@@ -4,14 +4,15 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {Provider as ReduxProvider} from "react-redux";
-import reduxThunk from "./stores/reduxThunk/reduxThunk";
+import {reduxThunk} from "./stores/reduxThunk/reduxThunk";
 
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <ReduxProvider store={reduxThunk()}>
+  <ReduxProvider store={reduxThunk}>
+    <Provider
     <App />
   </ReduxProvider>
 );
