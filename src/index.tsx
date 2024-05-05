@@ -4,7 +4,10 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {Provider as ReduxProvider} from "react-redux";
-import {reduxThunk} from "./stores/reduxThunk/reduxThunk";
+import reduxThunk from "./stores/reduxThunk/reduxThunk";
+import {RecoilRoot} from "recoil";
+import {BrowserRouter} from "react-router-dom";
+import {Provider as JotaiProvider} from "jotai";
 
 
 const root = ReactDOM.createRoot(
@@ -12,8 +15,13 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <ReduxProvider store={reduxThunk}>
-    <Provider
-    <App />
+    <RecoilRoot>
+      <JotaiProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </JotaiProvider>
+    </RecoilRoot>
   </ReduxProvider>
 );
 
