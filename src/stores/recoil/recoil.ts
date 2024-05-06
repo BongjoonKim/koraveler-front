@@ -1,5 +1,6 @@
 import {recoilPersist} from "recoil-persist";
 import {atom} from "recoil";
+import {ALERT_MESSAGE, USER_DATA} from "./recoilConstants";
 
 const {persistAtom} = recoilPersist({
   key: "sessionStorage",
@@ -17,6 +18,11 @@ export const recoil = {
       roles : []
     },
     effects_UNSTABLE: [persistAtom]
+  }),
+  
+  alertMsg: atom<AlertMsg>({
+    key:`${ALERT_MESSAGE}`,
+    default: {}
   })
 }
 

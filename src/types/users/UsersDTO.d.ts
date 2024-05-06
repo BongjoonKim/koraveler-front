@@ -1,5 +1,4 @@
-declare interface UsersDTO {
-  id ?: string;
+declare interface UsersDTO extends CommonDTO{
   userId ?: string;
   userpassword ?: string;
   email ?: string;
