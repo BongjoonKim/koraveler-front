@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ag-grid-community/core": "^31.3.1",
+    "@ag-grid-community/react": "^31.3.1",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@chakra-ui/react": "^2.8.2",
     "@reduxjs/toolkit": "^2.2.3",
@@ -13,6 +15,8 @@
     "@types/node": "^16.18.96",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
+    "ag-grid-community": "^31.3.1",
+    "ag-grid-react": "^31.3.1",
     "axios": "^1.6.8",
     "jotai": "^2.8.0",
     "lodash": "^4.17.21",
