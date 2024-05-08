@@ -21,6 +21,10 @@ function MenuAdmin(props : MenuAdminProps) {
           {
             headerName: "gogo",
             field : "value"
+          },
+          {
+            headerName: "애애",
+            field : "value"
           }
         ]}
         rowData={rowData}
