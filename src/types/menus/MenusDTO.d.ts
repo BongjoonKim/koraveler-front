@@ -3,4 +3,5 @@ declare interface MenusDTO extends CommonDTO {
   value ?: string;
   sequence ?: number;
   url ?: string;
+  type ?: ("main" | "setting" | "admin")[]
 }
