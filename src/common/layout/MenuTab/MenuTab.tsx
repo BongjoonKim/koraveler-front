@@ -1,14 +1,24 @@
 import styled from "styled-components";
 import {ReactNode} from "react";
+import useMenuTab from "./useMenuTab";
+import CusTab from "../../elements/CusTab";
 
-interface MenuTabProps {
+export interface MenuTabProps {
   children : ReactNode
 }
 function MenuTab(props : MenuTabProps) {
+  const {
+    menuList,
+    handleChangeTab,
+  } = useMenuTab(props);
   return (
     <StyledMenuTab>
-      
-      {props.children}
+      <CusTab
+        menus={menuList}
+        onChange={handleChangeTab}
+      >
+        {props.children}
+      </CusTab>
     </StyledMenuTab>
   )
 }
