@@ -11,14 +11,15 @@ function MenuTab(props : MenuTabProps) {
     menuList,
     handleChangeTab,
   } = useMenuTab(props);
+  console.log("메뉴 리스트sss", props.children);
   return (
     <StyledMenuTab>
       <CusTab
-        menus={menuList}
         onChange={handleChangeTab}
       >
-        {props.children}
+        {menuList}
       </CusTab>
+      {props.children}
     </StyledMenuTab>
   )
 }
@@ -26,4 +27,6 @@ function MenuTab(props : MenuTabProps) {
 export default MenuTab;
 
 const StyledMenuTab = styled.div`
+  height: 100%;
+  width: 100%;
 `;

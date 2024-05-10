@@ -1,8 +1,9 @@
 import {Tab, TabList, TabsProps, Tabs} from "@chakra-ui/react";
 import styled from "styled-components";
+import {ReactNode} from "react";
 
 interface CusTabProps extends TabsProps {
-  menus : MenusDTO[];
+  children : any[];
 }
 
 function CusTab(props : CusTabProps) {
@@ -13,9 +14,9 @@ function CusTab(props : CusTabProps) {
         onChange={props.onChange}
       >
         <TabList>
-          {props.menus.map((menu : MenusDTO) => {
+          {props.children.map((children : any) => {
             return (
-              <Tab>{menu.label}</Tab>
+              <Tab>{children.label}</Tab>
             )
           })}
         </TabList>

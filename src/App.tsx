@@ -3,12 +3,15 @@ import logo from './logo.svg';
 import './App.css';
 import styled from "styled-components";
 import RoutersTree from "./RoutersTree";
+import {ChakraProvider} from "@chakra-ui/react";
 
 function App() {
   return (
-    <StyledApp className={"app"}>
-      <RoutersTree/>
-    </StyledApp>
+    <ChakraProvider>
+      <StyledApp className={"app"}>
+        <RoutersTree/>
+      </StyledApp>
+    </ChakraProvider>
   );
 }
 
