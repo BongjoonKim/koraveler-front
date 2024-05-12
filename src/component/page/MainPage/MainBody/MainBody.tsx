@@ -30,6 +30,8 @@ function MainBody(props : MainBodyProps) {
 export default MainBody;
 
 const StyledMainBody = styled.div`
+  width: 100%;
+  height: 100%;
   .main-img {
     width: 100%;
     height: 100%;

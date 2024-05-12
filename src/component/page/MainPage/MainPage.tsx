@@ -23,7 +23,6 @@ export default MainPage;
 
 const StyledMainPage = styled.div`
   user-select: none;
-  
   .header {
     width: 100%;
     height: 6rem;
