@@ -5,6 +5,7 @@ import useMenuAdmin from "./useMenuAdmin";
 import {MenuAdminColumnDefsInit} from "../../../../../init/menus/MenuAdminColumnDefsInit";
 import HeaderButtons from "../../../../../common/layout/HeaderButtons";
 import CusModal from "../../../../../common/elements/CusModal";
+import MenuModalBody from "./MenuModalBody";
 
 interface MenuAdminProps {
 
@@ -41,7 +42,7 @@ function MenuAdmin(props : MenuAdminProps) {
           })
         }}
       >
-        <>sdfsdfsf</>
+        <MenuModalBody />
       </CusModal>
     </StyledMenuAdmin>
   )
