@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import {Button} from "@chakra-ui/react";
-import CusChakraButton from "../../elements/buttons/CusChakraButton";
+import CusButton from "../../elements/buttons/CusButton";
 
 export interface HeaderButtonsProps {
   onCreate?: () => void;
@@ -13,20 +13,20 @@ function HeaderButtons(props : HeaderButtonsProps) {
   return (
     <StyledHeaderbuttons>
       {props.onCreate && (
-        <CusChakraButton
+        <CusButton
           colorScheme={"teal"}
           onClick={props.onCreate}
         >
           Create
-        </CusChakraButton>
+        </CusButton>
       )}
       {props.onEdit && (
-        <CusChakraButton
+        <CusButton
           colorScheme={"teal"}
           onClick={props.onEdit}
         >
           Edit
-        </CusChakraButton>
+        </CusButton>
       )}
     </StyledHeaderbuttons>
   )
