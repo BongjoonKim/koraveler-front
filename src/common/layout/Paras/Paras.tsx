@@ -4,30 +4,34 @@ import PartType, {PartTypeProps} from "./PartType/PartType";
 
 interface ParasProps  {
   children: ReactNode
+  parasTitle ?: string | ReactNode;
 }
 
 interface ParagraphProps {
   children : ReactNode;
+  paragraphTitle ?: string | ReactNode;
 }
 
 interface ChapterProps {
   children : ReactNode;
+  chapterTitle ?: string | ReactNode;
 }
 
 interface SectionProps {
   children : ReactNode;
-  sectionTitle ?: string
+  sectionTitle ?: string | ReactNode;
 }
 
 interface PartProps extends PartTypeProps{
-  partTitle : string;
+  partTitle ?: string | ReactNode;
   type : string;
 }
 
 
 function Paras(props : ParasProps) {
   return (
-    <StyledParagraphs>
+    <StyledParagraphs
+    >
       {props.children}
     </StyledParagraphs>
   )
@@ -83,9 +87,11 @@ export default Paras;
 const StyledParagraphs = styled.div`
   display: flex;
   gap : 1rem;
+  width: 100%;
 `;
 
 const StyledParagraph = styled.div`
+  width: 100%;
 `;
 
 const StyledChapter = styled.div`
@@ -95,5 +101,15 @@ const StyledSection = styled.div`
 `;
 
 const StyledPart = styled.div`
+  width: 100%;
+  
+  margin: 0.5rem 0.5rem;
   display: flex;
+  gap: 1rem;
+  .part-title {
+    width: 50%;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 `;

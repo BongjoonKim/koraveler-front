@@ -10,10 +10,10 @@ interface MenuModalBodyProps {
 function MenuModalBody(props : MenuModalBodyProps) {
   return (
     <StyledMenuModalBody>
-      <Paras>
+      <Paras
+      >
         <Paras.Pharagraph>
           <Paras.Section
-            sectionTitle="Editor"
           >
             <Paras.Part
               partTitle="Title"
@@ -28,7 +28,7 @@ function MenuModalBody(props : MenuModalBodyProps) {
               type="textField"
             />
             <Paras.Part
-              partTitle="RUL"
+              partTitle="URL"
               type="textField"
             />
             <Paras.Part
