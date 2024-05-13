@@ -25,6 +25,8 @@ interface SectionProps {
 interface PartProps extends PartTypeProps{
   partTitle ?: string | ReactNode;
   type : string;
+  onChange : (event ?: any, field ?: string) => void;
+  field : string;
 }
 
 
@@ -72,7 +74,13 @@ function Part(props : PartProps) {
       <div className="part-title">
         {props.partTitle}
       </div>
-      <PartType type={props.type} />
+      <PartType
+        type={props.type}
+        onChange={props?.onChange
+          ? (event : any) => props.onChange(event, props.field)
+          : () => {}
+        }
+      />
     </StyledPart>
   )
 }

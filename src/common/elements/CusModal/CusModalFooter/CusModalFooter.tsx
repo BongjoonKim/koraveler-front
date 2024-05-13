@@ -3,11 +3,10 @@ import CusButton from "../../buttons/CusButton";
 import {InitFooterButtonTypes} from "../../../../types/common/initial/initialCommon";
 interface CusModalFooterProps {
   types : FooterButtonTypes[];
-  comon : CommonDTO;
-  createText : string;
-  editText : string;
-  cancelText : string;
-  deleteText : string;
+  createText ?: string;
+  editText ?: string;
+  cancelText ?: string;
+  deleteText ?: string;
   doCreate ?: () => void;
   doEdit ?: () => void;
   doCancel ?: () => void;

@@ -16,6 +16,7 @@ function useMenuAdmin() {
     type : null,
     isOpen: false
   });
+  const [menuData, setMenuData] = useState<MenusDTO>({});
   
   const createModalOpen = () => {
     console.log("모달 클릭")
@@ -56,7 +57,9 @@ function useMenuAdmin() {
     createModalOpen,
     editModalOpen,
     modalOpen,
-    setModalOpen
+    setModalOpen,
+    menuData,
+    setMenuData,
   }
 }
 
