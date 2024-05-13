@@ -6,6 +6,8 @@ import {MenuAdminColumnDefsInit} from "../../../../../init/menus/MenuAdminColumn
 import HeaderButtons from "../../../../../common/layout/HeaderButtons";
 import CusModal from "../../../../../common/elements/CusModal";
 import MenuModalBody from "./MenuModalBody";
+import CusButton from "../../../../../common/elements/buttons/CusButton";
+import CusModalFooter from "../../../../../common/elements/CusModal/CusModalFooter";
 
 interface MenuAdminProps {
 
@@ -33,6 +35,7 @@ function MenuAdmin(props : MenuAdminProps) {
         rowData={rowData}
       />
       <CusModal
+        title={"Editor"}
         isOpen={modalOpen.isOpen!}
         onClose={() => {
           setModalOpen({
@@ -41,6 +44,10 @@ function MenuAdmin(props : MenuAdminProps) {
             data: null
           })
         }}
+        footer={(
+          <CusModalFooter
+            types={} comon={} createText={} editText={} cancelText={} deleteText={}
+        )}
       >
         <MenuModalBody />
       </CusModal>

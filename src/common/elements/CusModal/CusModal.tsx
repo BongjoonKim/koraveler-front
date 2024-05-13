@@ -5,12 +5,13 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalCloseButton
+  ModalCloseButton, ModalFooter
 } from "@chakra-ui/react";
 import {ReactNode} from "react";
 
 interface CusModalProps extends ModalProps {
   title ?: string | ReactNode;
+  footer ?: ReactNode;
 }
 
 export default function CusModal(props:CusModalProps) {
@@ -28,6 +29,9 @@ export default function CusModal(props:CusModalProps) {
         <ModalBody>
           {props.children}
         </ModalBody>
+        <ModalFooter>
+          {props.footer}
+        </ModalFooter>
       </ModalContent>
     </Modal>
   )

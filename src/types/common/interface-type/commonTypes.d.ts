@@ -1,0 +1,1 @@
+declare type FooterButtonTypes = "create" | "edit" | "delete" | "cancel";
