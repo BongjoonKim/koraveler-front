@@ -19,7 +19,9 @@ function MenuAdmin(props : MenuAdminProps) {
     modalOpen,
     setModalOpen,
     createModalOpen,
-    editModalOpen
+    editModalOpen,
+    menuData,
+    setMenuData,
   } = useMenuAdmin();
   
   
@@ -46,10 +48,16 @@ function MenuAdmin(props : MenuAdminProps) {
         }}
         footer={(
           <CusModalFooter
-            types={} comon={} createText={} editText={} cancelText={} deleteText={}
+            types={["create", "cancel"]}
+            createText={"save"}
+            cancelText={"cancel"}
+          />
         )}
       >
-        <MenuModalBody />
+        <MenuModalBody
+          data={menuData}
+          setData={setMenuData}
+        />
       </CusModal>
     </StyledMenuAdmin>
   )
