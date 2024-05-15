@@ -1,18 +1,26 @@
 import CusInput from "../../../elements/textField/CusInput";
+import {KeyboardEventHandler} from "react";
 
 export interface PartTypeProps {
   type : string;
   value ?: any;
   onChange ?: (event : any) => void;
+  onKeyUp ?: KeyboardEventHandler<HTMLInputElement> | undefined;
 }
 
 function PartType(props : PartTypeProps) {
   switch (props.type) {
     case "textField":
       return (
-        <TextField
+        // <TextField
+        //   value={props.value}
+        //   onKey
+        //   onChange={props.onChange}
+        // />
+        <CusInput
           value={props.value}
           onChange={props.onChange}
+          onKeyUp={props.onKeyUp}
         />
       );
       break;
@@ -20,14 +28,6 @@ function PartType(props : PartTypeProps) {
       return <></>;
       break;
   }
-}
-
-function TextField(props : any) {
-  return (
-    <CusInput
-      value={props.value}
-    />
-  )
 }
 
 
