@@ -5,7 +5,7 @@ import Paras from "../../../../../../common/layout/Paras";
 import useMenuModalBody from "./useMenuModalBody";
 
 export interface MenuModalBodyProps {
-  data ?: any;
+  data ?: MenusDTO;
   setData ?: Dispatch<SetStateAction<any>>
 }
 
@@ -21,34 +21,39 @@ function MenuModalBody(props : MenuModalBodyProps) {
           <Paras.Section
           >
             <Paras.Part
-              partTitle="Title"
+              partTitle="Label"
               type="textField"
-              onChange={handleChange}
+              onChange={(event : any) => handleChange(event, "label")}
               field={"textField"}
+              value={props.data?.label}
             />
             <Paras.Part
               partTitle="Value"
               type="textField"
-              onChange={handleChange}
+              onChange={(event: any) => handleChange(event, "value")}
               field={"textField"}
+              value={props.data?.value}
             />
             <Paras.Part
               partTitle="Sequence"
               type="textField"
-              onChange={handleChange}
+              onChange={(event : any) => handleChange(event, "sequence")}
               field={"textField"}
+              value={props.data?.sequence}
             />
             <Paras.Part
               partTitle="URL"
               type="textField"
-              onChange={handleChange}
+              onChange={(event : any) => handleChange(event, "url")}
               field={"textField"}
+              value={props.data?.url}
             />
             <Paras.Part
               partTitle="Types"
               type="textField"
-              onChange={handleChange}
+              onChange={(event : any) => handleChange(event, "types")}
               field={"textField"}
+              value={props.data?.types}
             />
           </Paras.Section>
         </Paras.Pharagraph>

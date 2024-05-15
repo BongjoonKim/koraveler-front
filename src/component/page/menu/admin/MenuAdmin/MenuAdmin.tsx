@@ -24,6 +24,7 @@ function MenuAdmin(props : MenuAdminProps) {
     setMenuData,
   } = useMenuAdmin();
   
+  console.log("메뉴 값", menuData)
   
   
   return (

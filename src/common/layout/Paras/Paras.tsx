@@ -27,6 +27,7 @@ interface PartProps extends PartTypeProps{
   type : string;
   onChange : (event ?: any, field ?: string) => void;
   field : string;
+  key ?: string;
 }
 
 
@@ -76,8 +77,9 @@ function Part(props : PartProps) {
       </div>
       <PartType
         type={props.type}
+        value={props.value}
         onChange={props?.onChange
-          ? (event : any) => props.onChange(event, props.field)
+          ? (event : any) => props.onChange(event, props.key)
           : () => {}
         }
       />
