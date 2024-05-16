@@ -1,5 +1,5 @@
 import {recoilPersist} from "recoil-persist";
-import {atom} from "recoil";
+import {atom, selector} from "recoil";
 import {ALERT_MESSAGE, USER_DATA} from "./recoilConstants";
 
 const {persistAtom} = recoilPersist({
@@ -23,6 +23,21 @@ export const recoil = {
   alertMsg: atom<AlertMsg>({
     key:`${ALERT_MESSAGE}`,
     default: {}
+  }),
+  
+  // recoilSelector
+  userInfo : selector<any>({
+    key : "sdfsdf",
+    get: ({get}) => {
+      let data = null;
+      if (recoil.alertMsg) {
+        data = get(recoil.userData)
+      } else {
+        data = undefined;
+      }
+      
+      return data;
+    }
   })
 }
 
