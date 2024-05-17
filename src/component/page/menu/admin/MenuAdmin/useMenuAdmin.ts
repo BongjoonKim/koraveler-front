@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState} from "react";
-import {getAllMenus} from "../../../../../endpoints/menus-endpoints";
+import {createMenus, getAllMenus} from "../../../../../endpoints/menus-endpoints";
 import {useRecoilState} from "recoil";
 import recoil from "../../../../../stores/recoil";
 
@@ -18,14 +18,20 @@ function useMenuAdmin() {
   });
   const [menuData, setMenuData] = useState<MenusDTO>({});
   
-  const createModalOpen = () => {
+  const createModalOpen = useCallback(async() => {
     console.log("모달 클릭")
     setModalOpen({
       type : "create",
       isOpen: true,
       data : null
-    })
-  };
+    });
+    
+  }, []);
+  
+  const createMenu = useCallback(async() => {
+    console.log("menuData", menuData)
+    await createMenus(menuData);
+  }, [menuData]);
   
   const editModalOpen = useCallback(() => {
     setModalOpen({
@@ -60,6 +66,7 @@ function useMenuAdmin() {
     setModalOpen,
     menuData,
     setMenuData,
+    createMenu,
   }
 }
 

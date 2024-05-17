@@ -24,20 +24,5 @@ export const recoil = {
     key:`${ALERT_MESSAGE}`,
     default: {}
   }),
-  
-  // recoilSelector
-  userInfo : selector<any>({
-    key : "sdfsdf",
-    get: ({get}) => {
-      let data = null;
-      if (recoil.alertMsg) {
-        data = get(recoil.userData)
-      } else {
-        data = undefined;
-      }
-      
-      return data;
-    }
-  })
 }
 

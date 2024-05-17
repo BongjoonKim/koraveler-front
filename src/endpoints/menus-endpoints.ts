@@ -10,7 +10,7 @@ export async function getMenus(label : string) {
 }
 
 export async function createMenus(menusDTO : MenusDTO) {
-  return (await request.post("/menus"), menusDTO) as AxiosResponse<MenusDTO>;
+  return (await request.post("/menus"), {...menusDTO}) as AxiosResponse<MenusDTO>;
 }
 
 export async function updateMenus(menusDTO : MenusDTO) {
