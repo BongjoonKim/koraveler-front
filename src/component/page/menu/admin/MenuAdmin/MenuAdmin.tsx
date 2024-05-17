@@ -22,6 +22,7 @@ function MenuAdmin(props : MenuAdminProps) {
     editModalOpen,
     menuData,
     setMenuData,
+    createMenu
   } = useMenuAdmin();
   
   console.log("메뉴 값", menuData)
@@ -52,6 +53,7 @@ function MenuAdmin(props : MenuAdminProps) {
             types={["create", "cancel"]}
             createText={"save"}
             cancelText={"cancel"}
+            doCreate={createMenu}
           />
         )}
       >
