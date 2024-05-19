@@ -13,7 +13,7 @@ export const recoil = {
     default : {
       id: "",
       userId : "",
-      userpassword : "",
+      userPassword : "",
       email : "",
       roles : []
     },

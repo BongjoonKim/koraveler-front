@@ -16,7 +16,13 @@ function useMenuAdmin() {
     type : null,
     isOpen: false
   });
-  const [menuData, setMenuData] = useState<MenusDTO>({});
+  const [menuData, setMenuData] = useState<MenusDTO>({
+    label : "",
+    value : '',
+    sequence : 0,
+    url : "",
+    types : []
+  });
   
   const createModalOpen = useCallback(async() => {
     console.log("모달 클릭")

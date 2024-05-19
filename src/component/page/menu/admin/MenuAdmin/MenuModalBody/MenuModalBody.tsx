@@ -8,52 +8,27 @@ export interface MenuModalBodyProps {
   data ?: MenusDTO;
   setData ?: Dispatch<SetStateAction<any>>
 }
+type menuType = keyof MenusDTO;
 
+type ArrayOfKeys<T> = (keyof T)[];
 function MenuModalBody(props : MenuModalBodyProps) {
   const {
     handleChange
   } = useMenuModalBody(props);
+  
   return (
     <StyledMenuModalBody>
       <Paras
       >
         <Paras.Pharagraph>
-          <Paras.Section
-          >
+          <Paras.Section>
             <Paras.Part
-              partTitle="Label"
-              type="textField"
-              onChange={(event : any) => handleChange(event, "label")}
-              field={"textField"}
+              key={"label"}
+              inputType={"textField"}
+              fieldType={typeof props.data?.label}
+              field={"label"}
               value={props.data?.label}
-            />
-            <Paras.Part
-              partTitle="Value"
-              type="textField"
-              onChange={(event: any) => handleChange(event, "value")}
-              field={"textField"}
-              value={props.data?.value}
-            />
-            <Paras.Part
-              partTitle="Sequence"
-              type="textField"
-              onChange={(event : any) => handleChange(event, "sequence")}
-              field={"textField"}
-              value={props.data?.sequence}
-            />
-            <Paras.Part
-              partTitle="URL"
-              type="textField"
-              onChange={(event : any) => handleChange(event, "url")}
-              field={"textField"}
-              value={props.data?.url}
-            />
-            <Paras.Part
-              partTitle="Types"
-              type="textField"
-              onChange={(event : any) => handleChange(event, "types")}
-              field={"textField"}
-              value={props.data?.types}
+              onChange={(event : any, field?: any, value?: any) => handleChange(event, field, value)}
             />
           </Paras.Section>
         </Paras.Pharagraph>

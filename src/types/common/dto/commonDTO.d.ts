@@ -1,7 +1,6 @@
 
 
 declare interface CommonDTO {
-  id ?: string;
   created ?: Date;
   updated ?: Date;
   isNonExpired ?: boolean;
