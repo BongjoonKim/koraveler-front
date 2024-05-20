@@ -8,6 +8,7 @@ import CusModal from "../../../../../common/elements/CusModal";
 import MenuModalBody from "./MenuModalBody";
 import CusButton from "../../../../../common/elements/buttons/CusButton";
 import CusModalFooter from "../../../../../common/elements/CusModal/CusModalFooter";
+import {CellClickedEvent} from "ag-grid-community";
 
 interface MenuAdminProps {
 
@@ -19,6 +20,7 @@ function MenuAdmin(props : MenuAdminProps) {
     modalOpen,
     setModalOpen,
     createModalOpen,
+    modalClose,
     editModalOpen,
     menuData,
     setMenuData,
@@ -32,11 +34,21 @@ function MenuAdmin(props : MenuAdminProps) {
     <StyledMenuAdmin>
       <HeaderButtons
         onCreate={createModalOpen}
-        onEdit={editModalOpen}
+        // onEdit={editModalOpen}
       />
       <CusGrid
         columnDefs={MenuAdminColumnDefsInit}
         rowData={rowData}
+        onCellClicked={(params: CellClickedEvent<MenusDTO>) => {
+          setModalOpen({
+            type: "edit",
+            isOpen: true,
+            data: params.data
+          })
+          setMenuData(
+            params.data!
+          )
+        }}
       />
       <CusModal
         title={"Editor"}
@@ -54,6 +66,8 @@ function MenuAdmin(props : MenuAdminProps) {
             createText={"save"}
             cancelText={"cancel"}
             doCreate={createMenu}
+            
+            doCancel={modalClose}
           />
         )}
       >
