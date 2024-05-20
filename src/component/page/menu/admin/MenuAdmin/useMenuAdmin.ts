@@ -21,7 +21,7 @@ function useMenuAdmin() {
     value : '',
     sequence : 0,
     url : "",
-    types : []
+    types : ["admin"]
   });
   
   const createModalOpen = useCallback(async() => {
@@ -35,8 +35,13 @@ function useMenuAdmin() {
   }, []);
   
   const createMenu = useCallback(async() => {
-    console.log("menuData", menuData)
-    await createMenus(menuData);
+    try {
+      console.log("menuData", menuData)
+      await createMenus(menuData);
+    } catch (e) {
+      console.log("에러 확인", e)
+    }
+
   }, [menuData]);
   
   const editModalOpen = useCallback(() => {
