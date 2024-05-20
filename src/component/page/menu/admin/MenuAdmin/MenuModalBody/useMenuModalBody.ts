@@ -6,13 +6,12 @@ export type MenusDTOKeys = keyof MenusDTO;
 
 export default function useMenuModalBody(props : MenuModalBodyProps) {
   console.log("props.data", props.data)
-  const handleChange = useCallback((event : any, name:any, value: any) => {
-    console.log("값 확인", name, value)
-    if (name && props.setData) {
+  const handleChange = useCallback((event : any, field:keyof MenusDTO, value: any) => {
+    console.log("값 확인", field, value)
+    if (field && props.setData) {
       props.setData((prev : MenusDTO) => {
         const data = cloneDeep(prev);
-        // @ts-ignore
-        data[name] = value;
+        data[field] = value;
         console.log("전체 값", data)
         return data;
       });
