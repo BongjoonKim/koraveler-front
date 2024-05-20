@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState} from "react";
-import {createMenus, getAllMenus} from "../../../../../endpoints/menus-endpoints";
+import {createMenus, getAllMenus, updateMenus} from "../../../../../endpoints/menus-endpoints";
 import {useRecoilState} from "recoil";
 import recoil from "../../../../../stores/recoil";
 
@@ -36,19 +36,33 @@ function useMenuAdmin() {
   
   const createMenu = useCallback(async() => {
     try {
-      console.log("menuData", menuData)
-      await createMenus(menuData);
+      if(modalOpen.type === "create") {
+        console.log("menuData", menuData)
+        await createMenus(menuData);
+      } else if (modalOpen.type === "edit") {
+        await updateMenus(menuData);
+      }
+      await getMenus();
+
     } catch (e) {
       console.log("에러 확인", e)
     }
-
-  }, [menuData]);
+  }, [menuData, modalOpen]);
   
   const editModalOpen = useCallback(() => {
     setModalOpen({
       type : "edit",
       isOpen: true,
       data : null
+    });
+    
+  }, [modalOpen]);
+  
+  const modalClose = useCallback(() => {
+    setModalOpen({
+        type : undefined,
+        isOpen: false,
+        data : null
     })
   }, [modalOpen])
   
@@ -73,6 +87,7 @@ function useMenuAdmin() {
     rowData,
     createModalOpen,
     editModalOpen,
+    modalClose,
     modalOpen,
     setModalOpen,
     menuData,

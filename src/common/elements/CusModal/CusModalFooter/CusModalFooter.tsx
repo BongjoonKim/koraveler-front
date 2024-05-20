@@ -62,5 +62,6 @@ export default function CusModalFooter(props : CusModalFooterProps) {
 const StyledCusModalFooter = styled.div`
   display: flex;
   width: 100%;
-  align-items: flex-end;
+  justify-content: end;
+  gap: 0.5rem;
 `;
