@@ -18,5 +18,5 @@ export async function updateMenus(menusDTO : MenusDTO) {
 }
 
 export async function deleteMenus(label : string) {
-  return (await request.get("/menus")) as AxiosResponse<any>;
+  return (await request.delete(`/menus?label=${label}`)) as AxiosResponse<any>;
 }
