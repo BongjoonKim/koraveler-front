@@ -24,7 +24,8 @@ function MenuAdmin(props : MenuAdminProps) {
     editModalOpen,
     menuData,
     setMenuData,
-    createMenu
+    saveMenu,
+    deleteMenu
   } = useMenuAdmin();
   
   console.log("메뉴 값", menuData)
@@ -62,12 +63,13 @@ function MenuAdmin(props : MenuAdminProps) {
         }}
         footer={(
           <CusModalFooter
-            types={["create", "cancel"]}
+            types={["create", "cancel","delete"]}
             createText={"save"}
             cancelText={"cancel"}
-            doCreate={createMenu}
-            
+            deleteText={"delete"}
+            doCreate={saveMenu}
             doCancel={modalClose}
+            doDelete={deleteMenu}
           />
         )}
       >
