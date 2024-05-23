@@ -9,6 +9,8 @@ type ModalOpenProps = {
   data ?: any;
 }
 
+const initailMenuData
+
 function useMenuAdmin() {
   const [rowData, setRowData] = useState<any[]>([]);
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.alertMsg);
@@ -31,10 +33,16 @@ function useMenuAdmin() {
       isOpen: true,
       data : null
     });
-    setMenuData({})
+    setMenuData({
+      label : "",
+      value : '',
+      sequence : 0,
+      url : "",
+      types : ["admin"]
+    })
   
   
-  }, []);
+  }, [modalOpen, menuData]);
   
   const saveMenu = useCallback(async() => {
     try {
