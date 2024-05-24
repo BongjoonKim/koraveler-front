@@ -2,14 +2,13 @@ import {useCallback, useEffect, useState} from "react";
 import {createMenus, deleteMenus, getAllMenus, updateMenus} from "../../../../../endpoints/menus-endpoints";
 import {useRecoilState} from "recoil";
 import recoil from "../../../../../stores/recoil";
+import {initMenusDTO} from "../../../../../types/menus/initial";
 
 type ModalOpenProps = {
   type ?: "create" | "edit" | "delete" | null;
   isOpen ?: boolean;
   data ?: any;
 }
-
-const initailMenuData
 
 function useMenuAdmin() {
   const [rowData, setRowData] = useState<any[]>([]);
@@ -18,13 +17,7 @@ function useMenuAdmin() {
     type : null,
     isOpen: false
   });
-  const [menuData, setMenuData] = useState<MenusDTO>({
-    label : "",
-    value : '',
-    sequence : 0,
-    url : "",
-    types : ["admin"]
-  });
+  const [menuData, setMenuData] = useState<MenusDTO>(initMenusDTO);
   
   const createModalOpen = useCallback(async() => {
     console.log("모달 클릭")
@@ -33,15 +26,7 @@ function useMenuAdmin() {
       isOpen: true,
       data : null
     });
-    setMenuData({
-      label : "",
-      value : '',
-      sequence : 0,
-      url : "",
-      types : ["admin"]
-    })
-  
-  
+    setMenuData(initMenusDTO);
   }, [modalOpen, menuData]);
   
   const saveMenu = useCallback(async() => {
