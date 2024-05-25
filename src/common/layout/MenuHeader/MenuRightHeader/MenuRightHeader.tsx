@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import CusAvatar from "../../../elements/CusAvatar";
 
 interface RightHeaderProps {
 
@@ -7,7 +8,6 @@ interface RightHeaderProps {
 function MenuRightHeader(props : RightHeaderProps) {
   return (
     <StyledRightHeader>
-    
     </StyledRightHeader>
   )
 }
