@@ -3,5 +3,6 @@ declare interface UsersDTO extends CommonDTO{
   userId ?: string;
   userPassword ?: string;
   email ?: string;
+  src ?: string;
   roles ?: string[];
 }

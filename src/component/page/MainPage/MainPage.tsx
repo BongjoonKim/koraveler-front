@@ -28,6 +28,7 @@ const StyledMainPage = styled.div`
     height: 6rem;
     position: absolute;
     padding : 1rem;
-
+    display: flex;
+    justify-content: space-between;
   }
 `;
