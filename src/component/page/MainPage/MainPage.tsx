@@ -25,7 +25,7 @@ const StyledMainPage = styled.div`
   user-select: none;
   .header {
     width: 100%;
-    height: 6rem;
+    height: 3rem;
     position: absolute;
     padding : 1rem;
     display: flex;
