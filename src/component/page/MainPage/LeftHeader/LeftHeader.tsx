@@ -24,6 +24,7 @@ function LeftHeader(props : LeftHeaderProps) {
 export default LeftHeader;
 
 const StyledLeftHeader = styled.div`
+  width: 100%;
   .title {
     font-size: 3rem;
     font-weight: 600;

@@ -20,5 +20,5 @@ export default MenuHeader;
 
 const StyledMainHeader = styled.div`
   width: 100vw;
-  height: 10vh;
+  height: 5vh;
 `;
