@@ -1,15 +1,24 @@
 import styled from "styled-components";
 import CusAvatar from "../../../../common/elements/CusAvatar";
-import Slider from "./SliderMenu";
+import SliderMenu from "./SliderMenu";
+import useRightHeader from "./useRightHeader";
 
 interface RightHeaderProps {
 
 }
 
 function RightHeader(props : RightHeaderProps) {
+  const {
+    isSliderOpen,
+    setSliderOpen
+  } = useRightHeader();
+  
   return (
     <StyledRightHeader>
-      <Slider/>
+      <SliderMenu
+        isSliderOpen = {isSliderOpen}
+        setSliderOpen = {setSliderOpen}
+      />
       <CusAvatar />
     </StyledRightHeader>
   )
