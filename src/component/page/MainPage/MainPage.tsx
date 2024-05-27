@@ -27,7 +27,7 @@ const StyledMainPage = styled.div`
     width: 100%;
     height: 3rem;
     position: absolute;
-    padding : 1rem;
+    padding : 2rem;
     display: flex;
     justify-content: space-between;
   }

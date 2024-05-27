@@ -4,7 +4,7 @@ interface SliderProps {
 
 };
 
-function Slider(props: SliderProps) {
+function SliderMenu(props: SliderProps) {
   
   return (
     <StyledSlider>
@@ -13,11 +13,15 @@ function Slider(props: SliderProps) {
   )
 };
 
-export default Slider;
+export default SliderMenu;
 
 const StyledSlider = styled.div`
   width: 20rem;
-  height: 4rem;
-  position: absolute;
+  height: 30rem;
+  position: fixed;
   background: whitesmoke;
+  left: calc(100% - 20rem - 2rem);
+  top : 2rem;
+  border-radius: 16px;
+  tran
 `;
