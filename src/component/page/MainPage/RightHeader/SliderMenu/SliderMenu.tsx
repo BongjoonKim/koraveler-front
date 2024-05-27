@@ -1,13 +1,20 @@
 import styled from "styled-components";
+import {Dispatch, MouseEventHandler, SetStateAction, useState} from "react";
+import useSliderMenu from "./useSliderMenu";
 
-interface SliderProps {
-
+export interface SliderMenuProps {
+  isSliderOpen : boolean;
+  setSliderOpen : Dispatch<SetStateAction<boolean>>
 };
 
-function SliderMenu(props: SliderProps) {
-  
+function SliderMenu(props: SliderMenuProps) {
+  const {
+    handleAvatarClick
+  } = useSliderMenu(props)
   return (
-    <StyledSlider>
+    <StyledSlider
+      onClick={handleAvatarClick}
+    >
     
     </StyledSlider>
   )
@@ -15,7 +22,9 @@ function SliderMenu(props: SliderProps) {
 
 export default SliderMenu;
 
-const StyledSlider = styled.div`
+const StyledSlider = styled.div<{
+  onClick: (event: MouseEventHandler<HTMLDivElement>) => void;
+}>`
   width: 20rem;
   height: 30rem;
   position: fixed;
@@ -23,5 +32,5 @@ const StyledSlider = styled.div`
   left: calc(100% - 20rem - 2rem);
   top : 2rem;
   border-radius: 16px;
-  tran
+  transition: width 2s;
 `;
