@@ -1,13 +1,14 @@
 import styled from "styled-components";
-import {Avatar, AvatarGroup} from "@chakra-ui/react";
+import {Avatar, AvatarBadgeProps, AvatarGroup, AvatarGroupProps, AvatarProps} from "@chakra-ui/react";
+import {MouseEventHandler} from "react";
 
-interface CusAvatarProps {
+interface CusAvatarProps extends AvatarProps {
     users ?: UsersDTO[];
     user? : UsersDTO;
+    // onClick : (event: MouseEventHandler<HTMLSpanElement>) => void
 };
 
 function CusAvatar(props: CusAvatarProps) {
-  
   return (
     <StyledCusAvatar>
       {
@@ -20,6 +21,7 @@ function CusAvatar(props: CusAvatarProps) {
             <Avatar
               name={props.user?.email}
               src={props.user?.src || props.user?.userId}
+              onClick={props.onClick}
             />
           )
       }
