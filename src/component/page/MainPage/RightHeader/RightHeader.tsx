@@ -10,7 +10,8 @@ interface RightHeaderProps {
 function RightHeader(props : RightHeaderProps) {
   const {
     isSliderOpen,
-    setSliderOpen
+    setSliderOpen,
+    handleAvatarClick
   } = useRightHeader();
   
   return (
@@ -19,7 +20,9 @@ function RightHeader(props : RightHeaderProps) {
         isSliderOpen = {isSliderOpen}
         setSliderOpen = {setSliderOpen}
       />
-      <CusAvatar />
+      <CusAvatar
+        onClick={handleAvatarClick}
+      />
     </StyledRightHeader>
   )
 }

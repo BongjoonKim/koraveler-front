@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import {Dispatch, MouseEventHandler, SetStateAction, useState} from "react";
 import useSliderMenu from "./useSliderMenu";
 import CusButton from "../../../../../common/elements/buttons/CusButton";
@@ -14,35 +14,60 @@ function SliderMenu(props: SliderMenuProps) {
   } = useSliderMenu(props)
   return (
     <StyledSlider
-      onClick={handleAvatarClick}
+      isSliderOpen={props.isSliderOpen}
+      setSliderOpen={props.setSliderOpen}
     >
-      <div className="head">
-        <CusButton>로그인</CusButton>
-        <CusButton>회원가입</CusButton>
+      <div className="wrapper-sliderMenu">
+        <div className="head">
+          <CusButton>로그인</CusButton>
+          <CusButton>회원가입</CusButton>
+        </div>
+        <div className={"body"}>
+  
+        </div>
       </div>
-      <div className={"body"}>
-        
-      </div>
+
     </StyledSlider>
   )
 };
 
 export default SliderMenu;
+// onClick: (event: MouseEventHandler<HTMLDivElement>) => void;
 
-const StyledSlider = styled.div<{
-  onClick: (event: MouseEventHandler<HTMLDivElement>) => void;
-}>`
+const StyledSlider = styled.div<SliderMenuProps>`
   width: 20rem;
-  height: 30rem;
   position: fixed;
   background: whitesmoke;
   left: calc(100% - 20rem - 2rem);
   top : 2rem;
   border-radius: 16px;
-  transition: width 2s;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
+  //padding: 1.5rem;
+  .wrapper-sliderMenu {
+    margin: 1.5rem;
+  }
+  
+  transition: ${props => props.isSliderOpen ? "width 2s": "none"};
+  ${props => {
+    if (props.isSliderOpen) {
+      return css`
+        transition-property:  height, padding;
+        transition-duration: 600ms, 600ms;
+        height: 30rem;
+        overflow: hidden;
+
+      `
+    } else {
+      return css`
+        transition-property:  height, padding;
+        transition-duration: 600ms, 600ms;
+        overflow: hidden;
+        height: 0;
+      `
+    }
+
+  }}
+  
+  display: block;
   .head {
     display: flex;
     gap: 1rem;
