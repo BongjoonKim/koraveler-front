@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import {Dispatch, MouseEventHandler, SetStateAction, useState} from "react";
 import useSliderMenu from "./useSliderMenu";
+import CusButton from "../../../../../common/elements/buttons/CusButton";
 
 export interface SliderMenuProps {
   isSliderOpen : boolean;
@@ -15,7 +16,13 @@ function SliderMenu(props: SliderMenuProps) {
     <StyledSlider
       onClick={handleAvatarClick}
     >
-    
+      <div className="head">
+        <CusButton>로그인</CusButton>
+        <CusButton>회원가입</CusButton>
+      </div>
+      <div className={"body"}>
+        
+      </div>
     </StyledSlider>
   )
 };
@@ -33,4 +40,15 @@ const StyledSlider = styled.div<{
   top : 2rem;
   border-radius: 16px;
   transition: width 2s;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  .head {
+    display: flex;
+    gap: 1rem;
+  }
+  .body {
+    height: 100%;
+    width: 100%;
+  }
 `;
