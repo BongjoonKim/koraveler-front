@@ -10,7 +10,8 @@ export interface SliderMenuProps {
 
 function SliderMenu(props: SliderMenuProps) {
   const {
-    handleAvatarClick
+    handleAvatarClick,
+    handleLoginClick
   } = useSliderMenu(props)
   return (
     <StyledSlider
@@ -19,11 +20,11 @@ function SliderMenu(props: SliderMenuProps) {
     >
       <div className="wrapper-sliderMenu">
         <div className="head">
-          <CusButton>로그인</CusButton>
+          <CusButton onClick={handleLoginClick}>로그인</CusButton>
           <CusButton>회원가입</CusButton>
         </div>
         <div className={"body"}>
-  
+        
         </div>
       </div>
 
@@ -38,8 +39,8 @@ const StyledSlider = styled.div<SliderMenuProps>`
   width: 20rem;
   position: fixed;
   background: whitesmoke;
-  left: calc(100% - 20rem - 2rem);
-  top : 2rem;
+  left: calc(100% - 20rem - 1rem);
+  top : 1rem;
   border-radius: 16px;
   //padding: 1.5rem;
   .wrapper-sliderMenu {
