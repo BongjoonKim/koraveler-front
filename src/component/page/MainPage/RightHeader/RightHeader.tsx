@@ -34,5 +34,4 @@ const StyledRightHeader = styled.div`
   height: 100%;
   align-items: end;
   text-align: end;
-  padding: 1rem;
 `;
