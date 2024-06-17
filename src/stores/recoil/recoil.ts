@@ -17,7 +17,6 @@ export const recoil = {
       email : "",
       roles : []
     },
-    effects_UNSTABLE: [persistAtom]
   }),
   
   alertMsg: atom<AlertMsg>({

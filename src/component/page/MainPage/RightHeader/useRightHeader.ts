@@ -7,6 +7,7 @@ function useRightHeader() {
     setSliderOpen(prev => !prev);
   }, [isSliderOpen]);
   
+  
   return {
     isSliderOpen,
     setSliderOpen,
