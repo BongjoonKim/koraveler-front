@@ -2,6 +2,7 @@ import styled, {css} from "styled-components";
 import {Dispatch, MouseEventHandler, SetStateAction, useState} from "react";
 import useSliderMenu from "./useSliderMenu";
 import CusButton from "../../../../../common/elements/buttons/CusButton";
+import {lowerCase} from "lodash";
 
 export interface SliderMenuProps {
   isSliderOpen : boolean;
@@ -15,8 +16,7 @@ function SliderMenu(props: SliderMenuProps) {
   } = useSliderMenu(props)
   return (
     <StyledSlider
-      isSliderOpen={props.isSliderOpen}
-      setSliderOpen={props.setSliderOpen}
+      isslideropen={props.isSliderOpen.toString()}
     >
       <div className="wrapper-sliderMenu">
         <div className="head">
@@ -35,7 +35,7 @@ function SliderMenu(props: SliderMenuProps) {
 export default SliderMenu;
 // onClick: (event: MouseEventHandler<HTMLDivElement>) => void;
 
-const StyledSlider = styled.div<SliderMenuProps>`
+const StyledSlider = styled.div<{isslideropen : string}>`
   width: 20rem;
   position: fixed;
   background: whitesmoke;
@@ -47,9 +47,9 @@ const StyledSlider = styled.div<SliderMenuProps>`
     margin: 1.5rem;
   }
   
-  transition: ${props => props.isSliderOpen ? "width 2s": "none"};
+  transition: ${props => props.isslideropen ? "width 2s": "none"};
   ${props => {
-    if (props.isSliderOpen) {
+    if (props.isslideropen === "true") {
       return css`
         transition-property:  height, padding;
         transition-duration: 600ms, 600ms;
