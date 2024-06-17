@@ -21,5 +21,9 @@ function LoginRoutes(props: LoginRoutesProps) {
 export default LoginRoutes;
 
 const StyledLoginRoutes = styled.div`
-
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;

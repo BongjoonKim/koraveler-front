@@ -8,6 +8,7 @@ import reduxThunk from "./stores/reduxThunk/reduxThunk";
 import {RecoilRoot} from "recoil";
 import {BrowserRouter} from "react-router-dom";
 import {Provider as JotaiProvider} from "jotai";
+import {CookiesProvider} from "react-cookie";
 
 
 const root = ReactDOM.createRoot(
@@ -16,11 +17,13 @@ const root = ReactDOM.createRoot(
 root.render(
   <ReduxProvider store={reduxThunk}>
     <RecoilRoot>
-      <JotaiProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </JotaiProvider>
+      <CookiesProvider>
+        <JotaiProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </JotaiProvider>
+      </CookiesProvider>
     </RecoilRoot>
   </ReduxProvider>
 );
