@@ -28,12 +28,18 @@ function LoginPage(props: LoginPageProps) {
         <CusInput
           placeholder="ID"
           value={userInfo.userId}
-          onChange={(event:any) => handleChange(event, "id")}
+          id="id"
+          name="id"
+          type="text"
+          onChange={(event:ChangeEvent<HTMLInputElement>) => handleChange(event, "id")}
         />
         <CusInput
           placeholder="PASSWORD"
           value={userInfo.userPassword}
-          onChange={(event:any) => handleChange(event, "password")}
+          type="password"
+          id="pw"
+          name="pw"
+          onChange={(event:ChangeEvent<HTMLInputElement>) => handleChange(event, "password")}
         />
       </div>
       <div className="wrapper-footer">
