@@ -8,6 +8,7 @@ function CusInput(props : CusInputProps) {
   return (
     <Input
       {...props}
+      onChange={event => event}
     />
   )
 }
