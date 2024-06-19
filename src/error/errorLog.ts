@@ -10,6 +10,6 @@ export interface errorLogsProps {
   
 }
 
-export const errorLogs = (props : errorLogsProps) => {
-
+export const errorLogs = (e?: any, func?: Function, props ?: errorLogsProps) => {
+  return console.log(`${func} error`, e)
 }
