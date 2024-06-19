@@ -2,6 +2,7 @@ import styled from "styled-components";
 import CusAvatar from "../../../../common/elements/CusAvatar";
 import SliderMenu from "./SliderMenu";
 import useRightHeader from "./useRightHeader";
+import {Suspense} from "react";
 
 interface RightHeaderProps {
 
@@ -13,7 +14,6 @@ function RightHeader(props : RightHeaderProps) {
     setSliderOpen,
     handleAvatarClick
   } = useRightHeader();
-  
   return (
     <StyledRightHeader>
       <SliderMenu
@@ -22,6 +22,7 @@ function RightHeader(props : RightHeaderProps) {
       />
       <CusAvatar
         onClick={handleAvatarClick}
+        // name={}
       />
     </StyledRightHeader>
   )

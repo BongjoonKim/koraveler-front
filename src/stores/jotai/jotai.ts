@@ -1,8 +1,5 @@
 import { atom } from 'jotai'
 import {getUserData} from "../../endpoints/users-endpoints";
+import {errorLogs} from "../../error/errorLog";
 
-export const jAccessToken = atom<string | undefined>("");
-
-export const jUserData = atom<UsersDTO>(async get => {
-  const resUserData = await getUserData();
-})
+export const AccessToken = atom<string | undefined>("");

@@ -3,14 +3,14 @@ import {InitUsersDTO} from "../../../types/users/initialUsers";
 import {useNavigate} from "react-router-dom";
 import {login} from "../../../endpoints/login-endpoints";
 import {useAtom} from "jotai";
-import {jAccessToken} from "../../../stores/jotai/jotai";
+import {AccessToken} from "../../../stores/jotai/jotai";
 import {setCookie} from "../../../utils/cookieUtils";
 
 export default function useLoginPage() {
   const [userInfo, setUserInfo] = useState<UsersDTO>(InitUsersDTO);
   const [userId, setUserId] = useState<string>("");
   const navigate = useNavigate();
-  const [accessToken, setAccessToken] = useAtom(jAccessToken);
+  const [accessToken, setAccessToken] = useAtom(AccessToken);
   
   const handleChange = useCallback((event:ChangeEvent<HTMLInputElement>, type:string) => {
     console.log("event", event.target.value)

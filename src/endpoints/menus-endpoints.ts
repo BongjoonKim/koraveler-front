@@ -1,4 +1,4 @@
-import request from "../appConfig/request-response";
+import {request} from "../appConfig/request-response";
 import {AxiosResponse} from "axios";
 
 export async function getAllMenus() {

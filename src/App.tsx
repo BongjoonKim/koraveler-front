@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Suspense} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import styled from "styled-components";
