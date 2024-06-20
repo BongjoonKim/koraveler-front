@@ -3,26 +3,35 @@ import {PrimitiveAtom, useAtom, useAtomValue} from "jotai";
 import {AccessToken} from "../../../../stores/jotai/jotai";
 import {loadable} from "jotai/utils";
 import {getUserData} from "../../../../endpoints/users-endpoints";
-import useAxiosInterceptors from "../../../../appConfig/request-response";
+import {useAuth} from "../../../../appConfig/AuthContext";
+import {getAllMenus, getAllMenus2} from "../../../../endpoints/menus-endpoints";
+import {useRecoilState} from "recoil";
+import recoil from "../../../../stores/recoil";
 
 
 function useRightHeader() {
-  useAxiosInterceptors();
   const [isSliderOpen ,setSliderOpen] = useState<boolean>(false);
-  const [accessToken, setAccessToken] = useAtom(AccessToken);
-  
+  const [errorMsg, setErrorMsg] = useRecoilState(recoil.alertMsg);
+  const {accessToken, setAccessToken} = useAuth();
   
   const handleAvatarClick = useCallback((event : MouseEvent<HTMLSpanElement>) => {
     setSliderOpen(prev => !prev);
+    getAllMenus2(accessToken, setAccessToken);
   }, [isSliderOpen]);
   
   const getUserInfo = useCallback(async () => {
-    const res = await getUserData();
-    console.log("res", res)
-  }, []);
+    try {
+      const res = await getUserData();
+    } catch (e) {
+      setErrorMsg({
+        status: "error",
+        title: "retrieve failed",
+        description: "retrieve menus failed",
+      })
+    }
+  }, [accessToken]);
   
   useEffect(() => {
-    console.log('조회횟수', accessToken)
     getUserInfo();
   }, []);
   
