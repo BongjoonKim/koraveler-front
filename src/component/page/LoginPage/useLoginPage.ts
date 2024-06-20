@@ -5,12 +5,13 @@ import {login} from "../../../endpoints/login-endpoints";
 import {useAtom} from "jotai";
 import {AccessToken} from "../../../stores/jotai/jotai";
 import {setCookie} from "../../../utils/cookieUtils";
+import {useAuth} from "../../../appConfig/AuthContext";
 
 export default function useLoginPage() {
   const [userInfo, setUserInfo] = useState<UsersDTO>(InitUsersDTO);
   const [userId, setUserId] = useState<string>("");
   const navigate = useNavigate();
-  const [accessToken, setAccessToken] = useAtom(AccessToken);
+  const {setAccessToken} = useAuth();
   
   const handleChange = useCallback((event:ChangeEvent<HTMLInputElement>, type:string) => {
     console.log("event", event.target.value)
@@ -42,7 +43,8 @@ export default function useLoginPage() {
     try {
     const resToken = await login(userInfo);
     if (resToken.data) {
-      setAccessToken(resToken.data.refreshToken);
+      setAccessToken(resToken.data.accessToken);
+      setCookie("accessToken", resToken.data.accessToken!)
       setCookie("refreshToken", resToken.data.refreshToken!)
     }
     navigate('/')

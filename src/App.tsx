@@ -4,14 +4,17 @@ import './App.css';
 import styled from "styled-components";
 import RoutersTree from "./RoutersTree";
 import {ChakraProvider} from "@chakra-ui/react";
+import {AuthProvider} from "./appConfig/AuthContext";
 
 function App() {
   return (
-    <ChakraProvider>
-      <StyledApp className={"app"}>
-        <RoutersTree/>
-      </StyledApp>
-    </ChakraProvider>
+    <AuthProvider>
+      <ChakraProvider>
+        <StyledApp className={"app"}>
+          <RoutersTree/>
+        </StyledApp>
+      </ChakraProvider>
+    </AuthProvider>
   );
 }
 

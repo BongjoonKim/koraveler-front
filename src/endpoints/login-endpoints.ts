@@ -9,9 +9,9 @@ export async function login(props: UsersDTO) {
 }
 
 // accessToken이 만료되었을 때 작업
-export async function udtRefreshToken(props: TokenDTO) {
-  console.log("props", props)
+export async function udtRefreshToken(refreshToken : string) {
+  console.log("udtRefreshToken", refreshToken)
   return (await request.post('/login/refresh', {
-    ...props
+    refreshToken : refreshToken
   })) as AxiosResponse<TokenDTO>
 }
