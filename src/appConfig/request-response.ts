@@ -1,6 +1,5 @@
 import axios from "axios";
 import {useAtom} from "jotai/index";
-import {AccessToken} from "../stores/jotai/jotai";
 import {useCallback, useEffect} from "react";
 import {getCookie} from "../utils/cookieUtils";
 import {useNavigate} from "react-router-dom";
@@ -8,6 +7,7 @@ import {udtRefreshToken} from "../endpoints/login-endpoints";
 import {errorLogs} from "../error/errorLog";
 import {useAuth} from "./AuthContext";
 
+// Spring Security 필요
 export const request = axios.create({
   baseURL: "",
   headers: {
@@ -16,6 +16,15 @@ export const request = axios.create({
     "Content-Type": `application/json;charset=UTF-8`,
   }
 });
+
+// 로그인 전용 axios
+export const securityReq = axios.create({
+  baseURL:"",
+  headers: {
+    'Access-Control-Allow-Origin': 'http://localhost:3003',
+    'Content-Type': 'application/x-www-form-urlencoded'
+  }
+})
 
 // request.interceptors.request.use(
 //   config => {
@@ -80,11 +89,3 @@ export const request = axios.create({
 //   return {settingToken};
 // };
 
-// 로그인 전용 Content-Type
-export const securityReq = axios.create({
-  baseURL:"",
-  headers: {
-    'Access-Control-Allow-Origin': 'http://localhost:3003',
-    'Content-Type': 'application/x-www-form-urlencoded'
-  }
-})

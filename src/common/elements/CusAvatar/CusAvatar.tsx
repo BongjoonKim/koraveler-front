@@ -19,7 +19,7 @@ function CusAvatar(props: CusAvatarProps) {
             </AvatarGroup>
           ) : (
             <Avatar
-              name={props.user?.email}
+              name={props?.name}
               src={props.user?.src || props.user?.userId}
               onClick={props.onClick}
             />

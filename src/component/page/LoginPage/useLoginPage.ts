@@ -3,7 +3,6 @@ import {InitUsersDTO} from "../../../types/users/initialUsers";
 import {useNavigate} from "react-router-dom";
 import {login} from "../../../endpoints/login-endpoints";
 import {useAtom} from "jotai";
-import {AccessToken} from "../../../stores/jotai/jotai";
 import {setCookie} from "../../../utils/cookieUtils";
 import {useAuth} from "../../../appConfig/AuthContext";
 

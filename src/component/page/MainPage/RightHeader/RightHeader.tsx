@@ -10,6 +10,7 @@ interface RightHeaderProps {
 
 function RightHeader(props : RightHeaderProps) {
   const {
+    loginUser,
     isSliderOpen,
     setSliderOpen,
     handleAvatarClick
@@ -22,7 +23,7 @@ function RightHeader(props : RightHeaderProps) {
       />
       <CusAvatar
         onClick={handleAvatarClick}
-        // name={}
+        name={loginUser?.userId}
       />
     </StyledRightHeader>
   )

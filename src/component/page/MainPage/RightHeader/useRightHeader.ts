@@ -1,6 +1,6 @@
 import {MouseEvent, useCallback, useEffect, useState} from "react";
 import {PrimitiveAtom, useAtom, useAtomValue} from "jotai";
-import {AccessToken} from "../../../../stores/jotai/jotai";
+import {LoginUser} from "../../../../stores/jotai/jotai";
 import {loadable} from "jotai/utils";
 import {getUserData} from "../../../../endpoints/users-endpoints";
 import {useAuth} from "../../../../appConfig/AuthContext";
@@ -9,6 +9,7 @@ import {useRecoilState} from "recoil";
 import recoil from "../../../../stores/recoil";
 import {useNavigate} from "react-router-dom";
 import {endpointUtils} from "../../../../utils/endpointUtils";
+import {getLoginUser} from "../../../../endpoints/login-endpoints";
 
 
 function useRightHeader() {
@@ -16,6 +17,7 @@ function useRightHeader() {
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.alertMsg);
   const {accessToken, setAccessToken} = useAuth();
   const navigate = useNavigate();
+  const [loginUser, setLoginUser] = useAtom(LoginUser);
   
   const handleAvatarClick = useCallback(async (event : MouseEvent<HTMLSpanElement>) => {
     setSliderOpen(prev => !prev);
@@ -23,7 +25,6 @@ function useRightHeader() {
       // await getAllMenus2(accessToken, setAccessToken);
       // await getAllMenus3(accessToken, setAccessToken);
       console.log("엑세스 토큰", accessToken)
-      await endpointUtils.authAxios(getAllMenus3, accessToken, setAccessToken);
     } catch (e) {
       console.log("여기는 안 오냐?", e)
       if (e === "refreshToken expired") {
@@ -34,21 +35,28 @@ function useRightHeader() {
   
   const getUserInfo = useCallback(async () => {
     try {
-      const res = await getUserData();
+      const res = await endpointUtils.authAxios(getLoginUser, accessToken, setAccessToken);
+      if (res.data) {
+        setLoginUser(res.data);
+      }
     } catch (e) {
+      if (e === "refreshToken expired") {
+        navigate("/login")
+      }
       setErrorMsg({
         status: "error",
         title: "retrieve failed",
         description: "retrieve menus failed",
       })
     }
-  }, [accessToken]);
+  }, [accessToken, loginUser]);
   
   useEffect(() => {
     getUserInfo();
   }, []);
   
   return {
+    loginUser,
     isSliderOpen,
     setSliderOpen,
     handleAvatarClick
