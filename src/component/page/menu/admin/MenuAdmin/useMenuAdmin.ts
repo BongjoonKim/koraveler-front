@@ -12,7 +12,7 @@ type ModalOpenProps = {
 
 function useMenuAdmin() {
   const [rowData, setRowData] = useState<any[]>([]);
-  const [errorMsg, setErrorMsg] = useRecoilState(recoil.alertMsg);
+  const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   const [modalOpen, setModalOpen] = useState<ModalOpenProps>({
     type : null,
     isOpen: false
@@ -90,8 +90,7 @@ function useMenuAdmin() {
     } catch (e) {
       setErrorMsg({
         status: "error",
-        title: "retrieve failed",
-        description: "retrieve menus failed",
+        msg: "retrieve failed",
       })
     }
   }, [rowData]);

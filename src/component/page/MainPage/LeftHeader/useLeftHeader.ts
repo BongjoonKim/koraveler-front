@@ -5,7 +5,7 @@ import axios from "axios";
 import {getAllMenus} from "../../../../endpoints/menus-endpoints";
 
 export default function useLeftHeader() {
-  const [errorMsg, setErrorMsg] = useRecoilState(recoil.alertMsg);
+  const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   const [menus, setMenus] = useState<MenusDTO[]>([]);
   
   
@@ -16,8 +16,7 @@ export default function useLeftHeader() {
     } catch (e) {
       setErrorMsg({
         status: "error",
-        title: "retrieve failed",
-        description: "retrieve menus failed",
+        msg: "retrieve failed",
       })
     }
   }, [menus]);

@@ -10,11 +10,12 @@ import recoil from "../../../../stores/recoil";
 import {useNavigate} from "react-router-dom";
 import {endpointUtils} from "../../../../utils/endpointUtils";
 import {getLoginUser} from "../../../../endpoints/login-endpoints";
+import {REFESHTOKEN_EXPIRED} from "../../../../constants/constants";
 
 
 function useRightHeader() {
   const [isSliderOpen ,setSliderOpen] = useState<boolean>(false);
-  const [errorMsg, setErrorMsg] = useRecoilState(recoil.alertMsg);
+  const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   const {accessToken, setAccessToken} = useAuth();
   const navigate = useNavigate();
   const [loginUser, setLoginUser] = useAtom(LoginUser);
@@ -40,13 +41,12 @@ function useRightHeader() {
         setLoginUser(res.data);
       }
     } catch (e) {
-      if (e === "refreshToken expired") {
+      if (e === REFESHTOKEN_EXPIRED) {
         navigate("/login")
       }
       setErrorMsg({
         status: "error",
-        title: "retrieve failed",
-        description: "retrieve menus failed",
+        msg: "retrieve failed",
       })
     }
   }, [accessToken, loginUser]);
