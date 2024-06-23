@@ -5,7 +5,7 @@ import recoil from "../../../stores/recoil";
 import {MenuTabProps} from "./MenuTab";
 
 function useMenuTab(props : MenuTabProps) {
-  const [errorMsg, setErrorMsg] = useRecoilState(recoil.alertMsg);
+  const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   const [menuList, setMenuList] = useState<MenusDTO[]>([]);
   // 메뉴 목록 불러오기
   const getMenuList = useCallback(async() => {
@@ -15,8 +15,7 @@ function useMenuTab(props : MenuTabProps) {
     } catch (e) {
       setErrorMsg({
         status: "error",
-        title: "retrieve failed",
-        description: "retrieve menus failed",
+        msg: "retrieve failed",
       })
     }
   }, [menuList, errorMsg]);
