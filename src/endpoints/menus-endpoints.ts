@@ -5,23 +5,23 @@ import {getCookie, setCookie} from "../utils/cookieUtils";
 import {endpointUtils} from "../utils/endpointUtils";
 
 export async function getAllMenus() {
-  return (await request.get("/menus/all")) as AxiosResponse<MenusDTO[]>;
+  return (await request.get("ps/menus/all")) as AxiosResponse<MenusDTO[]>;
 }
 
 export async function getMenus(label : string) {
-  return (await request.get(`/menus?label=${label}`)) as AxiosResponse<MenusDTO>;
+  return (await request.get(`ps/menus?label=${label}`)) as AxiosResponse<MenusDTO>;
 }
 
 export async function createMenus(menusDTO : any) {
-  return (await request.post("/menus", menusDTO)) as AxiosResponse<MenusDTO>;
+  return (await request.post("ps/menus", menusDTO)) as AxiosResponse<MenusDTO>;
 }
 
 export async function updateMenus(menusDTO : MenusDTO) {
-  return (await request.put("/menus", menusDTO)) as AxiosResponse<MenusDTO>;
+  return (await request.put("ps/menus", menusDTO)) as AxiosResponse<MenusDTO>;
 }
 
 export async function deleteMenus(label : string) {
-  return (await request.delete(`/menus?label=${label}`)) as AxiosResponse<any>;
+  return (await request.delete(`ps/menus?label=${label}`)) as AxiosResponse<any>;
 }
 
 export async function getAllMenus2(func : any, accessToken : any, setAccessToken : any) {
@@ -55,7 +55,7 @@ export async function getAllMenus2(func : any, accessToken : any, setAccessToken
 
 export async function getAllMenus3(accessToken : any) {
   try {
-    return (await request.get("/menus/all", {
+    return (await request.get("ps/menus/all", {
       headers: {
         Authorization: `Bearer ${accessToken}`
       }

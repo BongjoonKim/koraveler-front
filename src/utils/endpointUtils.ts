@@ -1,10 +1,10 @@
 import {getCookie, setCookie} from "./cookieUtils";
 import {udtRefreshToken} from "../endpoints/login-endpoints";
-import {request} from "../appConfig/request-response";
-import {AxiosResponse} from "axios/index";
 
 export const endpointUtils = {
   async authAxios(func : any, accessToken ?: string | undefined | null, setAccessToken ?: any) {
+    console.log("값 확인", accessToken)
+  
     try {
       if (accessToken) {
         return (await func(accessToken))

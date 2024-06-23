@@ -1,8 +1,11 @@
 import {MouseEventHandler, useCallback} from "react";
 import {SliderMenuProps} from "./SliderMenu";
 import {useNavigate} from "react-router-dom";
+import {useAtomValue} from "jotai";
+import {LoginUser} from "../../../../../stores/jotai/jotai";
 
 function useSliderMenu(props : SliderMenuProps) {
+  const loginUser = useAtomValue(LoginUser);
   const navigate = useNavigate();
   
   const handleAvatarClick = useCallback((event : MouseEventHandler<HTMLDivElement>) => {
@@ -14,9 +17,12 @@ function useSliderMenu(props : SliderMenuProps) {
     navigate("/login")
   }, []);
   
+  //
+  
   return {
     handleAvatarClick,
-    handleLoginClick
+    handleLoginClick,
+    loginUser
   }
 }
 

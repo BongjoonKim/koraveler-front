@@ -11,6 +11,7 @@ export interface SliderMenuProps {
 
 function SliderMenu(props: SliderMenuProps) {
   const {
+    loginUser,
     handleAvatarClick,
     handleLoginClick
   } = useSliderMenu(props)
@@ -20,8 +21,12 @@ function SliderMenu(props: SliderMenuProps) {
     >
       <div className="wrapper-sliderMenu">
         <div className="head">
-          <CusButton onClick={handleLoginClick}>로그인</CusButton>
-          <CusButton>회원가입</CusButton>
+          {!loginUser?.userId && (
+            <>
+              <CusButton onClick={handleLoginClick}>로그인</CusButton>
+              <CusButton>회원가입</CusButton>
+            </>
+          )}
         </div>
         <div className={"body"}>
         
