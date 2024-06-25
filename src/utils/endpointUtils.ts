@@ -1,6 +1,6 @@
 import {getCookie, setCookie} from "./cookieUtils";
 import {udtRefreshToken} from "../endpoints/login-endpoints";
-import {ACCESSTOKEN_NULL, REFESHTOKEN_EXPIRED} from "../constants/constants";
+import {ACCESSTOKEN_NULL, REFESHTOKEN_EXPIRED} from "../constants/ErrorCode";
 
 export const endpointUtils = {
   async authAxios(func : any, accessToken ?: string | undefined | null, setAccessToken ?: any) {

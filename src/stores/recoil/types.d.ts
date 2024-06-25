@@ -1,5 +1,6 @@
 declare interface ErrorMessageProps {
-  status ?: string | number | null | undefined;
+  status ?: string;
   msg ?: string;
+  code ?: number | string;
   
 }

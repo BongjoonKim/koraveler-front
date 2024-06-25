@@ -10,7 +10,7 @@ import recoil from "../../../../stores/recoil";
 import {useNavigate} from "react-router-dom";
 import {endpointUtils} from "../../../../utils/endpointUtils";
 import {getLoginUser} from "../../../../endpoints/login-endpoints";
-import {REFESHTOKEN_EXPIRED} from "../../../../constants/constants";
+import {REFESHTOKEN_EXPIRED} from "../../../../constants/ErrorCode";
 
 
 function useRightHeader() {
@@ -37,6 +37,7 @@ function useRightHeader() {
   const getUserInfo = useCallback(async () => {
     try {
       const res = await endpointUtils.authAxios(getLoginUser, accessToken, setAccessToken);
+      console.log("res", res)
       if (res.data) {
         setLoginUser(res.data);
       }
