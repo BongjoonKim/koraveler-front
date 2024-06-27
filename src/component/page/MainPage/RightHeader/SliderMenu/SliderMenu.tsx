@@ -21,15 +21,39 @@ function SliderMenu(props: SliderMenuProps) {
     >
       <div className="wrapper-sliderMenu">
         <div className="head">
-          {!loginUser?.userId && (
+          {!loginUser?.userId ? (
             <>
               <CusButton onClick={handleLoginClick}>로그인</CusButton>
               <CusButton>회원가입</CusButton>
             </>
+          ) : (
+            <>
+              <div className="user-id">
+                <span>Hello! </span>
+                <span>{loginUser.userId}</span>
+              </div>
+              <div className="user-email">
+                {loginUser.email}
+              </div>
+            </>
           )}
+          
+          <div className="email">
+          
+          </div>
         </div>
         <div className={"body"}>
         
+        </div>
+        <div className={"footer"}>
+          <a className="account"
+          >
+            account
+          </a>
+          <a className="account"
+          >
+            logout
+          </a>
         </div>
       </div>
 
@@ -70,16 +94,36 @@ const StyledSlider = styled.div<{isslideropen : string}>`
         height: 0;
       `
     }
-
   }}
   
-  display: block;
+  display: flex;
+  flex-direction: column;
+  .wrapper-sliderMenu {
+    display: flex;
+    flex-direction: column;
+  }
+  
   .head {
     display: flex;
     gap: 1rem;
+    .user-id {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    flex-grow: 1;
   }
   .body {
     height: 100%;
     width: 100%;
+    flex-grow: 3;
+  }
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
+    width: 100%;
+    a {
+      cursor: pointer;
+    }
   }
 `;
