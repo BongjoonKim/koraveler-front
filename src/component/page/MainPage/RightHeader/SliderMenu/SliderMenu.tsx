@@ -56,7 +56,6 @@ function SliderMenu(props: SliderMenuProps) {
           </a>
         </div>
       </div>
-
     </StyledSlider>
   )
 };
