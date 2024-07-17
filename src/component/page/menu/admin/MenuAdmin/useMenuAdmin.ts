@@ -3,6 +3,8 @@ import {createMenus, deleteMenus, getAllMenus, updateMenus} from "../../../../..
 import {useRecoilState} from "recoil";
 import recoil from "../../../../../stores/recoil";
 import {initMenusDTO} from "../../../../../types/menus/initial";
+import {endpointUtils} from "../../../../../utils/endpointUtils";
+import {useAuth} from "../../../../../appConfig/AuthContext";
 
 type ModalOpenProps = {
   type ?: "create" | "edit" | "delete" | null;
@@ -18,6 +20,8 @@ function useMenuAdmin() {
     isOpen: false
   });
   const [menuData, setMenuData] = useState<MenusDTO>(initMenusDTO);
+  const {accessToken, setAccessToken} = useAuth();
+  
   
   const createModalOpen = useCallback(async() => {
     console.log("모달 클릭")
@@ -85,7 +89,7 @@ function useMenuAdmin() {
   
   const getMenus = useCallback(async () => {
     try {
-      const res = await getAllMenus();
+      const res = await endpointUtils.authAxios(getAllMenus, accessToken, setAccessToken)
       setRowData(res.data);
     } catch (e) {
       setErrorMsg({

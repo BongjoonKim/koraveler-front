@@ -14,6 +14,7 @@ export const endpointUtils = {
       const refreshToken = getCookie("refreshToken");
       if (refreshToken && refreshToken !== "undefined") {
         const res = await udtRefreshToken(getCookie("refreshToken").replace(/^"(.*)"$/, '$1'));
+        console.log("리프레시 토큰", refreshToken, getCookie("refreshToken"), res)
         if (res.data) {
           setCookie("refreshToken", res.data.refreshToken!);
           setAccessToken(res.data.accessToken);
