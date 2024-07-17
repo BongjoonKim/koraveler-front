@@ -3,6 +3,7 @@ import {SliderMenuProps} from "./SliderMenu";
 import {useNavigate} from "react-router-dom";
 import {useAtomValue} from "jotai";
 import {LoginUser} from "../../../../../stores/jotai/jotai";
+import {logout} from "../../../../../endpoints/login-endpoints";
 
 function useSliderMenu(props : SliderMenuProps) {
   const loginUser = useAtomValue(LoginUser);
@@ -17,12 +18,20 @@ function useSliderMenu(props : SliderMenuProps) {
     navigate("/login")
   }, []);
   
-  //
+  // 로그아웃 로직
+  const handleLogout = useCallback(async () => {
+    try {
+      const res = await logout();
+    } catch (e) {
+      console.log("logout error", e)
+    }
+  }, []);
   
   return {
     handleAvatarClick,
     handleLoginClick,
-    loginUser
+    loginUser,
+    handleLogout
   }
 }
 

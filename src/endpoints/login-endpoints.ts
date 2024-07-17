@@ -22,7 +22,6 @@ export async function udtRefreshToken(refreshToken : string) {
 
 export async function getLoginUser(accessToken : any) {
   try {
-    console.log("여기여기")
     return (await request.get(`ps/login/user`, {
       headers: {
         Authorization : `Bearer ${accessToken}`
@@ -30,5 +29,13 @@ export async function getLoginUser(accessToken : any) {
     })) as AxiosResponse<UsersDTO>;
   } catch (e) {
    throw e;
+  }
+}
+
+export async function logout() {
+  try {
+    return (await request.get(`ps/login/logout`)) as AxiosResponse<any>;
+  } catch (e) {
+    throw e;
   }
 }

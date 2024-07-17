@@ -13,7 +13,8 @@ function SliderMenu(props: SliderMenuProps) {
   const {
     loginUser,
     handleAvatarClick,
-    handleLoginClick
+    handleLoginClick,
+    handleLogout
   } = useSliderMenu(props)
   return (
     <StyledSlider
@@ -47,9 +48,15 @@ function SliderMenu(props: SliderMenuProps) {
         </div>
         <div className={"footer"}>
           <a className="account"
+             href={`${process.env.PUBLIC_URL}/menu/admin/menu`}
           >
             account
           </a>
+          <CusButton
+           onClick={handleLogout}
+          >
+            logout
+          </CusButton>
           <a className="account"
           >
             logout
