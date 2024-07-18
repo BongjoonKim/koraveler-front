@@ -1,16 +1,27 @@
 import styled from "styled-components";
+import useMenuLeftHeader from "./useMenuLeftHeader";
 
-interface LeftHeaderProps {
+export interface LeftHeaderProps {
 
 };
 
 function MenuLeftHeader(props: LeftHeaderProps) {
-  
+  const {menuList} = useMenuLeftHeader(props);
   return (
     <StyledLeftHeader>
       <a className={"title"} href={`${process.env.REACT_APP_URI}`}>
         Koraveler
       </a>
+      <div>
+        {menuList.map(menu => {
+          console.log("메뉴 정보", menu)
+          return (
+            <div>
+              {menu.label}
+            </div>
+          )
+        })}
+      </div>
     </StyledLeftHeader>
   )
 };
