@@ -10,7 +10,7 @@ interface RoutersTreeProps {
 function RoutersTree(props : RoutersTreeProps) {
   return (
     <Routes>
-      <Route path="/*" element={<MainPage />} />
+      <Route path="/home/*" element={<MainPage />} />
       <Route path="/menu/*" element={<MenuRoutes />} />
       <Route path="/login/*" element={<LoginRoutes />} />
     </Routes>

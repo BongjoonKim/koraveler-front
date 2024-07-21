@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import useLeftHeader from "./useLeftHeader";
+import {Link, LinkBox} from "@chakra-ui/react";
 
 interface LeftHeaderProps {
 
@@ -11,14 +12,14 @@ function LeftHeader(props : LeftHeaderProps) {
   console.log("메뉴 확인", menus);
   return (
     <StyledLeftHeader>
-      <div className="title">
+      <a className="title" href={`${process.env.PUBLIC_URL}/home`}>
         Koraveler
-      </div>
+      </a>
       <div className="menu">
         {menus.map(menu => {
           console.log("메뉴 정보", menu)
           return (
-            <a className="menu-label">
+            <a className="menu-label" href={`${process.env.REACT_APP_URI}${menu.url}`}>
               {menu.label}
             </a>
           )
@@ -31,7 +32,12 @@ function LeftHeader(props : LeftHeaderProps) {
 export default LeftHeader;
 
 const StyledLeftHeader = styled.div`
+  
+  a {
+    cursor: pointer;
+  }
   width: 100%;
+  z-index: 2000;
   display: flex;
   position: inherit;
   align-items: center;
