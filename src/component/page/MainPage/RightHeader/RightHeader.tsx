@@ -32,8 +32,9 @@ function RightHeader(props : RightHeaderProps) {
 export default RightHeader;
 
 const StyledRightHeader = styled.div`
-  width: 100%;
-  height: 100%;
-  align-items: end;
+  position: inherit;
+  width: calc(100vw - 4rem);
+  height: 3rem;
+  align-items: center;
   text-align: end;
 `;
