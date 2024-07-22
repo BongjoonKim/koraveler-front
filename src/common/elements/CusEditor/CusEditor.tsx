@@ -9,9 +9,10 @@ import '@toast-ui/editor/dist/i18n/ko-kr';
 import {MutableRefObject} from "react";
 
 interface CusEditorProps extends EditorProps{
+  ref : MutableRefObject<any>
 };
 
-function CusEditor(props: CusEditorProps, ref : MutableRefObject<Editor>) {
+function CusEditor(props: CusEditorProps) {
   
   return (
     <StyledCusEditor>
@@ -22,7 +23,7 @@ function CusEditor(props: CusEditorProps, ref : MutableRefObject<Editor>) {
         // hideModeSwitch={true}
         previewStyle={window.innerWidth > 1000 ? 'vertical' : 'tab'}
         useCommandShortcut={true}
-        ref={ref}
+        ref={props.ref}
         language="ko-KR"
         hooks={props.hooks}
       />

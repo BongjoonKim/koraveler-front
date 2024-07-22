@@ -11,9 +11,8 @@ function CreateDocument(props: CreateDocumentProps) {
   return (
     <StyledCreateDocument>
       <CusEditor
-        
-        />
-    
+        ref={createRef}
+      />
     </StyledCreateDocument>
   )
 };
