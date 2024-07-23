@@ -13,6 +13,8 @@ function BlogRoutes(props: BlogRoutesProps) {
     <StyledBlogRoutes>
       <Routes>
         <Route path="/blog/create" element={<CreateBlogPost />} />
+        <Route path="/blog/edit" element={<CreateBlogPost />} />
+        <Route path="/blog/view/:id" element={<CreateBlogPost />} />
       </Routes>
     </StyledBlogRoutes>
   )
