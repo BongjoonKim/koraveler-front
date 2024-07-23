@@ -8,3 +8,5 @@ declare interface CommonDTO {
   isCredentialsNonExpired ?: boolean;
   isEnabled ?: boolean;
 }
+
+declare type ActType = "CREATE" | "UPDATE" | "DELETE" | "GET" | "MAKE"

@@ -26,6 +26,7 @@ function CusEditor(props: CusEditorProps) {
         ref={props.ref}
         language="ko-KR"
         hooks={props.hooks}
+        height={"calc(80vh)"}
       />
     </StyledCusEditor>
   )
@@ -34,5 +35,6 @@ function CusEditor(props: CusEditorProps) {
 export default CusEditor;
 
 const StyledCusEditor = styled.div`
-
+  width: 100%;
+  height: 100%;
 `;
