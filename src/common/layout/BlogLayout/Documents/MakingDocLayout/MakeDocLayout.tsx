@@ -2,6 +2,7 @@ import styled from "styled-components";
 import {ReactNode} from "react";
 import CusButton from "../../../../elements/buttons/CusButton";
 import CusInput from "../../../../elements/textField/CusInput";
+import useMakeDocLayout from "./useMakeDocLayout";
 
 export interface MakeDocLayoutProps {
   type : ActType;
@@ -9,10 +10,22 @@ export interface MakeDocLayoutProps {
 };
 
 function MakingDocumentLayout(props: MakeDocLayoutProps) {
+  const {
+    document,
+    setDocument
+  } = useMakeDocLayout(props);
   return (
     <StyledMakeDocLayout>
       <div className="blog-header">
-        <CusInput variant='unstyled' placeholder='Unstyled' />
+        <CusInput
+          variant='unstyled'
+          placeholder='Unstyled'
+          value={document?.title}
+          onChange={(event) => {
+            const value = event.target.value;
+            setDocument((prev : DocumentDTO) => ({...prev, title : value}));
+          }}
+        />
       </div>
       <div className="blog-body">
         {props.children}
