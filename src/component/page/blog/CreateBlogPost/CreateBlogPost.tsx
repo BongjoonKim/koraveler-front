@@ -12,6 +12,7 @@ function CreateBlogPost(props: CreateBlogPostProps) {
     <StyledCreateBlogPost>
       <MakeDocLayout type={"CREATE"}>
         <CreateDocument/>
+        sdfsdfs
       </MakeDocLayout>
     </StyledCreateBlogPost>
   )
