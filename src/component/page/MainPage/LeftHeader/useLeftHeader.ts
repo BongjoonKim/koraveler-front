@@ -5,6 +5,7 @@ import axios from "axios";
 import {getAllMenus} from "../../../../endpoints/menus-endpoints";
 import {useAuth} from "../../../../appConfig/AuthContext";
 import {endpointUtils} from "../../../../utils/endpointUtils";
+import {getLoginUser} from "../../../../endpoints/login-endpoints";
 
 export default function useLeftHeader() {
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
@@ -13,7 +14,11 @@ export default function useLeftHeader() {
   
   const getMenus = useCallback(async () => {
     try {
-      const res = await endpointUtils.authAxios(getAllMenus, accessToken, setAccessToken);
+      const res = await endpointUtils.authAxios({
+        func : getAllMenus,
+        accessToken : accessToken,
+        setAccessToken : setAccessToken
+      });
       setMenus(res.data);
     } catch (e) {
       setErrorMsg({

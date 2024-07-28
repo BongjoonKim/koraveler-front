@@ -89,7 +89,11 @@ function useMenuAdmin() {
   
   const getMenus = useCallback(async () => {
     try {
-      const res = await endpointUtils.authAxios(getAllMenus, accessToken, setAccessToken)
+      const res = await endpointUtils.authAxios({
+        func : getAllMenus,
+        accessToken : accessToken,
+        setAccessToken : setAccessToken
+      });
       setRowData(res.data);
     } catch (e) {
       setErrorMsg({

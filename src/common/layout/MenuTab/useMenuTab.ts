@@ -14,7 +14,11 @@ function useMenuTab(props : MenuTabProps) {
   // 메뉴 목록 불러오기
   const getMenuList = useCallback(async() => {
     try {
-      const res = await endpointUtils.authAxios(getAllMenus, accessToken, setAccessToken)
+      const res = await endpointUtils.authAxios({
+        func : getAllMenus,
+        accessToken : accessToken,
+        setAccessToken : setAccessToken
+      })
       setMenuList(res.data);
     } catch (e) {
       setErrorMsg({

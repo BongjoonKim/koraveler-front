@@ -1,7 +1,7 @@
 declare interface DocumentDTO extends CommonDTO{
   id ?: string;
-  title : string;
-  contents : string;
+  title ?: string;
+  contents ?: string;
   contentsType ?: EditorType ;
   disclose ?: boolean;
   tags ?: [];

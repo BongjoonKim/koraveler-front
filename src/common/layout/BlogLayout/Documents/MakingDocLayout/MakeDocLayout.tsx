@@ -7,12 +7,15 @@ import useMakeDocLayout from "./useMakeDocLayout";
 export interface MakeDocLayoutProps {
   type : ActType;
   children ?: ReactNode;
+  document ?: DocumentDTO;
+  setDocument ?: any;
+  handleSave ?: () => void;
 };
 
 function MakingDocumentLayout(props: MakeDocLayoutProps) {
   const {
-    document,
-    setDocument
+    // document,
+    // setDocument
   } = useMakeDocLayout(props);
   return (
     <StyledMakeDocLayout>
@@ -20,10 +23,10 @@ function MakingDocumentLayout(props: MakeDocLayoutProps) {
         <CusInput
           variant='unstyled'
           placeholder='Unstyled'
-          value={document?.title}
+          value={props?.document?.title}
           onChange={(event) => {
             const value = event.target.value;
-            setDocument((prev : DocumentDTO) => ({...prev, title : value}));
+            props.setDocument((prev : DocumentDTO) => ({...prev, title : value}));
           }}
         />
       </div>
@@ -32,13 +35,13 @@ function MakingDocumentLayout(props: MakeDocLayoutProps) {
       </div>
       <div className="blog-header">
         <div className="buttons">
-          <CusButton>
-            Create
-          </CusButton>
-          <CusButton>
+          <CusButton
+            onClick={props.handleSave}
+          >
             Save
           </CusButton>
-          <CusButton>
+          <CusButton
+          >
             Cancel
           </CusButton>
         </div>

@@ -36,7 +36,11 @@ function useRightHeader() {
   
   const getUserInfo = useCallback(async () => {
     try {
-      const res = await endpointUtils.authAxios(getLoginUser, accessToken, setAccessToken);
+      const res = await endpointUtils.authAxios({
+        func : getLoginUser,
+        accessToken : accessToken,
+        setAccessToken : setAccessToken
+      });
       console.log("res", res)
       if (res.data) {
         setLoginUser(res.data);
