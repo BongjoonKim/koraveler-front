@@ -1,18 +1,30 @@
 import styled from "styled-components";
-import CreateDocument from "../../../../common/layout/BlogLayout/Documents/CreateDocument";
+import CreateDocument from "../../../../common/layout/BlogLayout/Documents/MakingDocLayout/CreateDocument";
 import MakeDocLayout from "../../../../common/layout/BlogLayout/Documents/MakingDocLayout/MakeDocLayout";
+import useCreateBlogPost from "./useCreateBlogPost";
 
-interface CreateBlogPostProps {
+export interface CreateBlogPostProps {
 
 };
 
 function CreateBlogPost(props: CreateBlogPostProps) {
-  
+  const {
+    editorRef,
+    document,
+    setDocument,
+    handleCreate
+  } = useCreateBlogPost(props);
   return (
     <StyledCreateBlogPost>
-      <MakeDocLayout type={"CREATE"}>
-        <CreateDocument/>
-        sdfsdfs
+      <MakeDocLayout
+        type={"CREATE"}
+        document={document}
+        setDocument={setDocument}
+        handleSave={handleCreate}
+      >
+        <CreateDocument
+          ref={editorRef}
+        />
       </MakeDocLayout>
     </StyledCreateBlogPost>
   )

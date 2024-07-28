@@ -2,11 +2,29 @@ import {getCookie, setCookie} from "./cookieUtils";
 import {udtRefreshToken} from "../endpoints/login-endpoints";
 import {ACCESSTOKEN_NULL, REFESHTOKEN_EXPIRED} from "../constants/ErrorCode";
 
+interface AxiosProps  {
+  func : any;
+  accessToken : any;
+  setAccessToken : any;
+  params ?: any;
+  requestBody ?: any;
+}
+
+export interface FuncProps {
+  accessToken : any;
+  params ?: any;
+  requestBody ?: any;
+}
+
 export const endpointUtils = {
-  async authAxios(func : any, accessToken ?: string | undefined | null, setAccessToken ?: any) {
+  async authAxios(props : AxiosProps) {
     try {
-      if (accessToken) {
-        return (await func(accessToken))
+      if (props.accessToken) {
+        return (await props.func({
+          accessToken : props.accessToken,
+          params : props?.params,
+          requestBody : props?.requestBody
+        }));
       } else {
         throw ACCESSTOKEN_NULL;
       }
@@ -17,8 +35,12 @@ export const endpointUtils = {
         console.log("리프레시 토큰", refreshToken, getCookie("refreshToken"), res)
         if (res.data) {
           setCookie("refreshToken", res.data.refreshToken!);
-          setAccessToken(res.data.accessToken);
-          return (await func(res.data.accessToken))
+          props.setAccessToken(res.data.accessToken);
+          return (await props.func({
+            accessToken: res.data.accessToken,
+            params : props?.params,
+            requestBody : props?.requestBody
+          }))
         } else {
           throw REFESHTOKEN_EXPIRED;
         }

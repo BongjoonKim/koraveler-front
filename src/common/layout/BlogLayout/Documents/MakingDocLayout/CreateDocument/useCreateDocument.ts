@@ -1,11 +1,8 @@
 import {CreateDocumentProps} from "./CreateDocument";
-import {useRef} from "react";
+import {useRef, useState} from "react";
 
 function useCreateDocument(props : CreateDocumentProps) {
-  const createRef = useRef(null);
-  
   return {
-    createRef
   }
 }
 

@@ -15,7 +15,11 @@ function useMenuLeftHeader(props : LeftHeaderProps) {
   
   const getMenuList = useCallback(async () => {
     try {
-      const res = await endpointUtils.authAxios(getAllMenus, accessToken, setAccessToken)
+      const res = await endpointUtils.authAxios({
+        func : getAllMenus,
+        accessToken : accessToken,
+        setAccessToken : setAccessToken
+      })
       setMenuList(res.data);
     } catch (e) {
       setErrorMsg({

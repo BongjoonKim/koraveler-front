@@ -6,13 +6,13 @@ import codeSyntaxHighlight from '@toast-ui/editor-plugin-code-syntax-highlight';
 import 'tui-color-picker/dist/tui-color-picker.css';
 import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
 import '@toast-ui/editor/dist/i18n/ko-kr';
-import {MutableRefObject} from "react";
+import {forwardRef, MutableRefObject} from "react";
 
 interface CusEditorProps extends EditorProps{
-  ref : MutableRefObject<any>
+  // ref : MutableRefObject<any>
 };
 
-function CusEditor(props: CusEditorProps) {
+function CusEditor(props: CusEditorProps, ref : any) {
   
   return (
     <StyledCusEditor>
@@ -23,7 +23,7 @@ function CusEditor(props: CusEditorProps) {
         // hideModeSwitch={true}
         previewStyle={window.innerWidth > 1000 ? 'vertical' : 'tab'}
         useCommandShortcut={true}
-        ref={props.ref}
+        ref={ref}
         language="ko-KR"
         hooks={props.hooks}
         height={"calc(80vh)"}
@@ -32,7 +32,7 @@ function CusEditor(props: CusEditorProps) {
   )
 };
 
-export default CusEditor;
+export default forwardRef(CusEditor);
 
 const StyledCusEditor = styled.div`
   width: 100%;
