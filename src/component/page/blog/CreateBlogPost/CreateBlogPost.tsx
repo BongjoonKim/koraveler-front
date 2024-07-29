@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import CreateDocument from "../../../../common/layout/BlogLayout/Documents/MakingDocLayout/CreateDocument";
+import CreateDocument from "../../../../common/layout/BlogLayout/Documents/MakingDocLayout/CreateEditor";
 import MakeDocLayout from "../../../../common/layout/BlogLayout/Documents/MakingDocLayout/MakeDocLayout";
 import useCreateBlogPost from "./useCreateBlogPost";
 

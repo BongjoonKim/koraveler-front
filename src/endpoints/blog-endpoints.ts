@@ -1,10 +1,18 @@
 import {request} from "../appConfig/request-response";
 import {AxiosResponse} from "axios";
+import {FuncProps} from "../utils/endpointUtils";
 
-export async function createDocument(accessToken : any) {
-  return (await request.get("blog/document", {
+export async function createDocument(props : FuncProps) {
+  return (await request.post("blog/document", props.reqBody, {
     headers : {
-      Authorization : `Bearer ${accessToken}`
+      Authorization : `Bearer ${props.accessToken}`
     }
-  })) as AxiosResponse<MenusDTO[]>;
+  })) as AxiosResponse<DocumentDTO>;
+};
+
+export async function getAllDocuments(props : FuncProps) {
+  return (await request.get(`blog/ps/documents
+    ?page=${props.params?.page}
+    &perPage=${props.params?.perPage}`
+  )) as AxiosResponse<DocumentsInfo>
 }

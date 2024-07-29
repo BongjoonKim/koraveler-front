@@ -7,13 +7,13 @@ interface AxiosProps  {
   accessToken : any;
   setAccessToken : any;
   params ?: any;
-  requestBody ?: any;
+  reqBody ?: any;
 }
 
 export interface FuncProps {
   accessToken : any;
   params ?: any;
-  requestBody ?: any;
+  reqBody ?: any;
 }
 
 export const endpointUtils = {
@@ -23,7 +23,7 @@ export const endpointUtils = {
         return (await props.func({
           accessToken : props.accessToken,
           params : props?.params,
-          requestBody : props?.requestBody
+          reqBody : props?.reqBody
         }));
       } else {
         throw ACCESSTOKEN_NULL;
@@ -39,7 +39,7 @@ export const endpointUtils = {
           return (await props.func({
             accessToken: res.data.accessToken,
             params : props?.params,
-            requestBody : props?.requestBody
+            reqBody : props?.reqBody
           }))
         } else {
           throw REFESHTOKEN_EXPIRED;

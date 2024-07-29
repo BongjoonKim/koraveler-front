@@ -1,15 +1,12 @@
 import styled from "styled-components";
 import CusEditor from "../../../../../elements/CusEditor/CusEditor";
-import useCreateDocument from "./useCreateDocument";
 import {forwardRef} from "react";
 
 export interface CreateDocumentProps {
 
 };
 
-function CreateDocument(props: CreateDocumentProps, ref : any) {
-  console.log("CreateDocument", ref.current)
-  const {} = useCreateDocument(props)
+function CreateEditor(props: CreateDocumentProps, ref : any) {
   return (
     <StyledCreateDocument>
       <CusEditor
@@ -19,7 +16,7 @@ function CreateDocument(props: CreateDocumentProps, ref : any) {
   )
 };
 
-export default forwardRef(CreateDocument);
+export default forwardRef(CreateEditor);
 
 const StyledCreateDocument = styled.div`
 

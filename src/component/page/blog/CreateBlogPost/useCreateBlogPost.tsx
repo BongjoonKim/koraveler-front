@@ -33,6 +33,7 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
           func : createDocument,
           accessToken : accessToken,
           setAccessToken : setAccessToken,
+          reqBody :request
         });
         console.log("글 생성", res);
       } catch (e) {
