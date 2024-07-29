@@ -1,3 +1,10 @@
+
+declare interface DocumentsInfo {
+  totalContents : number;
+  totalPages : number;
+  documentsDTO : DocumentDTO[];
+}
+
 declare interface DocumentDTO extends CommonDTO{
   id ?: string;
   title ?: string;
@@ -9,4 +16,11 @@ declare interface DocumentDTO extends CommonDTO{
   updatedUser ?: string;
   folderId ?: string;
   color ?: string;
+  thumbnailImgUrl ?: string;
+}
+
+interface PaginationDTO {
+  page : number;
+  size : number;
+  folderId ?: string;
 }

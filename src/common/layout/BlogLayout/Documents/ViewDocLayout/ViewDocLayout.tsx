@@ -1,14 +1,20 @@
 import styled from "styled-components";
+import {ReactNode} from "react";
 
-interface ViewDocLayoutProps {
-
+interface ViewDocLayoutProps extends DocumentDTO{
+  children ?: ReactNode;
 };
 
 function ViewDocLayout(props: ViewDocLayoutProps) {
   
   return (
     <StyledViewDocLayout>
-    
+      <div className="title">
+        {props.title}
+      </div>
+      <div className="contents">
+        {props.children}
+      </div>
     </StyledViewDocLayout>
   )
 };
@@ -16,5 +22,6 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
 export default ViewDocLayout;
 
 const StyledViewDocLayout = styled.div`
-
+  display: flex;
+  flex-direction: column;
 `;
