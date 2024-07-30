@@ -11,8 +11,6 @@ export async function createDocument(props : FuncProps) {
 };
 
 export async function getAllDocuments(props : FuncProps) {
-  return (await request.get(`blog/ps/documents
-    ?page=${props.params?.page}
-    &perPage=${props.params?.perPage}`
+  return (await request.get(`blog/ps/documents?page=${props.params?.page}&size=${props.params?.size}&folderId=${props.params?.folderId}`
   )) as AxiosResponse<DocumentsInfo>
 }

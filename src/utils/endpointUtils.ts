@@ -3,15 +3,15 @@ import {udtRefreshToken} from "../endpoints/login-endpoints";
 import {ACCESSTOKEN_NULL, REFESHTOKEN_EXPIRED} from "../constants/ErrorCode";
 
 interface AxiosProps  {
-  func : any;
-  accessToken : any;
-  setAccessToken : any;
+  func ?: any;
+  accessToken ?: any;
+  setAccessToken ?: any;
   params ?: any;
   reqBody ?: any;
 }
 
 export interface FuncProps {
-  accessToken : any;
+  accessToken ?: any;
   params ?: any;
   reqBody ?: any;
 }
