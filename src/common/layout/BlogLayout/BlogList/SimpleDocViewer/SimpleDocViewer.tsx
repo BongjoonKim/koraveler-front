@@ -5,7 +5,7 @@ import moment from "moment";
 export interface SimpleViewerProps extends DocumentDTO{
 };
 
-function SimpleViewer(props: SimpleViewerProps) {
+function SimpleDocViewer(props: SimpleViewerProps) {
   
   return (
     <StyledSimpleViewer>
@@ -49,7 +49,7 @@ function SimpleViewer(props: SimpleViewerProps) {
   )
 };
 
-export default SimpleViewer;
+export default SimpleDocViewer;
 
 const StyledSimpleViewer = styled.div`
 
