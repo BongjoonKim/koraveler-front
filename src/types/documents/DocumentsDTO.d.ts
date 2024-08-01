@@ -24,3 +24,5 @@ declare interface PaginationDTO {
   size ?: number;
   folderId ?: string;
 }
+
+declare type HookCallback = (url: string, text?: string) => void;
