@@ -11,9 +11,17 @@ function BlogHome(props: BlogHomeProps) {
     blogList
   } = useBlogHome(props);
   
+  console.log("블로그 리스트", blogList)
+  
   return (
     <StyledBlogList>
-        <SimpleDocViewer/>
+      {blogList?.documentsDTO?.map(blog => {
+        return (
+          <SimpleDocViewer
+            {...blog}
+          />
+        )
+      })}
     </StyledBlogList>
   )
 };
