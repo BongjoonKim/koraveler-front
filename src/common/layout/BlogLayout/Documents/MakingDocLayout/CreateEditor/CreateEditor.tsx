@@ -7,6 +7,7 @@ export interface CreateDocumentProps {
 };
 
 function CreateEditor(props: CreateDocumentProps, ref : any) {
+  
   return (
     <StyledCreateDocument>
       <CusEditor

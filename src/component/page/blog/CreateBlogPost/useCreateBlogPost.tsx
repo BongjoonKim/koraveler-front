@@ -13,6 +13,7 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
   const editorRef = useRef<any>(null);
   const [document, setDocument] = useState<DocumentDTO>()
   
+  
   const handleCreate = useCallback(async () => {
     console.log("handleCreate", editorRef.current.getInstance())
     if (editorRef?.current?.getInstance()) {
