@@ -6,10 +6,10 @@ export interface SimpleViewerProps extends DocumentDTO{
 };
 
 function SimpleDocViewer(props: SimpleViewerProps) {
-  
+  console.log("블로그 하나", props)
   return (
     <StyledSimpleViewer>
-      <div className={"header-img"}>
+      <div className={"header"}>
         {props.thumbnailImgUrl
           ? (
             <div
@@ -30,16 +30,16 @@ function SimpleDocViewer(props: SimpleViewerProps) {
           )
         }
       </div>
-      <div className="info">
-        <div className="info-top">
-          <h4>
+      <div className="body">
+        <div className="body-top">
+          <span className={"title"}>
             {props.title}
-          </h4>
-          <span>
+          </span>
+          <span className={"desc"}>
             {props.contents}
           </span>
         </div>
-        <div className="info-bottom">
+        <div className="body-bottom">
           <h6>
             {moment(props.created).format("YYYY-MM-DD")}
           </h6>
@@ -52,5 +52,35 @@ function SimpleDocViewer(props: SimpleViewerProps) {
 export default SimpleDocViewer;
 
 const StyledSimpleViewer = styled.div`
-
+  width: 20rem;
+  height: 20rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem 1rem;
+  
+  .header {
+    height: 100%;
+  }
+  .body {
+    height: 100%;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    background: snow;
+    .body-top {
+      flex-grow: 2;
+      display: flex;
+      flex-direction: column;
+      .title{
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+      .desc {
+        height: 100%;
+      }
+    }
+    .body-bottom {
+      height: 2rem;
+    }
+  }
 `;

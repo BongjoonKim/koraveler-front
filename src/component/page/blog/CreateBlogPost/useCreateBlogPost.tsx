@@ -28,6 +28,8 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
         contents : contents
       }
       
+      console.log("request 보기", request)
+      
       try {
         const res = await endpointUtils.authAxios({
           func : createDocument,
