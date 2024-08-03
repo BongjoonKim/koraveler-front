@@ -6,7 +6,6 @@ export interface SimpleViewerProps extends DocumentDTO{
 };
 
 function SimpleDocViewer(props: SimpleViewerProps) {
-  console.log("블로그 하나", props)
   return (
     <StyledSimpleViewer>
       <div className={"header"}>
@@ -16,7 +15,7 @@ function SimpleDocViewer(props: SimpleViewerProps) {
               className={"thumbnail"}
             >
               <Image
-                className={"img"}
+                src={props.thumbnailImgUrl}
               />
             </div>
           ) : (
@@ -51,27 +50,35 @@ function SimpleDocViewer(props: SimpleViewerProps) {
 
 export default SimpleDocViewer;
 
-const StyledSimpleViewer = styled.div`
-  width: 20rem;
-  height: 20rem;
-  display: flex;
-  flex-direction: column;
+const StyledSimpleViewer = styled.li`
+  width: 100%;
   border-radius: 1rem 1rem;
-  
+  flex-flow: column nowrap;
   .header {
-    height: 100%;
+    div {
+      height: 100%;
+      width: 100%;
+      img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+      }
+    }
   }
   .body {
-    height: 100%;
+    flex: 1 1;
     padding: 1rem;
     display: flex;
     flex-direction: column;
     background: snow;
+    gap: 1rem;
     .body-top {
       flex-grow: 2;
       display: flex;
       flex-direction: column;
+      gap : 1rem;
       .title{
+        height: 2rem;
         font-size: 1.5rem;
         font-weight: 600;
       }

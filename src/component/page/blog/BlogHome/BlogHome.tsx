@@ -28,6 +28,12 @@ function BlogHome(props: BlogHomeProps) {
 
 export default BlogHome;
 
-const StyledBlogList = styled.div`
-
+const StyledBlogList = styled.ul`
+  @media screen and (max-width: 1440px) {
+    grid-template-rows:;
+  }
+  }
+  
+  @media screen and (max-width: 1919px) {
+  
 `;
