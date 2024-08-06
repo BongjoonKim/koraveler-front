@@ -21,15 +21,16 @@ function BlogPage(props: BlogPageProps) {
 export default BlogPage;
 
 const StyledBlogPage = styled.div`
-  width: inherit;
-  display: inline-flex;
+  display: flex;
   justify-content: center;
+  //justify-content: center;
+  //width: 100vw;
   //.blog-layout {
-    @media (min-width: 1440px) {
-      width: 1200px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+    @media (min-width: 1800px) {
+      .blog-layout {
+        width: 1600px;
+      }
+      
     }
   //}
 
