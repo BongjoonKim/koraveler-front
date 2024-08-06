@@ -10,8 +10,10 @@ function BlogPage(props: BlogPageProps) {
   
   return (
     <StyledBlogPage>
-      <BlogHeader />
-      <BlogList />
+      <div className="blog-layout" >
+        <BlogHeader />
+        <BlogList />
+      </div>
     </StyledBlogPage>
   )
 };
@@ -19,5 +21,16 @@ function BlogPage(props: BlogPageProps) {
 export default BlogPage;
 
 const StyledBlogPage = styled.div`
+  width: inherit;
+  display: inline-flex;
+  justify-content: center;
+  //.blog-layout {
+    @media (min-width: 1440px) {
+      width: 1200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+  //}
 
 `;
