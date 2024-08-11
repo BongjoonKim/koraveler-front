@@ -24,4 +24,11 @@ export default ViewDocLayout;
 const StyledViewDocLayout = styled.div`
   display: flex;
   flex-direction: column;
+  padding: 2rem;
+  
+  @media (min-width: 1024px) {
+    display: flex;
+    flex-direction: column;
+    padding: 5rem;
+  }
 `;
