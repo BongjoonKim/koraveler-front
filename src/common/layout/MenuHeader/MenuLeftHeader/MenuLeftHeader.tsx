@@ -14,7 +14,6 @@ function MenuLeftHeader(props: LeftHeaderProps) {
       </a>
       <div>
         {menuList.map(menu => {
-          console.log("메뉴 정보", menu)
           return (
             <div>
               {menu.label}

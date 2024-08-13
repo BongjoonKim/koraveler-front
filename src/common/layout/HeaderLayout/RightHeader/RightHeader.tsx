@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import CusAvatar from "../../../../common/elements/CusAvatar";
+import CusAvatar from "../../../elements/CusAvatar";
 import SliderMenu from "./SliderMenu";
 import useRightHeader from "./useRightHeader";
 import {Suspense} from "react";

@@ -2,11 +2,11 @@ import {MouseEventHandler, useCallback, useEffect, useState} from "react";
 import {getAllMenus} from "../../../endpoints/menus-endpoints";
 import {useRecoilState} from "recoil";
 import recoil from "../../../stores/recoil";
-import {MenuTabProps} from "./MenuTab";
+import {MenuTabProps} from "./TabLayout";
 import {useAuth} from "../../../appConfig/AuthContext";
 import {endpointUtils} from "../../../utils/endpointUtils";
 
-function useMenuTab(props : MenuTabProps) {
+function useTabLayout(props : MenuTabProps) {
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   const [menuList, setMenuList] = useState<MenusDTO[]>([]);
   const {accessToken, setAccessToken} = useAuth();
@@ -43,4 +43,4 @@ function useMenuTab(props : MenuTabProps) {
   }
 }
 
-export default useMenuTab;
+export default useTabLayout;

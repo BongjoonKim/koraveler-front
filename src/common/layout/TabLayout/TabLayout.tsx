@@ -1,16 +1,16 @@
 import styled from "styled-components";
 import {ReactNode} from "react";
-import useMenuTab from "./useMenuTab";
+import useTabLayout from "./useTabLayout";
 import CusTab from "../../elements/CusTab";
 
 export interface MenuTabProps {
   children : ReactNode
 }
-function MenuTab(props : MenuTabProps) {
+function TabLayout(props : MenuTabProps) {
   const {
     menuList,
     handleChangeTab,
-  } = useMenuTab(props);
+  } = useTabLayout(props);
   return (
     <StyledMenuTab>
       <CusTab
@@ -23,7 +23,7 @@ function MenuTab(props : MenuTabProps) {
   )
 }
 
-export default MenuTab;
+export default TabLayout;
 
 const StyledMenuTab = styled.div`
   height: 100%;

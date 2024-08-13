@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import BlogHeader from "./BlogHeader";
+import BlogHeader from "../../../../common/layout/BlogLayout/BlogHeader";
 import BlogList from "./BlogList";
 
 export interface BlogPageProps {
@@ -11,7 +11,6 @@ function BlogPage(props: BlogPageProps) {
   return (
     <StyledBlogPage>
       <div className="blog-layout" >
-        <BlogHeader />
         <BlogList />
       </div>
     </StyledBlogPage>

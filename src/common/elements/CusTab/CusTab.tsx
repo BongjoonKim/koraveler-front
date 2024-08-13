@@ -7,6 +7,7 @@ interface CusTabProps extends TabsProps {
 }
 
 function CusTab(props : CusTabProps) {
+  
   return (
     <StyledCusTab>
       <Tabs
@@ -14,9 +15,9 @@ function CusTab(props : CusTabProps) {
         onChange={props.onChange}
       >
         <TabList>
-          {props.children.map((children : any) => {
+          {props?.children?.map((children : any) => {
             return (
-              <Tab>{children.label}</Tab>
+              <Tab>{children?.label}</Tab>
             )
           })}
         </TabList>
@@ -28,4 +29,5 @@ function CusTab(props : CusTabProps) {
 export default CusTab;
 
 const StyledCusTab = styled.div`
+  display: flex;
 `;

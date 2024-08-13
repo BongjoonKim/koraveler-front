@@ -1,7 +1,7 @@
 import styled, {css} from "styled-components";
 import {Dispatch, MouseEventHandler, SetStateAction, useState} from "react";
 import useSliderMenu from "./useSliderMenu";
-import CusButton from "../../../../../common/elements/buttons/CusButton";
+import CusButton from "../../../../elements/buttons/CusButton";
 import {lowerCase} from "lodash";
 
 export interface SliderMenuProps {
