@@ -9,7 +9,7 @@ function MenuLeftHeader(props: LeftHeaderProps) {
   const {menuList} = useMenuLeftHeader(props);
   return (
     <StyledLeftHeader>
-      <a className={"title"} href={`${process.env.REACT_APP_URI}/home`}>
+      <a className={"title"} href={`${process.env.REACT_APP_URI}`}>
         Koraveler
       </a>
       <div>

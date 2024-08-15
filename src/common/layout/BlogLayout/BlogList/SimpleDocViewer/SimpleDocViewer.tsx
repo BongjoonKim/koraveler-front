@@ -1,19 +1,13 @@
 import styled from "styled-components";
 import {Image} from "@chakra-ui/react";
 import moment from "moment";
-import {useNavigate} from "react-router-dom";
 
 export interface SimpleViewerProps extends DocumentDTO{
 };
 
 function SimpleDocViewer(props: SimpleViewerProps) {
-  const navigate = useNavigate();
   return (
-    <StyledSimpleViewer
-      onClick={() => {
-        navigate(`/blog/view/${props.id}`)
-      }}
-    >
+    <StyledSimpleViewer>
       <div className={"header"}>
         {props.thumbnailImgUrl
           ? (
@@ -59,20 +53,9 @@ export default SimpleDocViewer;
 const StyledSimpleViewer = styled.li`
   width: 100%;
   border-radius: 1rem 1rem;
-  display: flex;
   flex-flow: column nowrap;
-  min-height: 500px;
-  height: 100%;
   .header {
-    height: 50%;
-    .colorImg {
-      width: 100%;
-      height: 100%;
-      .img {
-        height: 100%;
-      }
-    }
-    .thumbnail {
+    div {
       height: 100%;
       width: 100%;
       img {
@@ -83,7 +66,7 @@ const StyledSimpleViewer = styled.li`
     }
   }
   .body {
-    height: 50%;
+    flex: 1 1;
     padding: 1rem;
     display: flex;
     flex-direction: column;
