@@ -3,6 +3,7 @@ import CusAvatar from "../../../elements/CusAvatar";
 import SliderMenu from "./SliderMenu";
 import useRightHeader from "./useRightHeader";
 import {Suspense} from "react";
+import CusButton from "../../../elements/buttons/CusButton";
 
 interface RightHeaderProps {
 
@@ -13,10 +14,16 @@ function RightHeader(props : RightHeaderProps) {
     loginUser,
     isSliderOpen,
     setSliderOpen,
-    handleAvatarClick
+    handleAvatarClick,
+    handleCreate,
   } = useRightHeader();
   return (
     <StyledRightHeader>
+      <CusButton
+        onClick={handleCreate}
+      >
+        Create
+      </CusButton>
       <SliderMenu
         isSliderOpen = {isSliderOpen}
         setSliderOpen = {setSliderOpen}
@@ -32,9 +39,12 @@ function RightHeader(props : RightHeaderProps) {
 export default RightHeader;
 
 const StyledRightHeader = styled.div`
+  gap: 1rem;
+  justify-content: flex-end;
+  display: flex;
   position: inherit;
-  width: calc(100vw - 4rem);
   height: 3rem;
   align-items: center;
   text-align: end;
+  //padding-right: 1rem;
 `;

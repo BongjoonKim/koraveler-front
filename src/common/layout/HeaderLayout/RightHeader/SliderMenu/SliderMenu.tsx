@@ -75,7 +75,7 @@ const StyledSlider = styled.div<{isslideropen : string}>`
   position: fixed;
   background: whitesmoke;
   left: calc(100% - 20rem - 1rem);
-  top : 1rem;
+  top : 6rem;
   border-radius: 16px;
   //padding: 1.5rem;
   .wrapper-sliderMenu {

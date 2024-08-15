@@ -56,6 +56,10 @@ function useRightHeader() {
     }
   }, [accessToken, loginUser]);
   
+  const handleCreate = useCallback(() => {
+    navigate("/blog/create")
+  }, []);
+  
   useEffect(() => {
     getUserInfo();
   }, []);
@@ -64,7 +68,8 @@ function useRightHeader() {
     loginUser,
     isSliderOpen,
     setSliderOpen,
-    handleAvatarClick
+    handleAvatarClick,
+    handleCreate
   }
 }
 
