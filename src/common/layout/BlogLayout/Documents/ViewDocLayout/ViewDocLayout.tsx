@@ -8,7 +8,6 @@ interface ViewDocLayoutProps extends DocumentDTO{
 };
 
 function ViewDocLayout(props: ViewDocLayoutProps) {
-  console.log("props", props)
   return (
     <StyledViewDocLayout>
       <div className="title">
@@ -22,6 +21,7 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
           <span> / </span>
           <span className={"updated-user"}>
             {props.updatedUser}
+            
           </span>
         </div>
         <div className="middle-right">
