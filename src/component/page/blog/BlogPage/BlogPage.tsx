@@ -22,6 +22,7 @@ export default BlogPage;
 const StyledBlogPage = styled.div`
   display: flex;
   justify-content: center;
+  background: snow;
   //justify-content: center;
   //width: 100vw;
   //.blog-layout {

@@ -11,13 +11,11 @@ function TabLayout(props : MenuTabProps) {
     menuList,
     handleChangeTab,
   } = useTabLayout(props);
-  console.log("메뉴 리스트sss", props.children);
   return (
     <StyledMenuTab>
       <CusTab
         onChange={handleChangeTab}
       >
-        {menuList}
       </CusTab>
       {props.children}
     </StyledMenuTab>

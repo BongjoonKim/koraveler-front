@@ -53,11 +53,21 @@ export default SimpleDocViewer;
 const StyledSimpleViewer = styled.li`
   width: 100%;
   border-radius: 1rem 1rem;
+  display: flex;
+  min-height: 500px;
+  height: 100%;
   flex-flow: column nowrap;
   .header {
-    div {
-      height: 100%;
+    height: 50%;
+    .colorImg {
       width: 100%;
+      height: 100%;
+      .img {
+        height: 100%;
+      }
+    }
+    .thumbnail {
+  
       img {
         height: 100%;
         width: 100%;
@@ -67,6 +77,7 @@ const StyledSimpleViewer = styled.li`
   }
   .body {
     flex: 1 1;
+    height: 50%;
     padding: 1rem;
     display: flex;
     flex-direction: column;
