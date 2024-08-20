@@ -34,3 +34,7 @@ export async function getAllDocuments(props : FuncProps) {
 export async function getDocument(props : FuncProps) {
   return (await request.get(`blog/ps/document?id=${props.params?.id}`)) as AxiosResponse<DocumentDTO>
 };
+
+export async function deleteDocument(props : FuncProps) {
+  return (await request.delete(`blog/ps/document?id=${props.params?.id}`)) as AxiosResponse<any>;
+}

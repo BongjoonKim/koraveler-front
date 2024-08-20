@@ -5,14 +5,13 @@ export interface ViewerDocProps {
   contents ?: string | undefined;
 };
 
-function ViewerDoc(props: ViewerDocProps, ref : any) {
+function ViewerDoc(props: ViewerDocProps) {
   
   return (
     <StyledViewerDoc>
         {props.contents
           ? (
             <Viewer
-              ref={ref}
               initialValue={props.contents}
             />
           ) : (

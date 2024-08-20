@@ -1,13 +1,19 @@
 import styled from "styled-components";
 import {Image} from "@chakra-ui/react";
 import moment from "moment";
+import {useNavigate} from "react-router-dom";
 
 export interface SimpleViewerProps extends DocumentDTO{
 };
 
 function SimpleDocViewer(props: SimpleViewerProps) {
+  const navigate = useNavigate();
   return (
-    <StyledSimpleViewer>
+    <StyledSimpleViewer
+      onClick={() => {
+        navigate(`/blog/view/${props.id}`)
+      }}
+    >
       <div className={"header"}>
         {props.thumbnailImgUrl
           ? (
@@ -40,7 +46,10 @@ function SimpleDocViewer(props: SimpleViewerProps) {
         </div>
         <div className="body-bottom">
           <h6>
-            {moment(props.created).format("YYYY-MM-DD")}
+            {moment(props.updated).format("YYYY-MM-DD")}
+          </h6>
+          <h6>
+            {props.updatedUser}
           </h6>
         </div>
       </div>
@@ -99,6 +108,8 @@ const StyledSimpleViewer = styled.li`
     }
     .body-bottom {
       height: 2rem;
+      display: flex;
+      justify-content: space-between;
     }
   }
 `;

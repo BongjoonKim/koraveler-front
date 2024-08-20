@@ -2,12 +2,14 @@ import styled from "styled-components";
 import {ReactNode} from "react";
 import moment from "moment";
 import CusButton from "../../../../elements/buttons/CusButton";
+import useViewDocLayout from "./useViewDocLayout";
 
-interface ViewDocLayoutProps extends DocumentDTO{
+export interface ViewDocLayoutProps extends DocumentDTO{
   children ?: ReactNode;
 };
 
 function ViewDocLayout(props: ViewDocLayoutProps) {
+  const {handleDelete} = useViewDocLayout(props);
   return (
     <StyledViewDocLayout>
       <div className="title">
@@ -26,8 +28,15 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
         </div>
         <div className="middle-right">
           <CusButton
-          >수정</CusButton>
-          <CusButton>삭제</CusButton>
+          
+          >
+            수정
+          </CusButton>
+          <CusButton
+            onClick={handleDelete}
+          >
+            삭제
+          </CusButton>
           <CusButton>북마크</CusButton>
         </div>
       </div>
