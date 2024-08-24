@@ -5,15 +5,17 @@ import {useRecoilState} from "recoil";
 import recoil from "../../../../../stores/recoil";
 import {endpointUtils} from "../../../../../utils/endpointUtils";
 import {deleteDocument} from "../../../../../endpoints/blog-endpoints";
+import {s3Utils} from "../../../../../utils/awsS3Utils";
+import {useNavigate} from "react-router-dom";
 
 export default function useViewDocLayout(props : ViewDocLayoutProps) {
+  const navigate = useNavigate();
   const {accessToken, setAccessToken} = useAuth();
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   
   const handleDelete = useCallback(async () => {
     try {
       // 글 데이터 삭제
-      console.log("props", props);
       const res = await endpointUtils.authAxios({
         func : deleteDocument,
         accessToken  : accessToken,
@@ -21,9 +23,21 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
         params : {id : props?.id}
       });
       
-      
-      
       // S3에 있는 이미지, 첨부파일 정보 삭제
+      const listRes = await s3Utils.getFiles({
+        prefix : `${props.id}/`
+      })
+      
+      // 첨부파일이 있을 경우 삭제
+      console.log("listRes", listRes)
+      if (listRes?.length) {
+        const fileKeyList = listRes.map(el => ({Key : el.Key}));
+        s3Utils.deleteFiles({
+          Keys : fileKeyList
+        });
+      }
+      navigate(`/blog/home`)
+      // 이상이 없으면 view 화면으로 이동
     } catch (e) {
       setErrorMsg({
         status: "error",

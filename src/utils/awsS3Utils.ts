@@ -11,7 +11,7 @@ export const s3Utils = {
   
   async getFiles(props : any) {
     const S3 = awsS3Config();
-    const response = await S3.listObjects({
+    const response = await S3.listObjectsV2({
       Bucket : "haries-img",
       Prefix : props.prefix
     });
@@ -63,8 +63,11 @@ export const s3Utils = {
         Objects : props.Keys
       },
     }
+    console.log("삭제 파람", params)
     const response = await S3.deleteObjects(params, (error, data) => {
+      console.log('에러 확인', error);
+      console.log('삭제 확인', data)
     });
-    return response.promise().then(el => el.$response);
+    return response;
   }
 }
