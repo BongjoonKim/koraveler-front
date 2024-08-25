@@ -9,7 +9,10 @@ export interface ViewDocLayoutProps extends DocumentDTO{
 };
 
 function ViewDocLayout(props: ViewDocLayoutProps) {
-  const {handleDelete} = useViewDocLayout(props);
+  const {
+    handleDelete,
+    handleEdit
+  } = useViewDocLayout(props);
   return (
     <StyledViewDocLayout>
       <div className="title">
@@ -28,7 +31,7 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
         </div>
         <div className="middle-right">
           <CusButton
-          
+            onClick={handleEdit}
           >
             수정
           </CusButton>

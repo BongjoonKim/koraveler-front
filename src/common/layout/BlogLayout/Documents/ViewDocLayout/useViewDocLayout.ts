@@ -13,6 +13,11 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
   const {accessToken, setAccessToken} = useAuth();
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   
+  // 수정 화면으로 전환
+  const handleEdit = useCallback(() => {
+    navigate(`/blog/edit/${props.id}`)
+  }, [props.id]);
+  
   const handleDelete = useCallback(async () => {
     try {
       // 글 데이터 삭제
@@ -48,6 +53,7 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
   }, [props]);
   
   return {
+    handleEdit,
     handleDelete
   }
 

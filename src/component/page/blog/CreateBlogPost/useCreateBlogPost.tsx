@@ -10,6 +10,7 @@ import {useAtom} from "jotai/index";
 import {uploadedInfo} from "../../../../stores/jotai/jotai";
 import {s3Utils} from "../../../../utils/awsS3Utils";
 import {cloneDeep} from "lodash";
+import {S3URLFindRegex} from "../../../../constants/RegexConstants";
 
 function useCreateBlogPost(props : CreateBlogPostProps) {
   const {accessToken, setAccessToken} = useAuth();
@@ -66,7 +67,7 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
           );
           
           // 정규 표현식을 사용하여 ![string](https://haries-img.s3.ap-northeast-2.amazonaws.com/ 문자열 ) 패턴을 찾습니다.
-          const regex = /!\[.*?\]\((https:\/\/haries-img\.s3\.ap-northeast-2\.amazonaws\.com\/.*?)\)/g;
+          const regex = S3URLFindRegex;
           let matches;
           const values = [];
   

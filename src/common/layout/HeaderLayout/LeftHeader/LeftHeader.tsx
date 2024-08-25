@@ -9,7 +9,6 @@ function LeftHeader(props : LeftHeaderProps) {
   const {
     menus
   } = useLeftHeader();
-  console.log("메뉴 확인", menus);
   return (
     <StyledLeftHeader>
       <a className="title" href={`${process.env.PUBLIC_URL}/home`}>
@@ -17,7 +16,6 @@ function LeftHeader(props : LeftHeaderProps) {
       </a>
       <div className="menu">
         {menus.map(menu => {
-          console.log("메뉴 정보", menu)
           return (
             <a className="menu-label" href={`${process.env.REACT_APP_URI}${menu.url}`}>
               {menu.label}

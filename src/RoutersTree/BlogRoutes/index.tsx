@@ -7,6 +7,7 @@ import ViewBlog from "../../component/page/blog/ViewBlog";
 import MenuHeader from "../../common/layout/MenuHeader";
 import MenuTab from "../../common/layout/TabLayout";
 import BlogLayout from "../../common/layout/BlogLayout/BlogLayout";
+import EditBlogPost from "../../component/page/blog/EditBlogPost";
 
 interface BlogRoutesProps {
 
@@ -21,7 +22,7 @@ function BlogRoutes(props: BlogRoutesProps) {
           <Route path="/create" element={<CreateBlogPost />} />
           <Route path="/edit" element={<CreateBlogPost />} />
           <Route path="/view/:id" element={<ViewBlog />} />
-          <Route path="/edit/:id" element={<CreateBlogPost />} />
+          <Route path="/edit/:id" element={<EditBlogPost />} />
           <Route path="/home" element={<BlogPage />} />
         </Routes>
       </BlogLayout>
