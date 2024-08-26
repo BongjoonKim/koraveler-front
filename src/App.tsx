@@ -21,6 +21,6 @@ function App() {
 export default App;
 
 const StyledApp = styled.div`
-  height: 100vh;
-  width : 100vw;
+  height: 100%;
+  width : 100%;
 `;

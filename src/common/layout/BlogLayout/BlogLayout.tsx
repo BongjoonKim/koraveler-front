@@ -21,5 +21,14 @@ function BlogLayout(props: BlogLayoutProps) {
 export default BlogLayout;
 
 const StyledBlogLayout = styled.div`
-
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1;
+  .blog-body {
+    height: 100%;
+    width: 100%;
+    flex: 1 1;
+  }
 `;

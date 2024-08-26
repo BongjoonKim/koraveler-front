@@ -20,18 +20,26 @@ function BlogPage(props: BlogPageProps) {
 export default BlogPage;
 
 const StyledBlogPage = styled.div`
+  height: 100%;
   display: flex;
   justify-content: center;
-  background: snow;
+  background: #B0D6FF;
+  .blog-layout {
+    height: 100%;
+    width: 100%;
+    padding: 2rem;
+  }
   //justify-content: center;
   //width: 100vw;
   //.blog-layout {
-    @media (min-width: 1800px) {
-      .blog-layout {
-        width: 1600px;
-      }
-      
+  @media (min-width: 1800px) {
+    .blog-layout {
+      width: 1600px;
+      height: 100%;
+      width: 100%;
     }
+
+  }
   //}
 
 `;

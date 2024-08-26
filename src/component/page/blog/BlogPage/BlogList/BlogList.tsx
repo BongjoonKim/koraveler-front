@@ -29,7 +29,7 @@ function BlogList(props: BlogHomeProps) {
 export default BlogList;
 
 const StyledBlogList = styled.ul`
-  padding: 2rem;
+  //padding: 2rem;
   display: grid;
   grid-template-columns: repeat(1, 100%);
   grid-gap: 2rem;
@@ -37,21 +37,20 @@ const StyledBlogList = styled.ul`
 
   @media screen and (min-width: 720px) {
     display: grid;
-    grid-template-columns: repeat(2, 100%);
+    grid-template-columns: repeat(2, calc(50% - 1rem));
     grid-gap: 2rem;
-    width: 50%;
+    //width: 100%;
   }
 
   @media screen and (min-width: 1440px) {
     display: grid;
-    grid-template-columns: repeat(3, 100%);
+    grid-template-columns: repeat(3, calc(33.3% - 2rem * 2 / 3));
     grid-gap: 2rem;
-    width: 33.3%;
+    //width: 100%;
   }
   
   @media screen and (min-width: 1920px) {
     display: grid;
-    grid-template-columns: repeat(4, 100%);
+    grid-template-columns: repeat(4, 25% - 2rem * 3 / 4);
     grid-gap: 2rem;
-    width: 25%;
 `;

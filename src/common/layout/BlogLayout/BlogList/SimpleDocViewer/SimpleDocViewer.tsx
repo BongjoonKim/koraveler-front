@@ -71,12 +71,14 @@ const StyledSimpleViewer = styled.li`
     .colorImg {
       width: 100%;
       height: 100%;
+      background: #efefef;
       .img {
         height: 100%;
       }
     }
     .thumbnail {
-  
+      height: 100%;
+      width: 100%;
       img {
         height: 100%;
         width: 100%;

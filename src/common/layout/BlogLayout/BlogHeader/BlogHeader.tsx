@@ -20,5 +20,4 @@ function BlogHeader(props: BlogHeaderProps) {
 export default BlogHeader;
 
 const StyledBlogHeader = styled.div`
-
 `;

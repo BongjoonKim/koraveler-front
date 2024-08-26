@@ -20,7 +20,6 @@ function BlogRoutes(props: BlogRoutesProps) {
       <BlogLayout>
         <Routes>
           <Route path="/create" element={<CreateBlogPost />} />
-          <Route path="/edit" element={<CreateBlogPost />} />
           <Route path="/view/:id" element={<ViewBlog />} />
           <Route path="/edit/:id" element={<EditBlogPost />} />
           <Route path="/home" element={<BlogPage />} />
@@ -33,5 +32,6 @@ function BlogRoutes(props: BlogRoutesProps) {
 export default BlogRoutes;
 
 const StyledBlogRoutes = styled.div`
-
+  height: 100%;
+  width: 100%;
 `;
