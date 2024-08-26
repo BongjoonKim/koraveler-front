@@ -20,7 +20,7 @@ export default HeaderLayout;
 
 const StyledHeaderLayout = styled.div<HeaderLayoutProps>`
     width: 100%;
-    background: black;
+    background: white;
     height: ${props => props.notHome ? "auto" : "2rem"};
     position: ${props => props.notHome ? "relative" : "absolute"};
     padding : 2rem;

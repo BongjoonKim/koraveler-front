@@ -20,10 +20,10 @@ function BlogPage(props: BlogPageProps) {
 export default BlogPage;
 
 const StyledBlogPage = styled.div`
-  height: 100%;
+  min-height: calc(100vh - 7rem);
   display: flex;
   justify-content: center;
-  background: black;
+  background: white;
   .blog-layout {
     height: 100%;
     width: 100%;

@@ -60,33 +60,44 @@ function SimpleDocViewer(props: SimpleViewerProps) {
 export default SimpleDocViewer;
 
 const StyledSimpleViewer = styled.li`
+  cursor: pointer;
   width: 100%;
   border-radius: 1rem 1rem;
+  box-shadow: 2px 2px #f0f0f0;
   display: flex;
   min-height: 500px;
   height: 100%;
   flex-flow: column nowrap;
+  &:hover {
+  }
   .header {
     height: 50%;
+
     .colorImg {
       width: 100%;
       height: 100%;
       background: #efefef;
       border-radius: 12px 12px 0 0;
+
       .img {
         height: 100%;
       }
     }
+
     .thumbnail {
       height: 100%;
       width: 100%;
+
       img {
         height: 100%;
         width: 100%;
         object-fit: cover;
+        border-radius: 12px 12px 0 0;
+
       }
     }
   }
+
   .body {
     flex: 1 1;
     height: 50%;
@@ -101,16 +112,17 @@ const StyledSimpleViewer = styled.li`
       flex-grow: 2;
       display: flex;
       flex-direction: column;
-      gap : 1rem;
+      gap: 1rem;
 
-      .title{
+      .title {
         height: 2rem;
         font-size: 1.5rem;
         font-weight: 600;
       }
+
       .desc {
         height: 100%;
-        display: -webkit-inline-box;
+        display: -webkit-box;
         -webkit-line-clamp: 5;
         -webkit-box-orient: vertical;
         overflow: hidden;
@@ -119,6 +131,7 @@ const StyledSimpleViewer = styled.li`
         line-height: 1.5;
       }
     }
+
     .body-bottom {
       height: 2rem;
       display: flex;

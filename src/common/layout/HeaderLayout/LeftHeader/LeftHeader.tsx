@@ -43,7 +43,7 @@ const StyledLeftHeader = styled.div<any>`
   position: inherit;
   align-items: center;
   height: 3rem;
-  color: ${props => props.isHome === true ? "black" : "snow"};
+  color: ${props => props.isHome === true ? "black" : "black"};
   .title {
     font-size: 3rem;
     font-weight: 600;
