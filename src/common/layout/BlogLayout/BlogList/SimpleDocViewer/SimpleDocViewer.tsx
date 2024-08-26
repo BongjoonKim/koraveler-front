@@ -72,6 +72,7 @@ const StyledSimpleViewer = styled.li`
       width: 100%;
       height: 100%;
       background: #efefef;
+      border-radius: 12px 12px 0 0;
       .img {
         height: 100%;
       }
@@ -94,11 +95,14 @@ const StyledSimpleViewer = styled.li`
     flex-direction: column;
     background: snow;
     gap: 1rem;
+    border-radius: 0 0 12px 12px;
+
     .body-top {
       flex-grow: 2;
       display: flex;
       flex-direction: column;
       gap : 1rem;
+
       .title{
         height: 2rem;
         font-size: 1.5rem;
@@ -106,6 +110,13 @@ const StyledSimpleViewer = styled.li`
       }
       .desc {
         height: 100%;
+        display: -webkit-inline-box;
+        -webkit-line-clamp: 5;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        //text-overflow: ellipsis;
+        //overflow-wrap: break-word;
+        line-height: 1.5;
       }
     }
     .body-bottom {

@@ -23,7 +23,7 @@ const StyledBlogPage = styled.div`
   height: 100%;
   display: flex;
   justify-content: center;
-  background: #B0D6FF;
+  background: black;
   .blog-layout {
     height: 100%;
     width: 100%;

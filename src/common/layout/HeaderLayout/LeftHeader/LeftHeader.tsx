@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import useLeftHeader from "./useLeftHeader";
 import {Link, LinkBox} from "@chakra-ui/react";
+import {useLocation} from "react-router-dom";
 
 interface LeftHeaderProps {
 
@@ -9,8 +10,10 @@ function LeftHeader(props : LeftHeaderProps) {
   const {
     menus
   } = useLeftHeader();
+  const location = useLocation();
+  console.log("location", location)
   return (
-    <StyledLeftHeader>
+    <StyledLeftHeader isHome={!!(location.pathname === "/home")}>
       <a className="title" href={`${process.env.PUBLIC_URL}/home`}>
         Koraveler
       </a>
@@ -29,7 +32,7 @@ function LeftHeader(props : LeftHeaderProps) {
 
 export default LeftHeader;
 
-const StyledLeftHeader = styled.div`
+const StyledLeftHeader = styled.div<any>`
   
   a {
     cursor: pointer;
@@ -40,6 +43,7 @@ const StyledLeftHeader = styled.div`
   position: inherit;
   align-items: center;
   height: 3rem;
+  color: ${props => props.isHome === true ? "black" : "snow"};
   .title {
     font-size: 3rem;
     font-weight: 600;
