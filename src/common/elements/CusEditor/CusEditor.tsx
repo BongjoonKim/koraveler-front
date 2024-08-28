@@ -26,7 +26,7 @@ function CusEditor(props: CusEditorProps, ref : any) {
         ref={ref}
         language="ko-KR"
         hooks={props.hooks}
-        height={"calc(80vh)"}
+        height={"100%"}
       />
     </StyledCusEditor>
   )

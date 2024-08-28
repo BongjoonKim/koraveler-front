@@ -34,5 +34,6 @@ function EditBlogPost(props: EditBlogPostProps) {
 export default EditBlogPost;
 
 const StyledEditBlogPost = styled.div`
-
+  height: 100%;
+  width: 100%;
 `;

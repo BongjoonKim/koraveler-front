@@ -28,6 +28,8 @@ const StyledBlogPage = styled.div`
     height: 100%;
     width: 100%;
     padding: 2rem;
+    display: flex;
+    justify-content: center;
   }
   //justify-content: center;
   //width: 100vw;

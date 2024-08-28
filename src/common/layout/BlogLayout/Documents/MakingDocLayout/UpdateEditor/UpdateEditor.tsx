@@ -41,5 +41,6 @@ function UpdateEditor(props: UpdateEditorProps, ref : any) {
 export default forwardRef(UpdateEditor);
 
 const StyledUpdateEditor = styled.div`
-
+  height: 100%;
+  width: 100%;
 `;

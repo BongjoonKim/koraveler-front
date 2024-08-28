@@ -13,7 +13,6 @@ export default function useLoginPage() {
   const {setAccessToken} = useAuth();
   
   const handleChange = useCallback((event:ChangeEvent<HTMLInputElement>, type:string) => {
-    console.log("event", event.target.value)
     if (type === "id") {
       setUserInfo((prev:any) => {
         return {
@@ -46,7 +45,7 @@ export default function useLoginPage() {
       setCookie("accessToken", resToken.data.accessToken!)
       setCookie("refreshToken", resToken.data.refreshToken!)
     }
-    navigate('/')
+    navigate('/home')
     } catch(e) {
       console.log("handleClickLogin", e);
     }

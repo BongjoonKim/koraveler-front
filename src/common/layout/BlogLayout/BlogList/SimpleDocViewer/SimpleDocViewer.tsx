@@ -2,6 +2,7 @@ import styled from "styled-components";
 import {Image} from "@chakra-ui/react";
 import moment from "moment";
 import {useNavigate} from "react-router-dom";
+import {S3URLInDocument} from "../../../../../constants/RegexConstants";
 
 export interface SimpleViewerProps extends DocumentDTO{
 };
@@ -41,7 +42,7 @@ function SimpleDocViewer(props: SimpleViewerProps) {
             {props.title}
           </span>
           <span className={"desc"}>
-            {props.contents}
+            {props.contents?.replace(S3URLInDocument, '')}
           </span>
         </div>
         <div className="body-bottom">

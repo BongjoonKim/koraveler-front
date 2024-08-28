@@ -24,5 +24,6 @@ function CreateEditor(props: CreateDocumentProps, ref : any) {
 export default forwardRef(CreateEditor);
 
 const StyledCreateDocument = styled.div`
-
+  height: 100%;
+  width: 100%;
 `;
