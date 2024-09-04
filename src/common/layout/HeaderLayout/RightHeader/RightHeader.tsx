@@ -16,14 +16,18 @@ function RightHeader(props : RightHeaderProps) {
     setSliderOpen,
     handleAvatarClick,
     handleCreate,
+    location
   } = useRightHeader();
   return (
     <StyledRightHeader>
-      <CusButton
-        onClick={handleCreate}
-      >
-        Create
-      </CusButton>
+      {location?.pathname !== "/home" && (
+        <CusButton
+          onClick={handleCreate}
+        >
+          Create
+        </CusButton>
+      )}
+
       <SliderMenu
         isSliderOpen = {isSliderOpen}
         setSliderOpen = {setSliderOpen}
@@ -42,9 +46,10 @@ const StyledRightHeader = styled.div`
   gap: 1rem;
   justify-content: flex-end;
   display: flex;
-  position: inherit;
+  position: relative;
   height: 3rem;
   align-items: center;
   text-align: end;
+  z-index: 2000;
   //padding-right: 1rem;
 `;

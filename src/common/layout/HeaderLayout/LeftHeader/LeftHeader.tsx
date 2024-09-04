@@ -11,7 +11,7 @@ function LeftHeader(props : LeftHeaderProps) {
     menus
   } = useLeftHeader();
   const location = useLocation();
-  console.log("location", location)
+  console.log("menus", menus)
   return (
     <StyledLeftHeader isHome={!!(location.pathname === "/home")}>
       <a className="title" href={`${process.env.PUBLIC_URL}/home`}>
@@ -37,10 +37,9 @@ const StyledLeftHeader = styled.div<any>`
   a {
     cursor: pointer;
   }
-  width: 100%;
   z-index: 2000;
   display: flex;
-  position: inherit;
+  position: relative;
   align-items: center;
   height: 3rem;
   color: ${props => props.isHome === true ? "black" : "black"};

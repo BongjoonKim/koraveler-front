@@ -20,6 +20,7 @@ function useMenuLeftHeader(props : LeftHeaderProps) {
         accessToken : accessToken,
         setAccessToken : setAccessToken
       })
+      console.log("메뉴 리스트 확인", res)
       setMenuList(res.data);
     } catch (e) {
       setErrorMsg({

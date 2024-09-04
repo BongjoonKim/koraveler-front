@@ -26,4 +26,5 @@ const StyledHeaderLayout = styled.div<HeaderLayoutProps>`
     padding : 2rem;
     display: flex;
     justify-content: space-between;
+    //z-index: 3000;
 `;

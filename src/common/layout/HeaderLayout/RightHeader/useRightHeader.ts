@@ -7,7 +7,7 @@ import {useAuth} from "../../../../appConfig/AuthContext";
 import {getAllMenus, getAllMenus2, getAllMenus3} from "../../../../endpoints/menus-endpoints";
 import {useRecoilState} from "recoil";
 import recoil from "../../../../stores/recoil";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {endpointUtils} from "../../../../utils/endpointUtils";
 import {getLoginUser} from "../../../../endpoints/login-endpoints";
 import {REFESHTOKEN_EXPIRED} from "../../../../constants/ErrorCode";
@@ -19,6 +19,9 @@ function useRightHeader() {
   const {accessToken, setAccessToken} = useAuth();
   const navigate = useNavigate();
   const [loginUser, setLoginUser] = useAtom(LoginUser);
+  const location = useLocation();
+  
+  console.log("location", location)
   
   const handleAvatarClick = useCallback(async (event : MouseEvent<HTMLSpanElement>) => {
     setSliderOpen(prev => !prev);
@@ -69,7 +72,8 @@ function useRightHeader() {
     isSliderOpen,
     setSliderOpen,
     handleAvatarClick,
-    handleCreate
+    handleCreate,
+    location
   }
 }
 

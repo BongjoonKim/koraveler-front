@@ -7,6 +7,7 @@ interface MainHeaderProps {
 }
 
 /* 메인 화면의 헤더에 사용되는 컴포넌트입니다 */
+// 현재 사용하지 않음
 function MenuHeader(props : MainHeaderProps) {
   return (
     <StyledMainHeader>
