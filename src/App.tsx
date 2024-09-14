@@ -5,13 +5,16 @@ import styled from "styled-components";
 import RoutersTree from "./RoutersTree";
 import {ChakraProvider} from "@chakra-ui/react";
 import {AuthProvider} from "./appConfig/AuthContext";
+import UniversalLayout from "./common/layout/UniversalLayout";
 
 function App() {
   return (
     <AuthProvider>
       <ChakraProvider>
         <StyledApp className={"app"}>
-          <RoutersTree/>
+          <UniversalLayout>
+            <RoutersTree/>
+          </UniversalLayout>
         </StyledApp>
       </ChakraProvider>
     </AuthProvider>

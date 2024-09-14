@@ -5,7 +5,7 @@ import {loadable} from "jotai/utils";
 import {getUserData} from "../../../../endpoints/users-endpoints";
 import {useAuth} from "../../../../appConfig/AuthContext";
 import {getAllMenus, getAllMenus2, getAllMenus3} from "../../../../endpoints/menus-endpoints";
-import {useRecoilState} from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import recoil from "../../../../stores/recoil";
 import {useLocation, useNavigate} from "react-router-dom";
 import {endpointUtils} from "../../../../utils/endpointUtils";
@@ -19,9 +19,9 @@ function useRightHeader() {
   const {accessToken, setAccessToken} = useAuth();
   const navigate = useNavigate();
   const [loginUser, setLoginUser] = useAtom(LoginUser);
+  // const [loginUser, setLoginUser] = useRecoilState(recoil.userData);
   const location = useLocation();
   
-  console.log("location", location)
   
   const handleAvatarClick = useCallback(async (event : MouseEvent<HTMLSpanElement>) => {
     setSliderOpen(prev => !prev);
@@ -45,9 +45,15 @@ function useRightHeader() {
         accessToken : accessToken,
         setAccessToken : setAccessToken
       });
-      console.log("res", res)
+      console.log("로그인 정보 불러오기", res.data.userId, loginUser)
       if (res.data) {
-        setLoginUser(res.data);
+        setLoginUser((prev : UsersDTO) => {
+          if (prev.userId === res.data?.userId) {
+            return prev;
+          } else {
+            return res.data
+          }
+        });
       }
     } catch (e) {
       if (e === REFESHTOKEN_EXPIRED) {

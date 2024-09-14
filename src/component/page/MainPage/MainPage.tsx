@@ -11,7 +11,7 @@ export interface MainPageProps {
 function MainPage(props : MainPageProps) {
   return (
     <StyledMainPage>
-      <HeaderLayout />
+      {/*<HeaderLayout />*/}
       <MainBody />
     </StyledMainPage>
   )

@@ -1,10 +1,14 @@
 import styled from "styled-components";
+import {useRecoilValue} from "recoil";
+import recoil from "../../../../stores/recoil";
 
 interface MainBodyProps {
 
 }
 
 function MainBody(props : MainBodyProps) {
+  const loginUser = useRecoilValue(recoil.userData);
+  console.log("메인 페이지에서 로그인 정보₩", loginUser)
   return (
     <StyledMainBody>
       <div className="main-img">

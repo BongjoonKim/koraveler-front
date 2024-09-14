@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import useLeftHeader from "./useLeftHeader";
-import {Link, LinkBox} from "@chakra-ui/react";
-import {useLocation} from "react-router-dom";
+import {Link} from "react-router-dom"
+import {useLocation, useNavigate} from "react-router-dom";
 
 interface LeftHeaderProps {
 
@@ -11,18 +11,21 @@ function LeftHeader(props : LeftHeaderProps) {
     menus
   } = useLeftHeader();
   const location = useLocation();
-  console.log("menus", menus)
+  const navigate = useNavigate();
   return (
     <StyledLeftHeader isHome={!!(location.pathname === "/home")}>
-      <a className="title" href={`${process.env.PUBLIC_URL}/home`}>
+      <Link
+        className="title"
+        to={`${process.env.PUBLIC_URL}/home`}
+      >
         Koraveler
-      </a>
+      </Link>
       <div className="menu">
         {menus.map(menu => {
           return (
-            <a className="menu-label" href={`${process.env.REACT_APP_URI}${menu.url}`}>
+            <Link className="menu-label" to={`${process.env.REACT_APP_URI}${menu.url}`}>
               {menu.label}
-            </a>
+            </Link>
           )
         })}
       </div>
