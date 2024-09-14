@@ -12,9 +12,9 @@ function App() {
     <AuthProvider>
       <ChakraProvider>
         <StyledApp className={"app"}>
-          <UniversalLayout>
+          {/*<UniversalLayout>*/}
             <RoutersTree/>
-          </UniversalLayout>
+          {/*</UniversalLayout>*/}
         </StyledApp>
       </ChakraProvider>
     </AuthProvider>

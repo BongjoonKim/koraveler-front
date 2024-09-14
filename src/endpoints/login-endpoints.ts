@@ -4,7 +4,7 @@ import {FuncProps} from "../utils/endpointUtils";
 
 export async function login(props: UsersDTO) {
   try {
-    return (await securityReq.post("ps/login",  {
+    return (await securityReq.post("/ps/login",  {
       username : props.userId,
       password : props.userPassword
     })) as AxiosResponse<TokenDTO>
@@ -16,14 +16,14 @@ export async function login(props: UsersDTO) {
 // accessToken이 만료되었을 때 작업
 export async function udtRefreshToken(refreshToken : string) {
   console.log("udtRefreshToken", refreshToken)
-  return (await request.post('ps/login/refresh', {
+  return (await request.post('/login/ps/refresh', {
     refreshToken : refreshToken
   })) as AxiosResponse<TokenDTO>
 }
 
 export async function getLoginUser(props : FuncProps) {
   try {
-    return (await request.get(`ps/login/user`, {
+    return (await request.get(`/login/user`, {
       headers: {
         Authorization : `Bearer ${props.accessToken}`
       }
@@ -35,7 +35,7 @@ export async function getLoginUser(props : FuncProps) {
 
 export async function logout() {
   try {
-    return (await request.get(`ps/login/logout`)) as AxiosResponse<any>;
+    return (await request.get(`/login/ps/logout`)) as AxiosResponse<any>;
   } catch (e) {
     throw e;
   }

@@ -18,8 +18,8 @@ function useRightHeader() {
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   const {accessToken, setAccessToken} = useAuth();
   const navigate = useNavigate();
-  const [loginUser, setLoginUser] = useAtom(LoginUser);
-  // const [loginUser, setLoginUser] = useRecoilState(recoil.userData);
+  // const [loginUser, setLoginUser] = useAtom(LoginUser);
+  const [loginUser, setLoginUser] = useRecoilState(recoil.userData);
   const location = useLocation();
   
   

@@ -17,14 +17,14 @@ function BlogRoutes(props: BlogRoutesProps) {
   
   return (
     <StyledBlogRoutes>
-      {/*<BlogLayout>*/}
+      <BlogLayout>
         <Routes>
           <Route path="/create" element={<CreateBlogPost />} />
           <Route path="/view/:id" element={<ViewBlog />} />
           <Route path="/edit/:id" element={<EditBlogPost />} />
           <Route path="/home" element={<BlogPage />} />
         </Routes>
-      {/*</BlogLayout>*/}
+      </BlogLayout>
     </StyledBlogRoutes>
   )
 };

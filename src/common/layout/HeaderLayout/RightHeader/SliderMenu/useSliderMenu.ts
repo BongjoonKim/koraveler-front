@@ -4,9 +4,15 @@ import {useNavigate} from "react-router-dom";
 import {useAtomValue} from "jotai";
 import {LoginUser} from "../../../../../stores/jotai/jotai";
 import {logout} from "../../../../../endpoints/login-endpoints";
+import {useRecoilState, useSetRecoilState} from "recoil";
+import recoil from "../../../../../stores/recoil";
+import {useAuth} from "../../../../../appConfig/AuthContext";
+import {setCookie} from "../../../../../utils/cookieUtils";
 
 function useSliderMenu(props : SliderMenuProps) {
-  const loginUser = useAtomValue(LoginUser);
+  // const loginUser = useAtomValue(LoginUser);
+  const [loginUser, setLoginUser] = useRecoilState(recoil.userData);
+  const {setAccessToken}= useAuth();
   const navigate = useNavigate();
   
   const handleAvatarClick = useCallback((event : MouseEventHandler<HTMLDivElement>) => {
@@ -22,6 +28,14 @@ function useSliderMenu(props : SliderMenuProps) {
   const handleLogout = useCallback(async () => {
     try {
       const res = await logout();
+      console.log("res", res)
+      if (res.status === 200) {
+        setLoginUser({});
+        setAccessToken("");
+        setCookie("refreshToken", "");
+      } else {
+        throw res.statusText;
+      }
     } catch (e) {
       console.log("logout error", e)
     }

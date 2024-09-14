@@ -3,6 +3,7 @@ import {Dispatch, MouseEventHandler, SetStateAction, useState} from "react";
 import useSliderMenu from "./useSliderMenu";
 import CusButton from "../../../../elements/buttons/CusButton";
 import {lowerCase} from "lodash";
+import {Link} from "react-router-dom";
 
 export interface SliderMenuProps {
   isSliderOpen : boolean;
@@ -47,20 +48,16 @@ function SliderMenu(props: SliderMenuProps) {
         
         </div>
         <div className={"footer"}>
-          <a className="account"
-             href={`${process.env.PUBLIC_URL}/menu/admin/menu`}
+          <Link className="account"
+             to={`${process.env.PUBLIC_URL}/menu/admin/menu`}
           >
             account
-          </a>
-          <CusButton
+          </Link>
+          <div className="account"
            onClick={handleLogout}
           >
             logout
-          </CusButton>
-          <a className="account"
-          >
-            logout
-          </a>
+          </div>
         </div>
       </div>
     </StyledSlider>
@@ -107,6 +104,7 @@ const StyledSlider = styled.div<{isslideropen : string}>`
   .wrapper-sliderMenu {
     display: flex;
     flex-direction: column;
+    height: 100%;
   }
   
   .head {
