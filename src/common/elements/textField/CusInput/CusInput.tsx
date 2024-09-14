@@ -7,7 +7,6 @@ interface CusInputProps extends InputProps {
 
 function CusInput(props : CusInputProps) {
   const [value, setValue] = useState<any>(props.value || "");
-  console.log("값 확인", value)
   
   const handleChange = useCallback((event : any) => {
     setValue(event.target.value);

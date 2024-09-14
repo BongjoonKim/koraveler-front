@@ -39,6 +39,7 @@ function useRightHeader() {
   
   const getUserInfo = useCallback(async () => {
     try {
+      
       const res = await endpointUtils.authAxios({
         func : getLoginUser,
         accessToken : accessToken,

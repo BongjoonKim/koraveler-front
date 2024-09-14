@@ -5,7 +5,6 @@ import axios from "axios";
 import {getAllMenus} from "../../../../endpoints/menus-endpoints";
 import {useAuth} from "../../../../appConfig/AuthContext";
 import {endpointUtils} from "../../../../utils/endpointUtils";
-import {getLoginUser} from "../../../../endpoints/login-endpoints";
 
 export default function useLeftHeader() {
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
