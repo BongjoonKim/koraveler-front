@@ -20,7 +20,7 @@ function RightHeader(props : RightHeaderProps) {
   } = useRightHeader();
   return (
     <StyledRightHeader>
-      {location?.pathname !== "/home" && (
+      {location?.pathname !== "/home" && loginUser.userId && (
         <CusButton
           onClick={handleCreate}
         >

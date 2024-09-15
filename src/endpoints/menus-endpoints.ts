@@ -4,12 +4,8 @@ import {udtRefreshToken} from "./login-endpoints";
 import {getCookie, setCookie} from "../utils/cookieUtils";
 import {endpointUtils} from "../utils/endpointUtils";
 
-export async function getAllMenus(props : any) {
-  return (await request.get("ps/menus/all", {
-    headers : {
-      Authorization : `Bearer ${props.accessToken}`
-    }
-  })) as AxiosResponse<MenusDTO[]>;
+export async function getAllMenus() {
+  return (await request.get("ps/menus/all")) as AxiosResponse<MenusDTO[]>;
 }
 
 export async function getMenus(label : string) {

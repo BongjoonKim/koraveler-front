@@ -39,7 +39,6 @@ function useRightHeader() {
   
   const getUserInfo = useCallback(async () => {
     try {
-      
       const res = await endpointUtils.authAxios({
         func : getLoginUser,
         accessToken : accessToken,
@@ -57,7 +56,8 @@ function useRightHeader() {
       }
     } catch (e) {
       if (e === REFESHTOKEN_EXPIRED) {
-        navigate("/login")
+        // navigate("/login")
+        console.log("로그인 만료")
       }
       setErrorMsg({
         status: "error",

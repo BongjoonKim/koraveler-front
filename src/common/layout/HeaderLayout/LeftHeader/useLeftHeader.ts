@@ -13,11 +13,8 @@ export default function useLeftHeader() {
   
   const getMenus = useCallback(async () => {
     try {
-      const res = await endpointUtils.authAxios({
-        func : getAllMenus,
-        accessToken : accessToken,
-        setAccessToken : setAccessToken
-      });
+      
+      const res = await getAllMenus();
       setMenus(res.data);
     } catch (e) {
       setErrorMsg({

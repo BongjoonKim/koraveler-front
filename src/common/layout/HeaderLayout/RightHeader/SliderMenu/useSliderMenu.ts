@@ -45,7 +45,8 @@ function useSliderMenu(props : SliderMenuProps) {
     handleAvatarClick,
     handleLoginClick,
     loginUser,
-    handleLogout
+    handleLogout,
+    navigate
   }
 }
 

@@ -15,8 +15,11 @@ function SliderMenu(props: SliderMenuProps) {
     loginUser,
     handleAvatarClick,
     handleLoginClick,
-    handleLogout
-  } = useSliderMenu(props)
+    handleLogout,
+    navigate
+  } = useSliderMenu(props);
+  
+  console.log("loginUser", loginUser)
   return (
     <StyledSlider
       isslideropen={props.isSliderOpen.toString()}
@@ -26,7 +29,9 @@ function SliderMenu(props: SliderMenuProps) {
           {!loginUser?.userId ? (
             <>
               <CusButton onClick={handleLoginClick}>로그인</CusButton>
-              <CusButton>회원가입</CusButton>
+              <CusButton onClick={() => {
+                navigate("/login/sign-up")
+              }}>회원가입</CusButton>
             </>
           ) : (
             <>
@@ -48,16 +53,21 @@ function SliderMenu(props: SliderMenuProps) {
         
         </div>
         <div className={"footer"}>
-          <Link className="account"
-             to={`${process.env.PUBLIC_URL}/menu/admin/menu`}
-          >
-            account
-          </Link>
-          <div className="account"
-           onClick={handleLogout}
-          >
-            logout
-          </div>
+          {loginUser?.userId && (
+            <>
+              {/*<Link className="account"*/}
+              {/*      to={`${process.env.PUBLIC_URL}/menu/admin/menu`}*/}
+              {/*>*/}
+              {/*  account*/}
+              {/*</Link>*/}
+              <div className="account"
+                   onClick={handleLogout}
+              >
+                logout
+              </div>
+            </>
+          )}
+
         </div>
       </div>
     </StyledSlider>

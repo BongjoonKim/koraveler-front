@@ -11,7 +11,6 @@ export const recoil = {
   userData : atom<UsersDTO>({
     key:`${USER_DATA}`,
     default : {
-      updatedUser : "sdfsdfsdf"
     },
   }),
   

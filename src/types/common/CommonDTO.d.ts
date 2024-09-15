@@ -17,4 +17,13 @@ declare interface CommonDTO {
   uniqKey ?: string;
 }
 
+declare interface UserCommon {
+  created ?: Date;
+  updated ?: Date;
+  isNonExpired ?: boolean;
+  isNonLocked ?: boolean;
+  isCredentialsNonExpired ?: boolean;
+  isEnable ?: boolean
+}
+
 declare type ActType = "CREATE" | "UPDATE" | "DELETE" | "GET" | "MAKE"
