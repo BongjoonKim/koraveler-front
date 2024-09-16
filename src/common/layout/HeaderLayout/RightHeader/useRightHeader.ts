@@ -1,4 +1,4 @@
-import {MouseEvent, useCallback, useEffect, useState} from "react";
+import {MouseEvent, useCallback, useEffect, useRef, useState} from "react";
 import {PrimitiveAtom, useAtom, useAtomValue} from "jotai";
 import {LoginUser} from "../../../../stores/jotai/jotai";
 import {loadable} from "jotai/utils";
@@ -21,6 +21,8 @@ function useRightHeader() {
   // const [loginUser, setLoginUser] = useAtom(LoginUser);
   const [loginUser, setLoginUser] = useRecoilState(recoil.userData);
   const location = useLocation();
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const cusAvaRef = useRef<HTMLDivElement>(null);
   
   
   const handleAvatarClick = useCallback(async (event : MouseEvent<HTMLSpanElement>) => {
@@ -74,13 +76,34 @@ function useRightHeader() {
     getUserInfo();
   }, []);
   
+  // 컴포넌트 외부 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = (event : any) => {
+      console.log("ref", sliderRef)
+      if (sliderRef.current && !sliderRef.current.contains(event.target)) {
+        if (cusAvaRef.current && !cusAvaRef.current.contains(event.target)) {
+          setSliderOpen(false);
+        }
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    // 컴포넌트가 언마운트되면 이벤트 리스너 제거
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [sliderRef]);
+  
   return {
     loginUser,
     isSliderOpen,
     setSliderOpen,
     handleAvatarClick,
     handleCreate,
-    location
+    location,
+    sliderRef,
+    cusAvaRef
   }
 }
 

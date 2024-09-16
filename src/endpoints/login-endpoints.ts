@@ -34,9 +34,9 @@ export async function getLoginUser(props : FuncProps) {
 }
 
 export async function logout() {
-  try {
-    return (await request.get(`/login/ps/logout`)) as AxiosResponse<any>;
-  } catch (e) {
-    throw e;
-  }
+  return (await request.get(`/login/ps/logout`)) as AxiosResponse<any>;
+}
+
+export async function signUp(props : UsersDTO) {
+  return (await request.post("/login/ps/sign-up", props)) as AxiosResponse<UsersDTO>
 }

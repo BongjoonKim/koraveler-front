@@ -18,7 +18,7 @@ function useViewBlog(props : ViewBlogProps) {
                 setDocument(res.data);
               } else {
                 setErrorMsg({
-                    status : "warn",
+                    status : "warning",
                     msg: "there is no blog id"
                 })
               }

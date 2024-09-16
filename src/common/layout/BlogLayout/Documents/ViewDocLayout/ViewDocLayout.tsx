@@ -11,7 +11,8 @@ export interface ViewDocLayoutProps extends DocumentDTO{
 function ViewDocLayout(props: ViewDocLayoutProps) {
   const {
     handleDelete,
-    handleEdit
+    handleEdit,
+    loginUser
   } = useViewDocLayout(props);
   return (
     <StyledViewDocLayout>
@@ -26,21 +27,23 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
           <span> / </span>
           <span className={"updated-user"}>
             {props.updatedUser}
-            
           </span>
         </div>
         <div className="middle-right">
-          <CusButton
-            onClick={handleEdit}
-          >
-            수정
-          </CusButton>
-          <CusButton
-            onClick={handleDelete}
-          >
-            삭제
-          </CusButton>
-          <CusButton>북마크</CusButton>
+          {loginUser.userId && (
+            <>
+              <CusButton
+                onClick={handleEdit}
+              >
+                수정
+              </CusButton>
+              <CusButton
+                onClick={handleDelete}
+              >
+                삭제
+              </CusButton>
+            </>
+          )}
         </div>
       </div>
       <div className="contents">

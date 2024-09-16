@@ -1,5 +1,14 @@
 import styled, {css} from "styled-components";
-import {Dispatch, MouseEventHandler, SetStateAction, useState} from "react";
+import {
+  Dispatch, ForwardedRef,
+  forwardRef,
+  LegacyRef,
+  MouseEventHandler,
+  MutableRefObject,
+  RefObject,
+  SetStateAction,
+  useState
+} from "react";
 import useSliderMenu from "./useSliderMenu";
 import CusButton from "../../../../elements/buttons/CusButton";
 import {lowerCase} from "lodash";
@@ -10,7 +19,7 @@ export interface SliderMenuProps {
   setSliderOpen : Dispatch<SetStateAction<boolean>>
 };
 
-function SliderMenu(props: SliderMenuProps) {
+function SliderMenu(props: SliderMenuProps, ref : ForwardedRef<HTMLDivElement>) {
   const {
     loginUser,
     handleAvatarClick,
@@ -23,6 +32,7 @@ function SliderMenu(props: SliderMenuProps) {
   return (
     <StyledSlider
       isslideropen={props.isSliderOpen.toString()}
+      ref={ref}
     >
       <div className="wrapper-sliderMenu">
         <div className="head">
@@ -35,19 +45,16 @@ function SliderMenu(props: SliderMenuProps) {
             </>
           ) : (
             <>
-              <div className="user-id">
-                <span>Hello! </span>
-                <span>{loginUser.userId}</span>
+              <div className="id">
+                <div className="user-id">
+                  <span>{loginUser.userId}</span>
+                </div>
               </div>
-              <div className="user-email">
-                {loginUser.email}
+              <div className="user-info">
+                <span className="user-email">{loginUser.email}</span>
               </div>
             </>
           )}
-          
-          <div className="email">
-          
-          </div>
         </div>
         <div className={"body"}>
         
@@ -74,19 +81,19 @@ function SliderMenu(props: SliderMenuProps) {
   )
 };
 
-export default SliderMenu;
+export default forwardRef(SliderMenu);
 // onClick: (event: MouseEventHandler<HTMLDivElement>) => void;
 
 const StyledSlider = styled.div<{isslideropen : string}>`
   width: 20rem;
-  position: fixed;
+  position: absolute;
   background: whitesmoke;
-  left: calc(100% - 20rem - 1rem);
-  top : 6rem;
+  left: calc(100% - 20rem + 1rem);
+  top : -1rem;
   border-radius: 16px;
   //padding: 1.5rem;
   .wrapper-sliderMenu {
-    margin: 1.5rem;
+    margin: 1rem;
   }
   
   transition: ${props => props.isslideropen ? "width 2s": "none"};
@@ -118,13 +125,34 @@ const StyledSlider = styled.div<{isslideropen : string}>`
   }
   
   .head {
-    display: flex;
-    gap: 1rem;
-    .user-id {
-      font-size: 1.5rem;
-      font-weight: 600;
-    }
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    .id {
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+      gap: 1rem;
+      width: calc(18rem - 56px);
+      height: 48px;
+      align-items: center;
+      .user-id {
+        font-size: 2rem;
+        font-weight: 600;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        span {
+          text-align: left;
+        }
+      }
+    }
+    .user-info {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
   }
   .body {
     height: 100%;

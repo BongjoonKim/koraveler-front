@@ -1,6 +1,7 @@
 import {recoilPersist} from "recoil-persist";
 import {atom, selector} from "recoil";
 import {ERROR_MESSAGE, USER_DATA} from "./recoilConstants";
+import {ErrorMessageProps} from "./types";
 
 const {persistAtom} = recoilPersist({
   key: "sessionStorage",
@@ -17,8 +18,9 @@ export const recoil = {
   errMsg: atom<ErrorMessageProps>({
     key:`${ERROR_MESSAGE}`,
     default: {
-      status : "",
-      msg: "retrieve failed"
+      status : undefined,
+      msg: "",
+      isShow : false
     }
   }),
 }

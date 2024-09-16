@@ -16,7 +16,9 @@ function RightHeader(props : RightHeaderProps) {
     setSliderOpen,
     handleAvatarClick,
     handleCreate,
-    location
+    location,
+    sliderRef,
+    cusAvaRef
   } = useRightHeader();
   return (
     <StyledRightHeader>
@@ -29,10 +31,12 @@ function RightHeader(props : RightHeaderProps) {
       )}
 
       <SliderMenu
+        ref={sliderRef}
         isSliderOpen = {isSliderOpen}
         setSliderOpen = {setSliderOpen}
       />
       <CusAvatar
+        ref={cusAvaRef}
         onClick={handleAvatarClick}
         name={loginUser?.userId}
       />

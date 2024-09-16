@@ -12,6 +12,7 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
   const navigate = useNavigate();
   const {accessToken, setAccessToken} = useAuth();
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
+  const [loginUser, setLoginUser] = useRecoilState(recoil.userData);
   
   // 수정 화면으로 전환
   const handleEdit = useCallback(() => {
@@ -54,7 +55,8 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
   
   return {
     handleEdit,
-    handleDelete
+    handleDelete,
+    loginUser
   }
 
 }

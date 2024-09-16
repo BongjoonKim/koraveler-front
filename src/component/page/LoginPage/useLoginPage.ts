@@ -52,12 +52,17 @@ export default function useLoginPage() {
   
   }, [userInfo]);
   
+  const handleClickSignUp = () => {
+    navigate("/login/sign-up")
+  }
+  
   return {
     userInfo,
     userId,
     handleClickTitle,
     handleChange,
-    handleClickLogin
+    handleClickLogin,
+    handleClickSignUp
   }
   
 }

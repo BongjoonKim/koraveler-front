@@ -3,14 +3,28 @@ import logo from './logo.svg';
 import './App.css';
 import styled from "styled-components";
 import RoutersTree from "./RoutersTree";
-import {ChakraProvider} from "@chakra-ui/react";
+import {Alert, ChakraProvider} from "@chakra-ui/react";
 import {AuthProvider} from "./appConfig/AuthContext";
 import UniversalLayout from "./common/layout/UniversalLayout";
+// 1. Import `extendTheme`
+import { extendTheme } from "@chakra-ui/react"
+import {useRecoilValue} from "recoil";
+import recoil from "./stores/recoil";
+
+// 2. Call `extendTheme` and pass your custom values
+const theme = extendTheme({
+  colors: {
+    brand: {
+      100: "#f7fafc",
+      900: "#1a202c",
+    },
+  },
+})
 
 function App() {
   return (
     <AuthProvider>
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
         <StyledApp className={"app"}>
           {/*<UniversalLayout>*/}
             <RoutersTree/>

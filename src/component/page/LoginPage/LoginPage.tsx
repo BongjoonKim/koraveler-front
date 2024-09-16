@@ -14,7 +14,8 @@ function LoginPage(props: LoginPageProps) {
     userId,
     handleChange,
     handleClickTitle,
-    handleClickLogin
+    handleClickLogin,
+    handleClickSignUp,
   } = useLoginPage();
   return (
     <StyledLoginPage>
@@ -44,7 +45,7 @@ function LoginPage(props: LoginPageProps) {
       </div>
       <div className="wrapper-footer">
         <CusButton
-          // onClick={}
+          onClick={handleClickSignUp}
         >
           SignUp
         </CusButton>
@@ -54,8 +55,6 @@ function LoginPage(props: LoginPageProps) {
           Login
         </CusButton>
       </div>
-
-      
     </StyledLoginPage>
   )
 };
@@ -68,9 +67,11 @@ const StyledLoginPage = styled.div`
   border-radius: 10px 10px;
   width: 40vw;
   min-width: max-content;
-  display: inline-block;
+  //display: inline-block;
   flex-direction: column;
   gap: 1rem;
+  display: flex;
+  flex-direction: column;
   .title {
     font-weight: bold;
     font-size: 4rem;

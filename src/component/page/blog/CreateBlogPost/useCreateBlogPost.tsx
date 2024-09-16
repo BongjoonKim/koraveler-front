@@ -11,6 +11,7 @@ import {uploadedInfo} from "../../../../stores/jotai/jotai";
 import {s3Utils} from "../../../../utils/awsS3Utils";
 import {cloneDeep} from "lodash";
 import {S3URLFindRegex} from "../../../../constants/RegexConstants";
+import {useNavigate} from "react-router-dom";
 
 function useCreateBlogPost(props : CreateBlogPostProps) {
   const {accessToken, setAccessToken} = useAuth();
@@ -18,6 +19,7 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
   const editorRef = useRef<any>(null);
   const [document, setDocument] = useState<DocumentDTO>()
   const [uploadedList, setUploadedList] = useAtom<any[]>(uploadedInfo);
+  const navigate = useNavigate();
   
   // 글 생성
   const handleCreate = useCallback(async () => {
@@ -86,7 +88,11 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
             setAccessToken: setAccessToken,
             reqBody : newDocument
           });
-          
+          if (saveRes.status === 200) {
+            navigate(`/blog/view/${saveRes.data.id}`)
+          } else {
+            throw saveRes.statusText;
+          }
           console.log("글 재저장", saveRes)
         }
         
