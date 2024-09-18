@@ -74,6 +74,7 @@ const StyledSliderBody = styled.div<{isLogin : boolean}>`
         background: snow;
         align-items: center;
         justify-content: center;
+        font-weight: 800;
       }
     `
   ) : (

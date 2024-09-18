@@ -34,4 +34,9 @@ export default forwardRef(CusAvatar);
 const StyledCusAvatar = styled.div`
   cursor: pointer;
   user-select: none;
+  &:hover {
+    [role="img"] {
+      color:#aecafb;
+    }
+  }
 `;

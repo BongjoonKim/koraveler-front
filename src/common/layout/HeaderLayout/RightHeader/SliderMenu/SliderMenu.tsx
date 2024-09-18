@@ -165,6 +165,7 @@ const StyledSlider = styled.div<{
     .account {
       cursor: pointer;
       font-size: 16px;
+      font-weight: 800;
     }
   }
 `;

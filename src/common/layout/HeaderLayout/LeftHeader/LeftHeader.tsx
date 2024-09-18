@@ -36,7 +36,6 @@ function LeftHeader(props : LeftHeaderProps) {
 export default LeftHeader;
 
 const StyledLeftHeader = styled.div<any>`
-  
   a {
     cursor: pointer;
   }
@@ -57,6 +56,22 @@ const StyledLeftHeader = styled.div<any>`
     .menu-label {
       font-size: 20px;
       font-weight: 500;
+      position: relative;
+      text-decoration: none;
+      color: black;
+      &::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px; /* bar의 높이 */
+        left: 0;
+        bottom: -2px; /* 텍스트 바로 아래에 위치 */
+        background-color: #000; /* bar의 색깔 */
+        transition: width 0.3s ease; /* 서서히 나타나는 애니메이션 */
+      }
+      &:hover::after {
+        width: 100%; /* hover 시 bar의 너비를 100%로 설정 */
+      }
     }
     
   }

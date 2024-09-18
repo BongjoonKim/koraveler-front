@@ -4,6 +4,7 @@ import AdminRoutes from "./AdminRoutes";
 import LoginRoutes from "./LoginRoutes";
 import BlogRoutes from "./BlogRoutes";
 import SettingRoutes from "./SettingRoutes";
+import TravelRoutes from "./TravelRoutes";
 
 interface RoutersTreeProps {
 
@@ -17,6 +18,7 @@ function RoutersTree(props : RoutersTreeProps) {
       <Route path="/setting/*" element={<SettingRoutes />} />
       <Route path="/login/*" element={<LoginRoutes />} />
       <Route path="/blog/*" element={<BlogRoutes />} />
+      <Route path="/travel/*" element={<TravelRoutes />} />
     </Routes>
   )
 }
