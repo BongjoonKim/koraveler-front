@@ -4,6 +4,7 @@ import SliderMenu from "./SliderMenu";
 import useRightHeader from "./useRightHeader";
 import {Suspense} from "react";
 import CusButton from "../../../elements/buttons/CusButton";
+import {Link} from "react-router-dom";
 
 interface RightHeaderProps {
 
@@ -22,13 +23,13 @@ function RightHeader(props : RightHeaderProps) {
   } = useRightHeader();
   return (
     <StyledRightHeader>
-      {location?.pathname !== "/home" && loginUser.userId && (
-        <CusButton
-          onClick={handleCreate}
-        >
-          Create
-        </CusButton>
-      )}
+      {/*{location?.pathname !== "/home" && loginUser.userId && (*/}
+      {/*  <Link*/}
+      {/*    to={`/blog/create`}*/}
+      {/*  >*/}
+      {/*    생성*/}
+      {/*  </Link>*/}
+      {/*)}*/}
 
       <SliderMenu
         ref={sliderRef}
@@ -55,5 +56,9 @@ const StyledRightHeader = styled.div`
   align-items: center;
   text-align: end;
   z-index: 2000;
+  a {
+    font-size: 20px;
+    font-weight: 500;
+  }
   //padding-right: 1rem;
 `;

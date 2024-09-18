@@ -13,6 +13,8 @@ import useSliderMenu from "./useSliderMenu";
 import CusButton from "../../../../elements/buttons/CusButton";
 import {lowerCase} from "lodash";
 import {Link} from "react-router-dom";
+import SliderBody from "./SliderBody";
+import {stringMap} from "aws-sdk/clients/backup";
 
 export interface SliderMenuProps {
   isSliderOpen : boolean;
@@ -28,45 +30,39 @@ function SliderMenu(props: SliderMenuProps, ref : ForwardedRef<HTMLDivElement>) 
     navigate
   } = useSliderMenu(props);
   
-  console.log("loginUser", loginUser)
   return (
     <StyledSlider
+      isLogin={!!loginUser?.userId}
       isslideropen={props.isSliderOpen.toString()}
       ref={ref}
     >
       <div className="wrapper-sliderMenu">
         <div className="head">
-          {!loginUser?.userId ? (
-            <>
-              <CusButton onClick={handleLoginClick}>로그인</CusButton>
-              <CusButton onClick={() => {
-                navigate("/login/sign-up")
-              }}>회원가입</CusButton>
-            </>
-          ) : (
-            <>
-              <div className="id">
-                <div className="user-id">
-                  <span>{loginUser.userId}</span>
-                </div>
+          <div className="id">
+            {loginUser?.userId ? (
+    
+              <div className="user-id">
+                <span>{loginUser.userId}</span>
               </div>
-              <div className="user-info">
-                <span className="user-email">{loginUser.email}</span>
-              </div>
-            </>
-          )}
+              ) : (
+                <span className="login-plz">로그인해주세요</span>
+              )}
+          </div>
+          <div className="user-info">
+            <span className="user-email">{loginUser.email}</span>
+          </div>
         </div>
         <div className={"body"}>
-        
+          <SliderBody/>
         </div>
         <div className={"footer"}>
           {loginUser?.userId && (
             <>
-              {/*<Link className="account"*/}
-              {/*      to={`${process.env.PUBLIC_URL}/menu/admin/menu`}*/}
-              {/*>*/}
-              {/*  account*/}
-              {/*</Link>*/}
+              {loginUser.roles?.includes("admin") && (
+                <Link className="account" to={`/admin/menu`}>
+                  관리자 설정
+                </Link>
+              )}
               <div className="account"
                    onClick={handleLogout}
               >
@@ -74,7 +70,6 @@ function SliderMenu(props: SliderMenuProps, ref : ForwardedRef<HTMLDivElement>) 
               </div>
             </>
           )}
-
         </div>
       </div>
     </StyledSlider>
@@ -84,7 +79,10 @@ function SliderMenu(props: SliderMenuProps, ref : ForwardedRef<HTMLDivElement>) 
 export default forwardRef(SliderMenu);
 // onClick: (event: MouseEventHandler<HTMLDivElement>) => void;
 
-const StyledSlider = styled.div<{isslideropen : string}>`
+const StyledSlider = styled.div<{
+  isslideropen : string,
+  isLogin : boolean
+}>`
   width: 20rem;
   position: absolute;
   background: whitesmoke;
@@ -102,7 +100,7 @@ const StyledSlider = styled.div<{isslideropen : string}>`
       return css`
         transition-property:  height, padding;
         transition-duration: 600ms, 600ms;
-        height: 30rem;
+        height: ${props.isLogin ? "24rem" : "auto"};
         overflow: hidden;
 
       `
@@ -164,8 +162,9 @@ const StyledSlider = styled.div<{isslideropen : string}>`
     justify-content: space-between;
     flex-grow: 1;
     width: 100%;
-    a {
+    .account {
       cursor: pointer;
+      font-size: 16px;
     }
   }
 `;

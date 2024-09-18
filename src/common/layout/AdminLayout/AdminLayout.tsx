@@ -12,7 +12,7 @@ function AdminLayout(props: AdminLayoutProps) {
   
   return (
     <StyledAdminLayout>
-      <HeaderLayout />
+      <HeaderLayout notHome={true} />
       <MenuTab>
         {props.children}
       </MenuTab>
@@ -24,6 +24,8 @@ function AdminLayout(props: AdminLayoutProps) {
 export default AdminLayout;
 
 const StyledAdminLayout = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
 `;

@@ -5,40 +5,38 @@ import recoil from "../../../stores/recoil";
 import {MenuTabProps} from "./TabLayout";
 import {useAuth} from "../../../appConfig/AuthContext";
 import {endpointUtils} from "../../../utils/endpointUtils";
+import {useNavigate} from "react-router-dom";
 
 function useTabLayout(props : MenuTabProps) {
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
-  const [menuList, setMenuList] = useState<MenusDTO[]>([]);
   const {accessToken, setAccessToken} = useAuth();
-  
-  // 메뉴 목록 불러오기
-  const getMenuList = useCallback(async() => {
-    try {
-      const res = await endpointUtils.authAxios({
-        func : getAllMenus,
-        accessToken : accessToken,
-        setAccessToken : setAccessToken
-      })
-      setMenuList(res.data);
-    } catch (e) {
-      setErrorMsg({
-        status: "error",
-        msg: "retrieve failed",
-      })
+  const navigate = useNavigate();
+  const [tabList, setTabList] = useState<any[]>([
+    {
+      label : "menu-list"
+    }, {
+      label : "user-list"
     }
-  }, [menuList, errorMsg]);
+  ]);
+  
   
   // 메뉴 클릭 이벤트
-  const handleChangeTab = useCallback((event : number) => {
-    console.log("클릭 이벤트", event)
-  }, []);
-  
-  useEffect(() => {
-    getMenuList();
+  const handleChangeTab = useCallback((index : number) => {
+    switch (index) {
+      case 0:
+        navigate("/admin/menu");
+        break;
+      case 1:
+        navigate("/admin/users");
+        break;
+      default:
+        break;
+    }
+    
   }, []);
   
   return {
-    menuList,
+    tabList,
     handleChangeTab
   }
 }

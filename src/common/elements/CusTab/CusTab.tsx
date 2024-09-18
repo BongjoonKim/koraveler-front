@@ -1,9 +1,10 @@
-import {Tab, TabList, TabsProps, Tabs} from "@chakra-ui/react";
+import {Tab, TabList, TabsProps, Tabs, TabPanels, TabPanel} from "@chakra-ui/react";
 import styled from "styled-components";
 import {ReactNode} from "react";
 
-interface CusTabProps extends TabsProps {
-  children : any[];
+interface CusTabProps {
+  tabs : any[];
+  onChange ?: (index : number) => void;
 }
 
 function CusTab(props : CusTabProps) {
@@ -15,9 +16,9 @@ function CusTab(props : CusTabProps) {
         onChange={props.onChange}
       >
         <TabList>
-          {props?.children?.map((children : any) => {
+          {props?.tabs?.map((tab : any) => {
             return (
-              <Tab>{children?.label}</Tab>
+              <Tab>{tab.label}</Tab>
             )
           })}
         </TabList>

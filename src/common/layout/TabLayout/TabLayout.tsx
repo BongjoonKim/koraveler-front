@@ -8,15 +8,15 @@ export interface MenuTabProps {
 }
 function TabLayout(props : MenuTabProps) {
   const {
-    menuList,
+    tabList,
     handleChangeTab,
   } = useTabLayout(props);
   return (
     <StyledMenuTab>
       <CusTab
         onChange={handleChangeTab}
-      >
-      </CusTab>
+        tabs={tabList}
+      />
       {props.children}
     </StyledMenuTab>
   )
@@ -25,6 +25,9 @@ function TabLayout(props : MenuTabProps) {
 export default TabLayout;
 
 const StyledMenuTab = styled.div`
+  display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
+  padding: 2rem;
 `;

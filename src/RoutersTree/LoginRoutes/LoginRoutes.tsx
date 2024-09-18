@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import {Route, Routes} from "react-router-dom";
-import MenuAdminRoutes from "../MenuRoutes/MenuAdminRoutes";
+import MenuAdminRoutes from "../AdminRoutes/MenuAdminRoutes";
 import LoginPage from "../../component/page/LoginPage";
 import SignUpPage from "../../component/page/SignUpPage";
 

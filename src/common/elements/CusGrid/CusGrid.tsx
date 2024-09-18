@@ -12,9 +12,6 @@ function CusGrid(props : CusGridProps) {
   return (
     <StyledCusGrid
       className="ag-theme-quartz"
-      style={{
-        height: 500
-      }}
     >
       <AgGridReact
         {...props}
@@ -26,4 +23,6 @@ function CusGrid(props : CusGridProps) {
 export default CusGrid;
 
 const StyledCusGrid = styled.div`
+  height: 100%;
+  width: 100%;
 `;

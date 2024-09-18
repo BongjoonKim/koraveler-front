@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import {Route, Routes} from "react-router-dom";
-import MenuAdminRoutes from "../MenuRoutes/MenuAdminRoutes";
+import MenuAdminRoutes from "../AdminRoutes/MenuAdminRoutes";
 import CreateBlogPost from "../../component/page/blog/CreateBlogPost/CreateBlogPost";
 import BlogPage from "../../component/page/blog/BlogPage";
 import ViewBlog from "../../component/page/blog/ViewBlog";
