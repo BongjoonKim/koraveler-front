@@ -23,14 +23,14 @@ function SliderBody(props: SliderBodyProps) {
               임시 글
             {/*</Link>*/}
           </Link>
-          <Link className="box" to={`/blog/create`}>
+          <Link className="box" to={`/blog/bookmark`}>
             {/*<Link className="box" to={`/blog/create`}>*/}
               북마크
             {/*</Link>*/}
           </Link>
-          <Link className="box" to={`/blog/create`}>
+          <Link className="box" to={`/blog/my-blog`}>
             {/*<Link className="box" to={`/blog/create`}>*/}
-              설정
+              나의 글
             {/*</Link>*/}
           </Link>
         </>

@@ -23,6 +23,7 @@ function BlogRoutes(props: BlogRoutesProps) {
           <Route path="/view/:id" element={<ViewBlog />} />
           <Route path="/edit/:id" element={<EditBlogPost />} />
           <Route path="/home" element={<BlogPage />} />
+          <Route path="/:type" element={<BlogPage />} />
         </Routes>
       </BlogLayout>
     </StyledBlogRoutes>

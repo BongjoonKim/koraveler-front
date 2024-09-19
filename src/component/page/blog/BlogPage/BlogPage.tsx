@@ -1,13 +1,14 @@
 import styled from "styled-components";
 import BlogHeader from "../../../../common/layout/BlogLayout/BlogHeader";
 import BlogList from "./BlogList";
+import {useLocation, useMatch} from "react-router-dom";
 
 export interface BlogPageProps {
 
 };
 
 function BlogPage(props: BlogPageProps) {
-  
+
   return (
     <StyledBlogPage>
       <div className="blog-layout" >

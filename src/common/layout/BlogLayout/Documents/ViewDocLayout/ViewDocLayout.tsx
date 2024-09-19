@@ -3,15 +3,22 @@ import {ReactNode} from "react";
 import moment from "moment";
 import CusButton from "../../../../elements/buttons/CusButton";
 import useViewDocLayout from "./useViewDocLayout";
+import { CiBookmark } from "react-icons/ci";
+import { IoBookmarkSharp } from "react-icons/io5";
+
+import {IconButton} from "@chakra-ui/react";
+import CusIconButton from "../../../../elements/buttons/CusIconButton";
 
 export interface ViewDocLayoutProps extends DocumentDTO{
   children ?: ReactNode;
+  isBookmarked ?: boolean;
 };
 
 function ViewDocLayout(props: ViewDocLayoutProps) {
   const {
     handleDelete,
     handleEdit,
+    changeBookmark,
     loginUser
   } = useViewDocLayout(props);
   return (
@@ -32,12 +39,20 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
         <div className="middle-right">
           {loginUser.userId && (
             <>
+              <CusIconButton
+                aria-label='bookmark-not-check'
+                icon={props?.isBookmarked ? <IoBookmarkSharp/> : <CiBookmark />}
+                variant="wacky"
+                onClick={changeBookmark}
+              />
               <CusButton
+                variant={"wacky"}
                 onClick={handleEdit}
               >
                 수정
               </CusButton>
               <CusButton
+                variant={"wacky"}
                 onClick={handleDelete}
               >
                 삭제
@@ -75,7 +90,6 @@ const StyledViewDocLayout = styled.div`
     }
     .middle-right {
       display: flex;
-      gap : 1rem;
     }
   }
   

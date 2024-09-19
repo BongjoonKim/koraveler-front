@@ -31,6 +31,14 @@ export async function getAllDocuments(props : FuncProps) {
   )) as AxiosResponse<DocumentsInfo>
 }
 
+export async function getDocumentsByAuth(props : FuncProps) {
+  return (await request.get(`blog/documents?page=${props.params?.page}&size=${props.params?.size}&folderId=${props.params?.folderId}&type=${props.params?.type}`, {
+    headers: {
+      Authorization : `Bearer ${props.accessToken}`
+    }
+  })) as AxiosResponse<DocumentsInfo>
+}
+
 export async function getDocument(props : FuncProps) {
   return (await request.get(`blog/ps/document?id=${props.params?.id}`)) as AxiosResponse<DocumentDTO>
 };

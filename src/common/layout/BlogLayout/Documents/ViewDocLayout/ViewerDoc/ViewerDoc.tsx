@@ -2,7 +2,7 @@ import styled from "styled-components";
 import {Viewer} from "@toast-ui/react-editor";
 
 export interface ViewerDocProps {
-  contents ?: string | undefined;
+  contents ?: string;
 };
 
 function ViewerDoc(props: ViewerDocProps) {

@@ -11,11 +11,11 @@ export interface ViewBlogProps {
 };
 
 function ViewBlog(props: ViewBlogProps) {
-  const {document} = useViewBlog(props);
+  const {document, isBookmarked} = useViewBlog(props);
   return (
     <StyledViewBlog>
       <Suspense>
-        <ViewDocLayout {...document}>
+        <ViewDocLayout {...document} isBookmarked={isBookmarked}>
           <ViewerDoc
             contents={document.contents}
           />

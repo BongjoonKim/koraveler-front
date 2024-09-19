@@ -7,12 +7,20 @@ import {endpointUtils} from "../../../../../utils/endpointUtils";
 import {deleteDocument} from "../../../../../endpoints/blog-endpoints";
 import {s3Utils} from "../../../../../utils/awsS3Utils";
 import {useNavigate} from "react-router-dom";
+import {useAtom} from "jotai";
+import {isBookmark} from "../../../../../stores/jotai/jotai";
+import {createBookmark, deleteBookmark} from "../../../../../endpoints/bookmark-endpoints";
+import {ERROR_MESSAGE} from "../../../../../stores/recoil/recoilConstants";
+import {ErrorMessageProps} from "../../../../../stores/recoil/types";
 
 export default function useViewDocLayout(props : ViewDocLayoutProps) {
   const navigate = useNavigate();
   const {accessToken, setAccessToken} = useAuth();
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   const [loginUser, setLoginUser] = useRecoilState(recoil.userData);
+  const [isBookmarked, setBookmarked] = useAtom(isBookmark);
+  const [errMsg, setErrMsg] = useRecoilState(recoil.errMsg);
+  
   
   // 수정 화면으로 전환
   const handleEdit = useCallback(() => {
@@ -53,9 +61,49 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
 
   }, [props]);
   
+  const changeBookmark = useCallback(async () => {
+    try {
+      if (isBookmarked) {
+        const res = await endpointUtils.authAxios({
+          func : deleteBookmark,
+          params : {
+            documentId : props.id
+          },
+          accessToken : accessToken,
+          setAccessToken : setAccessToken
+        });
+        console.log("삭제해보기", res)
+        if (res.status !== 200) {
+          throw res.statusText;
+        }
+        setBookmarked(false);
+      } else {
+        const reqBody: BookmarkDTO = {
+          documentId: props.id
+        }
+        const res = await endpointUtils.authAxios({
+          func: createBookmark,
+          reqBody: reqBody,
+          accessToken: accessToken,
+          setAccessToken: setAccessToken
+        });
+        if (res.status !== 200) {
+          throw res.statusText;
+        }
+        setBookmarked(true);
+      }
+    } catch (e : ErrorMessageProps | unknown) {
+      setErrMsg({
+        status: "error",
+        msg: e?.toString(),
+      })
+    }
+  }, [isBookmarked, props]);
+  
   return {
     handleEdit,
     handleDelete,
+    changeBookmark,
     loginUser
   }
 
