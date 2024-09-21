@@ -45,7 +45,10 @@ function useBlogList(props : BlogHomeProps) {
           accessToken : accessToken,
           setAccessToken : setAccessToken
         })
-        console.log("res", res)
+        if (res.status !== 200) {
+          throw res.statusText;
+        }
+        setBlogList(res.data);
       } else if (match?.params?.type === BLOG_PAGE_TYPE.BOOKMARK) {
         
         const res = await endpointUtils.authAxios({
@@ -58,9 +61,10 @@ function useBlogList(props : BlogHomeProps) {
           accessToken : accessToken,
           setAccessToken : setAccessToken
         })
-        console.log("res", res)
+        if (res.status !== 200) {
+          throw res.statusText;
+        }
         setBlogList(res.data)
-  
       }
 
     } catch (e) {
@@ -73,7 +77,7 @@ function useBlogList(props : BlogHomeProps) {
   
   useEffect(() => {
     getDocuments();
-  }, []);
+  }, [match]);
   
   return {
     blogList

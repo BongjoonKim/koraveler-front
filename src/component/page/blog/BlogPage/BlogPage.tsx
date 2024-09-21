@@ -1,7 +1,6 @@
 import styled from "styled-components";
-import BlogHeader from "../../../../common/layout/BlogLayout/BlogHeader";
 import BlogList from "./BlogList";
-import {useLocation, useMatch} from "react-router-dom";
+import BlogTitle from "./BlogTitle";
 
 export interface BlogPageProps {
 
@@ -11,6 +10,9 @@ function BlogPage(props: BlogPageProps) {
 
   return (
     <StyledBlogPage>
+      <div className="blog-title">
+        <BlogTitle />
+      </div>
       <div className="blog-layout" >
         <BlogList />
       </div>
@@ -23,12 +25,22 @@ export default BlogPage;
 const StyledBlogPage = styled.div`
   min-height: calc(100vh - 7rem);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   background: white;
-  .blog-layout {
-    height: 100%;
+  height: 100%;
+  width: 100%;
+  padding: 2rem;
+  gap : 0.5rem;
+  .blog-title {
     width: 100%;
-    padding: 2rem;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .blog-layout {
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
   }
