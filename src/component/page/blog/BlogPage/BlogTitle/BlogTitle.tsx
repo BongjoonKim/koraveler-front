@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import useBlogTitle from "./useBlogTitle";
+import CusSelect from "../../../../../common/elements/CusSelect";
+import {BlogListSortsOptionsType} from "../../../../../constants/constants";
 
 export interface BlogTitleProps {
 
@@ -7,8 +9,12 @@ export interface BlogTitleProps {
 
 function BlogTitle(props: BlogTitleProps) {
   const {
-    curPageTitle
+    curPageTitle,
+    sortOptions,
+    changeSort,
+    selectedOption
   } = useBlogTitle(props);
+  
   return (
     <StyledBlogTitle>
       <div className="left">
@@ -17,6 +23,13 @@ function BlogTitle(props: BlogTitleProps) {
         </span>
       </div>
       <div className="right">
+        <CusSelect onChange={changeSort} value={selectedOption}>
+          {sortOptions.map((option : BlogListSortsOptionsType) => {
+            return (
+              <option>{option.label}</option>
+            )
+          })}
+        </CusSelect>
       </div>
     </StyledBlogTitle>
   )
@@ -26,7 +39,7 @@ export default BlogTitle;
 
 const StyledBlogTitle = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   width: 100%;
   justify-content: space-between;
   .title {

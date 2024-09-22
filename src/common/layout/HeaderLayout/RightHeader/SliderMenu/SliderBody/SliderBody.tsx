@@ -18,7 +18,7 @@ function SliderBody(props: SliderBodyProps) {
               글 생성
             {/*</Link>*/}
           </Link>
-          <Link className="box" to={`/blog/create`}>
+          <Link className="box" to={`/blog/draft`}>
             {/*<Link className="box" to={`/blog/create`}>*/}
               임시 글
             {/*</Link>*/}

@@ -9,6 +9,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {getDocument, saveDocument} from "../../../../endpoints/blog-endpoints";
 import {endpointUtils} from "../../../../utils/endpointUtils";
 import {S3URLFindRegex} from "../../../../constants/RegexConstants";
+import {BLOG_SAVE_TYPE} from "../../../../constants/constants";
 
 export default function useEditBlogPost(props : EditBlogPostProps) {
   const {accessToken, setAccessToken} = useAuth();
@@ -20,7 +21,7 @@ export default function useEditBlogPost(props : EditBlogPostProps) {
   const navigate = useNavigate();
   
   // 글 수정
-  const handleEdit = useCallback(async () => {
+  const handleEdit = useCallback(async (saveOrDraft: string) => {
     // 글 가져오기
     if (editorRef?.current?.getInstance()) {
       const editorInfo = editorRef?.current.getInstance();
@@ -40,13 +41,19 @@ export default function useEditBlogPost(props : EditBlogPostProps) {
       while ((matches = regex!.exec(contents)) !== null) {
         values.push(matches[1]);
       }
+      let isDraft : boolean = false;
+      if (saveOrDraft === BLOG_SAVE_TYPE.SAVE) {
+        isDraft = false;
+      } else if (saveOrDraft == BLOG_SAVE_TYPE.DRAFT) {
+        isDraft = true;
+      }
       
       const request : DocumentDTO = {
         ...document,
         contents: contents,
-        thumbnailImgUrl : values[0]
+        thumbnailImgUrl : values[0],
+        draft : isDraft,
       }
-      console.log("request 보기", request);
       
       try {
         const saveRes = await endpointUtils.authAxios({

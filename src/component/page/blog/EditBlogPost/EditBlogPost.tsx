@@ -20,7 +20,8 @@ function EditBlogPost(props: EditBlogPostProps) {
         type={"UPDATE"}
         document={document}
         setDocument={setDocument}
-        handleSave={handleEdit}
+        handleSave={(saveOrDraft : string) => handleEdit(saveOrDraft)}
+
       >
         <UpdateEditor
           ref={editorRef}

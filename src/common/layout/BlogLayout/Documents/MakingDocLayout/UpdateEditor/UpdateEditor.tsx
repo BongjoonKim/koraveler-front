@@ -1,8 +1,4 @@
 import styled from "styled-components";
-import {useAtom} from "jotai";
-import {uploadedInfo} from "../../../../../../stores/jotai/jotai";
-import {useRecoilState} from "recoil";
-import recoil from "../../../../../../stores/recoil";
 import {forwardRef, lazy, Suspense, useCallback} from "react";
 import {uuid} from "../../../../../../utils/commonUtils";
 import useUpdateEditor from "./useUpdateEditor";

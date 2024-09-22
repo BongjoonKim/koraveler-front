@@ -17,6 +17,7 @@ declare interface DocumentDTO extends CommonDTO{
   folderId ?: string;
   color ?: string;
   thumbnailImgUrl ?: string;
+  draft ?: boolean
 }
 
 declare interface PaginationDTO {

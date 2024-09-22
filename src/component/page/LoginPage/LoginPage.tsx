@@ -66,6 +66,7 @@ const StyledLoginPage = styled.div`
   padding: 2rem;
   border-radius: 10px 10px;
   width: 40vw;
+  max-width: 500px;
   min-width: max-content;
   //display: inline-block;
   flex-direction: column;
@@ -82,6 +83,7 @@ const StyledLoginPage = styled.div`
   .wrapper-body {
     display: flex;
     flex-direction: column;
+    gap : 0.5rem;
   }
   .wrapper-footer {
     display: flex;

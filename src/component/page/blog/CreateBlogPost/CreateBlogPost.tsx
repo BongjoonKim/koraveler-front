@@ -20,7 +20,7 @@ function CreateBlogPost(props: CreateBlogPostProps) {
         type={"CREATE"}
         document={document}
         setDocument={setDocument}
-        handleSave={handleCreate}
+        handleSave={(saveOrDraft : string) => handleCreate(saveOrDraft)}
       >
         <CreateDocument
           ref={editorRef}

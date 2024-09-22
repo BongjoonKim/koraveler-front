@@ -66,7 +66,7 @@ const StyledSimpleViewer = styled.li`
   border-radius: 1rem 1rem;
   box-shadow: 2px 2px #f0f0f0;
   display: flex;
-  min-height: 500px;
+  min-height: 480px;
   height: 100%;
   flex-flow: column nowrap;
   &:hover {

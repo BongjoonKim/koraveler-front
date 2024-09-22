@@ -12,6 +12,7 @@ import {s3Utils} from "../../../../utils/awsS3Utils";
 import {cloneDeep} from "lodash";
 import {S3URLFindRegex} from "../../../../constants/RegexConstants";
 import {useNavigate} from "react-router-dom";
+import {BLOG_SAVE_TYPE} from "../../../../constants/constants";
 
 function useCreateBlogPost(props : CreateBlogPostProps) {
   const {accessToken, setAccessToken} = useAuth();
@@ -22,7 +23,7 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
   const navigate = useNavigate();
   
   // 글 생성
-  const handleCreate = useCallback(async () => {
+  const handleCreate = useCallback(async (saveOrDraft : string) => {
     console.log("handleCreate", editorRef.current.getInstance())
     if (editorRef?.current?.getInstance()) {
       const editorInfo = editorRef?.current.getInstance();
@@ -32,12 +33,17 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
       } else if (editorInfo?.mode === "wysiwyg") {
         contents = editorInfo.getHTML();
       }
+      let isDraft :boolean = false;
+      if (saveOrDraft === BLOG_SAVE_TYPE.SAVE) {
+        isDraft = false;
+      } else if (saveOrDraft === BLOG_SAVE_TYPE.DRAFT) {
+        isDraft = true;
+      }
       const request : DocumentDTO = {
         ...document,
-        contents : contents
+        contents : contents,
+        draft : isDraft
       }
-      
-      console.log("request 보기", request)
       
       try {
         // 글 생성하기

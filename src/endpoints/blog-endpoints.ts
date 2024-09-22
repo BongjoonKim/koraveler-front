@@ -27,12 +27,12 @@ export async function saveDocument(props : FuncProps) {
 }
 
 export async function getAllDocuments(props : FuncProps) {
-  return (await request.get(`blog/ps/documents?page=${props.params?.page}&size=${props.params?.size}&folderId=${props.params?.folderId}`
+  return (await request.get(`blog/ps/documents?page=${props.params?.page}&size=${props.params?.size}&folderId=${props.params?.folderId}&dateSort=${props.params?.dateSort}`
   )) as AxiosResponse<DocumentsInfo>
 }
 
 export async function getDocumentsByAuth(props : FuncProps) {
-  return (await request.get(`blog/documents?page=${props.params?.page}&size=${props.params?.size}&folderId=${props.params?.folderId}&type=${props.params?.type}`, {
+  return (await request.get(`blog/documents?page=${props.params?.page}&size=${props.params?.size}&folderId=${props.params?.folderId}&type=${props.params?.type}&dateSort=${props.params?.dateSort}`, {
     headers: {
       Authorization : `Bearer ${props.accessToken}`
     }

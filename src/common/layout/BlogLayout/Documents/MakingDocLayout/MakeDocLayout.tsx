@@ -3,13 +3,14 @@ import {ReactNode} from "react";
 import CusButton from "../../../../elements/buttons/CusButton";
 import CusInput from "../../../../elements/textField/CusInput";
 import useMakeDocLayout from "./useMakeDocLayout";
+import {BLOG_SAVE_TYPE} from "../../../../../constants/constants";
 
 export interface MakeDocLayoutProps {
   type : ActType;
   children ?: ReactNode;
   document ?: DocumentDTO;
   setDocument ?: any;
-  handleSave ?: () => void;
+  handleSave : (saveOrDraft : string) => void;
 };
 
 function MakingDocumentLayout(props: MakeDocLayoutProps) {
@@ -36,9 +37,14 @@ function MakingDocumentLayout(props: MakeDocLayoutProps) {
       <div className="blog-header">
         <div className="buttons">
           <CusButton
-            onClick={props.handleSave}
+            onClick={() => props.handleSave(BLOG_SAVE_TYPE.SAVE)}
           >
             Save
+          </CusButton>
+          <CusButton
+            onClick={() => props.handleSave(BLOG_SAVE_TYPE.DRAFT)}
+          >
+            Draft
           </CusButton>
           <CusButton
           >

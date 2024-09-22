@@ -32,6 +32,7 @@ const StyledBlogList = styled.ul`
   //padding: 2rem;
   display: grid;
   grid-template-columns: repeat(1, 100%);
+  grid-auto-rows: fit-content();
   grid-gap: 2rem;
   width: 100%;
 
