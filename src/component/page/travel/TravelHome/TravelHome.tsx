@@ -12,9 +12,9 @@ function TravelHome(props: TravelHomeProps) {
       <Image
         src={"https://haries-img.s3.ap-northeast-2.amazonaws.com/travel/home/seonwoonsa.JPG"}
       />
-      <div className="message">
-        고창 선운사
-      </div>
+      {/*<div className="message">*/}
+      {/*  고창 선운사*/}
+      {/*</div>*/}
     </StyledTravelHome>
   )
 };
@@ -29,6 +29,9 @@ const StyledTravelHome = styled.div`
   img {
     width: 100%;
     height: 100%;
+    min-width: 600px;
+    min-height: 600px;
+    object-fit: cover;
   }
 
   .message {
