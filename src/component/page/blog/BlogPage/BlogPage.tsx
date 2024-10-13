@@ -28,7 +28,7 @@ const StyledBlogPage = styled.div`
   background: white;
   height: 100%;
   width: 100%;
-  padding: 2rem;
+  padding: 1rem 2rem;
   gap : 0.5rem;
   .blog-title {
     width: 100%;

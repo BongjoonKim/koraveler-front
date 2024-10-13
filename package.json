@@ -7,6 +7,7 @@
     "@ag-grid-community/react": "^31.3.1",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@chakra-ui/core": "^0.8.0",
+    "@chakra-ui/icons": "^2.2.4",
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",

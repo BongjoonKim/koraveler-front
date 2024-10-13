@@ -23,6 +23,7 @@ function useRightHeader() {
   const location = useLocation();
   const sliderRef = useRef<HTMLDivElement>(null);
   const cusAvaRef = useRef<HTMLDivElement>(null);
+  const [searchModalOpen ,setSearchModalOpen] = useState<boolean>(false);
   
   
   const handleAvatarClick = useCallback(async (event : MouseEvent<HTMLSpanElement>) => {
@@ -72,6 +73,11 @@ function useRightHeader() {
     navigate("/blog/create")
   }, []);
   
+  const handleOpenModal = () => {
+    console.log("SearchModalOpen", searchModalOpen)
+    setSearchModalOpen(prev => !prev);
+  }
+  
   useEffect(() => {
     getUserInfo();
   }, []);
@@ -102,7 +108,9 @@ function useRightHeader() {
     handleCreate,
     location,
     sliderRef,
-    cusAvaRef
+    cusAvaRef,
+    handleOpenModal,
+    searchModalOpen
   }
 }
 

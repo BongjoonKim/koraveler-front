@@ -5,9 +5,12 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalCloseButton, ModalFooter
+  ModalCloseButton, ModalFooter, GlobalStyle
 } from "@chakra-ui/react";
 import {ReactNode} from "react";
+import styled from "styled-components";
+import { Global } from "@emotion/react";
+
 
 interface CusModalProps extends ModalProps {
   title ?: string | ReactNode;
@@ -20,12 +23,18 @@ export default function CusModal(props:CusModalProps) {
       isOpen={props.isOpen}
       onClose={props.onClose}
     >
-      <ModalOverlay/>
-      <ModalContent>
+      <Global
+        styles={{
+          ".chakra-modal__content-container": {
+            zIndex: "20001 !important",
+          },
+        }}
+      />
+      <ModalOverlay zIndex={20000}/>
+      <ModalContent zIndex={20001}>
         <ModalHeader>
           {props.title}
         </ModalHeader>
-        {/*<ModalCloseButton />*/}
         <ModalBody>
           {props.children}
         </ModalBody>
@@ -36,3 +45,4 @@ export default function CusModal(props:CusModalProps) {
     </Modal>
   )
 }
+

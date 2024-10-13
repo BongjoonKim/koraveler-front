@@ -1,5 +1,5 @@
-import {Input, InputGroup, InputGroupProps, InputProps, InputRightElement} from "@chakra-ui/react";
-import {useCallback, useEffect, useState} from "react";
+import {Input, InputGroup, InputGroupProps, InputLeftElement, InputProps, InputRightElement} from "@chakra-ui/react";
+import {ReactNode, useCallback, useEffect, useState} from "react";
 import CusButton from "../../buttons/CusButton";
 
 export interface CusInputProps extends InputProps {
@@ -7,7 +7,8 @@ export interface CusInputProps extends InputProps {
 }
 
 export interface CusInputGroupProps extends CusInputProps {
-
+  inputLeftElement ?: ReactNode;
+  inputRightElement ?: ReactNode;
 }
 
 function CusInput(props : CusInputProps) {
@@ -27,18 +28,26 @@ function CusInput(props : CusInputProps) {
 }
 
 export function CusInputGroup(props : CusInputGroupProps) {
-  const [isShow, setShow] = useState<boolean>(false);
+  const [isPassword, setPassword] = useState<boolean>(false);
   return (
     <InputGroup>
-      <CusInput
-        type={isShow ? 'text' : 'password'}
+      {props.inputLeftElement && (
+        <InputLeftElement>
+          {props.inputLeftElement}
+        </InputLeftElement>
+      )}
+      <Input
+        type={isPassword ? 'password' : 'text'}
         {...props}
       />
-      <InputRightElement width='5rem'>
-        <CusButton onClick={() => setShow(prev => !prev)} size="sm">
-          {isShow ? "show" : "hide"}
-        </CusButton>
-      </InputRightElement>
+      {props.inputRightElement && (
+        <InputRightElement>
+          {props.inputRightElement}
+        </InputRightElement>
+      )}
+        {/*<CusButton onClick={() => setShow(prev => !prev)} size="sm">*/}
+        {/*  {isShow ? "show" : "hide"}*/}
+        {/*</CusButton>*/}
     </InputGroup>
   )
 

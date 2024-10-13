@@ -13,7 +13,7 @@ function SliderBody(props: SliderBodyProps) {
     <StyledSliderBody isLogin={!!loginUser?.userId}>
       {loginUser?.userId ? (
         <>
-          <Link className="box" to={`/blog/create`}>
+           <Link className="box" to={`/blog/create`}>
             {/*<Link to={`/blog/create`}>*/}
               글 생성
             {/*</Link>*/}

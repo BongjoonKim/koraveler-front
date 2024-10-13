@@ -73,7 +73,7 @@ export default ViewDocLayout;
 const StyledViewDocLayout = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 2rem;
+  padding: 1rem 2rem;
   gap : 1rem;
   .title {
     font-size: 40px;
@@ -96,6 +96,6 @@ const StyledViewDocLayout = styled.div`
   @media (min-width: 1024px) {
     display: flex;
     flex-direction: column;
-    padding: 5rem;
+    padding: 1rem 2rem;
   }
 `;
