@@ -3,6 +3,7 @@ import useSearchModal from "./useSearchModal";
 import CusInput, {CusInputGroup} from "../../../elements/textField/CusInput";
 import {SearchIcon} from "@chakra-ui/icons";
 import {InputGroup, InputLeftElement} from "@chakra-ui/react";
+import SearchDocList from "./SearchDocList";
 
 export interface SearchModalProps {
 
@@ -10,12 +11,15 @@ export interface SearchModalProps {
 
 function SearchModal(props: SearchModalProps) {
   const {
-    searchValue
+    searchValue,
+    docs,
+    handleSearching,
   } = useSearchModal(props);
   return (
     <StyledSearchModal>
       <CusInputGroup
         // value={searchValue}
+        onChange={handleSearching}
         placeholder={"Search"}
         inputLeftElement={
           // <InputLeftElement pointerEvents="none">
@@ -24,6 +28,7 @@ function SearchModal(props: SearchModalProps) {
         }
       >
       </CusInputGroup>
+      <SearchDocList documents={docs}/>
     </StyledSearchModal>
   )
 };

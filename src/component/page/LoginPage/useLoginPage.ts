@@ -1,14 +1,18 @@
-import {ChangeEvent, useCallback, useState} from "react";
+import {ChangeEvent, useCallback, useState, KeyboardEvent} from "react";
 import {InitUsersDTO} from "../../../types/users/initialUsers";
 import {useNavigate} from "react-router-dom";
 import {login} from "../../../endpoints/login-endpoints";
 import {useAtom} from "jotai";
 import {setCookie} from "../../../utils/cookieUtils";
 import {useAuth} from "../../../appConfig/AuthContext";
+import {useRecoilState} from "recoil";
+import recoil from "../../../stores/recoil";
 
 export default function useLoginPage() {
   const [userInfo, setUserInfo] = useState<UsersDTO>(InitUsersDTO);
   const [userId, setUserId] = useState<string>("");
+  const [errMsg, setErrMsg] = useRecoilState(recoil.errMsg);
+  
   const navigate = useNavigate();
   const {setAccessToken} = useAuth();
   
@@ -49,8 +53,20 @@ export default function useLoginPage() {
     } catch(e) {
       console.log("handleClickLogin", e);
     }
-  
   }, [userInfo]);
+  
+  const pressEnter = useCallback((event : KeyboardEvent) => {
+    try {
+      if (event?.key === 'Enter') {
+        handleClickLogin();
+      }
+    } catch (e) {
+      setErrMsg({
+        status : "error",
+        msg: "login fail"
+      })
+    }
+  }, [handleClickLogin]);
   
   const handleClickSignUp = () => {
     navigate("/login/sign-up")
@@ -62,7 +78,8 @@ export default function useLoginPage() {
     handleClickTitle,
     handleChange,
     handleClickLogin,
-    handleClickSignUp
+    handleClickSignUp,
+    pressEnter
   }
   
 }

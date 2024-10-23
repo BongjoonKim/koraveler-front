@@ -31,6 +31,11 @@ export async function getAllDocuments(props : FuncProps) {
   )) as AxiosResponse<DocumentsInfo>
 }
 
+export async function searchDocuments(props : FuncProps) {
+  return (await request.get(`blog/ps/search/documents?value=${props.params?.value}&page=${props.params?.page}&size=${props.params?.size}`
+  )) as AxiosResponse<DocumentsInfo>
+}
+
 export async function getDocumentsByAuth(props : FuncProps) {
   return (await request.get(`blog/documents?page=${props.params?.page}&size=${props.params?.size}&folderId=${props.params?.folderId}&type=${props.params?.type}&dateSort=${props.params?.dateSort}`, {
     headers: {

@@ -16,6 +16,7 @@ function LoginPage(props: LoginPageProps) {
     handleClickTitle,
     handleClickLogin,
     handleClickSignUp,
+    pressEnter,
   } = useLoginPage();
   return (
     <StyledLoginPage>
@@ -32,6 +33,7 @@ function LoginPage(props: LoginPageProps) {
           id="id"
           name="id"
           type="text"
+          onKeyUp={pressEnter}
           onChange={(event:ChangeEvent<HTMLInputElement>) => handleChange(event, "id")}
         />
         <CusInput
@@ -40,6 +42,7 @@ function LoginPage(props: LoginPageProps) {
           type="password"
           id="pw"
           name="pw"
+          onKeyUp={pressEnter}
           onChange={(event:ChangeEvent<HTMLInputElement>) => handleChange(event, "password")}
         />
       </div>
