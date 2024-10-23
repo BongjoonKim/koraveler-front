@@ -122,7 +122,7 @@ const StyledSimpleViewer = styled.li`
       }
 
       .desc {
-        height: 100%;
+        //height: 100%;
         display: -webkit-box;
         -webkit-line-clamp: 5;
         -webkit-box-orient: vertical;
