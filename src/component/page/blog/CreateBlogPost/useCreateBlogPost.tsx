@@ -94,14 +94,15 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
             setAccessToken: setAccessToken,
             reqBody : newDocument
           });
-          if (saveRes.status === 200) {
-            navigate(`/blog/view/${saveRes.data.id}`)
-          } else {
-            throw saveRes.statusText;
-          }
-          console.log("글 재저장", saveRes)
+          console.log("saveRes", saveRes)
         }
-        
+        console.log("res", res)
+        if (res.status === 200) {
+          navigate(`/blog/view/${res.data.id}`)
+        } else {
+          throw res.statusText;
+        }
+        console.log("글 재저장", res)
         // 글도 변경 후 저장
       } catch (e) {
         setErrorMsg({

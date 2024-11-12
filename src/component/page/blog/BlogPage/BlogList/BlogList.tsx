@@ -11,8 +11,6 @@ function BlogList(props: BlogHomeProps) {
     blogList
   } = useBlogList(props);
   
-  console.log("블로그 리스트", blogList)
-  
   return (
     <StyledBlogList>
       {blogList?.documentsDTO?.map(blog => {

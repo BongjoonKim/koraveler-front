@@ -114,11 +114,13 @@ const StyledSimpleViewer = styled.li`
       display: flex;
       flex-direction: column;
       gap: 1rem;
-
       .title {
         height: 2rem;
         font-size: 1.5rem;
         font-weight: 600;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
       }
 
       .desc {
