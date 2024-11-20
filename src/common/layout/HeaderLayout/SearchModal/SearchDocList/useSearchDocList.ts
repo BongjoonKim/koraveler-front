@@ -8,6 +8,7 @@ export default function useSearchDocList(props: SearchDocListProps) {
     if (id) {
       navigate(`/blog/view/${id}`)
     }
+    
   }
   
   return {

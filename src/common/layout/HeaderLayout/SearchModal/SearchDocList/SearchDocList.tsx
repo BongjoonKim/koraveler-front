@@ -31,17 +31,21 @@ function SearchDocList(props: SearchDocListProps) {
 export default SearchDocList;
 
 const StyledSearchDocList = styled.div`
-  max-height: 80vh;
+  max-height: 70vh;
   overflow: auto;
   cursor: pointer;
-  height: 12rem;
+  height: 100%;
   .doc {
     height: 12rem;
-    border: 1px solid gray;
+    border-bottom: 1px solid white;
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem
+    gap: 0.5rem;
+    background: beige;
+    &:first-child {
+      border-top: 1px solid white;
+    }
   }
   .title {
     font-weight: bold;

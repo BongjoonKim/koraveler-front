@@ -17,18 +17,22 @@ function SearchModal(props: SearchModalProps) {
   } = useSearchModal(props);
   return (
     <StyledSearchModal>
-      <CusInputGroup
-        // value={searchValue}
-        onChange={handleSearching}
-        placeholder={"Search"}
-        inputLeftElement={
-          // <InputLeftElement pointerEvents="none">
+      <div className="top">
+        <CusInputGroup
+          // value={searchValue}
+          onChange={handleSearching}
+          placeholder={"Search"}
+          inputLeftElement={
+            // <InputLeftElement pointerEvents="none">
             <SearchIcon color="gray.300" />
-          // </InputLeftElement>
-        }
-      >
-      </CusInputGroup>
-      <SearchDocList documents={docs}/>
+            // </InputLeftElement>
+          }
+        >
+        </CusInputGroup>
+      </div>
+      <div className="body">
+        <SearchDocList documents={docs}/>
+      </div>
     </StyledSearchModal>
   )
 };
@@ -36,5 +40,8 @@ function SearchModal(props: SearchModalProps) {
 export default SearchModal;
 
 const StyledSearchModal = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   z-index: 20001;
 `;
