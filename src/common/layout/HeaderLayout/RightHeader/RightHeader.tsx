@@ -26,8 +26,8 @@ function RightHeader(props : RightHeaderProps) {
   } = useRightHeader();
   return (
     <>
-      <CusModal isOpen={searchModalOpen} onClose={handleOpenModal} >
-        <SearchModal />
+      <CusModal isOpen={searchModalOpen} onClose={handleOpenModal} size={"xl"} >
+        <SearchModal onClose={handleOpenModal}/>
       </CusModal>
     
     <StyledRightHeader>

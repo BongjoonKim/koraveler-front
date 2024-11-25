@@ -4,6 +4,7 @@ import useSearchDocList from "./useSearchDocList";
 
 export interface SearchDocListProps {
   documents ?: DocumentDTO[];
+  onClose : () => void;
 };
 
 function SearchDocList(props: SearchDocListProps) {

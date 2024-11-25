@@ -15,6 +15,7 @@ import { Global } from "@emotion/react";
 interface CusModalProps extends ModalProps {
   title ?: string | ReactNode;
   footer ?: ReactNode;
+  size ?: string;
 }
 
 export default function CusModal(props:CusModalProps) {
@@ -22,11 +23,13 @@ export default function CusModal(props:CusModalProps) {
     <Modal
       isOpen={props.isOpen}
       onClose={props.onClose}
+      size={props?.size}
     >
       <Global
         styles={{
           ".chakra-modal__content-container": {
             zIndex: "20001 !important",
+            width : "100rem"
           },
         }}
       />

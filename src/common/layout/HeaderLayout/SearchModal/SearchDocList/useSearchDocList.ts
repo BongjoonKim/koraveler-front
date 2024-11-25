@@ -7,8 +7,8 @@ export default function useSearchDocList(props: SearchDocListProps) {
   const handleMove = (id ?: string) => {
     if (id) {
       navigate(`/blog/view/${id}`)
+      props.onClose();
     }
-    
   }
   
   return {

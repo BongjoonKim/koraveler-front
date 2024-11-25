@@ -6,7 +6,7 @@ import {InputGroup, InputLeftElement} from "@chakra-ui/react";
 import SearchDocList from "./SearchDocList";
 
 export interface SearchModalProps {
-
+  onClose : () => void;
 };
 
 function SearchModal(props: SearchModalProps) {
@@ -31,7 +31,7 @@ function SearchModal(props: SearchModalProps) {
         </CusInputGroup>
       </div>
       <div className="body">
-        <SearchDocList documents={docs}/>
+        <SearchDocList documents={docs} onClose={props.onClose}/>
       </div>
     </StyledSearchModal>
   )
