@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import {Image} from "@chakra-ui/react";
+import TravelHomeMain from "./TravelHomeMain";
 
 export interface TravelHomeProps {
 
@@ -9,12 +10,13 @@ function TravelHome(props: TravelHomeProps) {
   
   return (
     <StyledTravelHome>
-      <Image
-        src={"https://haries-img.s3.ap-northeast-2.amazonaws.com/travel/home/seonwoonsa.JPG"}
-      />
+      {/*<Image*/}
+      {/*  src={"https://haries-img.s3.ap-northeast-2.amazonaws.com/travel/home/seonwoonsa.JPG"}*/}
+      {/*/>*/}
       {/*<div className="message">*/}
       {/*  고창 선운사*/}
       {/*</div>*/}
+      <TravelHomeMain />
     </StyledTravelHome>
   )
 };
