@@ -8,7 +8,6 @@ function TravelHomeMain(props: TravelHomeMainProps) {
   
   return (
     <StyledTravelHomeMain>
-      
     </StyledTravelHomeMain>
   )
 };
