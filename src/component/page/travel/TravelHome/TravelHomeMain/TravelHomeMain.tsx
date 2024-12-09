@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import CusWeather from "../../../../../common/elements/CusWeather";
 
 export interface TravelHomeMainProps {
 
@@ -8,6 +9,7 @@ function TravelHomeMain(props: TravelHomeMainProps) {
   
   return (
     <StyledTravelHomeMain>
+      <CusWeather />
     </StyledTravelHomeMain>
   )
 };
