@@ -15,6 +15,7 @@ export interface CusWeatherProps {
 
 function CusWeather(props: CusWeatherProps) {
   const {weatherData} = useCusWeather(props);
+  console.log("날씨 값", weatherData)
   return (
     <StyledCusWeather>
       <section className="vh-100" style={{ backgroundColor: '#4B515D' }}>
@@ -25,7 +26,7 @@ function CusWeather(props: CusWeatherProps) {
                 <MDBCardBody className="p-4">
                   <div className="d-flex">
                     <MDBTypography tag="h6" className="flex-grow-1">{weatherData?.city}</MDBTypography>
-                    <MDBTypography tag="h6">{weatherData?.time}</MDBTypography>
+                    <MDBTypography tag="h6">{weatherData?.current?.observation_time}</MDBTypography>
                   </div>
               
                   <div className="d-flex flex-column text-center mt-5 mb-4">
