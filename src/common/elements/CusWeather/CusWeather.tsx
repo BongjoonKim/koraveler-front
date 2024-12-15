@@ -31,16 +31,16 @@ function CusWeather(props: CusWeatherProps) {
               
                   <div className="d-flex flex-column text-center mt-5 mb-4">
                     <MDBTypography tag="h6" className="display-4 mb-0 font-weight-bold" style={{ color: '#1C2331' }}>
-                      {weatherData?.temperature}°C
+                      {weatherData?.current?.temperature}°C
                     </MDBTypography>
-                    <span className="small" style={{ color: '#868B94' }}>{weatherData?.description}</span>
+                    <span className="small" style={{ color: '#868B94' }}>{weatherData?.current?.weather_descriptions[0]}</span>
                   </div>
               
                   <div className="d-flex align-items-center">
                     <div className="flex-grow-1" style={{ fontSize: '1rem' }}>
-                      <div><i className="fas fa-wind fa-fw" style={{ color: '#868B94' }}></i> <span className="ms-1">{weatherData?.windSpeed} km/h</span></div>
-                      <div><i className="fas fa-tint fa-fw" style={{ color: '#868B94' }}></i> <span className="ms-1">{weatherData?.humidity}%</span></div>
-                      <div><i className="fas fa-sun fa-fw" style={{ color: '#868B94' }}></i> <span className="ms-1">{weatherData?.sunHours}h</span></div>
+                      <div><i className="fas fa-wind fa-fw" style={{ color: '#868B94' }}></i> <span className="ms-1">{weatherData?.current?.wind_speed} km/h</span></div>
+                      <div><i className="fas fa-tint fa-fw" style={{ color: '#868B94' }}></i> <span className="ms-1">{weatherData?.current?.humidity}%</span></div>
+                      {/*<div><i className="fas fa-sun fa-fw" style={{ color: '#868B94' }}></i> <span className="ms-1">{weatherData?.sunHours}h</span></div>*/}
                     </div>
                     <div>
                       <img src={weatherData?.icon} width="100px" alt="Weather icon" />
