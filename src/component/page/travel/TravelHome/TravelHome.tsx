@@ -24,25 +24,17 @@ function TravelHome(props: TravelHomeProps) {
 export default TravelHome;
 
 const StyledTravelHome = styled.div`
-  position: absolute;
+  //position: absolute;
   width: 100%;
   height: 100%;
 
-  img {
-    width: 100%;
-    height: 100%;
-    min-width: 600px;
-    min-height: 600px;
-    object-fit: cover;
-  }
-
-  .message {
-    position: absolute;
-    top: calc(100% - 6.5rem);
-    right: 4rem;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #e6e1e1;
-    font-style: italic;
-  }
+  //.message {
+  //  position: absolute;
+  //  top: calc(100% - 6.5rem);
+  //  right: 4rem;
+  //  font-size: 1.5rem;
+  //  font-weight: 600;
+  //  color: #e6e1e1;
+  //  font-style: italic;
+  //}
 `;

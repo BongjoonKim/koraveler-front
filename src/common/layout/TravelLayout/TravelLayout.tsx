@@ -10,7 +10,7 @@ function TravelLayout(props: TravelLayoutProps) {
   
   return (
     <StyledTravelLayout>
-      <HeaderLayout/>
+      <HeaderLayout  notHome={true}/>
       <div className={"travel-body"}>
         {props.children}
       </div>

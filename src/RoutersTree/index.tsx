@@ -20,7 +20,7 @@ function RoutersTree(props : RoutersTreeProps) {
       <Route path="/setting/*" element={<SettingRoutes />} />
       <Route path="/login/*" element={<LoginRoutes />} />
       <Route path="/blog/*" element={<BlogRoutes />} />
-      <Route path="/travel/*" element={<TravelRoutes />} />
+      <Route path="/travel/*" element={< TravelRoutes />} />
     </Routes>
   )
 }
