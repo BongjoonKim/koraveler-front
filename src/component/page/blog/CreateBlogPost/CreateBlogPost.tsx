@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import CreateDocument from "../../../../common/layout/BlogLayout/Documents/MakingDocLayout/CreateEditor";
+import CreateEditor from "../../../../common/layout/BlogLayout/Documents/MakingDocLayout/CreateEditor";
 import MakeDocLayout from "../../../../common/layout/BlogLayout/Documents/MakingDocLayout/MakeDocLayout";
 import useCreateBlogPost from "./useCreateBlogPost";
 
@@ -22,7 +22,7 @@ function CreateBlogPost(props: CreateBlogPostProps) {
         setDocument={setDocument}
         handleSave={(saveOrDraft : string) => handleCreate(saveOrDraft)}
       >
-        <CreateDocument
+        <CreateEditor
           ref={editorRef}
         />
       </MakeDocLayout>

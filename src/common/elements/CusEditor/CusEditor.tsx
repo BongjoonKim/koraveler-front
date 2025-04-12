@@ -8,8 +8,10 @@ import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-sy
 import '@toast-ui/editor/dist/i18n/ko-kr';
 import {forwardRef, MutableRefObject} from "react";
 
-interface CusEditorProps extends EditorProps{
+export interface CusEditorProps extends EditorProps{
   // ref : MutableRefObject<any>
+  getEditorConfig ?: any;
+  handleImageUpload ?: any;
 };
 
 function CusEditor(props: CusEditorProps, ref : any) {

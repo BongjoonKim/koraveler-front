@@ -12,6 +12,7 @@ export default function AdminRoutes() {
       <AdminLayout>
         <Routes>
           <Route path="/menu" element={<MenuAdmin />} />
+          
         </Routes>
       </AdminLayout>
     </StyledAdminRoutes>
