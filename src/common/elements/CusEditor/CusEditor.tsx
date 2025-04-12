@@ -15,7 +15,6 @@ export interface CusEditorProps extends EditorProps{
 };
 
 function CusEditor(props: CusEditorProps, ref : any) {
-  console.log("이니셜 밸류", props)
   return (
     <StyledCusEditor>
       <ToastUi

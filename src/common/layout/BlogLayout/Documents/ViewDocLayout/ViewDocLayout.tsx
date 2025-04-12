@@ -6,7 +6,6 @@ import useViewDocLayout from "./useViewDocLayout";
 import { CiBookmark } from "react-icons/ci";
 import { IoBookmarkSharp } from "react-icons/io5";
 
-import {IconButton} from "@chakra-ui/react";
 import CusIconButton from "../../../../elements/buttons/CusIconButton";
 
 export interface ViewDocLayoutProps extends DocumentDTO{
