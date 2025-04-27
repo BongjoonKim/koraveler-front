@@ -45,6 +45,7 @@ function useBlogList(props : BlogHomeProps) {
         if (res?.status !== 200) {
           throw res?.statusText;
         }
+        console.log("res.data blog", res.data)
         setBlogList(res.data);
       } else if (match?.params?.type === BLOG_PAGE_TYPE.MY_BLOG) {
         const res = await endpointUtils.authAxios({

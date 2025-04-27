@@ -8,29 +8,32 @@ export interface SliderBodyProps {
 };
 
 function SliderBody(props: SliderBodyProps) {
-  const {navigate, loginUser} = useSliderBody(props);
+  const {navigate, loginUser,handleCreatePost} = useSliderBody(props);
   return (
     <StyledSliderBody isLogin={!!loginUser?.userId}>
       {loginUser?.userId ? (
         <>
-           <Link className="box" to={`/blog/create`}>
-            {/*<Link to={`/blog/create`}>*/}
-              글 생성
-            {/*</Link>*/}
-          </Link>
+          {/*<Link className="box" to={`/blog/create`}>*/}
+          {/*  /!*<Link to={`/blog/create`}>*!/*/}
+          {/*  글 생성*/}
+          {/*  /!*</Link>*!/*/}
+          {/*</Link>*/}
+          <div className="box" onClick={handleCreatePost} style={{cursor: 'pointer'}}>
+            글 생성
+          </div>
           <Link className="box" to={`/blog/draft`}>
             {/*<Link className="box" to={`/blog/create`}>*/}
-              임시 글
+            임시 글
             {/*</Link>*/}
           </Link>
           <Link className="box" to={`/blog/bookmark`}>
             {/*<Link className="box" to={`/blog/create`}>*/}
-              북마크
+            북마크
             {/*</Link>*/}
           </Link>
           <Link className="box" to={`/blog/my-blog`}>
             {/*<Link className="box" to={`/blog/create`}>*/}
-              나의 글
+            나의 글
             {/*</Link>*/}
           </Link>
         </>
@@ -75,6 +78,7 @@ const StyledSliderBody = styled.div<{isLogin : boolean}>`
         align-items: center;
         justify-content: center;
         font-weight: 800;
+        font-size: 20px;
       }
     `
   ) : (

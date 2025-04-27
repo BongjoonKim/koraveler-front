@@ -1,46 +1,18 @@
-import {CreateDocumentProps} from "./CreateEditor";
-import {useAtomValue} from "jotai/index";
-import {uploadedInfo} from "../../../../../../stores/jotai/jotai";
-import {useAtom} from "jotai";
 import {useCallback} from "react";
 import {uuid} from "../../../../../../utils/commonUtils";
 import {s3Utils} from "../../../../../../utils/awsS3Utils";
+import {useAtom} from "jotai/index";
+import {uploadedInfo} from "../../../../../../stores/jotai/jotai";
 import {useRecoilState} from "recoil";
 import recoil from "../../../../../../stores/recoil";
 
-export default function useCreateEditor(props : CreateDocumentProps) {
+export interface useSaveEditorProps extends DocumentDTO{
+
+};
+
+function useSaveEditor(props : useSaveEditorProps) {
   const [uploadedList, setUploadedList] = useAtom<any[]>(uploadedInfo);
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
-  
-  console.log("id", props.id)
-  
-  // 파일 업로드
-  const onUploadImg = useCallback(async (blob: Blob, callback: HookCallback) => {
-    try {
-      const fileName = uuid();
-      const file = new File([blob], `${fileName}`, {type: blob.type});
-      const fileKey = `new/${fileName}`
-      
-      const res = await s3Utils.uploadFile({fileKey: fileKey, file: file});
-      
-      setUploadedList((prev : any[]) => {
-        return [
-          ...prev,
-          {
-            blob: blob,
-            key: `${fileKey}`,
-          }
-        ]
-      });
-      
-      await callback(res);
-    } catch (e) {
-      setErrorMsg({
-        status: "error",
-        msg: "onUploadImg fail",
-      })
-    }
-  }, [uploadedList]);
   
   // TinyMCE용 이미지 업로더
   const handleImageUpload = useCallback((blobInfo: any, progress: (percent: number) => void) => {
@@ -49,7 +21,7 @@ export default function useCreateEditor(props : CreateDocumentProps) {
         const blob = blobInfo.blob();
         const fileName = uuid();
         const file = new File([blob], `${fileName}`, { type: blob.type });
-        const fileKey = `${props?.id || "new"}/${fileName}`;
+        const fileKey = `new/${fileName}`;
         
         // 진행률 업데이트 (TinyMCE에서 지원)
         progress(10);
@@ -84,28 +56,15 @@ export default function useCreateEditor(props : CreateDocumentProps) {
         reject(e);
       }
     });
-  }, [uploadedList, setUploadedList, setErrorMsg, props]);
+  }, [uploadedList, setUploadedList, setErrorMsg]);
   
   // TinyMCE 에디터 설정
   const getEditorConfig = useCallback(() => {
     return {
-      height: '100%',
-      menubar: true,
-      plugins: [
-        'advlist autolink lists link image charmap print preview anchor',
-        'searchreplace visualblocks code fullscreen',
-        'insertdatetime media table paste code help wordcount'
-      ],
-      toolbar: 'undo redo | formatselect | ' +
-        'bold italic backcolor | alignleft aligncenter ' +
-        'alignright alignjustify | bullist numlist outdent indent | ' +
-        'removeformat | link image | help',
-      content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
       // 이미지 업로드 설정
       automatic_uploads: true,
       images_upload_handler: handleImageUpload,
       file_picker_types: 'image',
-      file_browser_callback_types: "image",
       // 파일 선택 콜백 (선택적)
       file_picker_callback: function(callback: any, value: any, meta: any) {
         // 파일 선택기를 열기 위한 input 요소 생성
@@ -143,9 +102,9 @@ export default function useCreateEditor(props : CreateDocumentProps) {
   }, [handleImageUpload]);
   
   return {
-    onUploadImg,
     handleImageUpload,
     getEditorConfig
   }
-  
 }
+
+export default useSaveEditor;

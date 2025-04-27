@@ -11,7 +11,7 @@ import {uploadedInfo} from "../../../../stores/jotai/jotai";
 import {s3Utils} from "../../../../utils/awsS3Utils";
 import {cloneDeep} from "lodash";
 import {S3URLFindRegex} from "../../../../constants/RegexConstants";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {BLOG_SAVE_TYPE} from "../../../../constants/constants";
 
 function useCreateBlogPost(props : CreateBlogPostProps) {
@@ -21,6 +21,7 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
   const [document, setDocument] = useState<DocumentDTO>()
   const [uploadedList, setUploadedList] = useAtom<any[]>(uploadedInfo);
   const navigate = useNavigate();
+  const {id} = useParams();
   
   // 글 생성
   // const handleCreate = useCallback(async (saveOrDraft : string) => {

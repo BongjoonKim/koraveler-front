@@ -4,7 +4,7 @@ import {forwardRef} from "react";
 import useCreateEditor from "./useCreateEditor";
 import TinyEditor from "../../../../../elements/CusEditor/TinyEditor";
 
-export interface CreateDocumentProps {
+export interface CreateDocumentProps extends DocumentDTO{
 
 };
 

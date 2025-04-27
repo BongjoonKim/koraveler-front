@@ -45,6 +45,7 @@ export default function useUpdateEditor(props : UpdateEditorProps) {
   const handleImageUpload = useCallback((blobInfo: any, progress: (percent: number) => void) => {
     return new Promise<string>(async (resolve, reject) => {
       try {
+        console.log("여기도 안 오나")
         const blob = blobInfo.blob();
         const fileName = uuid();
         const file = new File([blob], `${fileName}`, { type: blob.type });
@@ -54,6 +55,7 @@ export default function useUpdateEditor(props : UpdateEditorProps) {
         progress(10);
         
         // S3에 파일 업로드
+        console.log("업로드 확인", fileKey)
         const res = await s3Utils.uploadFile({ fileKey, file });
         
         // 진행률 업데이트
@@ -83,7 +85,7 @@ export default function useUpdateEditor(props : UpdateEditorProps) {
         reject(e);
       }
     });
-  }, [uploadedList, setUploadedList, setErrorMsg]);
+  }, [uploadedList, setUploadedList, setErrorMsg, props]);
   
   // TinyMCE 에디터 설정
   const getEditorConfig = useCallback(() => {
@@ -104,13 +106,15 @@ export default function useUpdateEditor(props : UpdateEditorProps) {
       automatic_uploads: true,
       images_upload_handler: handleImageUpload,
       file_picker_types: 'image',
+      file_browser_callback_types: "image",
+      
       // 파일 선택 콜백 (선택적)
       file_picker_callback: function(callback: any, value: any, meta: any) {
         // 파일 선택기를 열기 위한 input 요소 생성
         const input = document.createElement('input');
         input.setAttribute('type', 'file');
         input.setAttribute('accept', 'image/*');
-        
+        console.log("수정 사항 확인")
         input.onchange = function() {
           if (input.files && input.files[0]) {
             const file = input.files[0];
@@ -123,7 +127,6 @@ export default function useUpdateEditor(props : UpdateEditorProps) {
               const blobCache = (window as any).tinymce.activeEditor.editorUpload.blobCache;
               const base64 = (reader.result as string).split(',')[1];
               const blobInfo = blobCache.create(id, file, base64);
-              
               // 업로드 처리
               handleImageUpload(blobInfo, (progress) => {
                 console.log(`Upload progress: ${progress}%`);

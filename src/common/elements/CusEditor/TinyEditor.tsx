@@ -9,7 +9,7 @@ function TinyEditor(props : CusEditorProps, ref : any) {
   const [content, setContent] = useState<string | undefined>(props.initialValue);
   const editorConfig = {
     height: "100%",
-    menubar: false,
+    menubar: true,
     plugins: [
       'lists',
       'link',
@@ -25,6 +25,9 @@ function TinyEditor(props : CusEditorProps, ref : any) {
       'emoticons',
       'codesample',
       'quickbars',
+      'advlist autolink lists link image charmap print preview anchor',
+      'searchreplace visualblocks code fullscreen',
+      'insertdatetime media table paste code help wordcount'
     ],
     toolbar:
       'undo redo | blocks | ' +
@@ -33,6 +36,8 @@ function TinyEditor(props : CusEditorProps, ref : any) {
       'lists table link charmap searchreplace | ' +
       'image media codesample emoticons fullscreen preview | ' +
       'removeformat | help ',
+    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+    ...props.getEditorConfig
   }
   
   console.log("tinyAlert", process.env["REACT_APP_TINY_API_KEY"])
@@ -41,8 +46,9 @@ function TinyEditor(props : CusEditorProps, ref : any) {
       <Editor
         onInit={(evt, editor) => ref.current = editor}
         apiKey={process.env["REACT_APP_TINY_API_KEY"]}
-        value={content}
-        init={editorConfig}
+        // value={content}
+        initialValue={content}
+        init={props.getEditorConfig()}
       />
     </StyledTinyEditor>
   )
