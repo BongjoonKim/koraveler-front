@@ -14,6 +14,7 @@ function CreateEditor(props: CreateDocumentProps, ref : any) {
     handleImageUpload,
     getEditorConfig,
   } = useCreateEditor(props);
+  console.log("파일 전체 확인", props)
   return (
     <StyledCreateDocument>
       {/*<CusEditor*/}
@@ -22,11 +23,13 @@ function CreateEditor(props: CreateDocumentProps, ref : any) {
       {/*    addImageBlobHook: onUploadImg*/}
       {/*  }}*/}
       {/*/>*/}
-      <TinyEditor
-        ref={ref}
-        handleImageUpload={handleImageUpload}
-        getEditorConfig={getEditorConfig}
-      />
+      {props?.id && (
+        <TinyEditor
+          ref={ref}
+          handleImageUpload={handleImageUpload}
+          getEditorConfig={getEditorConfig}
+        />
+      )}
     </StyledCreateDocument>
   )
 };

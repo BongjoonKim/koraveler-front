@@ -9,6 +9,14 @@ export const s3Utils = {
     })
   },
   
+  async getThumbnailFile(props : any) {
+    const S3 = awsS3Config();
+    S3.getObject({
+      Bucket : "haries-thumbnail",
+      Key : props.fileKey
+    })
+  },
+  
   async getFiles(props : any) {
     const S3 = awsS3Config();
     const response = await S3.listObjectsV2({

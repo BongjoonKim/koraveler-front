@@ -46,6 +46,7 @@ export default function useCreateEditor(props : CreateDocumentProps) {
   const handleImageUpload = useCallback((blobInfo: any, progress: (percent: number) => void) => {
     return new Promise<string>(async (resolve, reject) => {
       try {
+        console.log("이미지 파일 보기", props)
         const blob = blobInfo.blob();
         const fileName = uuid();
         const file = new File([blob], `${fileName}`, { type: blob.type });

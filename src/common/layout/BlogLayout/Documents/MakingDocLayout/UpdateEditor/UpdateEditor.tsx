@@ -32,7 +32,7 @@ function UpdateEditor(props: UpdateEditorProps, ref : any) {
         {/*  />*/}
         {/*)}*/}
         
-        {(props.contents !== undefined || props.contents !== "") && (
+        {(props.contents !== undefined) && (
           <TinyEditor
             ref={ref}
             handleImageUpload={handleImageUpload}

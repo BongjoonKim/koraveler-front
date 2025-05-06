@@ -45,7 +45,7 @@ export default function useUpdateEditor(props : UpdateEditorProps) {
   const handleImageUpload = useCallback((blobInfo: any, progress: (percent: number) => void) => {
     return new Promise<string>(async (resolve, reject) => {
       try {
-        console.log("여기도 안 오나")
+        console.log("여기도 안 오나", blobInfo)
         const blob = blobInfo.blob();
         const fileName = uuid();
         const file = new File([blob], `${fileName}`, { type: blob.type });

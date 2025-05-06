@@ -5,6 +5,7 @@
   "dependencies": {
     "@ag-grid-community/core": "^31.3.1",
     "@ag-grid-community/react": "^31.3.1",
+    "@anthropic-ai/claude-code": "^0.2.64",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@chakra-ui/core": "^0.8.0",
     "@chakra-ui/icons": "^2.2.4",

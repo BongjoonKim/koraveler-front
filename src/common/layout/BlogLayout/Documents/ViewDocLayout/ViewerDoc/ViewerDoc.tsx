@@ -6,7 +6,6 @@ export interface ViewerDocProps {
 };
 
 function ViewerDoc(props: ViewerDocProps) {
-  
   return (
     <StyledViewerDoc>
         {props.contents

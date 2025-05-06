@@ -34,11 +34,20 @@ function useSaveBlogPost(props : useSaveBlogPostProps) {
       
       // 정규 표현식을 사용하여 이미지 URL 패턴 찾기
       const regex = S3URLFindRegex;
-      let matches;
-      const values = [];
+      let settingThumbnailUrl : string = "";
       
-      while ((matches = regex!.exec(contents)) !== null) {
-        values.push(matches[1]);
+      const match = contents.match(regex);
+      
+      if (match && match[0]) {
+        // 찾은 URL
+        const originalUrl = match[0];
+        console.log("원본 URL:", originalUrl);
+        
+        // haries-img를 haries-thumbnail로 변경
+        settingThumbnailUrl = originalUrl.replace('haries-img', 'haries-thumbnail');
+        console.log("변경된 URL:", settingThumbnailUrl);
+        
+        // 첫 번째 URL만 변경하여 반환
       }
       
       let isDraft: boolean = false;
@@ -51,7 +60,7 @@ function useSaveBlogPost(props : useSaveBlogPostProps) {
       const request: DocumentDTO = {
         ...document,
         contents: contents,
-        thumbnailImgUrl: values[0] || "", // 썸네일 URL이 없는 경우를 대비한 기본값 추가
+        thumbnailImgUrl: settingThumbnailUrl, // 썸네일 URL이 없는 경우를 대비한 기본값 추가
         draft: isDraft,
       }
       
