@@ -16,6 +16,8 @@ function useTabLayout(props : MenuTabProps) {
       label : "menu-list"
     }, {
       label : "user-list"
+    }, {
+      label : "folder"
     }
   ]);
   
@@ -28,6 +30,9 @@ function useTabLayout(props : MenuTabProps) {
         break;
       case 1:
         navigate("/admin/users");
+        break;
+      case 2:
+        navigate("/admin/folder");
         break;
       default:
         break;

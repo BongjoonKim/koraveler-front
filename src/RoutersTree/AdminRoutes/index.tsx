@@ -5,6 +5,7 @@ import MenuTab from "../../common/layout/TabLayout";
 import MenuHeader from "../../common/layout/MenuHeader";
 import AdminLayout from "../../common/layout/AdminLayout/AdminLayout";
 import MenuAdmin from "../../component/page/menu/admin/MenuAdmin";
+import FolderManagement from "../../component/page/menu/admin/FolderAdmin/FolderManagement";
 
 export default function AdminRoutes() {
   return (
@@ -12,7 +13,7 @@ export default function AdminRoutes() {
       <AdminLayout>
         <Routes>
           <Route path="/menu" element={<MenuAdmin />} />
-          
+          <Route path="/folder" element={<FolderManagement />} />
         </Routes>
       </AdminLayout>
     </StyledAdminRoutes>

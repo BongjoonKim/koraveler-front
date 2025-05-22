@@ -6,6 +6,7 @@ import BlogRoutes from "./BlogRoutes";
 import SettingRoutes from "./SettingRoutes";
 import TravelRoutes from "./TravelRoutes";
 import {Alert, AlertIcon, AlertTitle} from "@chakra-ui/react";
+import TechRoutes from "./TechRoutes";
 
 interface RoutersTreeProps {
 
@@ -21,6 +22,7 @@ function RoutersTree(props : RoutersTreeProps) {
       <Route path="/login/*" element={<LoginRoutes />} />
       <Route path="/blog/*" element={<BlogRoutes />} />
       <Route path="/travel/*" element={< TravelRoutes />} />
+      <Route path="/tech/*" element={< TechRoutes />} />
     </Routes>
   )
 }
