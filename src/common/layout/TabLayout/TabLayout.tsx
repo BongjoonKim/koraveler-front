@@ -10,12 +10,14 @@ function TabLayout(props : MenuTabProps) {
   const {
     tabList,
     handleChangeTab,
+    currentPath,
   } = useTabLayout(props);
   return (
     <StyledMenuTab>
       <CusTab
         onChange={handleChangeTab}
         tabs={tabList}
+        defaultIndex={tabList.find(tab => tab.value === currentPath)?.index || 0}
       />
       {props.children}
     </StyledMenuTab>

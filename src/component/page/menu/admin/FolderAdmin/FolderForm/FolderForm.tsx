@@ -23,7 +23,6 @@ export default function FolderForm( {
   
   // 폼 상태 관리
   const [formData, setFormData] = useState<FoldersDTO>({
-    id : "",
     name: '',
     path: '',
     parentId: null,
@@ -86,6 +85,7 @@ export default function FolderForm( {
     setError(null);
     
     try {
+      console.log("폴더 수정 or 삭제", isEditMode)
       if (isEditMode) {
         // 폴더 업데이트
         // await updateFolder(formData)

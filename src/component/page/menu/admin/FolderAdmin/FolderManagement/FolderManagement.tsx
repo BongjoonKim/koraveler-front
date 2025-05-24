@@ -59,7 +59,6 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
           <h2>폴더 구조</h2>
           <FolderTreeView
             key={refreshKey}
-            userId={userId}
             onFolderSelect={handleFolderSelect}
           />
         </div>

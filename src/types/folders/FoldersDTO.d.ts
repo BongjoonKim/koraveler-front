@@ -1,5 +1,5 @@
 declare interface FoldersDTO extends CommonDTO {
-  id: string;
+  id?: string;
   name: string;
   path: string;
   parentId: string | null;

@@ -3,7 +3,7 @@ import {AxiosResponse} from "axios";
 import {useAuth} from "../appConfig/AuthContext";
 import {FuncProps} from "../utils/endpointUtils";
 
-export async function getAllFolders(props : FuncProps) {
+export async function getAllLoginUserFolders(props : FuncProps) {
   return (await request.get(`/ps/folders/all`, {
     headers: {
       Authorization : `Bearer ${props.accessToken}`

@@ -5,19 +5,33 @@ import recoil from "../../../stores/recoil";
 import {MenuTabProps} from "./TabLayout";
 import {useAuth} from "../../../appConfig/AuthContext";
 import {endpointUtils} from "../../../utils/endpointUtils";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 
 function useTabLayout(props : MenuTabProps) {
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   const {accessToken, setAccessToken} = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // 전체 경로에서 마지막 부분만 추출
+  const currentPath = location.pathname.split('/').pop();
+  console.log("currentPath", currentPath)
+  
+  
+  
   const [tabList, setTabList] = useState<any[]>([
     {
-      label : "menu-list"
+      label : "menu-list",
+      value : "menus",
+      index : 0,
     }, {
-      label : "user-list"
+      label : "user-list",
+      value : "users",
+      index : 1,
     }, {
-      label : "folder"
+      label : "folder",
+      value : "folder",
+      index : 2,
     }
   ]);
   
@@ -42,7 +56,8 @@ function useTabLayout(props : MenuTabProps) {
   
   return {
     tabList,
-    handleChangeTab
+    handleChangeTab,
+    currentPath,
   }
 }
 
