@@ -10,6 +10,9 @@ import UniversalLayout from "./common/layout/UniversalLayout";
 import { extendTheme } from "@chakra-ui/react"
 import {useRecoilValue} from "recoil";
 import recoil from "./stores/recoil";
+import posthog from 'posthog-js'
+import {PostHogProvider} from "posthog-js/react";
+
 
 // 2. Call `extendTheme` and pass your custom values
 const theme = extendTheme({
@@ -21,8 +24,14 @@ const theme = extendTheme({
   },
 })
 
+// PostHog 초기화
+posthog.init(process.env.REACT_APP_PUBLIC_POSTHOG_KEY!, {
+  api_host: process.env.REACT_APP_PUBLIC_POSTHOG_HOST
+})
+
 function App() {
   return (
+    <PostHogProvider client={posthog}>
     <AuthProvider>
       <ChakraProvider theme={theme}>
         <StyledApp className={"app"}>
@@ -32,6 +41,7 @@ function App() {
         </StyledApp>
       </ChakraProvider>
     </AuthProvider>
+    </PostHogProvider>
   );
 }
 

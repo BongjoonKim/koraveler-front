@@ -11,8 +11,6 @@ import {Provider as JotaiProvider} from "jotai";
 import {CookiesProvider} from "react-cookie";
 import { ColorModeScript } from '@chakra-ui/react';
 
-
-
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
