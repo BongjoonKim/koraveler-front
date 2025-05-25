@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Box,
   Flex,
@@ -16,7 +16,7 @@ import { ChevronRightIcon } from '@chakra-ui/icons';
 import {
   StaticTreeDataProvider,
   Tree,
-  UncontrolledTreeEnvironment,
+  ControlledTreeEnvironment,
   TreeItem,
   TreeItemIndex,
 } from 'react-complex-tree';
@@ -29,8 +29,6 @@ export interface TreeItemData extends TreeItem {
   isFolder?: boolean;
   children?: TreeItemIndex[];
 }
-
-
 
 // 아이콘 컴포넌트 타입 정의
 interface CustomIconProps extends IconProps {
@@ -78,13 +76,18 @@ const GlobeIcon: React.FC<IconProps> = (props) => (
 
 // 컴포넌트 Props 타입
 export interface FolderTreeProps {
-  treeFolders ?: any;
-  handleFolderSelect?: (items: TreeItemIndex[]) => void;  // 폴더 선택
-  folders ?: any;
+  treeFolders?: any;
+  handleFolderSelect?: (items: TreeItemIndex[]) => void;
+  folders?: any;
+  selectedFolderId?: string | null;
 }
 
-function FolderTree(props : FolderTreeProps) {
-  const { folders,  handleFolderSelect } = props;
+export default function FolderTree(props: FolderTreeProps) {
+  const { folders, handleFolderSelect, selectedFolderId } = props;
+  
+  // 트리 상태 관리
+  const [expandedItems, setExpandedItems] = useState<TreeItemIndex[]>(['root']);
+  const [selectedItems, setSelectedItems] = useState<TreeItemIndex[]>([]);
   
   // Chakra UI 색상 모드 대응
   const bg = useColorModeValue('white', 'gray.800');
@@ -99,7 +102,38 @@ function FolderTree(props : FolderTreeProps) {
   const scrollTrackBg = useColorModeValue('#f7fafc', '#2d3748');
   const scrollThumbBg = useColorModeValue('#cbd5e0', '#4a5568');
   const scrollThumbHoverBg = useColorModeValue('#a0aec0', '#718096');
-
+  
+  // selectedFolderId가 변경될 때 selectedItems 업데이트
+  React.useEffect(() => {
+    if (selectedFolderId) {
+      const foundKey = Object.keys(folders || {}).find(key =>
+        folders[key].data?.id === selectedFolderId
+      );
+      setSelectedItems(foundKey ? [foundKey] : []);
+    } else {
+      setSelectedItems([]);
+    }
+  }, [selectedFolderId, folders]);
+  
+  // 선택 토글 핸들러
+  const handleSelectionChange = useCallback((newSelectedItems: TreeItemIndex[]) => {
+    // 새로 선택된 아이템이 있고, 현재 선택된 아이템과 같다면 선택 해제
+    if (newSelectedItems.length > 0 && selectedItems.length > 0) {
+      const newItem = newSelectedItems[0];
+      const currentItem = selectedItems[0];
+      
+      if (newItem === currentItem) {
+        // 같은 아이템을 다시 클릭한 경우 선택 해제
+        setSelectedItems([]);
+        handleFolderSelect?.([]);
+        return;
+      }
+    }
+    
+    // 일반적인 선택 처리
+    setSelectedItems(newSelectedItems);
+    handleFolderSelect?.(newSelectedItems);
+  }, [selectedItems, handleFolderSelect]);
   
   const renderItemArrow = React.useCallback(({ item, context }: any) => (
     <Flex align="center" justify="center" w={5} h={5} mr={1}>
@@ -118,19 +152,18 @@ function FolderTree(props : FolderTreeProps) {
   const renderItemTitle = React.useCallback(({ item, context }: any) => (
     <Flex
       align="center"
-      py={2}
-      px={3}
+      py={1}
+      px={2}
       mx={2}
       borderRadius="md"
       cursor="pointer"
       transition="all 0.2s"
-      bg={context.isSelected ? selectedBg : 'transparent'}
+      // bg={context.isSelected ? selectedBg : 'transparent'}
       _hover={{
-        bg: context.isSelected ? selectedBg : hoverBg,
+        // bg: context.isSelected ? selectedBg : hoverBg,
         transform: 'translateX(2px)',
       }}
-      border="1px solid"
-      borderColor={context.isSelected ? selectedBorderColor : 'transparent'}
+      // borderColor={context.isSelected ? selectedBorderColor : 'transparent'}
     >
       {/* 아이콘 */}
       <Box mr={3}>
@@ -138,20 +171,20 @@ function FolderTree(props : FolderTreeProps) {
           <FolderIcon
             boxSize={4}
             color={folderColor}
-            filter="drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1))"
+            filter="drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1))"
             isOpen={context.isExpanded}
           />
         ) : (
           <FileIcon
             boxSize={4}
             color={iconColor}
-            filter="drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1))"
+            filter="drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1))"
           />
         )}
       </Box>
       
       {/* 콘텐츠 */}
-      <Flex align="center" justify="space-between" flex={1} gap={2}>
+      <Flex align="center" justify="space-between" flex={1} gap={3}>
         <Text
           fontSize="sm"
           fontWeight="medium"
@@ -206,46 +239,52 @@ function FolderTree(props : FolderTreeProps) {
   }
   
   return (
-      <Box
-        py={3}
-        maxH="400px"
-        overflowY="auto"
-        css={{
-          '&::-webkit-scrollbar': {
-            width: '6px',
+    <Box
+      py={3}
+      maxH="400px"
+      overflowY="auto"
+      css={{
+        '&::-webkit-scrollbar': {
+          width: '6px',
+        },
+        '&::-webkit-scrollbar-track': {
+          background: scrollTrackBg,
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: scrollThumbBg,
+          borderRadius: '3px',
+          '&:hover': {
+            background: scrollThumbHoverBg,
           },
-          '&::-webkit-scrollbar-track': {
-            background: scrollTrackBg,
-          },
-          '&::-webkit-scrollbar-thumb': {
-            background: scrollThumbBg,
-            borderRadius: '3px',
-            '&:hover': {
-              background: scrollThumbHoverBg,
-            },
+        },
+      }}
+    >
+      <ControlledTreeEnvironment
+        items={folders}
+        getItemTitle={(item: TreeItemData) => item.data?.name || 'Untitled'}
+        viewState={{
+          ['tree-1']: {
+            expandedItems,
+            selectedItems,
           },
         }}
+        onExpandItem={(item) => setExpandedItems([...expandedItems, item.index])}
+        onCollapseItem={(item) =>
+          setExpandedItems(expandedItems.filter(expandedItemIndex => expandedItemIndex !== item.index))
+        }
+        onSelectItems={handleSelectionChange}
+        canDragAndDrop={false}
+        canDropOnFolder={false}
+        canReorderItems={false}
+        renderItemArrow={renderItemArrow}
+        renderItemTitle={renderItemTitle}
       >
-        <UncontrolledTreeEnvironment
-          dataProvider={new StaticTreeDataProvider(folders, (item, path) => ({ ...item, path }))}
-          getItemTitle={(item: TreeItemData) => item.data?.name || 'Untitled'}
-          viewState={{
-            ['tree-1']: {
-              expandedItems: ['root'],
-              selectedItems: [],
-            },
-          }}
-          canDragAndDrop={false}
-          canDropOnFolder={false}
-          canReorderItems={false}
-          onSelectItems={handleFolderSelect}
-          renderItemArrow={renderItemArrow}
-          // renderItemTitle={renderItemTitle}
-        >
-          <Tree treeId="tree-1" rootItem="root" treeLabel="폴더 구조" />
-        </UncontrolledTreeEnvironment>
-      </Box>
+        <Tree
+          treeId="tree-1"
+          rootItem="root"
+          treeLabel="폴더 구조"
+        />
+      </ControlledTreeEnvironment>
+    </Box>
   );
-};
-
-export default FolderTree;
+}

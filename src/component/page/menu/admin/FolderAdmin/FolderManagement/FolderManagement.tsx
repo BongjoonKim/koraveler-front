@@ -7,13 +7,14 @@ import {getAllLoginUserFolders} from "../../../../../../endpoints/folders-endpoi
 import {useRecoilState} from "recoil";
 import recoil from "../../../../../../stores/recoil";
 import {useAuth} from "../../../../../../appConfig/AuthContext";
+import moment from "moment";
 
 interface FolderManagementProps {
   userId?: string;
 }
 
 const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
-  const [selectedFolder, setSelectedFolder] = useState<FoldersDTO | null>(null);
+  const [selectedFolder, setSelectedFolder] = useState<FoldersDTO | undefined | null>(null);
   const [showForm, setShowForm] = useState<boolean>(false);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [refreshKey, setRefreshKey] = useState<number>(0);
@@ -21,10 +22,25 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
   const {accessToken, setAccessToken} = useAuth();
   const [folders, setFolders] = useState<any>({});
   
-  
-  // 폴더 선택 핸들러
+  // 폴더 선택 핸들러 - 토글 기능 추가
   const handleFolderSelect = (items: TreeItemIndex[]) => {
-    setSelectedFolder(folders.find((folder : FoldersDTO) => folder.id === items[0]));
+    console.log("folders", folders);
+    
+    // 선택된 항목이 없으면 선택 해제
+    if (!items || items.length === 0) {
+      setSelectedFolder(null);
+      return;
+    }
+    
+    const newSelectedFolder = folders[items[0]].data;
+    
+    // 현재 선택된 폴더와 새로 선택한 폴더가 같으면 선택 해제
+    if (selectedFolder && selectedFolder.id === newSelectedFolder.id) {
+      setSelectedFolder(null);
+    } else {
+      // 다른 폴더이거나 처음 선택하는 경우
+      setSelectedFolder(newSelectedFolder);
+    }
   };
   
   const getAllFolders = useCallback(async () => {
@@ -97,6 +113,7 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
             key={refreshKey}
             handleFolderSelect={handleFolderSelect}
             folders={folders}
+            selectedFolderId={selectedFolder?.id} // 선택된 폴더 ID 전달
           />
         </div>
         
@@ -113,13 +130,13 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
             <div className="folder-details">
               <h2>{selectedFolder.name}</h2>
               <div className="folder-info">
-                <p><strong>경로:</strong> {selectedFolder.path}</p>
+                <p><strong>경로:</strong> {selectedFolder?.path}</p>
                 <p><strong>공개:</strong> {selectedFolder.isPublic ? '예' : '아니오'}</p>
                 {selectedFolder.description && (
                   <p><strong>설명:</strong> {selectedFolder.description}</p>
                 )}
-                <p>{selectedFolder.created?.toDateString()}</p>
-                <p>{selectedFolder.updated?.toDateString()}</p>
+                <p>{moment(selectedFolder?.created).toISOString()}</p>
+                <p>{moment(selectedFolder?.updated).toISOString()}</p>
               </div>
             </div>
           ) : (

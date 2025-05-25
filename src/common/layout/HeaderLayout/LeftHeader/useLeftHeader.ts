@@ -39,7 +39,7 @@ export default function useLeftHeader() {
     });
   }, [location.pathname]);
   
-  // 메뉴 호버 추적 (선택사항)
+  // 메뉴 호버 추적
   const handleMenuHover = (menuLabel: string) => {
     posthog.capture('menu_hovered', {
       menu_label: menuLabel,
