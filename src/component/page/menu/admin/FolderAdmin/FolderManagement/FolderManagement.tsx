@@ -1,6 +1,12 @@
-import FolderTreeView from "../../../../../../common/widget/FolderTree";
-import {useState} from "react";
+import FolderTree from "../../../../../../common/widget/FolderTree";
+import {useCallback, useEffect, useState} from "react";
 import FolderForm from "../FolderForm/FolderForm";
+import {TreeItemIndex} from "react-complex-tree";
+import {endpointUtils} from "../../../../../../utils/endpointUtils";
+import {getAllLoginUserFolders} from "../../../../../../endpoints/folders-endpoints";
+import {useRecoilState} from "recoil";
+import recoil from "../../../../../../stores/recoil";
+import {useAuth} from "../../../../../../appConfig/AuthContext";
 
 interface FolderManagementProps {
   userId?: string;
@@ -11,11 +17,37 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
   const [showForm, setShowForm] = useState<boolean>(false);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [refreshKey, setRefreshKey] = useState<number>(0);
+  const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
+  const {accessToken, setAccessToken} = useAuth();
+  const [folders, setFolders] = useState<any>({});
+  
   
   // 폴더 선택 핸들러
-  const handleFolderSelect = (folder: FoldersDTO) => {
-    setSelectedFolder(folder);
+  const handleFolderSelect = (items: TreeItemIndex[]) => {
+    setSelectedFolder(folders.find((folder : FoldersDTO) => folder.id === items[0]));
   };
+  
+  const getAllFolders = useCallback(async () => {
+    try {
+      const res = await endpointUtils.authAxios({
+        func: getAllLoginUserFolders,
+        accessToken: accessToken,
+        setAccessToken: setAccessToken
+      });
+      
+      console.log("Folder response", res.data);
+      console.log("Folder response type:", typeof res.data);
+      console.log("Folder response length:", res.data?.length);
+      
+      setFolders(res.data || []);
+    } catch (e) {
+      console.error("Error fetching folders:", e);
+      setErrorMsg({
+        status: "error",
+        msg: "retrieve failed",
+      });
+    }
+  }, [accessToken, setAccessToken, setErrorMsg]);
   
   // 새 폴더 생성 버튼 핸들러
   const handleCreateFolder = () => {
@@ -42,6 +74,10 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
     setShowForm(false);
   };
   
+  useEffect(() => {
+    getAllFolders();
+  }, []);
+  
   return (
     <div className="folder-management">
       <div className="folder-management-header">
@@ -57,9 +93,10 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
       <div className="folder-management-content">
         <div className="folder-tree-section">
           <h2>폴더 구조</h2>
-          <FolderTreeView
+          <FolderTree
             key={refreshKey}
-            onFolderSelect={handleFolderSelect}
+            handleFolderSelect={handleFolderSelect}
+            folders={folders}
           />
         </div>
         
