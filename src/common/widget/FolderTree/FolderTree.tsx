@@ -135,26 +135,47 @@ export default function FolderTree(props: FolderTreeProps) {
     handleFolderSelect?.(newSelectedItems);
   }, [selectedItems, handleFolderSelect]);
   
+  // 화살표 클릭 핸들러 - 폴더 토글 전용
+  const handleArrowClick = useCallback((itemIndex: TreeItemIndex, isExpanded: boolean, e: React.MouseEvent) => {
+    e.stopPropagation(); // 부모 클릭 이벤트 방지
+    
+    if (isExpanded) {
+      setExpandedItems(expandedItems.filter(index => index !== itemIndex));
+    } else {
+      setExpandedItems([...expandedItems, itemIndex]);
+    }
+  }, [expandedItems]);
+  
   const renderItemArrow = React.useCallback(({ item, context }: any) => (
-    <Flex align="center" justify="center" w={5} h={5} mr={1}>
+    <Flex align="center" justify="center" w={4} h={4} mr={0}>
       {item.isFolder && item.children && item.children.length > 0 && (
-        <ChevronRightIcon
-          boxSize={3}
-          color={iconColor}
-          transform={context.isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'}
-          transition="transform 0.2s"
-          _hover={{ color: textColor }}
-        />
+        <Box
+          onClick={(e) => handleArrowClick(item.index, context.isExpanded, e)}
+          cursor="pointer"
+          p={0}
+          borderRadius="sm"
+          _hover={{ bg: hoverBg }}
+          transition="all 0.2s"
+          ml="3rem"
+        >
+          <ChevronRightIcon
+            boxSize={4}
+            color={iconColor}
+            transform={context.isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'}
+            transition="transform 0.2s"
+            _hover={{ color: textColor }}
+          />
+        </Box>
       )}
     </Flex>
-  ), [iconColor, textColor]);
+  ), [iconColor, textColor, hoverBg, handleArrowClick]);
   
   const renderItemTitle = React.useCallback(({ item, context }: any) => (
     <Flex
       align="center"
-      py={1}
-      px={2}
-      mx={2}
+      py={0}
+      px={0}
+      mx={0}
       borderRadius="md"
       cursor="pointer"
       transition="all 0.2s"
@@ -166,7 +187,7 @@ export default function FolderTree(props: FolderTreeProps) {
       // borderColor={context.isSelected ? selectedBorderColor : 'transparent'}
     >
       {/* 아이콘 */}
-      <Box mr={3}>
+      <Box mr={2}>
         {item.isFolder ? (
           <FolderIcon
             boxSize={4}
@@ -257,6 +278,47 @@ export default function FolderTree(props: FolderTreeProps) {
             background: scrollThumbHoverBg,
           },
         },
+        // react-complex-tree 기본 들여쓰기 패딩 조정
+        '.rct-tree-item-li': {
+          paddingLeft: '10px !important', // 기본값보다 줄임
+          position: 'relative',
+        },
+        '.rct-tree-item-title-container': {
+          paddingLeft: '0px !important',
+          gap: '0px !important', // flexbox 간격 제거
+        },
+        // 여닫이 아이콘과 폴더 버튼이 겹치지 않도록 조정
+        '.rct-tree-item-title-container > div:first-child': {
+          position: 'relative',
+          zIndex: '10 !important',
+          marginRight: '0px !important', // 간격 제거
+        },
+        '.rct-tree-item-button': {
+          marginLeft: '0px !important',
+          position: 'relative',
+          zIndex: '5 !important',
+        },
+        // 선택된 아이템의 왼쪽 표시를 숨기고 오른쪽에 표시
+        '.rct-tree-item-li[data-rct-item-selected="true"]::before': {
+          display: 'none !important', // 기본 왼쪽 표시 숨김
+        },
+        '.rct-tree-item-li[data-rct-item-selected="true"] .rct-tree-item-title-container': {
+          backgroundColor: `${selectedBg} !important`,
+          borderRadius: '6px !important',
+          marginLeft: '0px !important',
+        },
+        '.rct-tree-item-li[data-rct-item-selected="true"]::after': {
+          content: '""',
+          position: 'absolute',
+          right: '8px',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          width: '3px',
+          height: '20px',
+          backgroundColor: '#3182ce', // 파란색
+          borderRadius: '2px',
+          
+        },
       }}
     >
       <ControlledTreeEnvironment
@@ -268,14 +330,17 @@ export default function FolderTree(props: FolderTreeProps) {
             selectedItems,
           },
         }}
-        onExpandItem={(item) => setExpandedItems([...expandedItems, item.index])}
-        onCollapseItem={(item) =>
-          setExpandedItems(expandedItems.filter(expandedItemIndex => expandedItemIndex !== item.index))
-        }
+        // 폴더 클릭 시 확장/축소를 비활성화
+        onExpandItem={() => {}} // 빈 함수로 비활성화
+        onCollapseItem={() => {}} // 빈 함수로 비활성화
+        // onExpandItem={(item) => setExpandedItems([...expandedItems, item.index])}
+        // onCollapseItem={(item) =>
+        //   setExpandedItems(expandedItems.filter(expandedItemIndex => expandedItemIndex !== item.index))
+        // }
         onSelectItems={handleSelectionChange}
         canDragAndDrop={false}
-        canDropOnFolder={false}
-        canReorderItems={false}
+        canDropOnFolder={true}
+        canReorderItems={true}
         renderItemArrow={renderItemArrow}
         renderItemTitle={renderItemTitle}
       >

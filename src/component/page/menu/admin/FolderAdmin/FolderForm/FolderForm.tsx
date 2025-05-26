@@ -22,10 +22,11 @@ export default function FolderForm( {
   const isEditMode = !!folder?.id;
   
   // 폼 상태 관리
-  const [formData, setFormData] = useState<FoldersDTO>({
+  const [formData, setFormData] = useState<FoldersDTO & { parentName?: string }>({
     name: '',
     path: '',
     parentId: null,
+    parentName : "",
     userId: userId || "",
     isPublic: false,
     description: ''
@@ -43,7 +44,8 @@ export default function FolderForm( {
         id: folder.id,
         name: folder.name,
         path: folder.path,
-        parentId: folder.parentId,
+        parentId: parentFolder?.id ? parentFolder?.id :folder.parentId,
+        parentName : parentFolder?.name,
         userId: folder.userId,
         isPublic: folder.isPublic,
         description: folder.description || ''
@@ -52,8 +54,7 @@ export default function FolderForm( {
       // 새 폴더 생성 시 부모 폴더 정보를 기반으로 path 설정
       setFormData(prev => ({
         ...prev,
-        parent_id: parentFolder.id || null,
-        path: parentFolder.path + '/' + prev.name
+        parentId: parentFolder.id || null,
       }));
     }
   }, [folder, parentFolder]);
@@ -86,6 +87,7 @@ export default function FolderForm( {
     
     try {
       console.log("폴더 수정 or 삭제", isEditMode)
+      console.log("form정보 보기", formData)
       if (isEditMode) {
         // 폴더 업데이트
         // await updateFolder(formData)
@@ -137,12 +139,12 @@ export default function FolderForm( {
       </div>
       
       <div className="form-group">
-        <label htmlFor="path">경로 *</label>
+        <label htmlFor="path">상위 폴더 *</label>
         <input
           type="text"
-          id="path"
-          name="path"
-          value={formData.path}
+          id="parentName"
+          name="parentName"
+          value={parentFolder?.name}
           onChange={handleChange}
           required
           disabled={!!parentFolder}
