@@ -11,6 +11,14 @@ export async function getAllLoginUserFolders(props : FuncProps) {
   })) as AxiosResponse<any>;
 }
 
+export async function getParentFolder(props : FuncProps) {
+  return (await request.get(`/ps/folders?child-id=${props.params.childId}`, {
+    headers: {
+      Authorization : `Bearer ${props.accessToken}`
+    }
+  })) as AxiosResponse<any>;
+}
+
 export async function createFolder(props : FuncProps) {
   return (await request.post(`/ps/folders`, props.params, {
     headers: {

@@ -36,6 +36,7 @@ export default function FolderForm( {
   const [error, setError] = useState<string | null>(null);
   const {accessToken, setAccessToken} = useAuth();
   
+  console.log('부모 폴더 정보', parentFolder)
   
   // 초기 데이터 설정
   useEffect(() => {
