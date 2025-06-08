@@ -2,11 +2,9 @@ import FolderTree from "../../../../../../common/widget/FolderTree";
 import {useCallback, useEffect, useState} from "react";
 import FolderForm from "../FolderForm/FolderForm";
 import {TreeItemIndex} from "react-complex-tree";
-import {endpointUtils} from "../../../../../../utils/endpointUtils";
 import {getAllLoginUserFolders, getParentFolder} from "../../../../../../endpoints/folders-endpoints";
 import {useRecoilState} from "recoil";
 import recoil from "../../../../../../stores/recoil";
-import {useAuth} from "../../../../../../appConfig/AuthContext";
 import moment from "moment";
 import styled from "styled-components";
 import CusModal from "../../../../../../common/elements/CusModal";
@@ -23,7 +21,6 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
-  const {accessToken, setAccessToken} = useAuth();
   const [folders, setFolders] = useState<any>({});
   const [folderModal, setFolderModal] = useState<boolean>(false);
   const authEP = useAuthEP();
@@ -68,7 +65,7 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
         msg: "retrieve failed",
       });
     }
-  }, [accessToken, setAccessToken, setErrorMsg]);
+  }, [setErrorMsg]);
   
   const getParentFolderData = useCallback(async() => {
     try {

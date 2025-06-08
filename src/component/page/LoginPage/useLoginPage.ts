@@ -4,9 +4,9 @@ import {useNavigate} from "react-router-dom";
 import {login} from "../../../endpoints/login-endpoints";
 import {useAtom} from "jotai";
 import {setCookie} from "../../../utils/cookieUtils";
-import {useAuth} from "../../../appConfig/AuthContext";
 import {useRecoilState} from "recoil";
 import recoil from "../../../stores/recoil";
+import {useAuth} from "../../../appConfig/AuthProvider";
 
 export default function useLoginPage() {
   const [userInfo, setUserInfo] = useState<UsersDTO>(InitUsersDTO);

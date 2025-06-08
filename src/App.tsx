@@ -4,7 +4,6 @@ import './App.css';
 import styled from "styled-components";
 import RoutersTree from "./RoutersTree";
 import {Alert, ChakraProvider} from "@chakra-ui/react";
-import {AuthContextProvider} from "./appConfig/AuthContext";
 import UniversalLayout from "./common/layout/UniversalLayout";
 // 1. Import `extendTheme`
 import { extendTheme } from "@chakra-ui/react"
@@ -34,7 +33,6 @@ function App() {
   return (
     <PostHogProvider client={posthog}>
       <AuthProvider>
-        <AuthContextProvider>
           <ChakraProvider theme={theme}>
             <StyledApp className={"app"}>
               {/*<UniversalLayout>*/}
@@ -42,7 +40,6 @@ function App() {
               {/*</UniversalLayout>*/}
             </StyledApp>
           </ChakraProvider>
-        </AuthContextProvider>
       </AuthProvider>
     </PostHogProvider>
   );

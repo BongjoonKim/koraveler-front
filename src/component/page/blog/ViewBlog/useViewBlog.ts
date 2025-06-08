@@ -7,15 +7,14 @@ import recoil from "../../../../stores/recoil";
 import {useAtom} from "jotai";
 import {isBookmark} from "../../../../stores/jotai/jotai";
 import {getIsBookmarked} from "../../../../endpoints/bookmark-endpoints";
-import {useAuth} from "../../../../appConfig/AuthContext";
-import {endpointUtils} from "../../../../utils/endpointUtils";
+import useAuthEP from "../../../../utils/useAuthEP";
 
 function useViewBlog(props : ViewBlogProps) {
   const {id} = useParams();
   const [document, setDocument] = useState<DocumentDTO>({});
   const [isBookmarked, setBookmarked] = useAtom<boolean>(isBookmark);
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
-  const {accessToken, setAccessToken} = useAuth();
+  const authEP = useAuthEP()
   
   // 블로그 글 조회
   // 글 조회
@@ -28,12 +27,10 @@ function useViewBlog(props : ViewBlogProps) {
               throw res.statusText;
             }
             setDocument(res.data);
-            const resBookmark = await endpointUtils.authAxios({
+            const resBookmark = await authEP({
               func : getIsBookmarked,
               params : {documentId : id},
-              accessToken : accessToken,
-              setAccessToken : setAccessToken
-            });
+            })
             console.log("resBookmark", resBookmark)
             if (resBookmark.status !== 200) {
               throw resBookmark.statusText;

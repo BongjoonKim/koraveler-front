@@ -1,26 +1,22 @@
 import {LeftHeaderProps} from "./MenuLeftHeader";
 import {useCallback, useEffect, useState} from "react";
 import {getAllMenus} from "../../../../endpoints/menus-endpoints";
-import {useAuth} from "../../../../appConfig/AuthContext";
-import {endpointUtils} from "../../../../utils/endpointUtils";
 import {useRecoilState} from "recoil";
 import recoil from "../../../../stores/recoil";
+import useAuthEP from "../../../../utils/useAuthEP";
 
 
 function useMenuLeftHeader(props : LeftHeaderProps) {
   const [menuList, setMenuList] = useState<MenusDTO[]>([]);
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
-  const {accessToken, setAccessToken} = useAuth();
+  const authEP = useAuthEP();
   
   
   const getMenuList = useCallback(async () => {
     try {
-      const res = await endpointUtils.authAxios({
+      const res = await authEP({
         func : getAllMenus,
-        accessToken : accessToken,
-        setAccessToken : setAccessToken
       })
-      console.log("메뉴 리스트 확인", res)
       setMenuList(res.data);
     } catch (e) {
       setErrorMsg({

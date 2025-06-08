@@ -1,4 +1,3 @@
-import {useAuth} from "../../../../appConfig/AuthContext";
 import {useRecoilState} from "recoil";
 import recoil from "../../../../stores/recoil";
 import {useCallback, useEffect, useRef, useState} from "react";
@@ -7,21 +6,21 @@ import {uploadedInfo} from "../../../../stores/jotai/jotai";
 import {useNavigate, useParams} from "react-router-dom";
 import {S3URLFindRegex} from "../../../../constants/RegexConstants";
 import {BLOG_SAVE_TYPE} from "../../../../constants/constants";
-import {endpointUtils} from "../../../../utils/endpointUtils";
 import {getDocument, saveDocument} from "../../../../endpoints/blog-endpoints";
+import useAuthEP from "../../../../utils/useAuthEP";
 
 export interface useSaveBlogPostProps {
 
 };
 
 function useSaveBlogPost(props : useSaveBlogPostProps) {
-  const {accessToken, setAccessToken} = useAuth();
   const [errMsg, setErrMsg] = useRecoilState(recoil.errMsg);
   const editorRef = useRef<any>(null);
   const [document, setDocument] = useState<DocumentDTO>()
   const [uploadedList, setUploadedList] = useAtom<any[]>(uploadedInfo);
   const {id} = useParams();
   const navigate = useNavigate();
+  const authEP = useAuthEP();
   
   // 글 저장
   const handleEdit = useCallback(async (saveOrDraft: string) => {
@@ -65,12 +64,10 @@ function useSaveBlogPost(props : useSaveBlogPostProps) {
       }
       
       try {
-        const saveRes = await endpointUtils.authAxios({
+        const saveRes = await authEP({
           func: saveDocument,
-          accessToken: accessToken,
-          setAccessToken: setAccessToken,
           reqBody: request
-        });
+        })
         navigate(`/blog/view/${id}`)
       } catch (e) {
         setErrMsg({
@@ -79,7 +76,7 @@ function useSaveBlogPost(props : useSaveBlogPostProps) {
         })
       }
     }
-  }, [document, uploadedList, accessToken, setAccessToken, navigate, setErrMsg]);
+  }, [document, uploadedList, navigate, setErrMsg]);
   
   const getDocumentData = useCallback(async () => {
     try {

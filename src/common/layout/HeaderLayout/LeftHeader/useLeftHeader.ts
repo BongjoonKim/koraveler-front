@@ -3,15 +3,12 @@ import {useRecoilState} from "recoil";
 import recoil from "../../../../stores/recoil";
 import axios from "axios";
 import {getAllMenus} from "../../../../endpoints/menus-endpoints";
-import {useAuth} from "../../../../appConfig/AuthContext";
-import {endpointUtils} from "../../../../utils/endpointUtils";
 import posthog from "posthog-js";
 import {useLocation} from "react-router-dom";
 
 export default function useLeftHeader() {
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   const [menus, setMenus] = useState<MenusDTO[]>([]);
-  const {accessToken, setAccessToken} = useAuth();
   const location = useLocation();
   
   const getMenus = useCallback(async () => {

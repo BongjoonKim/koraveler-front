@@ -3,13 +3,11 @@ import {useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import {useRecoilState} from "recoil";
 import recoil from "../../../stores/recoil";
-import {useAuth} from "../../../appConfig/AuthContext";
 import {getWeather} from "../../../endpoints/common-endpoints";
 
 export default function useCusWeather(props : CusWeatherProps) {
   const [weatherData, setWeatherData] = useState<WeatherData | any | undefined>(undefined);
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
-  const {accessToken, setAccessToken} = useAuth();
   
   
   const getWeatherData = useCallback(async () => {

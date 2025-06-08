@@ -3,13 +3,10 @@ import {getAllMenus} from "../../../endpoints/menus-endpoints";
 import {useRecoilState} from "recoil";
 import recoil from "../../../stores/recoil";
 import {MenuTabProps} from "./TabLayout";
-import {useAuth} from "../../../appConfig/AuthContext";
-import {endpointUtils} from "../../../utils/endpointUtils";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 
 function useTabLayout(props : MenuTabProps) {
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
-  const {accessToken, setAccessToken} = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   

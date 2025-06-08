@@ -1,6 +1,5 @@
 import {request} from "../appConfig/request-response";
 import {AxiosResponse} from "axios";
-import {useAuth} from "../appConfig/AuthContext";
 import {FuncProps} from "../utils/useAuthEP";
 
 export async function getAllLoginUserFolders(props : FuncProps) {

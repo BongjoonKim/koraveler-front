@@ -2,15 +2,14 @@ import {SliderBodyProps} from "./SliderBody";
 import {useNavigate} from "react-router-dom";
 import {useRecoilState, useRecoilValue} from "recoil";
 import recoil from "../../../../../../stores/recoil";
-import {useAuth} from "../../../../../../appConfig/AuthContext";
-import {endpointUtils} from "../../../../../../utils/endpointUtils";
 import {createDocument} from "../../../../../../endpoints/blog-endpoints";
+import useAuthEP from "../../../../../../utils/useAuthEP";
 
 export default function useSliderBody(props : SliderBodyProps) {
   const navigate = useNavigate();
   const loginUser = useRecoilValue(recoil.userData);
-  const {accessToken, setAccessToken} = useAuth();
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
+  const authEP = useAuthEP();
   
   const handleCreatePost = async () => {
     try {
@@ -20,12 +19,10 @@ export default function useSliderBody(props : SliderBodyProps) {
       }
       
       // 글 생성하기
-      const res = await endpointUtils.authAxios({
+      const res = await authEP({
         func: createDocument,
-        accessToken: accessToken,
-        setAccessToken: setAccessToken,
         reqBody: request
-      });
+      })
       navigate(`/blog/create/${res.data.id}`)
     } catch (e) {
       setErrorMsg({

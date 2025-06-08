@@ -1,8 +1,7 @@
 import {useEffect, useState} from "react";
 import {createFolder, updateFolder} from "../../../../../../endpoints/folders-endpoints";
 import styled from "styled-components";
-import {useAuth} from "../../../../../../appConfig/AuthContext";
-import {endpointUtils} from "../../../../../../utils/endpointUtils";
+import useAuthEP from "../../../../../../utils/useAuthEP";
 
 interface FolderFormProps {
   userId?: string;
@@ -34,9 +33,7 @@ export default function FolderForm( {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const {accessToken, setAccessToken} = useAuth();
-  
-  console.log('부모 폴더 정보', parentFolder)
+  const authEP = useAuthEP();
   
   // 초기 데이터 설정
   useEffect(() => {
@@ -91,21 +88,15 @@ export default function FolderForm( {
       console.log("form정보 보기", formData)
       if (isEditMode) {
         // 폴더 업데이트
-        // await updateFolder(formData)
-        await endpointUtils.authAxios({
-          func : updateFolder,
-          accessToken : accessToken,
-          setAccessToken : setAccessToken,
-          params : formData
+        await authEP({
+          func: updateFolder,
+          params: formData,
         })
       } else {
         // 새 폴더 생성
-        // await createFolder(formData)
-        await endpointUtils.authAxios({
-          func : createFolder,
-          accessToken : accessToken,
-          setAccessToken : setAccessToken,
-          params : formData
+        await authEP({
+          func: createFolder,
+          params : formData,
         })
       }
       

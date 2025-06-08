@@ -1,22 +1,15 @@
 import {MouseEvent, useCallback, useEffect, useRef, useState} from "react";
-import {PrimitiveAtom, useAtom, useAtomValue} from "jotai";
-import {LoginUser} from "../../../../stores/jotai/jotai";
-import {loadable} from "jotai/utils";
-import {getUserData} from "../../../../endpoints/users-endpoints";
-import {useAuth} from "../../../../appConfig/AuthContext";
-import {getAllMenus, getAllMenus2, getAllMenus3} from "../../../../endpoints/menus-endpoints";
 import {useRecoilState, useRecoilValue} from "recoil";
 import recoil from "../../../../stores/recoil";
 import {useLocation, useNavigate} from "react-router-dom";
-import {endpointUtils} from "../../../../utils/endpointUtils";
 import {getLoginUser} from "../../../../endpoints/login-endpoints";
 import {REFESHTOKEN_EXPIRED} from "../../../../constants/ErrorCode";
+import useAuthEP from "../../../../utils/useAuthEP";
 
 
 function useRightHeader() {
   const [isSliderOpen ,setSliderOpen] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
-  const {accessToken, setAccessToken} = useAuth();
   const navigate = useNavigate();
   // const [loginUser, setLoginUser] = useAtom(LoginUser);
   const [loginUser, setLoginUser] = useRecoilState(recoil.userData);
@@ -24,13 +17,11 @@ function useRightHeader() {
   const sliderRef = useRef<HTMLDivElement>(null);
   const cusAvaRef = useRef<HTMLDivElement>(null);
   const [searchModalOpen ,setSearchModalOpen] = useState<boolean>(false);
-  
+  const authEP = useAuthEP();
   
   const handleAvatarClick = useCallback(async (event : MouseEvent<HTMLSpanElement>) => {
     setSliderOpen(prev => !prev);
     try {
-      // await getAllMenus2(accessToken, setAccessToken);
-      // await getAllMenus3(accessToken, setAccessToken);
     } catch (e) {
       if (e === "refreshToken expired") {
         navigate("/login")
@@ -40,11 +31,9 @@ function useRightHeader() {
   
   const getUserInfo = useCallback(async () => {
     try {
-      const res = await endpointUtils.authAxios({
+      const res = await authEP({
         func : getLoginUser,
-        accessToken : accessToken,
-        setAccessToken : setAccessToken
-      });
+      })
       if (res.data) {
         setLoginUser((prev : UsersDTO) => {
           if (prev.userId === res.data?.userId) {
@@ -67,7 +56,7 @@ function useRightHeader() {
         msg: "retrieve failed",
       })
     }
-  }, [accessToken, loginUser]);
+  }, [loginUser]);
   
   const handleCreate = useCallback(() => {
     navigate("/blog/create")

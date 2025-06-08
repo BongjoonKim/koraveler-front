@@ -6,8 +6,8 @@ import {LoginUser} from "../../../../../stores/jotai/jotai";
 import {logout} from "../../../../../endpoints/login-endpoints";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import recoil from "../../../../../stores/recoil";
-import {useAuth} from "../../../../../appConfig/AuthContext";
 import {setCookie} from "../../../../../utils/cookieUtils";
+import {useAuth} from "../../../../../appConfig/AuthProvider";
 
 function useSliderMenu(props : SliderMenuProps) {
   // const loginUser = useAtomValue(LoginUser);

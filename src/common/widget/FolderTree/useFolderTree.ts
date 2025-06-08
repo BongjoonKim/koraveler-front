@@ -4,25 +4,22 @@ import {useRecoilState} from "recoil";
 import recoil from "../../../stores/recoil";
 import {TreeItem, TreeItemIndex} from "react-complex-tree";
 import {getAllLoginUserFolders} from "../../../endpoints/folders-endpoints";
-import {endpointUtils} from "../../../utils/endpointUtils";
-import {useAuth} from "../../../appConfig/AuthContext";
+import useAuthEP from "../../../utils/useAuthEP";
 
 export default function useFolderTree(props: FolderTreeProps) {
   const [folders, setFolders] = useState<any>({});
   const [loginUser, setLoginUser] = useRecoilState(recoil.userData);
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
-  const {accessToken, setAccessToken} = useAuth();
   const [selectedFolders, setSelectedFolders] = useState<TreeItemIndex[]>([]);
-  
+  const authEP = useAuthEP();
 
   
   const getAllFolders = useCallback(async () => {
     try {
-      const res = await endpointUtils.authAxios({
+      const res = await authEP({
         func: getAllLoginUserFolders,
-        accessToken: accessToken,
-        setAccessToken: setAccessToken
-      });
+      })
+
       
       console.log("Folder response", res.data);
       console.log("Folder response type:", typeof res.data);
@@ -36,7 +33,7 @@ export default function useFolderTree(props: FolderTreeProps) {
         msg: "retrieve failed",
       });
     }
-  }, [accessToken, setAccessToken, setErrorMsg]);
+  }, [setErrorMsg]);
   
   
   const handleFolderSelect = useCallback((items: TreeItemIndex[]) => {

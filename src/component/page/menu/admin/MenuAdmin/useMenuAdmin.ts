@@ -3,7 +3,6 @@ import {createMenus, deleteMenus, getAllMenus, updateMenus} from "../../../../..
 import {useRecoilState} from "recoil";
 import recoil from "../../../../../stores/recoil";
 import {initMenusDTO} from "../../../../../types/menus/initial";
-import {useAuth} from "../../../../../appConfig/AuthContext";
 import useAuthEP from "../../../../../utils/useAuthEP";
 
 type ModalOpenProps = {
@@ -21,7 +20,6 @@ function useMenuAdmin() {
   });
   const authEP = useAuthEP();
   const [menuData, setMenuData] = useState<MenusDTO>(initMenusDTO);
-  const {accessToken, setAccessToken} = useAuth();
   
   
   const createModalOpen = useCallback(async() => {
@@ -90,11 +88,6 @@ function useMenuAdmin() {
   
   const getMenus = useCallback(async () => {
     try {
-      // const res = await endpointUtils.authAxios({
-      //   func : getAllMenus,
-      //   accessToken : accessToken,
-      //   setAccessToken : setAccessToken
-      // });
       const res = await authEP({
         func: getAllMenus
       })

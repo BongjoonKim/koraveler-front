@@ -1,9 +1,7 @@
 import {ViewDocLayoutProps} from "./ViewDocLayout";
 import {useCallback} from "react";
-import {useAuth} from "../../../../../appConfig/AuthContext";
 import {useRecoilState} from "recoil";
 import recoil from "../../../../../stores/recoil";
-import {endpointUtils} from "../../../../../utils/endpointUtils";
 import {deleteDocument} from "../../../../../endpoints/blog-endpoints";
 import {s3Utils} from "../../../../../utils/awsS3Utils";
 import {useNavigate} from "react-router-dom";
@@ -12,15 +10,15 @@ import {isBookmark} from "../../../../../stores/jotai/jotai";
 import {createBookmark, deleteBookmark} from "../../../../../endpoints/bookmark-endpoints";
 import {ERROR_MESSAGE} from "../../../../../stores/recoil/recoilConstants";
 import {ErrorMessageProps} from "../../../../../stores/recoil/types";
+import useAuthEP from "../../../../../utils/useAuthEP";
 
 export default function useViewDocLayout(props : ViewDocLayoutProps) {
   const navigate = useNavigate();
-  const {accessToken, setAccessToken} = useAuth();
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   const [loginUser, setLoginUser] = useRecoilState(recoil.userData);
   const [isBookmarked, setBookmarked] = useAtom(isBookmark);
   const [errMsg, setErrMsg] = useRecoilState(recoil.errMsg);
-  
+  const authEP = useAuthEP();
   
   // 수정 화면으로 전환
   const handleEdit = useCallback(() => {
@@ -30,12 +28,10 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
   const handleDelete = useCallback(async () => {
     try {
       // 글 데이터 삭제
-      const res = await endpointUtils.authAxios({
+      const res = await authEP({
         func : deleteDocument,
-        accessToken  : accessToken,
-        setAccessToken : setAccessToken,
         params : {id : props?.id}
-      });
+      })
       
       // S3에 있는 이미지, 첨부파일 정보 삭제
       const listRes = await s3Utils.getFiles({
@@ -64,14 +60,12 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
   const changeBookmark = useCallback(async () => {
     try {
       if (isBookmarked) {
-        const res = await endpointUtils.authAxios({
+        const res = await authEP({
           func : deleteBookmark,
           params : {
             documentId : props.id
           },
-          accessToken : accessToken,
-          setAccessToken : setAccessToken
-        });
+        })
         console.log("삭제해보기", res)
         if (res.status !== 200) {
           throw res.statusText;
@@ -81,12 +75,10 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
         const reqBody: BookmarkDTO = {
           documentId: props.id
         }
-        const res = await endpointUtils.authAxios({
+        const res = await authEP({
           func: createBookmark,
           reqBody: reqBody,
-          accessToken: accessToken,
-          setAccessToken: setAccessToken
-        });
+        })
         if (res.status !== 200) {
           throw res.statusText;
         }
