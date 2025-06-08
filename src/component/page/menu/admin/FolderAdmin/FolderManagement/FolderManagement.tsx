@@ -10,6 +10,8 @@ import {useAuth} from "../../../../../../appConfig/AuthContext";
 import moment from "moment";
 import styled from "styled-components";
 import CusModal from "../../../../../../common/elements/CusModal";
+import FolderInfo from "../FolderInfo";
+import useAuthEP from "../../../../../../utils/useAuthEP";
 
 interface FolderManagementProps {
   userId?: string;
@@ -24,6 +26,7 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
   const {accessToken, setAccessToken} = useAuth();
   const [folders, setFolders] = useState<any>({});
   const [folderModal, setFolderModal] = useState<boolean>(false);
+  const authEP = useAuthEP();
   
   // 폴더 선택 핸들러 - 토글 기능 추가
   const handleFolderSelect = (items: TreeItemIndex[]) => {
@@ -49,11 +52,9 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
   
   const getAllFolders = useCallback(async () => {
     try {
-      const res = await endpointUtils.authAxios({
-        func: getAllLoginUserFolders,
-        accessToken: accessToken,
-        setAccessToken: setAccessToken
-      });
+      const res = await authEP({
+        func : getAllLoginUserFolders,
+      })
       
       console.log("Folder response", res.data);
       console.log("Folder response type:", typeof res.data);
@@ -71,13 +72,11 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
   
   const getParentFolderData = useCallback(async() => {
     try {
-      const res =  await endpointUtils.authAxios({
+      const res = await authEP({
         func: getParentFolder,
-        accessToken : accessToken,
-        setAccessToken : setAccessToken,
-        params : {childId : selectedFolder?.id}
-      });
-      
+        params: { childId: selectedFolder?.id }
+      })
+
       if (res.status != 200) {
         throw res.statusText
       }
@@ -135,7 +134,6 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
     <div className="folder-management">
       <div className="folder-management-content">
         <div className="folder-tree-section">
-          <h2>폴더 구조</h2>
           <div className="folder-tree-container">
             <FolderTree
               key={refreshKey}
@@ -184,22 +182,9 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
               onCancel={handleFormCancel}
             />
           ) : selectedFolder ? (
-            <div className="folder-details">
-              <h2>{selectedFolder.name}</h2>
-              <div className="folder-info">
-                <p><strong>경로:</strong> {selectedFolder?.path}</p>
-                <p><strong>공개:</strong> {selectedFolder.isPublic ? '예' : '아니오'}</p>
-                {selectedFolder.description && (
-                  <p><strong>설명:</strong> {selectedFolder.description}</p>
-                )}
-                <p>{moment(selectedFolder?.created).toISOString()}</p>
-                <p>{moment(selectedFolder?.updated).toISOString()}</p>
-              </div>
-            </div>
+            <FolderInfo selectedFolder={selectedFolder} />
           ) : (
-            <div className="folder-empty-state">
-              <p>폴더를 선택하거나 새 폴더를 생성하세요.</p>
-            </div>
+            <></>
           )}
         </div>
       </div>
@@ -220,6 +205,7 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
 export default FolderManagement;
 
 const StyledFolderManagement = styled.div`
+    height: 100%;
     /* 폴더 관리 전체 레이아웃 */
     .folder-management {
         position: relative;
@@ -239,17 +225,18 @@ const StyledFolderManagement = styled.div`
     }
 
     .folder-tree-container {
+        height: 100%;
         position: relative;
         border: 1px solid #e1e5e9;
         border-radius: 8px;
         background: #fff;
-        min-height: 500px;
         overflow: hidden;
     }
 
     .folder-details-section {
         flex: 1;
         min-width: 300px;
+        
     }
 
     /* 플로팅 액션 버튼 컨테이너 */

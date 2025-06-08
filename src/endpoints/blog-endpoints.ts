@@ -1,6 +1,6 @@
 import {request} from "../appConfig/request-response";
 import {AxiosResponse} from "axios";
-import {FuncProps} from "../utils/endpointUtils";
+import {FuncProps} from "../utils/useAuthEP";
 
 export async function createDocument(props : FuncProps) {
   return (await request.post("blog/document", props.reqBody, {

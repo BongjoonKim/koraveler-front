@@ -3,8 +3,8 @@ import {createMenus, deleteMenus, getAllMenus, updateMenus} from "../../../../..
 import {useRecoilState} from "recoil";
 import recoil from "../../../../../stores/recoil";
 import {initMenusDTO} from "../../../../../types/menus/initial";
-import {endpointUtils} from "../../../../../utils/endpointUtils";
 import {useAuth} from "../../../../../appConfig/AuthContext";
+import useAuthEP from "../../../../../utils/useAuthEP";
 
 type ModalOpenProps = {
   type ?: "create" | "edit" | "delete" | null;
@@ -19,6 +19,7 @@ function useMenuAdmin() {
     type : null,
     isOpen: false
   });
+  const authEP = useAuthEP();
   const [menuData, setMenuData] = useState<MenusDTO>(initMenusDTO);
   const {accessToken, setAccessToken} = useAuth();
   
@@ -89,11 +90,14 @@ function useMenuAdmin() {
   
   const getMenus = useCallback(async () => {
     try {
-      const res = await endpointUtils.authAxios({
-        func : getAllMenus,
-        accessToken : accessToken,
-        setAccessToken : setAccessToken
-      });
+      // const res = await endpointUtils.authAxios({
+      //   func : getAllMenus,
+      //   accessToken : accessToken,
+      //   setAccessToken : setAccessToken
+      // });
+      const res = await authEP({
+        func: getAllMenus
+      })
       setRowData(res.data);
     } catch (e) {
       setErrorMsg({

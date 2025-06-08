@@ -1,6 +1,8 @@
 import {getCookie, setCookie} from "./cookieUtils";
 import {udtRefreshToken} from "../endpoints/login-endpoints";
-import {ACCESSTOKEN_NULL, REFESHTOKEN_EXPIRED} from "../constants/ErrorCode";
+import {useAuth} from "../appConfig/AuthProvider";
+
+
 
 interface AxiosProps  {
   func ?: any;
@@ -10,23 +12,26 @@ interface AxiosProps  {
   reqBody ?: any;
 }
 
-interface FuncProps {
+export interface FuncProps {
   accessToken ?: any;
   params ?: any;
   reqBody ?: any;
 }
 
-export const endpointUtils = {
-  async authAxios(props : AxiosProps) {
+// Hook 기반 useAuthEP
+export default function useAuthEP() {
+  const { accessToken, setAccessToken } = useAuth();
+  
+  return async (props: AxiosProps) => {
     try {
-      if (props.accessToken) {
-        return (await props.func({
-          accessToken : props.accessToken,
-          params : props?.params,
-          reqBody : props?.reqBody
-        }));
+      if (accessToken) {
+        return await props.func({
+          accessToken: accessToken,
+          params: props?.params,
+          reqBody: props?.reqBody
+        });
       } else {
-        throw ACCESSTOKEN_NULL;
+        throw new Error('ACCESSTOKEN_NULL');
       }
     } catch (e) {
       const refreshToken = getCookie("refreshToken");
@@ -34,18 +39,18 @@ export const endpointUtils = {
         const res = await udtRefreshToken(getCookie("refreshToken").replace(/^"(.*)"$/, '$1'));
         if (res.data) {
           setCookie("refreshToken", res.data.refreshToken!);
-          props.setAccessToken(res.data.accessToken);
-          return (await props.func({
+          setAccessToken(res.data.accessToken);
+          return await props.func({
             accessToken: res.data.accessToken,
-            params : props?.params,
-            reqBody : props?.reqBody
-          }))
+            params: props?.params,
+            reqBody: props?.reqBody
+          });
         } else {
-          throw REFESHTOKEN_EXPIRED;
+          throw new Error('REFRESHTOKEN_EXPIRED');
         }
       } else {
-        throw REFESHTOKEN_EXPIRED;
+        throw new Error('REFRESHTOKEN_EXPIRED');
       }
     }
-  }
-}
+  };
+};

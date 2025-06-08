@@ -4,7 +4,7 @@ import './App.css';
 import styled from "styled-components";
 import RoutersTree from "./RoutersTree";
 import {Alert, ChakraProvider} from "@chakra-ui/react";
-import {AuthProvider} from "./appConfig/AuthContext";
+import {AuthContextProvider} from "./appConfig/AuthContext";
 import UniversalLayout from "./common/layout/UniversalLayout";
 // 1. Import `extendTheme`
 import { extendTheme } from "@chakra-ui/react"
@@ -12,6 +12,7 @@ import {useRecoilValue} from "recoil";
 import recoil from "./stores/recoil";
 import posthog from 'posthog-js'
 import {PostHogProvider} from "posthog-js/react";
+import {AuthProvider} from "./appConfig/AuthProvider";
 
 
 // 2. Call `extendTheme` and pass your custom values
@@ -32,15 +33,17 @@ posthog.init(process.env.REACT_APP_PUBLIC_POSTHOG_KEY!, {
 function App() {
   return (
     <PostHogProvider client={posthog}>
-    <AuthProvider>
-      <ChakraProvider theme={theme}>
-        <StyledApp className={"app"}>
-          {/*<UniversalLayout>*/}
-            <RoutersTree/>
-          {/*</UniversalLayout>*/}
-        </StyledApp>
-      </ChakraProvider>
-    </AuthProvider>
+      <AuthProvider>
+        <AuthContextProvider>
+          <ChakraProvider theme={theme}>
+            <StyledApp className={"app"}>
+              {/*<UniversalLayout>*/}
+                <RoutersTree/>
+              {/*</UniversalLayout>*/}
+            </StyledApp>
+          </ChakraProvider>
+        </AuthContextProvider>
+      </AuthProvider>
     </PostHogProvider>
   );
 }

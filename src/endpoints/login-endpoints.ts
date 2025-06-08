@@ -1,6 +1,6 @@
 import {request, securityReq} from "../appConfig/request-response";
 import {AxiosResponse} from "axios";
-import {FuncProps} from "../utils/endpointUtils";
+import {FuncProps} from "../utils/useAuthEP";
 
 export async function login(props: UsersDTO) {
   try {

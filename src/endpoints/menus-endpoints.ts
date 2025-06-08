@@ -2,7 +2,6 @@ import {request} from "../appConfig/request-response";
 import {AxiosResponse} from "axios";
 import {udtRefreshToken} from "./login-endpoints";
 import {getCookie, setCookie} from "../utils/cookieUtils";
-import {endpointUtils} from "../utils/endpointUtils";
 
 export async function getAllMenus() {
   return (await request.get("ps/menus/all")) as AxiosResponse<MenusDTO[]>;
@@ -25,11 +24,6 @@ export async function deleteMenus(label : string) {
 }
 
 export async function getAllMenus2(func : any, accessToken : any, setAccessToken : any) {
-  // try {
-  //   await endpointUtils.tokenProcess(func, accessToken, setAccessToken);
-  // } throw e;
-  
-  console.log("accessToken", accessToken)
   try {
     if (accessToken) {
       func(accessToken);
