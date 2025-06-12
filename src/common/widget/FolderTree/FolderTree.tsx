@@ -147,7 +147,7 @@ export default function FolderTree(props: FolderTreeProps) {
   }, [expandedItems]);
   
   const renderItemArrow = React.useCallback(({ item, context }: any) => (
-    <Flex align="center" justify="center" w={4} h={4} mr={0}>
+    <Flex align="center" justify="center" w={2} h={4} mr={0}>
       {item.isFolder && item.children && item.children.length > 0 && (
         <Box
           onClick={(e) => handleArrowClick(item.index, context.isExpanded, e)}
@@ -156,7 +156,7 @@ export default function FolderTree(props: FolderTreeProps) {
           borderRadius="sm"
           _hover={{ bg: hoverBg }}
           transition="all 0.2s"
-          ml="3rem"
+          ml="1.5rem"
         >
           <ChevronRightIcon
             boxSize={4}
@@ -265,6 +265,8 @@ export default function FolderTree(props: FolderTreeProps) {
       maxH="400px"
       overflowY="auto"
       css={{
+        "border": "1px solid var(--chakra-colors-gray-200)",
+        "border-radius": "8px",
         '&::-webkit-scrollbar': {
           width: '6px',
         },
@@ -279,12 +281,7 @@ export default function FolderTree(props: FolderTreeProps) {
           },
         },
         // react-complex-tree 기본 들여쓰기 패딩 조정
-        '.rct-tree-item-li': {
-          paddingLeft: '10px !important', // 기본값보다 줄임
-          position: 'relative',
-        },
         '.rct-tree-item-title-container': {
-          paddingLeft: '0px !important',
           gap: '0px !important', // flexbox 간격 제거
         },
         // 여닫이 아이콘과 폴더 버튼이 겹치지 않도록 조정
@@ -294,7 +291,6 @@ export default function FolderTree(props: FolderTreeProps) {
           marginRight: '0px !important', // 간격 제거
         },
         '.rct-tree-item-button': {
-          marginLeft: '0px !important',
           position: 'relative',
           zIndex: '5 !important',
         },
@@ -305,7 +301,7 @@ export default function FolderTree(props: FolderTreeProps) {
         '.rct-tree-item-li[data-rct-item-selected="true"] .rct-tree-item-title-container': {
           backgroundColor: `${selectedBg} !important`,
           borderRadius: '6px !important',
-          marginLeft: '0px !important',
+          // marginLeft: '0px !important',
         },
         '.rct-tree-item-li[data-rct-item-selected="true"]::after': {
           content: '""',

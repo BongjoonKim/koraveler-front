@@ -8,6 +8,7 @@ import MenuHeader from "../../common/layout/MenuHeader";
 import MenuTab from "../../common/layout/TabLayout";
 import BlogLayout from "../../common/layout/BlogLayout/BlogLayout";
 import EditBlogPost from "../../component/page/blog/EditBlogPost";
+import BlogPostSetting from "../../common/widget/BlogPostSetting/BlogPostSetting";
 
 interface BlogRoutesProps {
 

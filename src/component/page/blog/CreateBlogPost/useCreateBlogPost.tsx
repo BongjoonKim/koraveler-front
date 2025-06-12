@@ -5,7 +5,7 @@ import {createAfterSaveDocument, createDocument, saveDocument} from "../../../..
 import {useRecoilState} from "recoil";
 import recoil from "../../../../stores/recoil";
 import {useAtom} from "jotai/index";
-import {uploadedInfo} from "../../../../stores/jotai/jotai";
+import { uploadedInfo} from "../../../../stores/jotai/jotai";
 import {s3Utils} from "../../../../utils/awsS3Utils";
 import {cloneDeep} from "lodash";
 import {S3URLFindRegex} from "../../../../constants/RegexConstants";

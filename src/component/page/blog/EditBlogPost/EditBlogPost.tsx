@@ -3,6 +3,8 @@ import useEditBlogPost from "./useEditBlogPost";
 import MakeDocLayout from "../../../../common/layout/BlogLayout/Documents/MakingDocLayout/MakeDocLayout";
 import UpdateEditor from "../../../../common/layout/BlogLayout/Documents/MakingDocLayout/UpdateEditor";
 import useSaveBlogPost from "../SaveBlogPost/useSaveBlogPost";
+import CusModal from "../../../../common/elements/CusModal";
+import BlogPostSetting from "../../../../common/widget/BlogPostSetting/BlogPostSetting";
 
 export interface EditBlogPostProps {
 
@@ -20,7 +22,9 @@ function EditBlogPost(props: EditBlogPostProps) {
     editorRef,
     document,
     setDocument,
-    handleEdit
+    handleEdit,
+    modalClose,
+    openBlogPostingModal,
   } = useSaveBlogPost(props)
   return (
     <StyledEditBlogPost>
@@ -36,6 +40,13 @@ function EditBlogPost(props: EditBlogPostProps) {
           {...document}
         />
       </MakeDocLayout>
+      <CusModal
+        isOpen={openBlogPostingModal}
+        onClose={modalClose}
+        title={"Saving Blog Post"}
+      >
+        <BlogPostSetting/>
+      </CusModal>
     </StyledEditBlogPost>
   )
 };
