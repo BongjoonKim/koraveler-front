@@ -11,6 +11,8 @@ export interface MakeDocLayoutProps {
   document ?: DocumentDTO;
   setDocument ?: any;
   handleSave : (saveOrDraft : string) => void;
+  handleSaveModalOpen : () => void;
+  
 };
 
 function MakingDocumentLayout(props: MakeDocLayoutProps) {
@@ -37,7 +39,7 @@ function MakingDocumentLayout(props: MakeDocLayoutProps) {
       <div className="blog-header">
         <div className="buttons">
           <CusButton
-            onClick={() => props.handleSave(BLOG_SAVE_TYPE.SAVE)}
+            onClick={props.handleSaveModalOpen}
           >
             Save
           </CusButton>

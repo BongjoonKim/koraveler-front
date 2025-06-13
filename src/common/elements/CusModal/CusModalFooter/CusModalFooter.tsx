@@ -7,8 +7,8 @@ interface CusModalFooterProps {
   editText ?: string;
   cancelText ?: string;
   deleteText ?: string;
-  doCreate ?: () => void;
-  doEdit ?: () => void;
+  doCreate ?: (props : any) => void;
+  doEdit ?: (props : any) => void;
   doCancel ?: () => void;
   doDelete ?: () => void;
 }

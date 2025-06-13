@@ -5,6 +5,8 @@ import UpdateEditor from "../../../../common/layout/BlogLayout/Documents/MakingD
 import useSaveBlogPost from "../SaveBlogPost/useSaveBlogPost";
 import CusModal from "../../../../common/elements/CusModal";
 import BlogPostSetting from "../../../../common/widget/BlogPostSetting/BlogPostSetting";
+import CusModalFooter from "../../../../common/elements/CusModal/CusModalFooter";
+import {BLOG_SAVE_TYPE} from "../../../../constants/constants";
 
 export interface EditBlogPostProps {
 
@@ -25,6 +27,13 @@ function EditBlogPost(props: EditBlogPostProps) {
     handleEdit,
     modalClose,
     openBlogPostingModal,
+    handleSaveModalOpen,
+    folders,
+    setFolders,
+    selectedFolder,
+    setSelectedFolder,
+    disclose,
+    setDisclose,
   } = useSaveBlogPost(props)
   return (
     <StyledEditBlogPost>
@@ -33,7 +42,7 @@ function EditBlogPost(props: EditBlogPostProps) {
         document={document}
         setDocument={setDocument}
         handleSave={(saveOrDraft : string) => handleEdit(saveOrDraft)}
-
+        handleSaveModalOpen={handleSaveModalOpen}
       >
         <UpdateEditor
           ref={editorRef}
@@ -44,8 +53,25 @@ function EditBlogPost(props: EditBlogPostProps) {
         isOpen={openBlogPostingModal}
         onClose={modalClose}
         title={"Saving Blog Post"}
+        footer={
+          <CusModalFooter
+            types={["create", "cancel"]}
+            createText={"save"}
+            cancelText={"cancel"}
+            doCreate={() => handleEdit(BLOG_SAVE_TYPE.SAVE)}
+            doCancel={modalClose}
+          />
+        }
       >
-        <BlogPostSetting/>
+        <BlogPostSetting
+          folders={folders}
+          setFolders={setFolders}
+          selectedFolder={selectedFolder}
+          setSelectedFolder={setSelectedFolder}
+          disclose={disclose}
+          setDisclose={setDisclose}
+          openBlogPostingModal={openBlogPostingModal}
+        />
       </CusModal>
     </StyledEditBlogPost>
   )

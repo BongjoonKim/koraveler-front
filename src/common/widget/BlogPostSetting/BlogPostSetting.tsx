@@ -3,9 +3,16 @@ import FolderTree from "../FolderTree";
 import useBlogPostSetting from "./useBlogPostSetting";
 import {FormControl, FormLabel} from "@chakra-ui/react";
 import CusRadio from "../../elements/CusRadio/CusRadio";
+import {Dispatch, SetStateAction} from "react";
 
 export interface BlogPostSettingProps{
-
+  folders: any;
+  setFolders : any;
+  selectedFolder ?: string;
+  setSelectedFolder : Dispatch<SetStateAction<string | undefined>>;
+  disclose : boolean;
+  setDisclose : Dispatch<SetStateAction<boolean>>;
+  openBlogPostingModal : boolean;
 }
 
 export default function BlogPostSetting(props : BlogPostSettingProps) {
@@ -14,7 +21,9 @@ export default function BlogPostSetting(props : BlogPostSettingProps) {
     handleFolderSelect,
     selectedFolder,
     showHideRadioOptions,
-  } = useBlogPostSetting();
+    disclose,
+    handleDiscloseSelect
+  } = useBlogPostSetting(props);
   return (
     <StyledBlogPostSetting>
       <FormControl>
@@ -24,7 +33,7 @@ export default function BlogPostSetting(props : BlogPostSettingProps) {
         <FolderTree
           folders={folders}
           handleFolderSelect={handleFolderSelect}
-          selectedFolderId={selectedFolder?.id}
+          selectedFolderId={selectedFolder}
         />
       </FormControl>
       <FormControl>
@@ -34,6 +43,8 @@ export default function BlogPostSetting(props : BlogPostSettingProps) {
         <CusRadio
           options={showHideRadioOptions}
           direction="horizontal"
+          value={disclose.toString()}
+          onChange={handleDiscloseSelect}
         />
       </FormControl>
 
