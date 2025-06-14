@@ -25,10 +25,10 @@ export default BlogPage;
 const StyledBlogPage = styled.div`
   display: flex;
   flex-direction: column;
-  background: white;
-  height: 100%;
+  //background: white;
+  //height: 100%;
   width: 100%;
-  padding: 1rem 2rem;
+  padding: 1rem 1rem;
   gap : 0.5rem;
   .blog-title {
     width: 100%;

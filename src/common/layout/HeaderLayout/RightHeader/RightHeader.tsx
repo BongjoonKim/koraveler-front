@@ -65,10 +65,10 @@ export default RightHeader;
 
 const StyledRightHeader = styled.div`
   gap: 1rem;
+  height: 100%;
   justify-content: flex-end;
   display: flex;
   position: relative;
-  height: 3rem;
   align-items: center;
   text-align: end;
   z-index: 2000;

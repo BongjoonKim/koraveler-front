@@ -38,7 +38,7 @@ function LeftHeader(props : LeftHeaderProps) {
     <StyledLeftHeader isHome={!!(location.pathname === "/home")}>
       <Link
         className="title"
-        to={`${process.env.PUBLIC_URL}/home`}
+        to={`${process.env.PUBLIC_URL}/blog/home`}
         onClick={handleLogoClick} // 로고 클릭 이벤트 추가
         onMouseEnter={() => handleMenuHover("home")} // 여기에 추가!
       >
@@ -66,6 +66,7 @@ function LeftHeader(props : LeftHeaderProps) {
 export default LeftHeader;
 
 const StyledLeftHeader = styled.div<any>`
+    height: 100%;
     a {
         cursor: pointer;
     }
@@ -73,10 +74,9 @@ const StyledLeftHeader = styled.div<any>`
     display: flex;
     position: relative;
     align-items: center;
-    height: 3rem;
     color: ${props => props.isHome === true ? "black" : "black"};
     .title {
-        font-size: 3rem;
+        font-size: 2.5rem;
         font-weight: 600;
     }
     .menu {

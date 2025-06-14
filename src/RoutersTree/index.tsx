@@ -15,7 +15,7 @@ interface RoutersTreeProps {
 function RoutersTree(props : RoutersTreeProps) {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/home" replace />} />  // 홈 화면으로 이동하기
+      <Route path="/" element={<Navigate to="blog/home" replace />} />  // 홈 화면으로 이동하기
       <Route path="/home/*" element={<MainPage />} />
       <Route path="/admin/*" element={<AdminRoutes />} />
       <Route path="/setting/*" element={<SettingRoutes />} />

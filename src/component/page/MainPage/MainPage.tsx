@@ -21,13 +21,5 @@ export default MainPage;
 
 const StyledMainPage = styled.div`
   user-select: none;
-  .header {
-    width: 100%;
-    height: 2rem;
-    position: absolute;
-    padding : 2rem;
-    display: flex;
-    justify-content: space-between;
-  }
-  
+  height: 100%;
 `;
