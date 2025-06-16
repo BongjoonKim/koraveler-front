@@ -2,7 +2,7 @@
 declare interface DocumentsInfo {
   totalDocsCnt ?: number;
   totalPagesCnt ?: number;
-  documentsDTO ?: DocumentDTO[];
+  documents ?: DocumentDTO[];
 }
 
 declare interface DocumentDTO extends CommonDTO{

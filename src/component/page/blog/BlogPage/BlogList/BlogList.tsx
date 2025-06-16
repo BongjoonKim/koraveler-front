@@ -13,7 +13,7 @@ function BlogList(props: BlogHomeProps) {
   
   return (
     <StyledBlogList>
-      {blogList?.documentsDTO?.map(blog => {
+      {blogList?.documents?.map(blog => {
         return (
           <SimpleDocViewer
             {...blog}

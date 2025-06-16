@@ -24,8 +24,8 @@ export default function useSearchModal(props : SearchModalProps) {
       if (resDocs?.status !== 200) {
         throw resDocs.statusText;
       }
-      setDocs(resDocs.data.documentsDTO);
-      console.log("resDocs.data.documentsDTO", resDocs.data.documentsDTO)
+      setDocs(resDocs.data.documents);
+      console.log("resDocs.data.documentsDTO", resDocs.data.documents)
     } catch (e) {
       setErrorMsg({
         status : "error",

@@ -8,23 +8,26 @@ import {BLOG_LIST_SORTS, BLOG_PAGE_TYPE} from "../../../../../constants/constant
 import {useAtom, useAtomValue} from "jotai/index";
 import {selBlogSortOpt} from "../../../../../stores/jotai/jotai";
 import useAuthEP from "../../../../../utils/useAuthEP";
+import {extractTextAdvanced} from "../../../../../utils/commonUtils";
 
 function useBlogList(props : BlogHomeProps) {
-  const [blogList, setBlogList] = useState<DocumentsInfo>();
+  const [blogList, setBlogList] = useState<DocumentsInfo | undefined>();
   const [page, setPage] = useState<number>(0);
   const [size, setSize] = useState<number>(24);
   const match = useMatch("/blog/:type");
   const selectedOption = useAtomValue(selBlogSortOpt);
   const authEP = useAuthEP();
   
-  console.log("keyof typeof BLOG_PAGE_TYPE",  match, BLOG_PAGE_TYPE.BOOKMARK)
-  
-  
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   
   // 블로그 글 목록 조회
   const getDocuments = useCallback(async () => {
     try {
+      let blogPosts : DocumentsInfo = {
+        totalDocsCnt : 0,
+        totalPagesCnt : 0,
+        documents : []
+      };
       // 소팅 작업
       let dateSort = "DESC";
       if (selectedOption === BLOG_LIST_SORTS.OLD) {
@@ -43,8 +46,8 @@ function useBlogList(props : BlogHomeProps) {
         if (res?.status !== 200) {
           throw res?.statusText;
         }
-        console.log("res.data blog", res.data)
-        setBlogList(res.data);
+        console.log("res.data", res.data)
+        blogPosts = res.data;
       } else if (match?.params?.type === BLOG_PAGE_TYPE.MY_BLOG) {
         const res = await authEP({
           func : getDocumentsByAuth,
@@ -58,7 +61,7 @@ function useBlogList(props : BlogHomeProps) {
         if (res.status !== 200) {
           throw res.statusText;
         }
-        setBlogList(res.data);
+        blogPosts = res.data
       } else if (match?.params?.type === BLOG_PAGE_TYPE.BOOKMARK) {
         const res = await authEP({
           func : getDocumentsByAuth,
@@ -72,7 +75,7 @@ function useBlogList(props : BlogHomeProps) {
         if (res.status !== 200) {
           throw res.statusText;
         }
-        setBlogList(res.data)
+        blogPosts = res.data;
       } else if (match?.params?.type === BLOG_PAGE_TYPE.DRAFT) {
         const res = await authEP({
           func : getDocumentsByAuth,
@@ -86,9 +89,21 @@ function useBlogList(props : BlogHomeProps) {
         if (res.status !== 200) {
           throw res.statusText;
         }
-        setBlogList(res.data)
+        blogPosts = res.data;
       }
-
+      console.log("blogPosts", blogPosts)
+      if (!blogPosts?.documents) return;
+      console.log("여기 오나")
+      const updatedBlogPosts = {
+        ...blogPosts,
+        documents: blogPosts.documents.map(post => ({
+          ...post,
+          contents: extractTextAdvanced(post?.contents)
+        }))
+      };
+      
+      console.log("extractBlogPosts", updatedBlogPosts);
+      setBlogList(updatedBlogPosts);
     } catch (e) {
       setErrorMsg({
         status : "error",
