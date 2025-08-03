@@ -49,7 +49,7 @@ export default function useLoginPage() {
       setCookie("accessToken", resToken.data.accessToken!)
       setCookie("refreshToken", resToken.data.refreshToken!)
     }
-    navigate('/home')
+    navigate('/blog/home')
     } catch(e) {
       console.log("handleClickLogin", e);
     }

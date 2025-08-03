@@ -36,7 +36,7 @@ function Sidebar({ onChatbotClick, onBlogClick, onHomeClick }: SidebarProps) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 transition: 'all 0.2s ease',
-                color: '#5f6368'
+                // color: '#5f6368'
               }}
             >
               <TbMessageChatbot size={24} />
@@ -58,7 +58,7 @@ function Sidebar({ onChatbotClick, onBlogClick, onHomeClick }: SidebarProps) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 transition: 'all 0.2s ease',
-                color: '#5f6368'
+                // color: '#5f6368'
               }}
             >
               <HiOutlineDocumentText size={24} />
@@ -104,17 +104,17 @@ const LogoButton = styled.button`
   height: 48px;
   width: 48px;
   border-radius: 24px;
-  background-color: #e60023;
+  //background-color: #e60023;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  color: white;
+  color: black;
 
   &:hover {
-    background-color: #d50019;
+    background-color: #f1f3f4;
     transform: scale(1.05);
   }
 
