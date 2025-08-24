@@ -1,3 +1,5 @@
+// src/common/elements/CusModal/CusModalFooter/CusModalFooter.tsx
+
 import styled from "styled-components";
 import CusButton from "../../buttons/CusButton";
 import {InitFooterButtonTypes} from "../../../../types/common/initial/initialCommon";

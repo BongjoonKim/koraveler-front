@@ -1,3 +1,5 @@
+//src/appConfig/awsS3Config.ts
+
 import AWS from "aws-sdk"
 
 export default function awsS3Config() {

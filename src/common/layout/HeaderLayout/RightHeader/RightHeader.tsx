@@ -3,9 +3,9 @@ import CusAvatar from "../../../elements/CusAvatar";
 import SliderMenu from "./SliderMenu";
 import useRightHeader from "./useRightHeader";
 import CusButton from "../../../elements/buttons/CusButton";
-import {Search2Icon} from "@chakra-ui/icons";
 import CusModal from "../../../elements/CusModal";
 import SearchModal from "../SearchModal";
+import {SearchIcon} from "lucide-react";
 
 interface RightHeaderProps {
 
@@ -41,7 +41,7 @@ function RightHeader(props : RightHeaderProps) {
         }}
         onClick={handleOpenModal}
       >
-        <Search2Icon/>
+        <SearchIcon/>
         <span className="text">
           Search the docs
         </span>

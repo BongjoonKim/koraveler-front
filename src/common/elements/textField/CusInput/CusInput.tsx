@@ -1,57 +1,57 @@
-import {Input, InputGroup, InputGroupProps, InputLeftElement, InputProps, InputRightElement} from "@chakra-ui/react";
-import {ReactNode, useCallback, useEffect, useState} from "react";
+// src/common/elements/textField/CusInput/CusInput.tsx
+
+import React from "react";
+import { Input, InputGroup } from "@chakra-ui/react";
+import { ReactNode, useState } from "react";
 import CusButton from "../../buttons/CusButton";
 
-export interface CusInputProps extends InputProps {
-
+export interface CusInputProps extends React.ComponentProps<typeof Input> {
+  // Input의 모든 props를 상속
 }
 
 export interface CusInputGroupProps extends CusInputProps {
-  inputLeftElement ?: ReactNode;
-  inputRightElement ?: ReactNode;
+  inputLeftElement?: ReactNode;
+  inputRightElement?: ReactNode;
 }
 
-function CusInput(props : CusInputProps) {
-  const [value, setValue] = useState<any>(props.value || "");
-  
-  const handleChange = useCallback((event : any) => {
-    setValue(event.target.value);
-  }, [props.value, value]);
-  
+function CusInput(props: CusInputProps) {
   return (
     <Input
       {...props}
-      value={props.value}
-      onChange={props.onChange}
     />
   )
 }
 
-export function CusInputGroup(props : CusInputGroupProps) {
-  const [isPassword, setPassword] = useState<boolean>(false);
+export function CusInputGroup(props: CusInputGroupProps) {
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  
+  // props에서 inputLeftElement, inputRightElement를 분리하고 나머지는 Input에 전달
+  const { inputLeftElement, inputRightElement, type, ...inputProps } = props;
+  
+  const isPasswordType = type === 'password';
+  
+  // 패스워드 타입이면 show/hide 버튼을 우선적으로 표시
+  const endElement = isPasswordType ? (
+    <CusButton
+      onClick={() => setShowPassword(prev => !prev)}
+      size="sm"
+      variant="ghost"
+    >
+      {showPassword ? "Hide" : "Show"}
+    </CusButton>
+  ) : inputRightElement;
+  
   return (
-    <InputGroup>
-      {props.inputLeftElement && (
-        <InputLeftElement>
-          {props.inputLeftElement}
-        </InputLeftElement>
-      )}
+    <InputGroup
+      startElement={inputLeftElement}
+      endElement={endElement}
+    >
       <Input
-        type={isPassword ? 'password' : 'text'}
-        {...props}
+        type={isPasswordType ? (showPassword ? 'text' : 'password') : type}
+        {...inputProps}
       />
-      {props.inputRightElement && (
-        <InputRightElement>
-          {props.inputRightElement}
-        </InputRightElement>
-      )}
-        {/*<CusButton onClick={() => setShow(prev => !prev)} size="sm">*/}
-        {/*  {isShow ? "show" : "hide"}*/}
-        {/*</CusButton>*/}
     </InputGroup>
   )
-
-
 }
 
 export default CusInput

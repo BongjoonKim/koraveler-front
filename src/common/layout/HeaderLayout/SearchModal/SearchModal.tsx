@@ -1,9 +1,8 @@
 import styled from "styled-components";
 import useSearchModal from "./useSearchModal";
 import CusInput, {CusInputGroup} from "../../../elements/textField/CusInput";
-import {SearchIcon} from "@chakra-ui/icons";
-import {InputGroup, InputLeftElement} from "@chakra-ui/react";
 import SearchDocList from "./SearchDocList";
+import {SearchIcon} from "lucide-react";
 
 export interface SearchModalProps {
   onClose : () => void;

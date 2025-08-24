@@ -1,30 +1,37 @@
-import {Navigate, Route, Routes} from "react-router-dom";
-import MainPage from "../component/page/MainPage";
-import AdminRoutes from "./AdminRoutes";
-import LoginRoutes from "./LoginRoutes";
+// RoutersTree/index.tsx
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import BlogRoutes from "./BlogRoutes";
 import SettingRoutes from "./SettingRoutes";
 import TravelRoutes from "./TravelRoutes";
-import {Alert, AlertIcon, AlertTitle} from "@chakra-ui/react";
+import {Alert, AlertContent, AlertDescription, AlertIndicator, AlertRoot, AlertTitle} from "@chakra-ui/react"; // AlertIcon → AlertIndicator
 import TechRoutes from "./TechRoutes";
+import ChatRoutes from "./ChatRoutes";
+import MainPage from "../component/page/MainPage";
 
-interface RoutersTreeProps {
-
-}
-
-function RoutersTree(props : RoutersTreeProps) {
+export default function RoutersTree() {
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="blog/home" replace />} />  // 홈 화면으로 이동하기
-      <Route path="/home/*" element={<MainPage />} />
-      <Route path="/admin/*" element={<AdminRoutes />} />
-      <Route path="/setting/*" element={<SettingRoutes />} />
-      <Route path="/login/*" element={<LoginRoutes />} />
-      <Route path="/blog/*" element={<BlogRoutes />} />
-      <Route path="/travel/*" element={< TravelRoutes />} />
-      <Route path="/tech/*" element={< TechRoutes />} />
-    </Routes>
-  )
+    <Router>
+      <Routes>
+        <Route path="/*" element={<MainPage/>}/>
+        <Route path="/blog/*" element={<BlogRoutes/>}/>
+        <Route path="/travel/*" element={<TravelRoutes/>}/>
+        <Route path="/tech/*" element={<TechRoutes/>}/>
+        <Route path="/chat/*" element={<ChatRoutes/>}/>
+        <Route path="/setting/*" element={
+            <SettingRoutes/>
+        }/>
+        <Route path="*" element={
+          <AlertRoot status="error">
+            <AlertIndicator /> {/* AlertIcon → AlertIndicator */}
+            <AlertContent>
+              <AlertTitle>404 - 페이지를 찾을 수 없습니다!</AlertTitle>
+              <AlertDescription>
+                요청하신 페이지가 존재하지 않습니다.
+              </AlertDescription>
+            </AlertContent>
+          </AlertRoot>
+        }/>
+      </Routes>
+    </Router>
+  );
 }
-
-export default RoutersTree;

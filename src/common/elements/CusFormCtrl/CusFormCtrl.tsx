@@ -1,35 +1,34 @@
-import styled from "styled-components";
+// src/common/elements/CusFormCtrl/CusFormCtrl.tsx
+
 import {ReactNode} from "react";
-import {FormControl, FormErrorMessage, FormHelperText, FormLabel} from "@chakra-ui/react";
+import {
+  Field
+} from "@chakra-ui/react";
 
 export interface CusFormCtrlProps  {
   formTitle ?: string | number;
   children : ReactNode;
   helpMsg ?: string;
-  errMsg ?: any;
+  errMsg ?: string;
   isInValid ?: boolean
-};
+}
 
 function CusFormCtrl(props: CusFormCtrlProps) {
   
   return (
-    <StyledCusFormCtrl inValid={!!props.isInValid}>
-      <FormLabel>{props.formTitle}</FormLabel>
+    <Field.Root invalid={props.isInValid}>
+      {props.formTitle && (
+        <Field.Label>{props.formTitle}</Field.Label>
+      )}
       {props.children}
       {props.helpMsg && (
-        <FormHelperText>{props.helpMsg}</FormHelperText>
+        <Field.HelperText>{props.helpMsg}</Field.HelperText>
       )}
       {props.errMsg && (
-        <FormErrorMessage>
-          {props.errMsg}
-        </FormErrorMessage>
+        <Field.ErrorText>{props.errMsg}</Field.ErrorText>
       )}
-    </StyledCusFormCtrl>
+    </Field.Root>
   )
-};
+}
 
 export default CusFormCtrl;
-
-const StyledCusFormCtrl = styled(FormControl)`
-
-`;

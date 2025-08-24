@@ -1,45 +1,36 @@
-import React, {Suspense} from 'react';
-import logo from './logo.svg';
-import './App.css';
+// App.tsx
+import React from 'react';
 import styled from "styled-components";
 import RoutersTree from "./RoutersTree";
-import {Alert, ChakraProvider} from "@chakra-ui/react";
-import UniversalLayout from "./common/layout/UniversalLayout";
-// 1. Import `extendTheme`
-import { extendTheme } from "@chakra-ui/react"
+import {ChakraProvider, defaultSystem} from "@chakra-ui/react";
 import {useRecoilValue} from "recoil";
 import recoil from "./stores/recoil";
 import posthog from 'posthog-js'
-import {PostHogProvider} from "posthog-js/react";
+import { PostHogProvider} from 'posthog-js/react'
 import {AuthProvider} from "./appConfig/AuthProvider";
 
-
-// 2. Call `extendTheme` and pass your custom values
-const theme = extendTheme({
-  colors: {
-    brand: {
-      100: "#f7fafc",
-      900: "#1a202c",
-    },
-  },
-})
-
-// PostHog 초기화
-posthog.init(process.env.REACT_APP_PUBLIC_POSTHOG_KEY!, {
-  api_host: process.env.REACT_APP_PUBLIC_POSTHOG_HOST
-})
+if (typeof window !== 'undefined') {
+  posthog.init(process.env.REACT_APP_PUBLIC_POSTHOG_KEY!, {
+    api_host: process.env.REACT_APP_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+    person_profiles: 'identified_only',
+    loaded: (posthog) => {
+      if (process.env.NODE_ENV === 'development') posthog.debug()
+    }
+  })
+}
 
 function App() {
+  // isLoadingGlobal이 없다면 주석 처리하거나 다른 값으로 대체
+  // const isLoadingGlobal = useRecoilValue(recoil.isLoadingGlobal);
+  
   return (
     <PostHogProvider client={posthog}>
       <AuthProvider>
-          <ChakraProvider theme={theme}>
-            <StyledApp className={"app"}>
-              {/*<UniversalLayout>*/}
-                <RoutersTree/>
-              {/*</UniversalLayout>*/}
-            </StyledApp>
-          </ChakraProvider>
+        <ChakraProvider value={defaultSystem}>
+          <StyledApp className={"app"}>
+            <RoutersTree/>
+          </StyledApp>
+        </ChakraProvider>
       </AuthProvider>
     </PostHogProvider>
   );
@@ -47,7 +38,4 @@ function App() {
 
 export default App;
 
-const StyledApp = styled.div`
-  height: 100%;
-  width : 100%;
-`;
+const StyledApp = styled.div``;

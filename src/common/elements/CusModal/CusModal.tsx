@@ -1,51 +1,52 @@
+// common/elements/CusModal/CusModal.tsx
+import React from "react";
 import {
-  Modal,
-  ModalOverlay,
-  ModalProps,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton, ModalFooter, GlobalStyle
+  Dialog,
+  DialogBackdrop,
+  DialogContent,
+  DialogHeader,
+  DialogBody,
+  DialogCloseTrigger,
+  DialogFooter,
+  DialogRoot,
+  DialogTitle
 } from "@chakra-ui/react";
 import {ReactNode} from "react";
 import styled from "styled-components";
-import { Global } from "@emotion/react";
 
-
-interface CusModalProps extends ModalProps {
-  title ?: string | ReactNode;
-  footer ?: ReactNode;
-  size ?: string;
+export interface CusModalProps {
+  title?: string | number;
+  footer?: ReactNode;
+  size?: "xs" | "sm" | "md" | "lg" | "xl" | "cover" | "full"; // 타입 명시
+  children?: ReactNode;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export default function CusModal(props:CusModalProps) {
+export default function CusModal(props: CusModalProps) {
   return (
-    <Modal
-      isOpen={props.isOpen}
-      onClose={props.onClose}
+    <DialogRoot
+      open={props.isOpen}
+      onOpenChange={(details: { open: boolean }) => !details.open && props.onClose()}
       size={props?.size}
     >
-      <Global
-        styles={{
-          ".chakra-modal__content-container": {
-            zIndex: "20001 !important",
-            width : "100rem"
-          },
-        }}
-      />
-      <ModalOverlay zIndex={20000}/>
-      <ModalContent zIndex={20001}>
-        <ModalHeader>
-          {props.title}
-        </ModalHeader>
-        <ModalBody>
+      <DialogBackdrop />
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{props.title}</DialogTitle>
+          <DialogCloseTrigger />
+        </DialogHeader>
+        <DialogBody>
           {props.children}
-        </ModalBody>
-        <ModalFooter>
-          {props.footer}
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
-  )
+        </DialogBody>
+        {props.footer && (
+          <DialogFooter>
+            {props.footer}
+          </DialogFooter>
+        )}
+      </DialogContent>
+    </DialogRoot>
+  );
 }
 
+const StyledCusModal = styled.div``;

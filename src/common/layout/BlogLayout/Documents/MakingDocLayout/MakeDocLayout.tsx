@@ -24,7 +24,6 @@ function MakingDocumentLayout(props: MakeDocLayoutProps) {
     <StyledMakeDocLayout>
       <div className="blog-header">
         <CusInput
-          variant='unstyled'
           placeholder='Unstyled'
           value={props?.document?.title}
           onChange={(event) => {

@@ -4,6 +4,7 @@ import {useRecoilState} from "recoil";
 import recoil from "../../../stores/recoil";
 import {MenuTabProps} from "./TabLayout";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
+import { TabItem } from "../../elements/CusTab/CusTab";
 
 function useTabLayout(props : MenuTabProps) {
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
@@ -14,42 +15,40 @@ function useTabLayout(props : MenuTabProps) {
   const currentPath = location.pathname.split('/').pop();
   console.log("currentPath", currentPath)
   
-  
-  
-  const [tabList, setTabList] = useState<any[]>([
+  // TabItem[] 타입으로 변경하고 value를 경로 기반으로 설정
+  const [tabList, setTabList] = useState<TabItem[]>([
     {
-      label : "menu-list",
-      value : "menus",
-      index : 0,
-    }, {
-      label : "user-list",
-      value : "users",
-      index : 1,
-    }, {
-      label : "folder",
-      value : "folder",
-      index : 2,
+      label: "menu-list",
+      value: "menu", // 경로의 마지막 부분과 일치하도록 설정
+    },
+    {
+      label: "user-list",
+      value: "users",
+    },
+    {
+      label: "folder",
+      value: "folder",
     }
   ]);
   
-  
-  // 메뉴 클릭 이벤트
-  const handleChangeTab = useCallback((index : number) => {
-    switch (index) {
-      case 0:
+  // 메뉴 클릭 이벤트 - 이제 string value를 받습니다
+  const handleChangeTab = useCallback((value: string) => {
+    console.log("Tab changed to value:", value);
+    
+    switch (value) {
+      case "menu":
         navigate("/admin/menu");
         break;
-      case 1:
+      case "users":
         navigate("/admin/users");
         break;
-      case 2:
+      case "folder":
         navigate("/admin/folder");
         break;
       default:
         break;
     }
-    
-  }, []);
+  }, [navigate]);
   
   return {
     tabList,

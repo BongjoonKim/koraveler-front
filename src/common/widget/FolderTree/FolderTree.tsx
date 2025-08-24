@@ -5,14 +5,11 @@ import {
   Text,
   Icon,
   Badge,
-  useColorModeValue,
   Heading,
-  Tooltip,
   IconProps,
   BoxProps,
 } from '@chakra-ui/react';
-
-import { ChevronRightIcon } from '@chakra-ui/icons';
+import { ChevronRight } from 'lucide-react';
 import {
   StaticTreeDataProvider,
   Tree,
@@ -22,6 +19,64 @@ import {
 } from 'react-complex-tree';
 import useFolderTree from './useFolderTree';
 import 'react-complex-tree/lib/style-modern.css';
+
+// Tooltip 컴포넌트 정의 (Chakra UI v3 방식)
+import { Portal } from '@chakra-ui/react';
+
+// Tooltip 컴포넌트
+interface TooltipProps {
+  children: React.ReactNode;
+  label: string;
+  fontSize?: string;
+  hasArrow?: boolean;
+}
+
+const Tooltip = ({ children, label, fontSize = "sm", hasArrow = false }: TooltipProps) => {
+  const [isVisible, setIsVisible] = useState(false);
+  
+  return (
+    <Box
+      position="relative"
+      display="inline-block"
+      onMouseEnter={() => setIsVisible(true)}
+      onMouseLeave={() => setIsVisible(false)}
+    >
+      {children}
+      {isVisible && (
+        <Portal>
+          <Box
+            position="absolute"
+            top="100%"
+            left="50%"
+            transform="translateX(-50%)"
+            mt={1}
+            px={2}
+            py={1}
+            bg="gray.900"
+            color="white"
+            borderRadius="md"
+            fontSize={fontSize}
+            whiteSpace="nowrap"
+            zIndex={1000}
+            _before={hasArrow ? {
+              content: '""',
+              position: "absolute",
+              top: "-4px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              borderLeft: "4px solid transparent",
+              borderRight: "4px solid transparent",
+              borderBottom: "4px solid",
+              borderBottomColor: "gray.900"
+            } : undefined}
+          >
+            {label}
+          </Box>
+        </Portal>
+      )}
+    </Box>
+  );
+};
 
 // 트리 아이템 데이터 타입
 export interface TreeItemData extends TreeItem {
@@ -89,19 +144,19 @@ export default function FolderTree(props: FolderTreeProps) {
   const [expandedItems, setExpandedItems] = useState<TreeItemIndex[]>(['root']);
   const [selectedItems, setSelectedItems] = useState<TreeItemIndex[]>([]);
   
-  // Chakra UI 색상 모드 대응
-  const bg = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
-  const headerBg = useColorModeValue('linear(to-r, blue.500, purple.600)', 'linear(to-r, blue.600, purple.700)');
-  const hoverBg = useColorModeValue('gray.50', 'gray.700');
-  const selectedBg = useColorModeValue('blue.50', 'blue.900');
-  const selectedBorderColor = useColorModeValue('blue.200', 'blue.600');
-  const textColor = useColorModeValue('gray.700', 'gray.200');
-  const iconColor = useColorModeValue('gray.500', 'gray.400');
-  const folderColor = useColorModeValue('orange.500', 'orange.300');
-  const scrollTrackBg = useColorModeValue('#f7fafc', '#2d3748');
-  const scrollThumbBg = useColorModeValue('#cbd5e0', '#4a5568');
-  const scrollThumbHoverBg = useColorModeValue('#a0aec0', '#718096');
+  // 색상 정의 (하드코딩으로 변경)
+  const bg = 'white';
+  const borderColor = 'gray.200';
+  const headerBg = 'linear-gradient(to right, #3182ce, #805ad5)';
+  const hoverBg = 'gray.50';
+  const selectedBg = 'blue.50';
+  const selectedBorderColor = 'blue.200';
+  const textColor = 'gray.700';
+  const iconColor = 'gray.500';
+  const folderColor = 'orange.500';
+  const scrollTrackBg = '#f7fafc';
+  const scrollThumbBg = '#cbd5e0';
+  const scrollThumbHoverBg = '#a0aec0';
   
   // selectedFolderId가 변경될 때 selectedItems 업데이트
   React.useEffect(() => {
@@ -158,12 +213,10 @@ export default function FolderTree(props: FolderTreeProps) {
           transition="all 0.2s"
           ml="1.5rem"
         >
-          <ChevronRightIcon
-            boxSize={4}
+          <ChevronRight
+            size={4}
             color={iconColor}
             transform={context.isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'}
-            transition="transform 0.2s"
-            _hover={{ color: textColor }}
           />
         </Box>
       )}
@@ -179,12 +232,9 @@ export default function FolderTree(props: FolderTreeProps) {
       borderRadius="md"
       cursor="pointer"
       transition="all 0.2s"
-      // bg={context.isSelected ? selectedBg : 'transparent'}
       _hover={{
-        // bg: context.isSelected ? selectedBg : hoverBg,
         transform: 'translateX(2px)',
       }}
-      // borderColor={context.isSelected ? selectedBorderColor : 'transparent'}
     >
       {/* 아이콘 */}
       <Box mr={2}>
@@ -210,7 +260,7 @@ export default function FolderTree(props: FolderTreeProps) {
           fontSize="sm"
           fontWeight="medium"
           color={textColor}
-          isTruncated
+          truncate
           flex={1}
         >
           {item.data?.name || 'Untitled'}
@@ -229,7 +279,7 @@ export default function FolderTree(props: FolderTreeProps) {
               display="flex"
               alignItems="center"
               gap={1}
-              bgGradient="linear(to-r, green.400, green.600)"
+              bg="green.500"
             >
               <GlobeIcon boxSize={2.5} />
               공개
@@ -301,7 +351,6 @@ export default function FolderTree(props: FolderTreeProps) {
         '.rct-tree-item-li[data-rct-item-selected="true"] .rct-tree-item-title-container': {
           backgroundColor: `${selectedBg} !important`,
           borderRadius: '6px !important',
-          // marginLeft: '0px !important',
         },
         '.rct-tree-item-li[data-rct-item-selected="true"]::after': {
           content: '""',
@@ -313,7 +362,6 @@ export default function FolderTree(props: FolderTreeProps) {
           height: '20px',
           backgroundColor: '#3182ce', // 파란색
           borderRadius: '2px',
-          
         },
       }}
     >
@@ -329,10 +377,6 @@ export default function FolderTree(props: FolderTreeProps) {
         // 폴더 클릭 시 확장/축소를 비활성화
         onExpandItem={() => {}} // 빈 함수로 비활성화
         onCollapseItem={() => {}} // 빈 함수로 비활성화
-        // onExpandItem={(item) => setExpandedItems([...expandedItems, item.index])}
-        // onCollapseItem={(item) =>
-        //   setExpandedItems(expandedItems.filter(expandedItemIndex => expandedItemIndex !== item.index))
-        // }
         onSelectItems={handleSelectionChange}
         canDragAndDrop={false}
         canDropOnFolder={true}

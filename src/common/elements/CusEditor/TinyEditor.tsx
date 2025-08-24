@@ -1,3 +1,5 @@
+// src/common/elements/CusEditor/TinyEditor.tsx
+
 import {forwardRef, useRef, useState} from "react";
 import { Editor } from '@tinymce/tinymce-react';
 import { Editor as TinyMCEEditor } from 'tinymce';
