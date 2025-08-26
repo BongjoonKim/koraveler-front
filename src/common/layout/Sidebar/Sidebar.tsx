@@ -3,14 +3,15 @@ import { TbMessageChatbot } from "react-icons/tb";
 import { HiOutlineDocumentText } from "react-icons/hi2";
 import { BiHome } from "react-icons/bi";
 import CusIconButton from "../../elements/buttons/CusIconButton";
+import useSidebar from "./useSidebar";
 
 export interface SidebarProps {
-  onChatbotClick?: () => void;
   onBlogClick?: () => void;
   onHomeClick?: () => void;
 }
 
-function Sidebar({ onChatbotClick, onBlogClick, onHomeClick }: SidebarProps) {
+function Sidebar({ onBlogClick, onHomeClick }: SidebarProps) {
+  const {onChatbotClick} = useSidebar();
   return (
     <StyledSidebar>
       <NavigationContainer>

@@ -7,6 +7,7 @@ import {Alert, AlertContent, AlertDescription, AlertIndicator, AlertRoot, AlertT
 import TechRoutes from "./TechRoutes";
 import ChatRoutes from "./ChatRoutes";
 import MainPage from "../component/page/MainPage";
+import LoginRoutes from "./LoginRoutes/LoginRoutes";
 
 export default function RoutersTree() {
   return (
@@ -17,6 +18,7 @@ export default function RoutersTree() {
         <Route path="/travel/*" element={<TravelRoutes/>}/>
         <Route path="/tech/*" element={<TechRoutes/>}/>
         <Route path="/chat/*" element={<ChatRoutes/>}/>
+        <Route path="/login/*" element={<LoginRoutes/>}/>
         <Route path="/setting/*" element={
             <SettingRoutes/>
         }/>

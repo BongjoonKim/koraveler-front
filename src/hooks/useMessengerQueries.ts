@@ -150,7 +150,7 @@ export const useOnlineMembers = (channelId: string | null) => {
 export const useCreateChannel = () => {
   const authEP = useAuthEP();
   const queryClient = useQueryClient();
-  
+  console.log("여기도 오나")
   return useMutation({
     mutationFn: (data: {
       name: string;

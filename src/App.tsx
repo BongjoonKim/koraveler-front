@@ -8,6 +8,7 @@ import recoil from "./stores/recoil";
 import posthog from 'posthog-js'
 import { PostHogProvider} from 'posthog-js/react'
 import {AuthProvider} from "./appConfig/AuthProvider";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 
 if (typeof window !== 'undefined') {
   posthog.init(process.env.REACT_APP_PUBLIC_POSTHOG_KEY!, {
@@ -23,15 +24,28 @@ function App() {
   // isLoadingGlobal이 없다면 주석 처리하거나 다른 값으로 대체
   // const isLoadingGlobal = useRecoilValue(recoil.isLoadingGlobal);
   
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        // 전역 쿼리 설정
+        staleTime: 1000 * 60 * 5, // 5분
+        refetchOnWindowFocus: false,
+        retry: 1,
+      },
+    },
+  });
+  
   return (
     <PostHogProvider client={posthog}>
-      <AuthProvider>
-        <ChakraProvider value={defaultSystem}>
-          <StyledApp className={"app"}>
-            <RoutersTree/>
-          </StyledApp>
-        </ChakraProvider>
-      </AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <ChakraProvider value={defaultSystem}>
+            <StyledApp className={"app"}>
+              <RoutersTree/>
+            </StyledApp>
+          </ChakraProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </PostHogProvider>
   );
 }

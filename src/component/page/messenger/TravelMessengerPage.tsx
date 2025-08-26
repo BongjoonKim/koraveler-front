@@ -99,7 +99,6 @@ const TravelMessengerPage: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
   
-  // Handlers
   const handleCreateChannel = async () => {
     if (!newChannelData.name.trim()) {
       toaster.create({
@@ -111,7 +110,8 @@ const TravelMessengerPage: React.FC = () => {
     }
     
     try {
-      await createChannelMutation.mutateAsync(newChannelData);
+      const result = await createChannelMutation.mutateAsync(newChannelData);
+      console.log('채널 생성 결과:', result); // 디버깅용 로그 추가
       setShowCreateModal(false);
       setNewChannelData({ name: '', description: '', channelType: 'GROUP' });
       toaster.create({
@@ -120,6 +120,7 @@ const TravelMessengerPage: React.FC = () => {
         duration: 2000
       });
     } catch (error) {
+      console.error('채널 생성 에러:', error); // 에러 로깅
       toaster.create({
         title: '채널 생성에 실패했습니다',
         status: 'error',
@@ -148,31 +149,31 @@ const TravelMessengerPage: React.FC = () => {
   );
   
   return (
-    <Flex h="100vh" bg="gray.50">
+    <Flex h="100%" bg="gray.50">
       {/* 연결 상태 표시 */}
-      <Box position="fixed" top={4} right={4} zIndex={1000}>
-        <Flex
-          align="center"
-          bg="white"
-          px={3}
-          py={2}
-          borderRadius="lg"
-          shadow="md"
-          border="1px"
-          borderColor="gray.200"
-        >
-          <Box
-            w={2}
-            h={2}
-            borderRadius="full"
-            bg={isSocketConnected ? "green.400" : "red.400"}
-            mr={2}
-          />
-          <Text fontSize="sm" color="gray.600">
-            {isSocketConnected ? '연결됨' : '연결 끊김'}
-          </Text>
-        </Flex>
-      </Box>
+      {/*<Box position="fixed" top={4} right={4} zIndex={1000}>*/}
+      {/*  <Flex*/}
+      {/*    align="center"*/}
+      {/*    bg="white"*/}
+      {/*    px={3}*/}
+      {/*    py={2}*/}
+      {/*    borderRadius="lg"*/}
+      {/*    shadow="md"*/}
+      {/*    border="1px"*/}
+      {/*    borderColor="gray.200"*/}
+      {/*  >*/}
+      {/*    <Box*/}
+      {/*      w={2}*/}
+      {/*      h={2}*/}
+      {/*      borderRadius="full"*/}
+      {/*      bg={isSocketConnected ? "green.400" : "red.400"}*/}
+      {/*      mr={2}*/}
+      {/*    />*/}
+      {/*    <Text fontSize="sm" color="gray.600">*/}
+      {/*      {isSocketConnected ? '연결됨' : '연결 끊김'}*/}
+      {/*    </Text>*/}
+      {/*  </Flex>*/}
+      {/*</Box>*/}
       
       {/* 사이드바 - 채널 목록 */}
       <Box w="320px" bg="white" borderRight="1px" borderColor="gray.200">
@@ -308,7 +309,6 @@ const TravelMessengerPage: React.FC = () => {
       
       {/* 채널 생성 모달 */}
       <DialogRoot open={showCreateModal} onOpenChange={(details : any) => setShowCreateModal(details.open)}>
-        <Portal>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>새 채널 만들기</DialogTitle>
@@ -382,7 +382,6 @@ const TravelMessengerPage: React.FC = () => {
               </Button>
             </DialogFooter>
           </DialogContent>
-        </Portal>
       </DialogRoot>
     </Flex>
   );

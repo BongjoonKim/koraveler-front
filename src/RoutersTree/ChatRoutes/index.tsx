@@ -3,6 +3,7 @@ import {Route, Routes} from "react-router-dom";
 import CreateBlogPost from "../../component/page/blog/CreateBlogPost/CreateBlogPost";
 import AdminLayout from "../../common/layout/AdminLayout/AdminLayout";
 import TravelMessengerPage from "../../component/page/messenger/TravelMessengerPage";
+import BlogLayout from "../../common/layout/BlogLayout";
 
 interface BlogRoutesProps {
 
@@ -12,11 +13,11 @@ function BlogRoutes(props: BlogRoutesProps) {
   
   return (
     <StyledBlogRoutes>
-      <AdminLayout>
+      <BlogLayout>
         <Routes>
           <Route path="/" element={<TravelMessengerPage />} />
         </Routes>
-      </AdminLayout>
+      </BlogLayout>
     </StyledBlogRoutes>
   )
 };

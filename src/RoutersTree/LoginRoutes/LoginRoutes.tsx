@@ -1,15 +1,11 @@
 import styled from "styled-components";
 import {Route, Routes} from "react-router-dom";
-import MenuAdminRoutes from "../AdminRoutes/MenuAdminRoutes";
 import LoginPage from "../../component/page/LoginPage";
 import SignUpPage from "../../component/page/SignUpPage";
 
-interface LoginRoutesProps {
+interface LoginRoutesProps {}
 
-};
-
-function LoginRoutes(props: LoginRoutesProps) {
-  
+function LoginRoutes() {
   return (
     <StyledLoginRoutes>
       <Routes>
@@ -18,14 +14,14 @@ function LoginRoutes(props: LoginRoutesProps) {
       </Routes>
     </StyledLoginRoutes>
   )
-};
+}
 
 export default LoginRoutes;
 
 const StyledLoginRoutes = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
