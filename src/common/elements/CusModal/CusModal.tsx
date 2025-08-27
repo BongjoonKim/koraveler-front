@@ -21,6 +21,8 @@ export interface CusModalProps {
   children?: ReactNode;
   isOpen: boolean;
   onClose: () => void;
+  backdropDarkness ?: number;
+  
 }
 
 export default function CusModal(props: CusModalProps) {
@@ -30,7 +32,14 @@ export default function CusModal(props: CusModalProps) {
       onOpenChange={(details: { open: boolean }) => !details.open && props.onClose()}
       size={props?.size}
     >
-      <DialogBackdrop />
+      <DialogBackdrop
+        bg="rgba(0, 0, 0, 0)"
+        backdropFilter={props?.backdropDarkness && `brightness(${1 - props.backdropDarkness}) contrast(${1 + props.backdropDarkness / 2})`}
+        style={props.backdropDarkness && {
+          backgroundColor: `rgba(0, 0, 0, ${props.backdropDarkness})`,
+          backdropFilter: `brightness(${1 - props.backdropDarkness}) contrast(${1 + props.backdropDarkness / 2})`
+        }}
+      />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{props.title}</DialogTitle>

@@ -1,17 +1,20 @@
 // src/common/elements/CusButton/CusButton.tsx
 
-import {Button, ButtonProps} from "@chakra-ui/react";
+import { Button, ButtonProps } from "@chakra-ui/react";
 
 interface CusButtonProps extends ButtonProps {
-  // Chakra UI v3에서 지원하는 variant 타입으로 제한
   variant?: "outline" | "solid" | "ghost" | "subtle" | "surface" | "plain";
+  colorPalette?: "gray" | "red" | "orange" | "yellow" | "green" | "teal" | "blue" | "cyan" | "purple" | "pink";
 }
 
-function CusButton(props : CusButtonProps) {
+function CusButton(props: CusButtonProps) {
+  const { colorPalette = "gray", variant = "solid", ...restProps } = props;
+  
   return (
     <Button
-      {...props}
-      variant={props.variant || "solid"} // 기본값 설정
+      colorPalette={colorPalette}
+      variant={variant}
+      {...restProps}
     />
   )
 }

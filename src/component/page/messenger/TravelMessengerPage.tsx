@@ -57,7 +57,7 @@ import {
 import ChatHeader from './chat/ChatHeader';
 import MessageInput from './message/MessageInput';
 import MessageItem from './message/MessageItem';
-import {CusInputGroup} from "../../../common/elements/textField/CusInput";
+import CusInput from "../../../common/elements/textField/CusInput";
 
 const toaster = createToaster({
   placement: 'top-right',
@@ -197,11 +197,11 @@ const TravelMessengerPage: React.FC = () => {
         
         {/* 검색 */}
         <Box p={4}>
-          <CusInputGroup
+          <CusInput
             placeholder="채널 검색..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            inputLeftElement={<Search size={16} color="gray.400" />}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+            startElement={<Search size={16} color="gray.400" />}
           />
         </Box>
         

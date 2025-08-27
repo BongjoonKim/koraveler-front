@@ -1,5 +1,7 @@
 
 // 숫자 판별
+import {S3URLInDocument} from "../constants/RegexConstants";
+
 export const isNumber = (value : any) => {
   if (value) {
     const numberPattern = /^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/;
@@ -84,5 +86,25 @@ export const extractTextAdvanced = (htmlString?: string, options?: ExtractTextAd
     return '';
   }
 };
+
+// Function to strip HTML tags and S3 URLs
+export const replacingHtmlInText = (content?: string): string => {
+  if (!content) return '';
+  
+  // Remove HTML tags
+  const strippedContent = content.replace(/<[^>]*>/g, '');
+  
+  // Remove S3 URLs from markdown images
+  const cleanedContent = strippedContent.replace(S3URLInDocument, '');
+  
+  // Remove HTML whitespace entities
+  const removedWhitespaceEntities = cleanedContent
+    .replace(/&nbsp;/g, ' ')   // Non-breaking space
+    .replace(/\s+/g, ' ')      // Collapse multiple whitespaces
+    .trim();
+  
+  // Trim and truncate
+  return removedWhitespaceEntities.trim();
+}
 
 

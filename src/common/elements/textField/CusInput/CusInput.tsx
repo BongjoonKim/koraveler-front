@@ -1,37 +1,31 @@
-// src/common/elements/textField/CusInput/CusInput.tsx
-
-import React from "react";
-import { Input, InputGroup } from "@chakra-ui/react";
-import { ReactNode, useState } from "react";
+import React, { forwardRef, ReactNode, useState } from "react";
+import {
+  Input,
+  InputGroup,
+  type InputProps,
+  type InputGroupProps
+} from "@chakra-ui/react";
 import CusButton from "../../buttons/CusButton";
 
-export interface CusInputProps extends React.ComponentProps<typeof Input> {
-  // Input의 모든 props를 상속
+export interface CusInputProps extends InputProps {
+  startElement?: ReactNode;
+  endElement?: ReactNode;
+  inputGroupProps?: Omit<InputGroupProps, 'startElement' | 'endElement'>;
 }
 
-export interface CusInputGroupProps extends CusInputProps {
-  inputLeftElement?: ReactNode;
-  inputRightElement?: ReactNode;
-}
-
-function CusInput(props: CusInputProps) {
-  return (
-    <Input
-      {...props}
-    />
-  )
-}
-
-export function CusInputGroup(props: CusInputGroupProps) {
+const CusInput = forwardRef<HTMLInputElement, CusInputProps>((props, ref) => {
+  const {
+    startElement,
+    endElement,
+    type,
+    inputGroupProps,
+    ...inputProps
+  } = props;
+  
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  
-  // props에서 inputLeftElement, inputRightElement를 분리하고 나머지는 Input에 전달
-  const { inputLeftElement, inputRightElement, type, ...inputProps } = props;
-  
   const isPasswordType = type === 'password';
   
-  // 패스워드 타입이면 show/hide 버튼을 우선적으로 표시
-  const endElement = isPasswordType ? (
+  const passwordToggle = isPasswordType ? (
     <CusButton
       onClick={() => setShowPassword(prev => !prev)}
       size="sm"
@@ -39,19 +33,23 @@ export function CusInputGroup(props: CusInputGroupProps) {
     >
       {showPassword ? "Hide" : "Show"}
     </CusButton>
-  ) : inputRightElement;
+  ) : endElement;
   
   return (
     <InputGroup
-      startElement={inputLeftElement}
-      endElement={endElement}
+      startElement={startElement}
+      endElement={passwordToggle}
+      {...inputGroupProps}
     >
       <Input
+        ref={ref}
         type={isPasswordType ? (showPassword ? 'text' : 'password') : type}
         {...inputProps}
       />
     </InputGroup>
-  )
-}
+  );
+});
 
-export default CusInput
+CusInput.displayName = 'CusInput';
+
+export default CusInput;
