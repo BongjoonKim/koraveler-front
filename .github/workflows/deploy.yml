@@ -18,12 +18,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # 프로젝트에 맞는 버전으로 변경
-          cache: 'npm'
+          node-version: '18.19.1'  # EC2와 동일한 버전
+          cache: 'yarn'
 
       # 3. 의존성 설치
       - name: Install dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile
 
       # 4. 환경 변수 파일 생성
       - name: Create .env.production file
@@ -77,13 +77,22 @@ jobs:
           # build 디렉토리 전송
           scp -i ~/.ssh/koraveler.pem -r build ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/koraveler-front/
 
-      # 9. Nginx 재시작
+      # 9. Nginx 자동 시작 설정 확인 및 적용
+      - name: Enable Nginx auto-start on boot
+        run: |
+          ssh -i ~/.ssh/koraveler.pem ubuntu@${{ secrets.EC2_HOST }} \
+            "sudo systemctl enable nginx && \
+             echo 'Nginx auto-start enabled' && \
+             sudo systemctl is-enabled nginx"
+
+      # 10. Nginx 재시작
       - name: Restart Nginx
         run: |
           ssh -i ~/.ssh/koraveler.pem ubuntu@${{ secrets.EC2_HOST }} \
-            "sudo systemctl restart nginx"
+            "sudo systemctl restart nginx && \
+             sudo systemctl status nginx --no-pager"
 
-      # 10. 배포 확인 (옵션)
+      # 11. 배포 확인 (옵션)
       - name: Verify deployment
         run: |
           ssh -i ~/.ssh/koraveler.pem ubuntu@${{ secrets.EC2_HOST }} \
