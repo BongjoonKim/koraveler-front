@@ -24,7 +24,7 @@ export default function useSearchModal(props : any) {
         throw resDocs.statusText;
       }
       setDocs(resDocs.data.documents);
-      console.log("resDocs.data.documentsDTO", resDocs.data.documents)
+      console.log("resDocs.data.documents", resDocs.data.documents)
     } catch (e) {
       setErrorMsg({
         status : "error",

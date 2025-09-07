@@ -1,0 +1,95 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Node.js 설정
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # 프로젝트에 맞는 버전으로 변경
+          cache: 'npm'
+
+      # 3. 의존성 설치
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. 환경 변수 파일 생성
+      - name: Create .env.production file
+        run: |
+          cat > .env.production << EOF
+          REACT_APP_ENV=${{ secrets.REACT_APP_ENV }}
+          REACT_APP_BASE_URL=${{ secrets.REACT_APP_BASE_URL }}
+          REACT_APP_URI=${{ secrets.REACT_APP_URI }}
+          REACT_APP_AWS_S3_URI=${{ secrets.REACT_APP_AWS_S3_URI }}
+          REACT_APP_AWS_S3_THUMBNAIL_URI=${{ secrets.REACT_APP_AWS_S3_THUMBNAIL_URI }}
+          REACT_APP_AWS_ACCESS_KEY=${{ secrets.REACT_APP_AWS_ACCESS_KEY }}
+          REACT_APP_AWS_SECRET_KEY=${{ secrets.REACT_APP_AWS_SECRET_KEY }}
+          REACT_APP_AWS_FILE_REGION=${{ secrets.REACT_APP_AWS_FILE_REGION }}
+          REACT_APP_BACKEND_URI=${{ secrets.REACT_APP_BACKEND_URI }}
+          REACT_APP_WEATHERSTACK_URL=${{ secrets.REACT_APP_WEATHERSTACK_URL }}
+          REACT_APP_WEATHERSTACK_KEY=${{ secrets.REACT_APP_WEATHERSTACK_KEY }}
+          REACT_APP_TINY_API_KEY=${{ secrets.REACT_APP_TINY_API_KEY }}
+          REACT_APP_GOOGLE_ANALYTICS_ID=${{ secrets.REACT_APP_GOOGLE_ANALYTICS_ID }}
+          REACT_APP_PUBLIC_POSTHOG_KEY=${{ secrets.REACT_APP_PUBLIC_POSTHOG_KEY }}
+          REACT_APP_PUBLIC_POSTHOG_HOST=${{ secrets.REACT_APP_PUBLIC_POSTHOG_HOST }}
+          EOF
+
+      # 5. 빌드
+      - name: Build application
+        run: npm run build
+
+      # 6. SSH 키 설정
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/koraveler.pem
+          chmod 600 ~/.ssh/koraveler.pem
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      # 7. 기존 파일 백업 (옵션)
+      - name: Backup existing deployment
+        run: |
+          ssh -i ~/.ssh/koraveler.pem ubuntu@${{ secrets.EC2_HOST }} \
+            "if [ -d /home/ubuntu/koraveler-front/build ]; then \
+               sudo mv /home/ubuntu/koraveler-front/build /home/ubuntu/koraveler-front/build.backup; \
+             fi"
+
+      # 8. 파일 전송
+      - name: Deploy to EC2
+        run: |
+          # .env.production 파일 전송
+          scp -i ~/.ssh/koraveler.pem .env.production ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/koraveler-front/
+          
+          # build 디렉토리 전송
+          scp -i ~/.ssh/koraveler.pem -r build ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/koraveler-front/
+
+      # 9. Nginx 재시작
+      - name: Restart Nginx
+        run: |
+          ssh -i ~/.ssh/koraveler.pem ubuntu@${{ secrets.EC2_HOST }} \
+            "sudo systemctl restart nginx"
+
+      # 10. 배포 확인 (옵션)
+      - name: Verify deployment
+        run: |
+          ssh -i ~/.ssh/koraveler.pem ubuntu@${{ secrets.EC2_HOST }} \
+            "curl -I localhost || echo 'Health check failed'"
+
+      # 12. 정리
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -f ~/.ssh/koraveler.pem
+          rm -f .env.production
