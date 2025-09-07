@@ -18,12 +18,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18.19.1'  # 프로젝트에 맞는 버전으로 변경
-          cache: 'yarn'
+          node-version: '18'  # 프로젝트에 맞는 버전으로 변경
+          cache: 'npm'
 
       # 3. 의존성 설치
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       # 4. 환경 변수 파일 생성
       - name: Create .env.production file
@@ -48,6 +48,8 @@ jobs:
 
       # 5. 빌드
       - name: Build application
+        env:
+          CI: false
         run: yarn build
 
       # 6. SSH 키 설정

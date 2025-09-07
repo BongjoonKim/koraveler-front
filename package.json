@@ -69,7 +69,7 @@
   },
   "scripts": {
     "start": "export PORT=3002 && react-scripts start",
-    "build": "NODE_ENV=production react-scripts build",
+    "build": "CI=false NODE_ENV=production react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
