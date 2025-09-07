@@ -48,7 +48,7 @@ jobs:
 
       # 5. 빌드
       - name: Build application
-        run: npm run build
+        run: yarn build
 
       # 6. SSH 키 설정
       - name: Setup SSH key
