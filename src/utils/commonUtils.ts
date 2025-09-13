@@ -49,7 +49,7 @@ export const extractTextAdvanced = (htmlString?: string, options?: ExtractTextAd
     const doc = parser.parseFromString(htmlString, 'text/html');
     
     let text = '';
-    console.log("htmlString", htmlString)
+    // console.log("htmlString", htmlString)
     if (preserveLineBreaks) {
       // <br>, <p>, <div> 등을 줄바꿈으로 변환
       const brElements = doc.querySelectorAll('br');
@@ -79,7 +79,7 @@ export const extractTextAdvanced = (htmlString?: string, options?: ExtractTextAd
       text = text.substring(0, maxLength - ellipsisType.length) + ellipsisType;
     }
     
-    console.log("extracted text:", text);
+    // console.log("extracted text:", text);
     return text;
   } catch (error) {
     console.error('고급 텍스트 추출 중 오류 발생:', error);

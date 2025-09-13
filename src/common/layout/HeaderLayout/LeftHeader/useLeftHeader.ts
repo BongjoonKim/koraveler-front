@@ -30,18 +30,18 @@ export default function useLeftHeader() {
   
   // 페이지 뷰 추적 (선택사항)
   useEffect(() => {
-    posthog.capture('page_view', {
-      page: location.pathname,
-      is_home: location.pathname === "/home"
-    });
+    // posthog.capture('page_view', {
+    //   page: location.pathname,
+    //   is_home: location.pathname === "/home"
+    // });
   }, [location.pathname]);
   
   // 메뉴 호버 추적
   const handleMenuHover = (menuLabel: string) => {
-    posthog.capture('menu_hovered', {
-      menu_label: menuLabel,
-      current_page: location.pathname
-    });
+    // posthog.capture('menu_hovered', {
+    //   menu_label: menuLabel,
+    //   current_page: location.pathname
+    // });
   };
   
   return {

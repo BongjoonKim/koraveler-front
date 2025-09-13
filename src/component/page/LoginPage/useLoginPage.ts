@@ -1,12 +1,13 @@
+// src/hooks/useLoginPage.ts
+
 import {ChangeEvent, useCallback, useState, KeyboardEvent} from "react";
 import {InitUsersDTO} from "../../../types/users/initialUsers";
 import {useNavigate} from "react-router-dom";
 import {login} from "../../../endpoints/login-endpoints";
-import {useAtom} from "jotai";
-import {setCookie} from "../../../utils/cookieUtils";
 import {useRecoilState} from "recoil";
 import recoil from "../../../stores/recoil";
 import {useAuth} from "../../../appConfig/AuthProvider";
+import {refreshTokenStorage} from "../../../appConfig/AuthProvider";
 
 export default function useLoginPage() {
   const [userInfo, setUserInfo] = useState<UsersDTO>(InitUsersDTO);
@@ -32,28 +33,35 @@ export default function useLoginPage() {
         }
       })
     }
-  
-  }, [userInfo])
+  }, []);
   
   // 제목 누르기
   const handleClickTitle = useCallback(() => {
     navigate("/")
-  }, []);
+  }, [navigate]);
   
   // 로그인 버튼 클릭
   const handleClickLogin = useCallback(async () => {
     try {
-    const resToken = await login(userInfo);
-    if (resToken.data) {
-      setAccessToken(resToken.data.accessToken);
-      setCookie("accessToken", resToken.data.accessToken!)
-      setCookie("refreshToken", resToken.data.refreshToken!)
+      const resToken = await login(userInfo);
+      
+      if (resToken.data) {
+        // accessToken은 Context(메모리)에만 저장
+        setAccessToken(resToken.data.accessToken);
+        
+        // refreshToken은 sessionStorage에만 저장
+        refreshTokenStorage.set(resToken.data.refreshToken!);
+        
+        navigate('/blog/home');
+      }
+    } catch(e: any) {
+      console.error("Login failed:", e);
+      setErrMsg({
+        status: "error",
+        msg: e.response?.data?.message || "로그인에 실패했습니다."
+      });
     }
-    navigate('/blog/home')
-    } catch(e) {
-      console.log("handleClickLogin", e);
-    }
-  }, [userInfo]);
+  }, [userInfo, setAccessToken, navigate, setErrMsg]);
   
   const pressEnter = useCallback((event : KeyboardEvent) => {
     try {
@@ -66,11 +74,11 @@ export default function useLoginPage() {
         msg: "login fail"
       })
     }
-  }, [handleClickLogin]);
+  }, [handleClickLogin, setErrMsg]);
   
-  const handleClickSignUp = () => {
+  const handleClickSignUp = useCallback(() => {
     navigate("/login/sign-up")
-  }
+  }, [navigate]);
   
   return {
     userInfo,
@@ -81,5 +89,4 @@ export default function useLoginPage() {
     handleClickSignUp,
     pressEnter
   }
-  
 }

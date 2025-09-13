@@ -1,37 +1,39 @@
-// src/hooks/useWebSocket.ts (STOMP 버전)
+// src/hooks/useWebSocket.ts
 import { useEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../appConfig/AuthProvider';
+import { useCurrentUser } from './useCurrentUser'; // 추가
 import {
   socketConnectedAtom,
   selectedChannelAtom,
-  typingUsersAtom
+  typingUsersAtom,
+  addMessageAtom
 } from '../stores/messengerStore/messengerStore';
 
 export const useWebSocket = () => {
   const stompClientRef = useRef<Client | null>(null);
   const [, setIsConnected] = useAtom(socketConnectedAtom);
-  const { accessToken } = useAuth();
   const [selectedChannel] = useAtom(selectedChannelAtom);
   const [, setTypingUsers] = useAtom(typingUsersAtom);
+  const [, addMessage] = useAtom(addMessageAtom);
+  const { accessToken } = useAuth();
+  const currentUser = useCurrentUser(); // 현재 사용자 정보
   const queryClient = useQueryClient();
   const subscriptionsRef = useRef<Map<string, any>>(new Map());
   
+  // WebSocket 연결
   useEffect(() => {
     if (!accessToken) return;
     
-    // STOMP 클라이언트 생성
     const client = new Client({
       webSocketFactory: () => new SockJS(`${process.env.REACT_APP_BACKEND_URI}/ws`),
       connectHeaders: {
         Authorization: `Bearer ${accessToken}`
       },
-      debug: (str) => {
-        console.log('STOMP:', str);
-      },
+      debug: (str) => console.log('STOMP:', str),
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
@@ -39,89 +41,58 @@ export const useWebSocket = () => {
     
     stompClientRef.current = client;
     
-    client.onConnect = (frame) => {
-      console.log('STOMP Connected:', frame);
+    client.onConnect = () => {
+      console.log('WebSocket 연결됨');
       setIsConnected(true);
       
-      // 전역 에러 구독
       client.subscribe('/user/queue/errors', (message) => {
-        console.error('WebSocket Error:', message.body);
+        console.error('WebSocket 에러:', message.body);
       });
     };
     
     client.onDisconnect = () => {
-      console.log('STOMP Disconnected');
+      console.log('WebSocket 연결 해제');
       setIsConnected(false);
       subscriptionsRef.current.clear();
-    };
-    
-    client.onStompError = (frame) => {
-      console.error('STOMP Error:', frame);
-      setIsConnected(false);
     };
     
     client.activate();
     
     return () => {
-      subscriptionsRef.current.forEach((subscription) => {
-        subscription.unsubscribe();
-      });
+      subscriptionsRef.current.forEach(sub => sub.unsubscribe());
       subscriptionsRef.current.clear();
       client.deactivate();
-      setIsConnected(false);
     };
   }, [accessToken, setIsConnected]);
   
-  // 채널 구독/구독해제
+  // 채널 구독
   useEffect(() => {
     const client = stompClientRef.current;
-    if (!client || !client.connected || !selectedChannel) return;
+    if (!client?.connected || !selectedChannel || !currentUser) return;
     
     const channelId = selectedChannel.id;
     
     // 이전 구독 해제
-    subscriptionsRef.current.forEach((subscription, key) => {
-      if (key.includes('channel/')) {
-        subscription.unsubscribe();
+    subscriptionsRef.current.forEach((sub, key) => {
+      if (key.startsWith('channel/')) {
+        sub.unsubscribe();
         subscriptionsRef.current.delete(key);
       }
     });
     
-    // 새 채널 메시지 구독
+    // 메시지 구독
     const messageSubscription = client.subscribe(
       `/topic/channel/${channelId}/messages`,
       (message) => {
         const newMessage = JSON.parse(message.body);
         
-        // 메시지 목록 업데이트
-        queryClient.setQueryData(['messages', channelId], (old: any) => {
-          if (!old) return old;
-          return {
-            ...old,
-            pages: old.pages.map((page: any, index: number) =>
-              index === 0
-                ? { ...page, messages: [newMessage, ...page.messages] }
-                : page
-            ),
-          };
-        });
+        // 내가 보낸 메시지는 무시
+        if (newMessage.userId === currentUser.id) {
+          return;
+        }
         
-        // 채널 목록의 lastMessage 업데이트
-        queryClient.setQueryData(['channels', 'my'], (old: any) => {
-          if (!old) return old;
-          return {
-            ...old,
-            channels: old.channels.map((channel: any) =>
-              channel.id === channelId
-                ? {
-                  ...channel,
-                  lastMessage: newMessage,
-                  lastMessageAt: newMessage.createdAt
-                }
-                : channel
-            ),
-          };
-        });
+        // 다른 사용자의 메시지 추가
+        addMessage({ ...newMessage, isMyMessage: false });
       }
     );
     
@@ -131,19 +102,13 @@ export const useWebSocket = () => {
       (message) => {
         const typingEvent = JSON.parse(message.body);
         
-        setTypingUsers(prev => {
-          if (typingEvent.isTyping) {
-            return [...prev.filter(u => u !== typingEvent.userId), typingEvent.userId];
-          } else {
-            return prev.filter(u => u !== typingEvent.userId);
-          }
-        });
-        
-        // 3초 후 자동으로 타이핑 상태 제거
-        if (typingEvent.isTyping) {
-          setTimeout(() => {
-            setTypingUsers(prev => prev.filter(u => u !== typingEvent.userId));
-          }, 3000);
+        if (typingEvent.userId !== currentUser.id) {
+          setTypingUsers(prev => {
+            if (typingEvent.isTyping) {
+              return [...prev.filter(id => id !== typingEvent.userId), typingEvent.userId];
+            }
+            return prev.filter(id => id !== typingEvent.userId);
+          });
         }
       }
     );
@@ -151,31 +116,11 @@ export const useWebSocket = () => {
     subscriptionsRef.current.set(`channel/${channelId}/messages`, messageSubscription);
     subscriptionsRef.current.set(`channel/${channelId}/typing`, typingSubscription);
     
-  }, [selectedChannel, queryClient, setTypingUsers]);
-  
-  const sendMessage = (messageData: {
-    channelId: string;
-    message: string;
-    messageType: string;
-    parentMessageId?: string;
-    attachments?: any[];
-    mentionedUserIds?: string[];
-  }) => {
-    const client = stompClientRef.current;
-    if (!client || !client.connected) {
-      console.error('STOMP client not connected');
-      return;
-    }
-    
-    client.publish({
-      destination: `/app/chat/${messageData.channelId}/send`,
-      body: JSON.stringify(messageData),
-    });
-  };
+  }, [selectedChannel?.id, currentUser?.id, addMessage, setTypingUsers]);
   
   const startTyping = (channelId: string) => {
     const client = stompClientRef.current;
-    if (!client || !client.connected) return;
+    if (!client?.connected) return;
     
     client.publish({
       destination: `/app/chat/${channelId}/typing`,
@@ -185,7 +130,7 @@ export const useWebSocket = () => {
   
   const stopTyping = (channelId: string) => {
     const client = stompClientRef.current;
-    if (!client || !client.connected) return;
+    if (!client?.connected) return;
     
     client.publish({
       destination: `/app/chat/${channelId}/typing`,
@@ -194,7 +139,6 @@ export const useWebSocket = () => {
   };
   
   return {
-    sendMessage,
     startTyping,
     stopTyping,
     isConnected: stompClientRef.current?.connected || false

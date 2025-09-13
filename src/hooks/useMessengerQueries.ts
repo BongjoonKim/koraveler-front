@@ -35,10 +35,10 @@ import {
 } from '../endpoints/messenger-endpoints';
 import {
   Channel, ChannelApiResponse,
-  ChannelListApiResponse,
+  ChannelListApiResponse, ChannelListResponse,
   ChannelMember, ChannelMemberListApiResponse,
   Message,
-  MessageListApiResponse
+  MessageListApiResponse, MessageListResponse
 } from "../types/messenger/messengerTypes";
 
 // ===== 일반 쿼리들 (타입 명시) =====
@@ -229,25 +229,25 @@ export const useLeaveChannel = () => {
 
 // ===== 메시지 관련 훅 =====
 
-// 채널 메시지 조회 (무한 스크롤)
+// useMessengerQueries.ts
 export const useChannelMessages = (channelId: string | null) => {
   const authEP = useAuthEP();
   
-  return useInfiniteQuery({
+  return useQuery<MessageListResponse>({
     queryKey: ['messages', channelId],
-    queryFn: async ({ pageParam }: { pageParam: string | null }) => {
-      const response: MessageListApiResponse = await authEP({
+    queryFn: async () => {
+      const response = await authEP({
         func: getChannelMessages,
-        params: { channelId: channelId!, cursor: pageParam, size: 50 }
+        params: {
+          channelId: channelId!,
+          page: 0,  // 일단 첫 페이지만
+          size: 50
+        }
       });
       return response.data;
     },
     enabled: !!channelId,
-    initialPageParam: null as string | null,
-    getNextPageParam: (lastPage) => {
-      return lastPage.hasNext ? lastPage.nextCursor : undefined;
-    },
-    staleTime: 1000 * 60 * 5, // 5분
+    staleTime: 1000 * 60 * 5,
   });
 };
 
@@ -293,6 +293,7 @@ export const useMentionedMessages = () => {
 };
 
 // 메시지 전송 뮤테이션
+// src/hooks/useMessengerQueries.ts
 export const useSendMessage = () => {
   const authEP = useAuthEP();
   const queryClient = useQueryClient();
@@ -307,33 +308,62 @@ export const useSendMessage = () => {
       mentionedUserIds?: string[];
       clientId?: string;
     }) => authEP({ func: sendMessage, params: data }),
+    
     onSuccess: (response, variables) => {
-      // 메시지 목록 업데이트
-      queryClient.setQueryData(['messages', variables.channelId], (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          pages: old.pages.map((page: any, index: number) =>
-            index === 0
-              ? { ...page, messages: [response.data, ...page.messages] }
-              : page
-          ),
-        };
-      });
+      // 채널의 메시지 목록 업데이트 (임시 메시지 교체)
+      queryClient.setQueryData(
+        ['messages', variables.channelId],
+        (old: MessageListResponse | undefined) => {
+          if (!old) {
+            return {
+              messages: [response.data],
+              hasNext: false,
+              totalCount: 1
+            };
+          }
+          
+          // clientId로 임시 메시지 찾아서 교체
+          const existingIndex = old.messages.findIndex(
+            msg => msg.id === variables.clientId
+          );
+          
+          if (existingIndex >= 0) {
+            const newMessages = [...old.messages];
+            newMessages[existingIndex] = response.data;
+            return { ...old, messages: newMessages };
+          }
+          
+          // 임시 메시지가 없으면 끝에 추가
+          return {
+            ...old,
+            messages: [...old.messages, response.data],
+            totalCount: old.totalCount + 1
+          };
+        }
+      );
       
-      // 채널 목록에서 lastMessage 업데이트
-      queryClient.setQueryData(['channels', 'my'], (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          channels: old.channels.map((channel: Channel) =>
-            channel.id === variables.channelId
-              ? { ...channel, lastMessage: response.data, lastMessageAt: response.data.createdAt }
-              : channel
-          ),
-        };
-      });
-    },
+      // 채널 목록 업데이트
+      queryClient.setQueryData(
+        ['channels', 'my'],
+        (old: ChannelListResponse | undefined) => {
+          if (!old) return old;
+          
+          return {
+            ...old,
+            channels: old.channels.map((channel: Channel) =>
+              channel.id === variables.channelId
+                ? {
+                  ...channel,
+                  lastMessage: response.data,
+                  lastMessageAt: response.data.createdAt,
+                  unreadMessageCount: 0
+                }
+                : channel
+            )
+          };
+        }
+      );
+    }
   });
 };
 

@@ -130,13 +130,18 @@ export interface ChannelListResponse {
   channels: Channel[];
   totalCount: number;
   hasNext: boolean;
-  nextCursor?: string;
+  nextCursor?: string;    // cursor 기반 페이징용 (선택적)
+  currentPage?: number;   // ✅ 추가: 현재 페이지 번호
+  totalPages?: number;    // ✅ 추가: 전체 페이지 수
 }
 
+// MessageListResponse 수정
 export interface MessageListResponse {
   messages: Message[];
   hasNext: boolean;
-  nextCursor?: string;
+  nextCursor?: string;    // cursor 기반 페이징용 (선택적)
+  currentPage?: number;   // ✅ 추가: 현재 페이지 번호
+  totalPages?: number;    // ✅ 추가: 전체 페이지 수
   totalCount: number;
 }
 
@@ -192,6 +197,7 @@ export interface MessageReactionRequest {
   isAdd: boolean;
 }
 
+// MessageSearchRequest 타입 수정
 export interface MessageSearchRequest {
   keyword?: string;
   userId?: string;
@@ -200,15 +206,18 @@ export interface MessageSearchRequest {
   endDate?: string;
   hasAttachments?: boolean;
   isPinned?: boolean;
+  page?: number;        // ✅ 추가: 페이지 번호
   size?: number;
   cursor?: string;
   sortBy?: string;
   sortDirection?: string;
 }
 
+// PageRequest 타입 수정
 export interface PageRequest {
+  page?: number;        // ✅ 추가: 페이지 번호 (0부터 시작)
   size?: number;
-  cursor?: string;
+  cursor?: string;      // cursor 기반 페이징도 지원 (선택적)
   sortBy?: string;
   sortDirection?: string;
 }

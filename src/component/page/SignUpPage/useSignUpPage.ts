@@ -127,17 +127,19 @@ export default function useSignUpPage(props : SignUpPageProps) {
   }, [signUpForm, checkPassword]);
   
   const handleSignUp = useCallback(async () => {
-    // valid 확인
-    beforeSignUpCheck();
     
     try {
+      // valid 확인
+      beforeSignUpCheck();
       const res = await signUp(signUpForm);
+      console.log("res.data", res)
       navigate('/login')
-    } catch (e) {
+    } catch (e : any) {
+      console.log("res.data", e)
       setErrMsg({
         isShow : true,
         status : "error",
-        msg : e?.toString()
+        msg : e.response?.data.toString()
       })
       setTimeout(() => {
         errMsgReset();
