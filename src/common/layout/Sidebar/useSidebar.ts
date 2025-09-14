@@ -8,7 +8,17 @@ export default function useSidebar() {
     navigate(`/chat`)
   }
   
+  const onBlogClick = () => {
+    navigate(`/blog/home`)
+  }
+  
+  const onHomeClick = () => {
+    navigate(`/blog/home`)
+  }
+  
   return {
-    onChatbotClick
+    onChatbotClick,
+    onBlogClick,
+    onHomeClick
   }
 }

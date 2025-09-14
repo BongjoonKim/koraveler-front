@@ -2,6 +2,7 @@ import {recoilPersist} from "recoil-persist";
 import {atom, selector} from "recoil";
 import {ERROR_MESSAGE, USER_DATA} from "./recoilConstants";
 import {ErrorMessageProps} from "./types";
+import {UsersDTO} from "../../types/users/UsersDTO";
 
 const {persistAtom} = recoilPersist({
   key: "sessionStorage",

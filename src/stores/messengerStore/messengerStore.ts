@@ -1,139 +1,15 @@
 // src/stores/messengerStore/messengerStore.ts
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
-
-// 타입 정의
-interface Channel {
-  id: string;
-  name: string;
-  description?: string;
-  channelType: 'PUBLIC' | 'PRIVATE' | 'DIRECT_MESSAGE' | 'GROUP' | 'ANNOUNCEMENT';
-  avatarUrl?: string;
-  topic?: string;
-  tags?: string[];
-  memberCount: number;
-  lastMessageAt?: string;
-  isArchived: boolean;
-  isReadOnly: boolean;
-  createdAt: string;
-  updatedAt: string;
-  isMember?: boolean;
-  isMuted?: boolean;
-  unreadMessageCount?: number;
-  myRole?: string;
-  lastMessage?: Message;
-}
-
-interface Message {
-  id: string;
-  channelId: string;
-  message: string;
-  userId: string;
-  userNickname?: string;
-  userAvatarUrl?: string;
-  messageType: 'TEXT' | 'IMAGE' | 'FILE' | 'AUDIO' | 'VIDEO' | 'SYSTEM' | 'EMOJI_ONLY' | 'VOICE_NOTE';
-  status: 'SENT' | 'DELIVERED' | 'READ' | 'DELETED' | 'EDITED' | 'FAILED';
-  parentMessageId?: string;
-  parentMessage?: Message;
-  attachments?: MessageAttachment[];
-  thumbnailUrl?: string;
-  isEdited: boolean;
-  isPinned: boolean;
-  mentionedUserIds?: string[];
-  mentionedUsers?: UserSummary[];
-  isSystemMessage: boolean;
-  reactions?: MessageReaction[];
-  unreadCount?: number;
-  createdAt: string;
-  updatedAt: string;
-  author?: UserSummary;
-  replyCount?: number;
-  isMyMessage?: boolean;
-}
-
-interface MessageAttachment {
-  id: string;
-  fileName: string;
-  originalFileName: string;
-  fileUrl: string;
-  mimeType: string;
-  fileSize: number;
-  width?: number;
-  height?: number;
-  duration?: number;
-}
-
-interface MessageReaction {
-  emoji: string;
-  count: number;
-  users: UserSummary[];
-  isMyReaction: boolean;
-}
-
-interface ChannelMember {
-  id: string;
-  userId: string;
-  nickname?: string;
-  status: 'ACTIVE' | 'INACTIVE' | 'BANNED' | 'LEFT' | 'PENDING_APPROVAL';
-  joinedAt: string;
-  lastSeenAt: string;
-  lastReadMessageId?: string;
-  notificationLevel: 'ALL' | 'MENTIONS_ONLY' | 'NONE';
-  isMuted: boolean;
-  mutedUntil?: string;
-  user: UserSummary;
-  roleId?: string;
-  roleName?: string;
-  isOnline: boolean;
-}
-
-interface UserSummary {
-  id: string;
-  username: string;
-  nickname?: string;
-  avatarUrl?: string;
-  isOnline: boolean;
-}
-
-interface ContextMenuState {
-  visible: boolean;
-  x: number;
-  y: number;
-  message: Message | null;
-}
-
-interface FileUploadProgress {
-  [fileId: string]: {
-    file: File;
-    progress: number;
-    status: 'uploading' | 'completed' | 'failed';
-    url?: string;
-  };
-}
-
-interface VoiceRecording {
-  isRecording: boolean;
-  audioBlob?: Blob;
-  duration: number;
-  recordingStartTime?: number;
-}
-
-interface SearchState {
-  query: string;
-  filters: {
-    messageType?: Message['messageType'];
-    userId?: string;
-    hasAttachments?: boolean;
-    isPinned?: boolean;
-    startDate?: string;
-    endDate?: string;
-  };
-  results: Message[];
-  isLoading: boolean;
-}
+import type {
+  UserSummary,
+  Channel,
+  Message,
+  ChannelMember
+} from '../../types/messenger/messengerTypes';
 
 // =========================
-// 기본 상태 Atoms
+// 기본 상태 Atoms (메시지 관련 제거)
 // =========================
 
 // 현재 사용자 정보 (로컬 스토리지에 저장)
@@ -141,15 +17,6 @@ export const currentUserAtom = atomWithStorage<UserSummary | null>('currentUser'
 
 // 선택된 채널
 export const selectedChannelAtom = atom<Channel | null>(null);
-
-// 채널 목록
-export const channelsAtom = atom<Channel[]>([]);
-
-// 현재 채널의 메시지 목록
-export const messagesAtom = atom<Message[]>([]);
-
-// 현재 채널의 멤버 목록
-export const channelMembersAtom = atom<ChannelMember[]>([]);
 
 // WebSocket 연결 상태
 export const socketConnectedAtom = atom<boolean>(false);
@@ -195,9 +62,6 @@ export const showVoiceRecorderAtom = atom<boolean>(false);
 // 현재 타이핑 중인 사용자들
 export const typingUsersAtom = atom<string[]>([]);
 
-// 각 채널별 안읽은 메시지 수
-export const unreadCountsAtom = atom<Record<string, number>>({});
-
 // 온라인 사용자 목록
 export const onlineUsersAtom = atom<Set<string>>(new Set<string>());
 
@@ -206,7 +70,12 @@ export const onlineUsersAtom = atom<Set<string>>(new Set<string>());
 // =========================
 
 // 컨텍스트 메뉴 상태
-export const contextMenuAtom = atom<ContextMenuState>({
+export const contextMenuAtom = atom<{
+  visible: boolean;
+  x: number;
+  y: number;
+  message: Message | null;
+}>({
   visible: false,
   x: 0,
   y: 0,
@@ -224,7 +93,19 @@ export const replyToMessageAtom = atom<Message | null>(null);
 // =========================
 
 // 검색 상태
-export const searchStateAtom = atom<SearchState>({
+export const searchStateAtom = atom<{
+  query: string;
+  filters: {
+    messageType?: Message['messageType'];
+    userId?: string;
+    hasAttachments?: boolean;
+    isPinned?: boolean;
+    startDate?: string;
+    endDate?: string;
+  };
+  results: Message[];
+  isLoading: boolean;
+}>({
   query: '',
   filters: {},
   results: [],
@@ -242,7 +123,12 @@ export const searchHistoryAtom = atomWithStorage<string[]>('searchHistory', []);
 export const uploadingFilesAtom = atom<File[]>([]);
 
 // 파일 업로드 진행률
-export const uploadProgressAtom = atom<FileUploadProgress>({});
+export const uploadProgressAtom = atom<Record<string, {
+  file: File;
+  progress: number;
+  status: 'uploading' | 'completed' | 'failed';
+  url?: string;
+}>>({});
 
 // 드래그 앤 드롭 상태
 export const isDraggingFileAtom = atom<boolean>(false);
@@ -252,7 +138,12 @@ export const isDraggingFileAtom = atom<boolean>(false);
 // =========================
 
 // 음성 녹음 상태
-export const voiceRecordingAtom = atom<VoiceRecording>({
+export const voiceRecordingAtom = atom<{
+  isRecording: boolean;
+  audioBlob?: Blob;
+  duration: number;
+  recordingStartTime?: number;
+}>({
   isRecording: false,
   duration: 0
 });
@@ -263,18 +154,13 @@ export const voiceRecordingAtom = atom<VoiceRecording>({
 
 // 사용자 설정
 export const userSettingsAtom = atomWithStorage('userSettings', {
-  // 테마 설정
   theme: 'light' as 'light' | 'dark' | 'system',
-  
-  // 알림 설정
   notifications: {
     desktop: true,
     sound: true,
     mentions: true,
     directMessages: true
   },
-  
-  // 채팅 설정
   chat: {
     sendOnEnter: true,
     showTimestamps: true,
@@ -282,11 +168,7 @@ export const userSettingsAtom = atomWithStorage('userSettings', {
     showAvatars: true,
     fontSize: 'medium' as 'small' | 'medium' | 'large'
   },
-  
-  // 언어 설정
   language: 'ko' as 'ko' | 'en',
-  
-  // 개인정보 설정
   privacy: {
     showOnlineStatus: true,
     allowDirectMessages: true,
@@ -295,45 +177,33 @@ export const userSettingsAtom = atomWithStorage('userSettings', {
 });
 
 // =========================
-// Derived Atoms (계산된 값들)
+// WebSocket 이벤트 처리 Atoms
 // =========================
 
-// 현재 채널의 총 안읽은 메시지 수
-export const totalUnreadCountAtom = atom((get) => {
-  const unreadCounts = get(unreadCountsAtom);
-  return Object.values(unreadCounts).reduce((total, count) => total + count, 0);
-});
+// WebSocket 메시지 수신 이벤트
+export const websocketMessageReceivedAtom = atom<{
+  channelId: string;
+  messageId: string;
+  timestamp: number;
+} | null>(null);
 
-// 현재 채널의 온라인 멤버 수
-export const onlineMemberCountAtom = atom((get) => {
-  const members = get(channelMembersAtom);
-  return members.filter(member => member.isOnline).length;
-});
+// WebSocket 메시지 업데이트 이벤트
+export const websocketMessageUpdatedAtom = atom<{
+  channelId: string;
+  messageId: string;
+  timestamp: number;
+} | null>(null);
 
-// 검색 결과가 있는지 여부
-export const hasSearchResultsAtom = atom((get) => {
-  const searchState = get(searchStateAtom);
-  return searchState.results.length > 0;
-});
+// WebSocket 메시지 삭제 이벤트
+export const websocketMessageDeletedAtom = atom<{
+  channelId: string;
+  messageId: string;
+  timestamp: number;
+} | null>(null);
 
-// 현재 채널에서 내가 멘션되었는지 여부
-export const hasMentionsAtom = atom((get) => {
-  const messages = get(messagesAtom);
-  const currentUser = get(currentUserAtom);
-  
-  if (!currentUser) return false;
-  
-  return messages.some(message =>
-    message.mentionedUserIds?.includes(currentUser.id) ||
-    message.message.includes(`@${currentUser.username}`)
-  );
-});
-
-// 현재 업로드 중인 파일이 있는지 여부
-export const hasUploadingFilesAtom = atom((get) => {
-  const uploadingFiles = get(uploadingFilesAtom);
-  return uploadingFiles.length > 0;
-});
+// =========================
+// Derived Atoms (계산된 값들)
+// =========================
 
 // 현재 타이핑 중인 다른 사용자들 (자신 제외)
 export const otherTypingUsersAtom = atom((get) => {
@@ -345,74 +215,21 @@ export const otherTypingUsersAtom = atom((get) => {
   return typingUsers.filter(username => username !== currentUser.username);
 });
 
+// 검색 결과가 있는지 여부
+export const hasSearchResultsAtom = atom((get) => {
+  const searchState = get(searchStateAtom);
+  return searchState.results.length > 0;
+});
+
+// 현재 업로드 중인 파일이 있는지 여부
+export const hasUploadingFilesAtom = atom((get) => {
+  const uploadingFiles = get(uploadingFilesAtom);
+  return uploadingFiles.length > 0;
+});
+
 // =========================
-// Action Atoms (상태 업데이트 액션들)
+// Action Atoms (UI 액션들)
 // =========================
-
-// 메시지 추가 액션
-export const addMessageAtom = atom(
-  null,
-  (get, set, message: Message) => {
-    const currentMessages = get(messagesAtom);
-    
-    // 중복 메시지 방지
-    if (currentMessages.some(m => m.id === message.id)) {
-      return;
-    }
-    
-    // 메시지를 시간순으로 정렬하여 추가
-    const newMessages = [...currentMessages, message].sort(
-      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    );
-    
-    set(messagesAtom, newMessages);
-    
-    // 현재 사용자가 보낸 메시지가 아니면 안읽은 수 증가
-    const currentUser = get(currentUserAtom);
-    const selectedChannel = get(selectedChannelAtom);
-    
-    if (currentUser && selectedChannel && message.userId !== currentUser.id) {
-      const unreadCounts = get(unreadCountsAtom);
-      set(unreadCountsAtom, {
-        ...unreadCounts,
-        [message.channelId]: (unreadCounts[message.channelId] || 0) + 1
-      });
-    }
-  }
-);
-
-// 메시지 업데이트 액션
-export const updateMessageAtom = atom(
-  null,
-  (get, set, updatedMessage: Message) => {
-    const currentMessages = get(messagesAtom);
-    const newMessages = currentMessages.map(message =>
-      message.id === updatedMessage.id ? updatedMessage : message
-    );
-    set(messagesAtom, newMessages);
-  }
-);
-
-// 메시지 삭제 액션
-export const deleteMessageAtom = atom(
-  null,
-  (get, set, messageId: string) => {
-    const currentMessages = get(messagesAtom);
-    const newMessages = currentMessages.filter(message => message.id !== messageId);
-    set(messagesAtom, newMessages);
-  }
-);
-
-// 채널 읽음 처리 액션
-export const markChannelAsReadAtom = atom(
-  null,
-  (get, set, channelId: string) => {
-    const unreadCounts = get(unreadCountsAtom);
-    const newUnreadCounts = { ...unreadCounts };
-    delete newUnreadCounts[channelId];
-    set(unreadCountsAtom, newUnreadCounts);
-  }
-);
 
 // 타이핑 시작 액션
 export const startTypingAtom = atom(
@@ -448,13 +265,6 @@ export const updateUserOnlineStatusAtom = atom(
     }
     
     set(onlineUsersAtom, newOnlineUsers);
-    
-    // 채널 멤버 목록의 온라인 상태도 업데이트
-    const channelMembers = get(channelMembersAtom);
-    const updatedMembers = channelMembers.map(member =>
-      member.userId === userId ? { ...member, isOnline } : member
-    );
-    set(channelMembersAtom, updatedMembers);
   }
 );
 
@@ -480,7 +290,12 @@ export const updateSearchQueryAtom = atom(
 // 파일 업로드 진행률 업데이트 액션
 export const updateUploadProgressAtom = atom(
   null,
-  (get, set, fileId: string, progress: Partial<FileUploadProgress[string]>) => {
+  (get, set, fileId: string, progress: Partial<{
+    file: File;
+    progress: number;
+    status: 'uploading' | 'completed' | 'failed';
+    url?: string;
+  }>) => {
     const currentProgress = get(uploadProgressAtom);
     set(uploadProgressAtom, {
       ...currentProgress,
@@ -496,24 +311,17 @@ export const updateUploadProgressAtom = atom(
 // 초기화 및 정리 액션들
 // =========================
 
-// 채널 변경 시 상태 초기화
+// 채널 변경 시 UI 상태 초기화
 export const changeChannelAtom = atom(
   null,
   (get, set, channel: Channel | null) => {
     set(selectedChannelAtom, channel);
-    set(messagesAtom, []);
-    set(channelMembersAtom, []);
     set(typingUsersAtom, []);
     set(messageInputAtom, '');
     set(mentionedUsersAtom, []);
     set(editingMessageIdAtom, null);
     set(replyToMessageAtom, null);
     set(contextMenuAtom, { visible: false, x: 0, y: 0, message: null });
-    
-    // 현재 채널의 안읽은 메시지 수 초기화
-    if (channel) {
-      set(markChannelAsReadAtom, channel.id);
-    }
   }
 );
 
@@ -523,12 +331,8 @@ export const logoutAtom = atom(
   (get, set) => {
     set(currentUserAtom, null);
     set(selectedChannelAtom, null);
-    set(channelsAtom, []);
-    set(messagesAtom, []);
-    set(channelMembersAtom, []);
     set(socketConnectedAtom, false);
     set(typingUsersAtom, []);
-    set(unreadCountsAtom, {});
     set(onlineUsersAtom, new Set());
     set(messageInputAtom, '');
     set(mentionedUsersAtom, []);
@@ -538,70 +342,15 @@ export const logoutAtom = atom(
   }
 );
 
-export default {
-  // 기본 상태
-  currentUserAtom,
-  selectedChannelAtom,
-  channelsAtom,
-  messagesAtom,
-  channelMembersAtom,
-  socketConnectedAtom,
-  
-  // UI 상태
-  messageInputAtom,
-  mentionedUsersAtom,
-  showEmojiPickerAtom,
-  showAttachmentsAtom,
-  showMemberListAtom,
-  showCreateChannelAtom,
-  showChannelSettingsAtom,
-  showUserProfileAtom,
-  showSearchModalAtom,
-  showVoiceRecorderAtom,
-  
-  // 실시간 상태
-  typingUsersAtom,
-  unreadCountsAtom,
-  onlineUsersAtom,
-  
-  // 인터랙션 상태
-  contextMenuAtom,
-  editingMessageIdAtom,
-  replyToMessageAtom,
-  
-  // 검색
-  searchStateAtom,
-  searchHistoryAtom,
-  
-  // 파일 업로드
-  uploadingFilesAtom,
-  uploadProgressAtom,
-  isDraggingFileAtom,
-  
-  // 음성 녹음
-  voiceRecordingAtom,
-  
-  // 설정
-  userSettingsAtom,
-  
-  // Derived atoms
-  totalUnreadCountAtom,
-  onlineMemberCountAtom,
-  hasSearchResultsAtom,
-  hasMentionsAtom,
-  hasUploadingFilesAtom,
-  otherTypingUsersAtom,
-  
-  // Action atoms
-  addMessageAtom,
-  updateMessageAtom,
-  deleteMessageAtom,
-  markChannelAsReadAtom,
-  startTypingAtom,
-  stopTypingAtom,
-  updateUserOnlineStatusAtom,
-  updateSearchQueryAtom,
-  updateUploadProgressAtom,
-  changeChannelAtom,
-  logoutAtom
-};
+// WebSocket 메시지 수신 트리거
+export const triggerMessageRefetchAtom = atom(
+  null,
+  (get, set, channelId: string) => {
+    // WebSocket 메시지 수신 시 타임스탬프 업데이트
+    set(websocketMessageReceivedAtom, {
+      channelId,
+      messageId: '',
+      timestamp: Date.now()
+    });
+  }
+);

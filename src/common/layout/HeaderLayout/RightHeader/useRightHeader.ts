@@ -5,6 +5,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {getLoginUser} from "../../../../endpoints/login-endpoints";
 import {REFESHTOKEN_EXPIRED} from "../../../../constants/ErrorCode";
 import useAuthEP from "../../../../utils/useAuthEP";
+import {UsersDTO} from "../../../../types/users/UsersDTO";
 
 
 function useRightHeader() {

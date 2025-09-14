@@ -6,12 +6,11 @@ import CusIconButton from "../../elements/buttons/CusIconButton";
 import useSidebar from "./useSidebar";
 
 export interface SidebarProps {
-  onBlogClick?: () => void;
   onHomeClick?: () => void;
 }
 
-function Sidebar({ onBlogClick, onHomeClick }: SidebarProps) {
-  const {onChatbotClick} = useSidebar();
+function Sidebar() {
+  const {onChatbotClick, onBlogClick, onHomeClick} = useSidebar();
   return (
     <StyledSidebar>
       <NavigationContainer>

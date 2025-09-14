@@ -5,12 +5,12 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../appConfig/AuthProvider';
-import { useCurrentUser } from './useCurrentUser'; // 추가
+import { useCurrentUser } from './useCurrentUser';
 import {
   socketConnectedAtom,
   selectedChannelAtom,
   typingUsersAtom,
-  addMessageAtom
+  triggerMessageRefetchAtom,
 } from '../stores/messengerStore/messengerStore';
 
 export const useWebSocket = () => {
@@ -18,9 +18,9 @@ export const useWebSocket = () => {
   const [, setIsConnected] = useAtom(socketConnectedAtom);
   const [selectedChannel] = useAtom(selectedChannelAtom);
   const [, setTypingUsers] = useAtom(typingUsersAtom);
-  const [, addMessage] = useAtom(addMessageAtom);
+  const [, triggerMessageRefetch] = useAtom(triggerMessageRefetchAtom);
   const { accessToken } = useAuth();
-  const currentUser = useCurrentUser(); // 현재 사용자 정보
+  const currentUser = useCurrentUser();
   const queryClient = useQueryClient();
   const subscriptionsRef = useRef<Map<string, any>>(new Map());
   
@@ -86,13 +86,23 @@ export const useWebSocket = () => {
       (message) => {
         const newMessage = JSON.parse(message.body);
         
-        // 내가 보낸 메시지는 무시
+        // 내가 보낸 메시지는 무시 (이미 낙관적 업데이트로 처리됨)
         if (newMessage.userId === currentUser.id) {
           return;
         }
         
-        // 다른 사용자의 메시지 추가
-        addMessage({ ...newMessage, isMyMessage: false });
+        // 메시지 목록 refetch 트리거
+        queryClient.invalidateQueries({
+          queryKey: ['messages', channelId]
+        });
+        
+        // 채널 목록도 업데이트 (마지막 메시지, 읽지 않은 수 등)
+        queryClient.invalidateQueries({
+          queryKey: ['channels', 'my']
+        });
+        
+        // WebSocket 이벤트 트리거 (선택사항 - UI 업데이트용)
+        triggerMessageRefetch(channelId);
       }
     );
     
@@ -113,10 +123,38 @@ export const useWebSocket = () => {
       }
     );
     
+    // 메시지 업데이트 이벤트 구독
+    const updateSubscription = client.subscribe(
+      `/topic/channel/${channelId}/message-updates`,
+      (message) => {
+        const updateEvent = JSON.parse(message.body);
+        
+        // 메시지 목록 refetch
+        queryClient.invalidateQueries({
+          queryKey: ['messages', channelId]
+        });
+      }
+    );
+    
+    // 메시지 삭제 이벤트 구독
+    const deleteSubscription = client.subscribe(
+      `/topic/channel/${channelId}/message-deletes`,
+      (message) => {
+        const deleteEvent = JSON.parse(message.body);
+        
+        // 메시지 목록 refetch
+        queryClient.invalidateQueries({
+          queryKey: ['messages', channelId]
+        });
+      }
+    );
+    
     subscriptionsRef.current.set(`channel/${channelId}/messages`, messageSubscription);
     subscriptionsRef.current.set(`channel/${channelId}/typing`, typingSubscription);
+    subscriptionsRef.current.set(`channel/${channelId}/updates`, updateSubscription);
+    subscriptionsRef.current.set(`channel/${channelId}/deletes`, deleteSubscription);
     
-  }, [selectedChannel?.id, currentUser?.id, addMessage, setTypingUsers]);
+  }, [selectedChannel?.id, currentUser?.id, queryClient, setTypingUsers, triggerMessageRefetch]);
   
   const startTyping = (channelId: string) => {
     const client = stompClientRef.current;
@@ -138,9 +176,21 @@ export const useWebSocket = () => {
     });
   };
   
+  // 메시지 전송 (WebSocket 직접 전송 - 선택사항)
+  const sendMessageViaWebSocket = (channelId: string, message: any) => {
+    const client = stompClientRef.current;
+    if (!client?.connected) return;
+    
+    client.publish({
+      destination: `/app/chat/${channelId}/send`,
+      body: JSON.stringify(message),
+    });
+  };
+  
   return {
     startTyping,
     stopTyping,
+    sendMessageViaWebSocket,
     isConnected: stompClientRef.current?.connected || false
   };
 };

@@ -1,37 +1,32 @@
 // src/appConfig/AuthProvider.tsx
 
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState, useRef } from "react";
 
 interface AuthContextType {
   accessToken: string | null | undefined;
   setAccessToken: (token: string | null | undefined) => void;
   clearAuth: () => void;
+  refreshTokenIfNeeded: () => Promise<string | null>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Context에서 토큰을 가져오는 함수 타입
-type TokenGetter = () => {
-  accessToken: string | null | undefined;
-  setAccessToken: (token: string | null | undefined) => void;
-};
-
-// 전역 토큰 getter 함수를 저장할 변수
-let globalTokenGetter: TokenGetter | null = null;
-
-// 토큰 getter를 설정하는 함수
-export const setTokenGetter = (getter: TokenGetter) => {
-  globalTokenGetter = getter;
-};
-
-// refreshToken을 sessionStorage에서 관리하는 유틸리티
+// localStorage 사용으로 변경 (sessionStorage는 탭 닫으면 사라짐)
 export const refreshTokenStorage = {
   get: (): string | null => {
     try {
-      const token = sessionStorage.getItem('refreshToken');
-      return token;
+      // localStorage로 변경
+      const token = localStorage.getItem('refreshToken');
+      if (token) {
+        // 토큰 유효성 간단 체크
+        const parts = token.split('.');
+        if (parts.length === 3) {
+          return token;
+        }
+      }
+      return null;
     } catch (error) {
-      console.error('Failed to get refresh token from sessionStorage:', error);
+      console.error('Failed to get refresh token:', error);
       return null;
     }
   },
@@ -39,75 +34,115 @@ export const refreshTokenStorage = {
   set: (token: string | null) => {
     try {
       if (token) {
-        sessionStorage.setItem('refreshToken', token);
+        localStorage.setItem('refreshToken', token);
+        // 디버깅용 로그
+        console.log('[Storage] RefreshToken saved');
       } else {
-        sessionStorage.removeItem('refreshToken');
+        localStorage.removeItem('refreshToken');
       }
     } catch (error) {
-      console.error('Failed to set refresh token in sessionStorage:', error);
+      console.error('Failed to set refresh token:', error);
     }
   },
   
   clear: () => {
     try {
-      sessionStorage.removeItem('refreshToken');
+      localStorage.removeItem('refreshToken');
+      console.log('[Storage] RefreshToken cleared');
     } catch (error) {
-      console.error('Failed to clear refresh token from sessionStorage:', error);
+      console.error('Failed to clear refresh token:', error);
     }
   }
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  // accessToken은 메모리에만 저장 (보안상 새로고침 시 사라짐)
   const [accessToken, setAccessToken] = useState<string | null | undefined>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const refreshingPromise = useRef<Promise<string | null> | null>(null);
   
-  // 컴포넌트 마운트 시 refreshToken이 있으면 자동으로 accessToken 발급
+  // 토큰 갱신 함수 (중복 호출 방지)
+  const refreshTokenIfNeeded = async (): Promise<string | null> => {
+    // 이미 갱신 중이면 기존 Promise 반환
+    if (refreshingPromise.current) {
+      return refreshingPromise.current;
+    }
+    
+    const refreshToken = refreshTokenStorage.get();
+    
+    if (!refreshToken) {
+      return null;
+    }
+    
+    // 갱신 Promise 생성
+    refreshingPromise.current = (async () => {
+      try {
+        console.log('[Auth] Refreshing token...');
+        const { udtRefreshToken } = await import('../endpoints/login-endpoints');
+        const res = await udtRefreshToken(refreshToken);
+        
+        if (res.data?.accessToken) {
+          setAccessToken(res.data.accessToken);
+          
+          // 새 refreshToken이 있으면 업데이트
+          if (res.data.refreshToken) {
+            refreshTokenStorage.set(res.data.refreshToken);
+          }
+          
+          console.log('[Auth] Token refreshed successfully');
+          return res.data.accessToken;
+        }
+        
+        throw new Error('No access token in response');
+      } catch (error) {
+        console.error('[Auth] Token refresh failed:', error);
+        refreshTokenStorage.clear();
+        setAccessToken(null);
+        return null;
+      } finally {
+        // 갱신 완료 후 Promise 초기화
+        refreshingPromise.current = null;
+      }
+    })();
+    
+    return refreshingPromise.current;
+  };
+  
+  // 초기 인증 체크 (마운트 시 한 번만)
   useEffect(() => {
     const initializeAuth = async () => {
       const refreshToken = refreshTokenStorage.get();
       
-      if (refreshToken && !accessToken) {
-        try {
-          // refreshToken으로 새 accessToken 발급 시도
-          const { udtRefreshToken } = await import('../endpoints/login-endpoints');
-          const res = await udtRefreshToken(refreshToken);
-          
-          if (res.data) {
-            setAccessToken(res.data.accessToken);
-            // 새로운 refreshToken이 왔다면 업데이트
-            if (res.data.refreshToken) {
-              refreshTokenStorage.set(res.data.refreshToken);
-            }
-          } else {
-            // refreshToken이 만료된 경우
-            refreshTokenStorage.clear();
-          }
-        } catch (error) {
-          console.error('Failed to refresh token on mount:', error);
-          refreshTokenStorage.clear();
-        }
+      if (refreshToken) {
+        console.log('[Auth] Initializing with stored refresh token');
+        await refreshTokenIfNeeded();
       }
+      
+      setIsInitialized(true);
     };
     
-    initializeAuth();
-  }, []); // 최초 마운트 시 한 번만 실행
+    if (!isInitialized) {
+      initializeAuth();
+    }
+  }, [isInitialized]);
   
-  // Context 값이 변경될 때마다 endpointUtils에 getter 함수 설정
-  useEffect(() => {
-    setTokenGetter(() => ({ accessToken, setAccessToken }));
-  }, [accessToken]);
-  
-  // 로그아웃 시 모든 인증 정보 제거
+  // 로그아웃
   const clearAuth = () => {
+    console.log('[Auth] Clearing authentication');
     setAccessToken(null);
     refreshTokenStorage.clear();
   };
+  
+  // 디버깅: 토큰 상태 로깅
+  useEffect(() => {
+    console.log('[Auth] AccessToken status:', accessToken ? 'Present' : 'Absent');
+  }, [accessToken]);
   
   return (
     <AuthContext.Provider value={{
       accessToken,
       setAccessToken,
-      clearAuth
+      clearAuth,
+      refreshTokenIfNeeded
     }}>
       {children}
     </AuthContext.Provider>

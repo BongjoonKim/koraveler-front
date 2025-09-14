@@ -10,7 +10,7 @@ export interface BlogLayoutProps {
 function BlogLayout(props: BlogLayoutProps) {
   return (
     <StyledBlogLayout>
-      <Sidebar />
+      <Sidebar/>
       <MainContent>
         <BlogHeader />
         <BlogBody>

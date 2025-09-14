@@ -9,6 +9,8 @@ interface CusAvatarProps {
     src?: string;
     userId?: string;
   };
+  size?:string;
+  src?:string;
   name?: string;
   onClick?: MouseEventHandler<HTMLDivElement>;
 }
@@ -23,8 +25,8 @@ const CusAvatar = forwardRef<HTMLDivElement, CusAvatarProps>((props, ref: Forwar
           </AvatarGroup>
         ) : (
           <Avatar.Root onClick={props.onClick}>
-            <Avatar.Fallback>{props?.name}</Avatar.Fallback>
-            <Avatar.Image src={props.user?.src || props.user?.userId} />
+            <Avatar.Fallback>{props?.name?.[0]}</Avatar.Fallback>
+            <Avatar.Image src={props.user?.src || props.user?.userId} size={props.size} />
           </Avatar.Root>
         )
       }

@@ -1,13 +1,9 @@
 // src/utils/useAuthEP.ts
 
-import { udtRefreshToken } from "../endpoints/login-endpoints";
 import { useAuth } from "../appConfig/AuthProvider";
-import { refreshTokenStorage } from "../appConfig/AuthProvider";
 
 interface AxiosProps {
   func?: any;
-  accessToken?: any;
-  setAccessToken?: any;
   params?: any;
   reqBody?: any;
 }
@@ -18,73 +14,50 @@ export interface FuncProps {
   reqBody?: any;
 }
 
-// Hook 기반 useAuthEP
 export default function useAuthEP() {
-  const { accessToken, setAccessToken, clearAuth } = useAuth();
+  const { accessToken, refreshTokenIfNeeded } = useAuth();
   
   return async (props: AxiosProps) => {
     try {
-      // accessToken이 있으면 바로 API 호출
+      // 1차 시도: 현재 accessToken으로
       if (accessToken) {
+        try {
+          return await props.func({
+            accessToken: accessToken,
+            params: props?.params,
+            reqBody: props?.reqBody
+          });
+        } catch (error: any) {
+          // 401 에러인 경우 토큰 갱신 시도
+          if (error.response?.status === 401) {
+            console.log('[useAuthEP] 401 error, attempting refresh...');
+            throw new Error('TOKEN_EXPIRED');
+          }
+          throw error;
+        }
+      }
+      
+      // accessToken이 없으면 갱신 시도
+      throw new Error('ACCESSTOKEN_NULL');
+      
+    } catch (e: any) {
+      console.log('[useAuthEP] Error:', e.message);
+      
+      // 토큰 갱신 시도
+      const newAccessToken = await refreshTokenIfNeeded();
+      
+      if (newAccessToken) {
+        // 새 토큰으로 재시도
         return await props.func({
-          accessToken: accessToken,
+          accessToken: newAccessToken,
           params: props?.params,
           reqBody: props?.reqBody
         });
-      } else {
-        // accessToken이 없으면 refreshToken으로 재발급 시도
-        throw new Error('ACCESSTOKEN_NULL');
       }
-    } catch (e: any) {
-      // accessToken이 없거나 만료된 경우
-      // sessionStorage에서 refreshToken 가져오기
-      const refreshToken = refreshTokenStorage.get();
       
-      if (refreshToken && refreshToken !== "undefined") {
-        try {
-          // refreshToken으로 새로운 accessToken 요청
-          const res = await udtRefreshToken(refreshToken);
-          
-          if (res.data) {
-            // 새로운 accessToken 저장
-            setAccessToken(res.data.accessToken);
-            
-            // 새로운 refreshToken이 왔다면 sessionStorage 업데이트
-            if (res.data.refreshToken) {
-              refreshTokenStorage.set(res.data.refreshToken);
-            }
-            
-            // 원래 요청 재시도
-            return await props.func({
-              accessToken: res.data.accessToken,
-              params: props?.params,
-              reqBody: props?.reqBody
-            });
-          } else {
-            // 토큰 갱신 실패
-            console.error('Token refresh failed: No data received');
-            clearAuth();
-            throw new Error('REFRESHTOKEN_EXPIRED');
-          }
-        } catch (refreshError) {
-          console.error('Token refresh error:', refreshError);
-          clearAuth();
-          
-          // 로그인 페이지로 리다이렉트 (옵션)
-          // window.location.href = '/login';
-          
-          throw new Error('REFRESHTOKEN_EXPIRED');
-        }
-      } else {
-        // refreshToken이 없는 경우
-        console.error('No refresh token available');
-        clearAuth();
-        
-        // 로그인 페이지로 리다이렉트 (옵션)
-        // window.location.href = '/login';
-        
-        throw new Error('REFRESHTOKEN_NOT_FOUND');
-      }
+      // 갱신 실패 시 에러
+      console.error('[useAuthEP] Authentication failed');
+      throw new Error('AUTHENTICATION_FAILED');
     }
   };
 }

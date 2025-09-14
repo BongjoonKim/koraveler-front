@@ -1,5 +1,6 @@
 import {atom} from 'jotai'
 import {BLOG_LIST_SORTS, BLOG_LIST_SORTS_OPTIONS, BlogListSortsOptionsType} from "../../constants/constants";
+import {UsersDTO} from "../../types/users/UsersDTO";
 
 // 로그인한 사용자 정보를 가지고 있음
 export const LoginUser = atom<UsersDTO>({});

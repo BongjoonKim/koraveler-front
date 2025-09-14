@@ -4,6 +4,7 @@ import {useRecoilState, useResetRecoilState} from "recoil";
 import recoil from "../../../stores/recoil";
 import {signUp} from "../../../endpoints/login-endpoints";
 import {useNavigate} from "react-router-dom";
+import {UsersDTO} from "../../../types/users/UsersDTO";
 
 type ErrValidType = {
   [K in keyof UsersDTO]: string;
@@ -19,7 +20,7 @@ export default function useSignUpPage(props : SignUpPageProps) {
   
   // 아이디 확인하기
   const handleChangeId = useCallback((event : ChangeEvent<HTMLInputElement>) => {
-    setSignUpForm(prev => {
+    setSignUpForm((prev : any) => {
       return {
         ...prev,
         userId : event.target.value
@@ -28,7 +29,7 @@ export default function useSignUpPage(props : SignUpPageProps) {
   }, [signUpForm]);
   
   const handleChangePwd = useCallback((event : ChangeEvent<HTMLInputElement>) => {
-    setSignUpForm(prev => {
+    setSignUpForm((prev : any) => {
       return {
         ...prev,
         userPassword : event.target.value
@@ -41,7 +42,7 @@ export default function useSignUpPage(props : SignUpPageProps) {
   }, [signUpForm, checkPassword]);
   
   const handleChangeName = useCallback((event : ChangeEvent<HTMLInputElement>) => {
-    setSignUpForm(prev => {
+    setSignUpForm((prev : any) => {
       return {
         ...prev,
         name : event.target.value
@@ -50,7 +51,7 @@ export default function useSignUpPage(props : SignUpPageProps) {
   }, [signUpForm, checkPassword]);
   
   const handleChangeEmail = useCallback((event : ChangeEvent<HTMLInputElement>) => {
-    setSignUpForm(prev => {
+    setSignUpForm((prev : any) => {
       return {
         ...prev,
         email : event.target.value
@@ -59,7 +60,7 @@ export default function useSignUpPage(props : SignUpPageProps) {
   }, [signUpForm, checkPassword]);
   
   const handleChangeBirthday = useCallback((event : ChangeEvent<HTMLInputElement>) => {
-    setSignUpForm(prev => {
+    setSignUpForm((prev : any) => {
       return {
         ...prev,
         name : event.target.value

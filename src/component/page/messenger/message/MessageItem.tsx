@@ -16,7 +16,8 @@ import {
   MenuTrigger,
   MenuItem,
   Textarea,
-  createToaster
+  createToaster,
+  Portal
 } from '@chakra-ui/react';
 import {
   Download,
@@ -29,8 +30,8 @@ import {
   Pin,
   MoreVertical,
   File,
-  Play,
-  Pause
+  Check,
+  CheckCheck
 } from 'lucide-react';
 
 // Types
@@ -71,8 +72,8 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
   const deleteMessageMutation = useDeleteMessage();
   const updateMessageMutation = useUpdateMessage();
   
-  const isMyMessage = message.userId === currentUser?.id;
-  
+  const isMyMessage = message.isMyMessage;
+  console.log("isMyMessage", message, currentUser)
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString('ko-KR', {
@@ -192,14 +193,14 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
     return (
       <Box
         p={3}
-        bg="gray.50"
+        bg={isMyMessage ? "blue.50" : "gray.50"}
         borderRadius="md"
         border="1px"
-        borderColor="gray.200"
+        borderColor={isMyMessage ? "blue.200" : "gray.200"}
         maxW="250px"
       >
         <HStack gap={3}>
-          <Box>
+          <Box color={isMyMessage ? "blue.500" : "gray.500"}>
             <File size={24} />
           </Box>
           <VStack align="start" gap={0} flex={1} minW={0}>
@@ -232,164 +233,178 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
       className="group"
     >
       <Flex
-        direction={isMyMessage ? 'row-reverse' : 'row'}
+        w="100%"
+        justify={isMyMessage ? 'flex-end' : 'flex-start'}
         align="flex-start"
-        gap={3}
       >
-        {/* 아바타 */}
-        {!isMyMessage && (
-          <Box
-            w={8}
-            h={8}
-            borderRadius="full"
-            bg="gradient-to-br from-blue-400 to-purple-500"
-            color="white"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            fontSize="sm"
-            fontWeight="bold"
-            flexShrink={0}
-          >
-            {message.userAvatarUrl ? (
-              <Image
-                src={message.userAvatarUrl}
-                alt={message.userNickname || message.userId}
-                w="full"
-                h="full"
-                borderRadius="full"
-                objectFit="cover"
-              />
-            ) : (
-              (message.userNickname || message.userId || 'U').charAt(0).toUpperCase()
-            )}
-          </Box>
-        )}
-        
-        {/* 메시지 내용 */}
-        <VStack
-          align={isMyMessage ? 'flex-end' : 'flex-start'}
-          gap={1}
+        <HStack
+          align="flex-start"
+          gap={3}
           maxW="70%"
-          flex={1}
+          flexDirection={isMyMessage ? 'row-reverse' : 'row'}
         >
-          {/* 사용자 이름 및 시간 */}
+          {/* 아바타 - 상대방 메시지일 때만 표시 */}
           {!isMyMessage && (
-            <HStack gap={2} w="full" justify="space-between">
-              <Text fontSize="sm" fontWeight="semibold" color="gray.700">
+            <Box
+              w={8}
+              h={8}
+              borderRadius="full"
+              bg="gradient-to-br from-blue-400 to-purple-500"
+              color="white"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              fontSize="sm"
+              fontWeight="bold"
+              flexShrink={0}
+            >
+              {message.userAvatarUrl ? (
+                <Image
+                  src={message.userAvatarUrl}
+                  alt={message.userNickname || message.userId}
+                  w="full"
+                  h="full"
+                  borderRadius="full"
+                  objectFit="cover"
+                />
+              ) : (
+                (message.userNickname || message.userId || 'U').charAt(0).toUpperCase()
+              )}
+            </Box>
+          )}
+          
+          {/* 메시지 내용 컨테이너 */}
+          <VStack
+            align={isMyMessage ? 'flex-end' : 'flex-start'}
+            gap={1}
+            flex={1}
+          >
+            {/* 사용자 이름 - 상대방 메시지일 때만 표시 */}
+            {!isMyMessage && (
+              <Text fontSize="sm" fontWeight="semibold" color="gray.700" px={1}>
                 {message.userNickname || message.userId}
               </Text>
+            )}
+            
+            {/* 메시지 버블 */}
+            <Box
+              bg={isMyMessage ? 'blue.500' : 'white'}
+              color={isMyMessage ? 'white' : 'gray.800'}
+              px={4}
+              py={2}
+              borderRadius={isMyMessage ? '18px 18px 4px 18px' : '18px 18px 18px 4px'}
+              border={!isMyMessage ? '1px' : 'none'}
+              borderColor="gray.200"
+              shadow={isMyMessage ? 'md' : 'sm'}
+              position="relative"
+              onContextMenu={handleContextMenu}
+              maxW="100%"
+              wordBreak="break-word"
+            >
+              {/* 고정 표시 */}
+              {message.isPinned && (
+                <Box
+                  position="absolute"
+                  top="-8px"
+                  right="-8px"
+                  bg="amber.100"
+                  borderRadius="full"
+                  p={1}
+                  shadow="sm"
+                >
+                  <Pin size={12} color="#f59e0b" />
+                </Box>
+              )}
+              
+              {/* 메시지 텍스트 */}
+              {isEditing ? (
+                <VStack gap={2} align="stretch">
+                  <Textarea
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    minH="60px"
+                    resize="vertical"
+                    color="gray.900"
+                    bg="white"
+                  />
+                  <HStack gap={2}>
+                    <Button size="xs" colorScheme="blue" onClick={handleSaveEdit}>
+                      저장
+                    </Button>
+                    <Button size="xs" variant="ghost" onClick={handleCancelEdit}>
+                      취소
+                    </Button>
+                  </HStack>
+                </VStack>
+              ) : (
+                <Text fontSize="sm" lineHeight="1.5" whiteSpace="pre-wrap">
+                  {message.message}
+                </Text>
+              )}
+              
+              {/* 수정 표시 */}
+              {message.isEdited && !isEditing && (
+                <Text
+                  fontSize="xs"
+                  color={isMyMessage ? "blue.100" : "gray.400"}
+                  mt={1}
+                  fontStyle="italic"
+                >
+                  (편집됨)
+                </Text>
+              )}
+            </Box>
+            
+            {/* 시간 및 읽음 표시 */}
+            <HStack gap={1} px={1}>
               <Text fontSize="xs" color="gray.500">
                 {formatTime(message.createdAt)}
               </Text>
-            </HStack>
-          )}
-          
-          {/* 메시지 버블 */}
-          <Box
-            bg={isMyMessage ? 'blue.500' : 'white'}
-            color={isMyMessage ? 'white' : 'gray.800'}
-            px={4}
-            py={2}
-            borderRadius="2xl"
-            border={!isMyMessage ? '1px' : 'none'}
-            borderColor="gray.200"
-            shadow={!isMyMessage ? 'sm' : 'none'}
-            position="relative"
-            onContextMenu={handleContextMenu}
-          >
-            {/* 고정 표시 */}
-            {message.isPinned && (
-              <Pin
-                size={12}
-                style={{
-                  position: 'absolute',
-                  top: '-4px',
-                  right: '-4px',
-                  color: '#f59e0b'
-                }}
-              />
-            )}
-            
-            {/* 메시지 텍스트 */}
-            {isEditing ? (
-              <VStack gap={2} align="stretch">
-                <Textarea
-                  value={editText}
-                  onChange={(e) => setEditText(e.target.value)}
-                  minH="60px"
-                  resize="vertical"
-                  color="gray.900"
-                  bg="white"
-                />
-                <HStack gap={2}>
-                  <Button size="xs" colorScheme="blue" onClick={handleSaveEdit}>
-                    저장
-                  </Button>
-                  <Button size="xs" variant="ghost" onClick={handleCancelEdit}>
-                    취소
-                  </Button>
-                </HStack>
-              </VStack>
-            ) : (
-              <Text fontSize="sm" lineHeight="1.4" whiteSpace="pre-wrap">
-                {message.message}
-              </Text>
-            )}
-            
-            {/* 수정 표시 */}
-            {message.isEdited && !isEditing && (
-              <Text
-                fontSize="xs"
-                color={isMyMessage ? "whiteAlpha.700" : "gray.500"}
-                mt={1}
-                fontStyle="italic"
-              >
-                (편집됨)
-              </Text>
-            )}
-          </Box>
-          
-          {/* 첨부파일 */}
-          {message.attachments && message.attachments.length > 0 && (
-            <VStack gap={2} align={isMyMessage ? 'flex-end' : 'flex-start'}>
-              {message.attachments.map((attachment, index) => (
-                <Box key={index}>
-                  {renderAttachment(attachment)}
+              {isMyMessage && (
+                <Box color={message.status === 'READ' ? "blue.400" : "gray.400"}>
+                  {message.status === 'READ' ? (
+                    <CheckCheck size={14} />
+                  ) : (
+                    <Check size={14} />
+                  )}
                 </Box>
-              ))}
-            </VStack>
-          )}
-          
-          {/* 반응 */}
-          {message.reactions && message.reactions.length > 0 && (
-            <HStack gap={1} flexWrap="wrap">
-              {message.reactions.map((reaction, index) => (
-                <Button
-                  key={index}
-                  size="xs"
-                  variant={reaction.isMyReaction ? "solid" : "outline"}
-                  colorScheme={reaction.isMyReaction ? "blue" : "gray"}
-                  borderRadius="full"
-                  fontSize="xs"
-                  px={2}
-                  py={1}
-                  minH="auto"
-                  onClick={() => handleReaction(reaction.emoji)}
-                >
-                  {reaction.emoji} {reaction.count}
-                </Button>
-              ))}
+              )}
             </HStack>
-          )}
-          
-          {/* 내 메시지인 경우 시간 표시 */}
-          {isMyMessage && (
-            <Text fontSize="xs" color="gray.500">
-              {formatTime(message.createdAt)}
-            </Text>
-          )}
-        </VStack>
+            
+            {/* 첨부파일 */}
+            {message.attachments && message.attachments.length > 0 && (
+              <VStack gap={2} align={isMyMessage ? 'flex-end' : 'flex-start'} mt={1}>
+                {message.attachments.map((attachment, index) => (
+                  <Box key={index}>
+                    {renderAttachment(attachment)}
+                  </Box>
+                ))}
+              </VStack>
+            )}
+            
+            {/* 반응 */}
+            {message.reactions && message.reactions.length > 0 && (
+              <HStack gap={1} flexWrap="wrap" mt={1}>
+                {message.reactions.map((reaction, index) => (
+                  <Button
+                    key={index}
+                    size="xs"
+                    variant={reaction.isMyReaction ? "solid" : "outline"}
+                    colorScheme={reaction.isMyReaction ? "blue" : "gray"}
+                    borderRadius="full"
+                    fontSize="xs"
+                    px={2}
+                    py={1}
+                    minH="auto"
+                    onClick={() => handleReaction(reaction.emoji)}
+                  >
+                    {reaction.emoji} {reaction.count}
+                  </Button>
+                ))}
+              </HStack>
+            )}
+          </VStack>
+        </HStack>
         
         {/* 호버 시 액션 버튼들 */}
         <HStack
@@ -405,6 +420,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
           shadow="md"
           borderRadius="md"
           p={1}
+          zIndex={5}
         >
           {/* 반응 추가 버튼 */}
           <IconButton
@@ -465,26 +481,30 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
                 <MoreVertical size={16} />
               </IconButton>
             </MenuTrigger>
-            <MenuContent>
-              <MenuItem onClick={handlePin}>
-                <HStack gap={2}>
-                  <Pin size={16} />
-                  <Text>{message.isPinned ? '고정 해제' : '고정'}</Text>
-                </HStack>
-              </MenuItem>
-              <MenuItem>
-                <HStack gap={2}>
-                  <Star size={16} />
-                  <Text>즐겨찾기</Text>
-                </HStack>
-              </MenuItem>
-              <MenuItem>
-                <HStack gap={2}>
-                  <Forward size={16} />
-                  <Text>전달</Text>
-                </HStack>
-              </MenuItem>
-            </MenuContent>
+            <Portal>
+              <Menu.Positioner>
+                <MenuContent>
+                  <MenuItem onClick={handlePin}>
+                    <HStack gap={2}>
+                      <Pin size={16} />
+                      <Text>{message.isPinned ? '고정 해제' : '고정'}</Text>
+                    </HStack>
+                  </MenuItem>
+                  <MenuItem>
+                    <HStack gap={2}>
+                      <Star size={16} />
+                      <Text>즐겨찾기</Text>
+                    </HStack>
+                  </MenuItem>
+                  <MenuItem>
+                    <HStack gap={2}>
+                      <Forward size={16} />
+                      <Text>전달</Text>
+                    </HStack>
+                  </MenuItem>
+                </MenuContent>
+              </Menu.Positioner>
+            </Portal>
           </Menu.Root>
         </HStack>
       </Flex>
@@ -494,8 +514,9 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
         <Box
           position="absolute"
           top="100%"
-          left="50%"
-          transform="translateX(-50%)"
+          left={isMyMessage ? 'auto' : '50%'}
+          right={isMyMessage ? '10%' : 'auto'}
+          transform={isMyMessage ? 'none' : 'translateX(-50%)'}
           bg="white"
           shadow="lg"
           borderRadius="full"
@@ -503,6 +524,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
           zIndex={10}
           border="1px"
           borderColor="gray.200"
+          mt={2}
         >
           <HStack gap={1}>
             {['👍', '❤️', '😂', '😮', '😢', '😡'].map((emoji) => (
@@ -519,6 +541,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
                   handleReaction(emoji);
                   setShowReactions(false);
                 }}
+                _hover={{ bg: 'gray.100' }}
               >
                 {emoji}
               </Button>

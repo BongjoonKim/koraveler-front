@@ -20,14 +20,15 @@ export const useCurrentUser = (): UserSummary | null => {  // 반환 타입 명�
       if (!accessToken) return null;
       try {
         const response = await authEP({ func: getLoginUser });
+        console.log("사용자 정보 ", response.data)
         return response.data;
       } catch (error) {
         console.error('사용자 정보 조회 실패:', error);
         return null;
       }
     },
-    enabled: !!accessToken && !currentUser,
-    staleTime: 1000 * 60 * 30, // 30분
+    enabled: !!accessToken || !currentUser,
+    staleTime: 1000 * 60 // 1분
   });
   
   // currentUserAtom 업데이트

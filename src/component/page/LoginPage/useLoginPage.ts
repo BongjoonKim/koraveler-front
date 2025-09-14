@@ -8,6 +8,7 @@ import {useRecoilState} from "recoil";
 import recoil from "../../../stores/recoil";
 import {useAuth} from "../../../appConfig/AuthProvider";
 import {refreshTokenStorage} from "../../../appConfig/AuthProvider";
+import {UsersDTO} from "../../../types/users/UsersDTO";
 
 export default function useLoginPage() {
   const [userInfo, setUserInfo] = useState<UsersDTO>(InitUsersDTO);

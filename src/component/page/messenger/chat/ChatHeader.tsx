@@ -6,10 +6,10 @@ import {
   AvatarGroup,
   Badge,
   Box,
-  Button,
+  Button, Dialog,
   Flex,
   HStack,
-  IconButton,
+  IconButton, Menu, Portal,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -29,13 +29,18 @@ import {
   MenuRoot,
   MenuTrigger,
 } from "@chakra-ui/react";
-import { Phone, Settings, Star } from "lucide-react";
-import { selectedChannelAtom } from "../../../../stores/messengerStore/messengerStore";
+import {Phone, Settings, Star, Users} from "lucide-react";
+import { selectedChannelAtom, showMemberListAtom } from "../../../../stores/messengerStore/messengerStore";
 import { useState } from "react";
 
 export default function ChatHeader() {
   const [selectedChannel] = useAtom(selectedChannelAtom);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showMemberList, setShowMemberList] = useAtom(showMemberListAtom);
+  
+  const handleShowMembers = () => {
+    setShowMemberList(true);
+  };
   
   if (!selectedChannel) return null;
   
@@ -48,6 +53,7 @@ export default function ChatHeader() {
         borderBottom="1px solid"
         borderColor="gray.200"
         bg="white"
+        height="4rem"
       >
         <HStack gap={3}>
           <Avatar.Root size="md">
@@ -76,18 +82,21 @@ export default function ChatHeader() {
         
         <HStack gap={2}>
           <IconButton
-            aria-label="음성 통화"
-            size="sm"
-            variant="ghost"
-          >
-            <Phone size={16} />
-          </IconButton>
-          <IconButton
             aria-label="중요 메시지"
             size="sm"
             variant="ghost"
           >
             <Star size={16} />
+          </IconButton>
+          
+          {/* 멤버 목록 보기 버튼 추가 */}
+          <IconButton
+            aria-label="멤버 목록"
+            size="sm"
+            variant="ghost"
+            onClick={handleShowMembers}
+          >
+            <Users size={16} />
           </IconButton>
           
           <MenuRoot>
@@ -100,22 +109,36 @@ export default function ChatHeader() {
                 <Settings size={16} />
               </IconButton>
             </MenuTrigger>
-            <MenuContent>
-              <MenuItem onClick={() => setIsModalOpen(true)}>
-                채널 정보
-              </MenuItem>
-              <MenuItem>알림 설정</MenuItem>
-              <MenuItem>멤버 관리</MenuItem>
-              <MenuItem color="red.500">
-                채널 나가기
-              </MenuItem>
-            </MenuContent>
+            <Portal>
+              <Menu.Positioner>
+              <MenuContent
+                css={{
+                  zIndex: 9999,  // CSS prop으로 z-index 설정
+                  position: 'relative'
+                }}
+              >
+                <MenuItem onClick={() => setIsModalOpen(true)}>
+                  채널 정보
+                </MenuItem>
+                <MenuItem>알림 설정</MenuItem>
+                <MenuItem onClick={handleShowMembers}>
+                  <Users size={14} style={{ marginRight: '8px' }} />
+                  멤버 관리
+                </MenuItem>
+                <MenuItem color="red.500">
+                  채널 나가기
+                </MenuItem>
+              </MenuContent>
+              </Menu.Positioner>
+            </Portal>
           </MenuRoot>
         </HStack>
       </Flex>
       
       {/* Chakra UI v3 Dialog */}
-      <DialogRoot open={isModalOpen} onOpenChange={(details: { open: boolean }) => setIsModalOpen(details.open)}>
+      <Dialog.Root open={isModalOpen} onOpenChange={(details: { open: boolean }) => setIsModalOpen(details.open)} placement="center" >
+        <Portal>
+        <Dialog.Positioner>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>채널 정보</DialogTitle>
@@ -146,6 +169,13 @@ export default function ChatHeader() {
             </VStack>
           </DialogBody>
           <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={handleShowMembers}
+              style={{ marginRight: 'auto' }}
+            >
+              멤버 관리
+            </Button>
             <DialogActionTrigger asChild>
               <Button variant="outline" onClick={() => setIsModalOpen(false)}>
                 닫기
@@ -154,7 +184,9 @@ export default function ChatHeader() {
           </DialogFooter>
           <DialogCloseTrigger />
         </DialogContent>
-      </DialogRoot>
+        </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
     </>
   );
 }

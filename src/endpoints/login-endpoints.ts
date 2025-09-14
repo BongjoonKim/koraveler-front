@@ -1,6 +1,7 @@
 import {request, securityReq} from "../appConfig/request-response";
 import {AxiosResponse} from "axios";
 import {FuncProps} from "../utils/useAuthEP";
+import {UsersDTO} from "../types/users/UsersDTO";
 
 export async function login(props: UsersDTO) {
   try {
@@ -23,7 +24,7 @@ export async function udtRefreshToken(refreshToken : string) {
 
 export async function getLoginUser(props : FuncProps) {
   try {
-    return (await request.get(`/login/user`, {
+    return (await request.get(`/api/v1/users/me`, {
       headers: {
         Authorization : `Bearer ${props.accessToken}`
       }
