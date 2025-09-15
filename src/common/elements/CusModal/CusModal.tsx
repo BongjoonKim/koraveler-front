@@ -40,11 +40,26 @@ export default function CusModal(props: CusModalProps) {
           backdropFilter: `brightness(${1 - props.backdropDarkness}) contrast(${1 + props.backdropDarkness / 2})`
         }}
       />
-      <DialogContent>
+      <DialogContent
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          maxWidth: 'calc(100vw - 2rem)',
+          margin: 0
+        }}
+      >
+        {props.title && (
         <DialogHeader>
-          <DialogTitle>{props.title}</DialogTitle>
-          <DialogCloseTrigger />
+          
+            <>
+              <DialogTitle>{props.title}</DialogTitle>
+              <DialogCloseTrigger />
+            </>
+          
         </DialogHeader>
+        )}
         <DialogBody>
           {props.children}
         </DialogBody>
@@ -57,5 +72,3 @@ export default function CusModal(props: CusModalProps) {
     </DialogRoot>
   );
 }
-
-const StyledCusModal = styled.div``;

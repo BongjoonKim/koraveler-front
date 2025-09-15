@@ -57,6 +57,8 @@ export const useMyChannels = (params?: { size?: number; sortBy?: string; sortDir
       return response.data;
     },
     staleTime: 1000 * 60 * 5, // 5분
+    refetchOnMount: 'always', // 컴포넌트 마운트 시마다 새로고침
+    
   });
 };
 

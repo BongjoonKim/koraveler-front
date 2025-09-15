@@ -69,6 +69,12 @@ export const useTravelMessenger = () => {
     };
   }, [refetchMessages]);
   
+  useEffect(() => {
+    return () => {
+      setSelectedChannel(null)
+    }
+  }, [])
+  
   // 채널 생성 핸들러
   const handleCreateChannel = useCallback(async () => {
     if (!newChannelData.name.trim()) {

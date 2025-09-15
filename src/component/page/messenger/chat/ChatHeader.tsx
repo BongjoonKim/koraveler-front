@@ -120,7 +120,6 @@ export default function ChatHeader() {
                 <MenuItem onClick={() => setIsModalOpen(true)}>
                   채널 정보
                 </MenuItem>
-                <MenuItem>알림 설정</MenuItem>
                 <MenuItem onClick={handleShowMembers}>
                   <Users size={14} style={{ marginRight: '8px' }} />
                   멤버 관리

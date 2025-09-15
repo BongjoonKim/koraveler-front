@@ -72,12 +72,6 @@ export const useChatManager = (): ChatManagerReturn => {
     }
   }, [selectedChannel?.id]);
   
-  // 메시지 데이터 가공 (isMyMessage 플래그 추가)
-  const messages = messagesData?.messages?.map(msg => ({
-    ...msg,
-    isMyMessage: currentUser ? msg.userId === currentUser.id : false
-  })) || [];
-  
   const handleSendMessage = (): void => {
     if (!messageInput.trim() || !selectedChannel || !currentUser) {
       if (!currentUser) {
@@ -136,7 +130,7 @@ export const useChatManager = (): ChatManagerReturn => {
   return {
     selectedChannel,
     setSelectedChannel,
-    messages, // TanStack Query에서 가져온 메시지
+    messages : messagesData?.messages || [], // TanStack Query에서 가져온 메시지
     channelMembers: membersData || [],
     messageInput,
     setMessageInput,

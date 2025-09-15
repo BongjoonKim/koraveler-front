@@ -28,23 +28,61 @@ export const useWebSocket = () => {
   useEffect(() => {
     if (!accessToken) return;
     
+    // 방법 1: URL 파라미터로 토큰 전달
+    const wsUrl = `${process.env.REACT_APP_BACKEND_URI}/ws?token=${encodeURIComponent(accessToken)}`;
+    
+    // 방법 2: 커스텀 SockJS 옵션으로 헤더 설정 (SockJS 3.0+ 필요)
+    const sockJsOptions = {
+      transportOptions: {
+        xhr: {
+          beforeSend: (xhr: XMLHttpRequest) => {
+            xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
+          }
+        }
+      }
+    };
+    
     const client = new Client({
-      webSocketFactory: () => new SockJS(`${process.env.REACT_APP_BACKEND_URI}/ws`),
+      // 방법 1 사용 시
+      webSocketFactory: () => new SockJS(wsUrl),
+      
+      // 방법 2 사용 시 (SockJS 버전에 따라 작동 안 할 수 있음)
+      // webSocketFactory: () => new SockJS(`${process.env.REACT_APP_BACKEND_URI}/ws`, null, sockJsOptions),
+      
       connectHeaders: {
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${accessToken}`  // STOMP 레벨 인증용
       },
-      debug: (str) => console.log('STOMP:', str),
+      // debug: (str) => console.log('STOMP:', str),
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
+      
+      // 연결 실패 시 재시도 로직
+      beforeConnect: () => {
+        console.log('WebSocket 연결 시도...');
+      },
+      
+      onStompError: (frame) => {
+        console.error('STOMP 에러:', frame.headers['message']);
+        console.error('에러 본문:', frame.body);
+        
+        // 인증 에러인 경우 재연결 시도하지 않음
+        if (frame.headers['message']?.includes('auth') ||
+          frame.headers['message']?.includes('401') ||
+          frame.headers['message']?.includes('403')) {
+          console.error('인증 실패. WebSocket 연결을 중단합니다.');
+          client.deactivate();
+        }
+      }
     });
     
     stompClientRef.current = client;
     
     client.onConnect = () => {
-      console.log('WebSocket 연결됨');
+      console.log('WebSocket 연결 성공');
       setIsConnected(true);
       
+      // 에러 큐 구독
       client.subscribe('/user/queue/errors', (message) => {
         console.error('WebSocket 에러:', message.body);
       });
@@ -54,6 +92,10 @@ export const useWebSocket = () => {
       console.log('WebSocket 연결 해제');
       setIsConnected(false);
       subscriptionsRef.current.clear();
+    };
+    
+    client.onWebSocketError = (error) => {
+      console.error('WebSocket 에러:', error);
     };
     
     client.activate();

@@ -76,13 +76,21 @@ const StyledLeftHeader = styled.div<any>`
     align-items: center;
     color: ${props => props.isHome === true ? "black" : "black"};
     .title {
-        font-size: 2.5rem;
+        font-size: 2rem;
         font-weight: 600;
     }
     .menu {
         display: flex;
         gap: 2rem;
         margin: 0rem 3rem;
+
+        /* 660px 이하에서 메뉴 숨기기 */
+        @media screen and (max-width: 660px) {
+            display: none;
+        }
+        .title {
+            font-size: 2rem;
+        }
         .menu-label {
             font-size: 20px;
             font-weight: 500;
@@ -102,6 +110,13 @@ const StyledLeftHeader = styled.div<any>`
             &:hover::after {
                 width: 100%;
             }
+        }
+    }
+
+    /* 모바일에서 타이틀 크기 조정 (선택사항) */
+    @media screen and (max-width: 660px) {
+        .title {
+            font-size: 2rem;
         }
     }
 `;

@@ -221,7 +221,7 @@ const MessageInput: React.FC = () => {
               <X size={14} />
             </IconButton>
           </Flex>
-          <Grid templateColumns="repeat(4, 1fr)" gap={2}>
+          <Grid templateColumns="repeat(2, 1fr)" gap={2}>
             <Button
               variant="ghost"
               size="sm"
@@ -251,29 +251,29 @@ const MessageInput: React.FC = () => {
               <Image size={20} />
               <Text fontSize="xs" mt={1}>이미지</Text>
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              h="auto"
-              flexDirection="column"
-              p={2}
-              onClick={startVoiceRecording}
-              _hover={{ bg: "gray.100" }}
-            >
-              <Mic size={20} />
-              <Text fontSize="xs" mt={1}>음성</Text>
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              h="auto"
-              flexDirection="column"
-              p={2}
-              _hover={{ bg: "gray.100" }}
-            >
-              <MapPin size={20} />
-              <Text fontSize="xs" mt={1}>위치</Text>
-            </Button>
+            {/*<Button*/}
+            {/*  variant="ghost"*/}
+            {/*  size="sm"*/}
+            {/*  h="auto"*/}
+            {/*  flexDirection="column"*/}
+            {/*  p={2}*/}
+            {/*  onClick={startVoiceRecording}*/}
+            {/*  _hover={{ bg: "gray.100" }}*/}
+            {/*>*/}
+            {/*  <Mic size={20} />*/}
+            {/*  <Text fontSize="xs" mt={1}>음성</Text>*/}
+            {/*</Button>*/}
+            {/*<Button*/}
+            {/*  variant="ghost"*/}
+            {/*  size="sm"*/}
+            {/*  h="auto"*/}
+            {/*  flexDirection="column"*/}
+            {/*  p={2}*/}
+            {/*  _hover={{ bg: "gray.100" }}*/}
+            {/*>*/}
+            {/*  <MapPin size={20} />*/}
+            {/*  <Text fontSize="xs" mt={1}>위치</Text>*/}
+            {/*</Button>*/}
           </Grid>
         </Box>
       )}

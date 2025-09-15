@@ -9,11 +9,13 @@ import recoil from "../../../stores/recoil";
 import {useAuth} from "../../../appConfig/AuthProvider";
 import {refreshTokenStorage} from "../../../appConfig/AuthProvider";
 import {UsersDTO} from "../../../types/users/UsersDTO";
+import {useCurrentUserActions} from "../../../hooks/useCurrentUser";
 
 export default function useLoginPage() {
   const [userInfo, setUserInfo] = useState<UsersDTO>(InitUsersDTO);
   const [userId, setUserId] = useState<string>("");
   const [errMsg, setErrMsg] = useRecoilState(recoil.errMsg);
+  const { refreshCurrentUser } = useCurrentUserActions();
   
   const navigate = useNavigate();
   const {setAccessToken} = useAuth();
@@ -53,6 +55,7 @@ export default function useLoginPage() {
         // refreshToken은 sessionStorage에만 저장
         refreshTokenStorage.set(resToken.data.refreshToken!);
         
+        await refreshCurrentUser(); // 명시적으로 사용자 정보 업데이트
         navigate('/blog/home');
       }
     } catch(e: any) {

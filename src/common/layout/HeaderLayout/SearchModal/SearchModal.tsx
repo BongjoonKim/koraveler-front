@@ -61,18 +61,20 @@ const StyledSearchModal = styled(motion.div)`
     flex-direction: column;
     background: white;
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    max-width: 600px;
+    //box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     width: 100%;
-    min-width: 20rem;
+    max-width: min(600px, calc(100vw - 2rem));
     max-height: 80vh;
-    margin: auto;
     overflow: hidden;
     z-index: 20001;
+    padding: 1rem;
+    box-sizing: border-box;
 
     .header {
         padding: 1rem;
         border-bottom: 1px solid #f0f0f0;
+        width: 100%; /* 너비 제한 */
+        box-sizing: border-box; /* 패딩 포함 */
     }
 
     .search-container {
@@ -80,9 +82,25 @@ const StyledSearchModal = styled(motion.div)`
         align-items: center;
         gap: 1rem;
         position: relative;
+        width: 100%; /* 너비 제한 */
+        box-sizing: border-box;
 
-        > div {
-            flex-grow: 1;
+        /* Chakra Input Group 스타일 오버라이드 */
+        .chakra-group {
+            flex: 1;
+            min-width: 0; /* flex item이 줄어들 수 있도록 */
+            width: 100%;
+
+            input {
+                width: 100%;
+                box-sizing: border-box;
+            }
+        }
+
+        > div:first-child { /* CusInput wrapper */
+            flex: 1;
+            min-width: 0;
+            overflow: hidden; /* 넘치는 내용 숨김 */
         }
     }
 
@@ -97,6 +115,7 @@ const StyledSearchModal = styled(motion.div)`
         padding: 0.5rem;
         border-radius: 50%;
         transition: background-color 0.2s ease, color 0.2s ease;
+        flex-shrink: 0;
 
         &:hover {
             background-color: #f7fafc;
@@ -107,7 +126,10 @@ const StyledSearchModal = styled(motion.div)`
     .body {
         flex-grow: 1;
         overflow-y: auto;
+        overflow-x: hidden; /* 가로 스크롤 방지 */
         position: relative;
+        width: 100%; /* 너비 제한 */
+        box-sizing: border-box;
     }
 
     .no-results {
@@ -115,14 +137,30 @@ const StyledSearchModal = styled(motion.div)`
         justify-content: center;
         align-items: center;
         height: 25rem;
-        min-width: 20rem;
         color: #a0aec0;
         font-style: italic;
         text-align: center;
+        padding: 1rem;
+        width: 100%; /* 너비 제한 */
+        box-sizing: border-box;
+        word-break: break-word; /* 긴 텍스트 줄바꿈 */
     }
 
-    @media (max-width: 768px) {
-        max-width: 95%;
-        margin: auto;
+    /* 모든 자식 요소에 box-sizing 적용 */
+    * {
+        box-sizing: border-box;
+    }
+
+    @media (max-width: 660px) {
+        padding: 0.5rem;
+        max-width: calc(100vw - 1rem);
+
+        .header {
+            padding: 0.75rem;
+        }
+
+        .no-results {
+            height: 15rem;
+        }
     }
 `;

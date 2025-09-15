@@ -67,24 +67,35 @@ function RightHeader(props : RightHeaderProps) {
 export default RightHeader;
 
 const StyledRightHeader = styled.div`
-  gap: 1rem;
-  height: 100%;
-  justify-content: flex-end;
-  display: flex;
-  position: relative;
-  align-items: center;
-  text-align: end;
-  z-index: 2000;
-  a {
-    font-size: 20px;
-    font-weight: 500;
-  }
-  .search-button {
-    svg {
-      color: gray;
+    gap: 1rem;
+    height: 100%;
+    justify-content: flex-end;
+    display: flex;
+    position: relative;
+    align-items: center;
+    text-align: end;
+    z-index: 2000;
+    a {
+        font-size: 20px;
+        font-weight: 500;
     }
-    .text {
-      color : gray;
+    .search-button {
+        svg {
+            color: gray;
+        }
+        .text {
+            color : gray;
+
+            /* 660px 이하에서 텍스트만 숨기기 */
+            @media screen and (max-width: 660px) {
+                display: none;
+            }
+        }
+
+        /* 모바일에서 버튼 너비 조정 */
+        @media screen and (max-width: 660px) {
+            width: auto !important;
+            min-width: 2.5rem;
+        }
     }
-  }
 `;
