@@ -22,7 +22,6 @@ export interface CusModalProps {
   isOpen: boolean;
   onClose: () => void;
   backdropDarkness ?: number;
-  
 }
 
 export default function CusModal(props: CusModalProps) {
