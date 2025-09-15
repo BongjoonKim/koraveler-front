@@ -60,12 +60,12 @@ jobs:
           chmod 600 ~/.ssh/koraveler.pem
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      # 7. 기존 파일 백업 (옵션)
-      - name: Backup existing deployment
+      # 7. 기존 파일 제거
+      - name: Remove existing deployment
         run: |
           ssh -i ~/.ssh/koraveler.pem ubuntu@${{ secrets.EC2_HOST }} \
             "if [ -d /home/ubuntu/koraveler-front/build ]; then \
-               sudo mv /home/ubuntu/koraveler-front/build /home/ubuntu/koraveler-front/build.backup; \
+               sudo rm -rf /home/ubuntu/koraveler-front/build; \
              fi"
 
       # 8. 파일 전송
