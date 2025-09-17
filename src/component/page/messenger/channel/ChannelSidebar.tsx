@@ -13,6 +13,7 @@ interface ChannelSidebarProps {
   onSearchChange: (value: string) => void;
   onChannelSelect: (channel: Channel) => void;
   onCreateChannel: () => void;
+  isMobile: boolean;
 }
 
 const ChannelSidebar: React.FC<ChannelSidebarProps> = ({
@@ -21,10 +22,11 @@ const ChannelSidebar: React.FC<ChannelSidebarProps> = ({
                                                          searchQuery,
                                                          onSearchChange,
                                                          onChannelSelect,
-                                                         onCreateChannel
+                                                         onCreateChannel,
+                                                         isMobile
                                                        }) => {
   return (
-    <Box w="320px" bg="white" borderRight="1px" borderColor="gray.200" flexShrink={0}>
+    <Box w={isMobile ? "100%" : "320px"} bg="white" borderRight="1px" borderColor="gray.200" flexShrink={0}>
       {/* 헤더 */}
       <Box p={4} borderBottom="1px" borderColor="gray.200" bg="blue.600" height="4rem">
         <Flex justify="space-between" align="center">

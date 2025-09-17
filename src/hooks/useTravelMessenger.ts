@@ -36,6 +36,8 @@ export const useTravelMessenger = () => {
     description: '',
     channelType: 'GROUP'
   });
+  const [isMobile, setIsMobile] = useState(false);
+  
   
   // Hooks
   const {
@@ -49,6 +51,30 @@ export const useTravelMessenger = () => {
   
   const { startTyping, stopTyping } = useWebSocket();
   const createChannelMutation = useCreateChannel();
+  
+  // 화면 크기 감지
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // 초기 체크
+    checkMobile();
+    
+    // resize 이벤트 리스너
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+  
+  // 모바일에서 채널 선택 시 멤버 리스트 닫기
+  useEffect(() => {
+    if (isMobile && selectedChannel) {
+      setShowMemberList(false);
+    }
+  }, [isMobile, selectedChannel, setShowMemberList]);
   
   // 메시지 자동 스크롤
   useEffect(() => {
@@ -137,6 +163,10 @@ export const useTravelMessenger = () => {
     setShowMemberList(prev => !prev);
   }, [setShowMemberList]);
   
+  // 모바일에서 표시할 화면 결정
+  const shouldShowSidebar = !isMobile || !selectedChannel;
+  const shouldShowChat = !isMobile || selectedChannel;
+  
   return {
     // Refs
     messagesEndRef,
@@ -153,6 +183,9 @@ export const useTravelMessenger = () => {
     messages,
     isLoadingMessages,
     isSendingMessage,
+    isMobile,
+    shouldShowSidebar,
+    shouldShowChat,
     
     // Handlers
     handleChannelSelect,

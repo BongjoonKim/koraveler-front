@@ -29,12 +29,12 @@ import {
   MenuRoot,
   MenuTrigger,
 } from "@chakra-ui/react";
-import {Phone, Settings, Star, Users} from "lucide-react";
+import {ChevronLeft, Phone, Settings, Star, Users} from "lucide-react";
 import { selectedChannelAtom, showMemberListAtom } from "../../../../stores/messengerStore/messengerStore";
 import { useState } from "react";
 
 export default function ChatHeader() {
-  const [selectedChannel] = useAtom(selectedChannelAtom);
+  const [selectedChannel, setSelectedChannel] = useAtom(selectedChannelAtom);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showMemberList, setShowMemberList] = useAtom(showMemberListAtom);
   
@@ -56,6 +56,9 @@ export default function ChatHeader() {
         height="4rem"
       >
         <HStack gap={3}>
+          <IconButton variant={"ghost"} onClick={() => setSelectedChannel(null)}>
+            <ChevronLeft />
+          </IconButton>
           <Avatar.Root size="md">
             <Avatar.Image
               src={selectedChannel.avatarUrl}
