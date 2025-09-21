@@ -63,9 +63,8 @@ const StyledSearchModal = styled(motion.div)`
     border-radius: 12px;
     //box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     width: 100%;
-    max-width: min(600px, calc(100vw - 2rem));
-    max-height: 80vh;
-    overflow: hidden;
+    height: 30rem;
+    //overflow: hidden;
     z-index: 20001;
     padding: 1rem;
     box-sizing: border-box;
@@ -153,14 +152,14 @@ const StyledSearchModal = styled(motion.div)`
 
     @media (max-width: 660px) {
         padding: 0.5rem;
-        max-width: calc(100vw - 1rem);
+        max-width: 100%;
 
         .header {
             padding: 0.75rem;
         }
 
         .no-results {
-            height: 15rem;
+            height: 100%;
         }
     }
 `;
