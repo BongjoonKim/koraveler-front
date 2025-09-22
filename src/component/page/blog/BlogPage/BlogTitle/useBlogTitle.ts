@@ -2,6 +2,7 @@ import {BlogTitleProps} from "./BlogTitle";
 import {useMatch} from "react-router-dom";
 import {SyntheticEvent, useEffect, useState} from "react";
 import {
+  BLOG_LIST_SORTS,
   BLOG_LIST_SORTS_OPTIONS,
   BLOG_PAGE_TYPE,
   BlogListSortsOptionsType,
@@ -12,14 +13,13 @@ import {useAtom} from "jotai";
 import {selBlogSortOpt} from "../../../../../stores/jotai/jotai";
 
 
-export default function useBlogTitle(props : BlogTitleProps) {
+export default function useBlogTitle(props: BlogTitleProps) {
   const match = useMatch("/blog/:type");
   const [blogTitles, setBlogTitles] = useState<string[]>(Object.values(BLOG_PAGE_TYPE));
   const [curPageTitle, setCurPageTitle] = useState<BlogPageTypeType>(upperCase(BLOG_PAGE_TYPE.HOME));
   const [sortOptions, setSortOptions] = useState<BlogListSortsOptionsType[]>(BLOG_LIST_SORTS_OPTIONS);
   const [selectedOption, setSelectedOption] = useAtom(selBlogSortOpt);
   
-  // 블로그 페이지 명
   const findCurPageTitle = () => {
     const curPage = blogTitles.find((bt:string) => bt === match?.params?.type);
     if (curPage) {
@@ -29,11 +29,9 @@ export default function useBlogTitle(props : BlogTitleProps) {
     }
   }
   
-  const changeSort = (event : any) => {
-    console.log("event", event.target.value);
-    setSelectedOption(
-      event.target.value
-    )
+  const changeSort = (value: string) => {
+    console.log("Selected value:", value);
+    setSelectedOption(value as BLOG_LIST_SORTS);
   }
   
   useEffect(() => {
@@ -44,7 +42,6 @@ export default function useBlogTitle(props : BlogTitleProps) {
     curPageTitle,
     sortOptions,
     changeSort,
-    selectedOption
+    selectedOption: selectedOption || BLOG_LIST_SORTS.LATEST  // 여기서도 기본값 보장
   }
-  
 }

@@ -68,15 +68,6 @@ const MessageInput: React.FC = () => {
     const value = e.target.value;
     setMessageInput(value);
     
-    // Auto-resize textarea (최소 높이 유지)
-    // if (textareaRef.current) {
-    //   textareaRef.current.style.height = '36px'; // 기본 높이
-    //   const scrollHeight = textareaRef.current.scrollHeight;
-    //   if (scrollHeight > 36) {
-    //     textareaRef.current.style.height = Math.min(scrollHeight, 120) + 'px';
-    //   }
-    // }
-    
     // 타이핑 이벤트 처리
     if (selectedChannel) {
       startTyping(selectedChannel.id);
@@ -96,6 +87,7 @@ const MessageInput: React.FC = () => {
   const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
+      e.stopPropagation();
       if (messageInput.trim()) {
         handleSendMessage();
         // 타이핑 중지

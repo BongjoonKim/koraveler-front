@@ -312,38 +312,6 @@ export const useSendMessage = () => {
     }) => authEP({ func: sendMessage, params: data }),
     
     onSuccess: (response, variables) => {
-      // 채널의 메시지 목록 업데이트 (임시 메시지 교체)
-      queryClient.setQueryData(
-        ['messages', variables.channelId],
-        (old: MessageListResponse | undefined) => {
-          if (!old) {
-            return {
-              messages: [response.data],
-              hasNext: false,
-              totalCount: 1
-            };
-          }
-          
-          // clientId로 임시 메시지 찾아서 교체
-          const existingIndex = old.messages.findIndex(
-            msg => msg.id === variables.clientId
-          );
-          
-          if (existingIndex >= 0) {
-            const newMessages = [...old.messages];
-            newMessages[existingIndex] = response.data;
-            return { ...old, messages: newMessages };
-          }
-          
-          // 임시 메시지가 없으면 끝에 추가
-          return {
-            ...old,
-            messages: [...old.messages, response.data],
-            totalCount: old.totalCount + 1
-          };
-        }
-      );
-      
       // 채널 목록 업데이트
       queryClient.setQueryData(
         ['channels', 'my'],

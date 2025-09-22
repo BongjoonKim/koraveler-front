@@ -73,7 +73,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
   const updateMessageMutation = useUpdateMessage();
   
   const isMyMessage = message.isMyMessage;
-  console.log("isMyMessage", message, currentUser)
+  console.log("isMyMessage", isMyMessage)
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString('ko-KR', {
