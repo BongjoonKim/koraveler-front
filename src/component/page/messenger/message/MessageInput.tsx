@@ -344,7 +344,7 @@ const MessageInput: React.FC = () => {
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
               resize="none"
-              minH="2rem"
+              minH="1rem"
               h="100%"
               maxH="120px"
               py={1.5}

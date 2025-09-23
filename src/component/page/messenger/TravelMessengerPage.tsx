@@ -9,6 +9,7 @@ import ChannelMemberList from './channel/ChannelMemberList';
 import ChannelSidebar from './channel/ChannelSidebar';
 import CreateChannelModal from './channel/CreateChannelModal';
 import EmptyChannelState from './channel/EmptyChannelState';
+import ModernMessageInput from "./message/ModernMessageInput";
 
 const TravelMessengerPage: React.FC = () => {
   const {
@@ -74,7 +75,8 @@ const TravelMessengerPage: React.FC = () => {
                   )}
                 </Box>
                 
-                <MessageInput />
+                {/*<MessageInput />*/}
+                <ModernMessageInput />
               </>
             ) : (
               <EmptyChannelState onCreateChannel={handleOpenCreateModal} />
