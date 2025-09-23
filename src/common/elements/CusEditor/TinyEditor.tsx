@@ -61,4 +61,8 @@ export default forwardRef(TinyEditor);
 const StyledTinyEditor = styled.div`
     width: 100%;
     height: 100%;
+    .tox {
+        height: 100%;
+        width: 100%;
+    }
 `;

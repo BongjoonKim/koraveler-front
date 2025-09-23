@@ -1,5 +1,5 @@
 // src/hooks/useCurrentUser.ts
-import { useEffect, useCallback } from 'react';
+import {useEffect, useCallback, useRef} from 'react';
 import { useAtom } from 'jotai';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../appConfig/AuthProvider';
@@ -13,6 +13,9 @@ export const useCurrentUser = (): UserSummary | null => {
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
   const authEP = useAuthEP();
   const queryClient = useQueryClient();
+  
+  // 이전 토큰을 추적하여 실제 토큰 변경만 감지
+  const prevTokenRef = useRef<string | null | undefined>(null);
   
   // 로그인한 사용자 정보 조회
   const { data: userData, isSuccess, isError, isFetching, refetch } = useQuery({
@@ -36,7 +39,7 @@ export const useCurrentUser = (): UserSummary | null => {
       }
     },
     enabled: !!accessToken,
-    staleTime: 0, // 즉시 stale 처리하여 항상 최신 데이터 fetch
+    staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 10, // 10분
     refetchOnWindowFocus: true, // 창 포커스 시 재조회
     refetchOnReconnect: true,
@@ -59,17 +62,29 @@ export const useCurrentUser = (): UserSummary | null => {
   
   // accessToken 변경 시 처리
   useEffect(() => {
+    // 토큰이 실제로 변경되었는지 확인
+    if (prevTokenRef.current === accessToken) {
+      return; // 같은 토큰이면 아무것도 하지 않음
+    }
+    
+    // 이전 토큰 업데이트
+    const previousToken = prevTokenRef.current;
+    prevTokenRef.current = accessToken;
+    
     if (!accessToken) {
       // 로그아웃 시 즉시 처리
       setCurrentUser(null);
-      queryClient.removeQueries({ queryKey: ['currentUser'] });
-      queryClient.cancelQueries({ queryKey: ['currentUser'] });
-      console.log("토큰 없음: 사용자 정보 초기화");
+      
+      if(previousToken) {
+        queryClient.removeQueries({ queryKey: ['currentUser', previousToken] , exact: true});
+        queryClient.cancelQueries({ queryKey: ['currentUser', previousToken] , exact: true});
+      }
+
     } else {
       // 로그인 시 즉시 재조회
-      refreshCurrentUser();
+      queryClient.removeQueries({ queryKey: ['currentUser', previousToken] , exact: true});
     }
-  }, [accessToken]); // refreshCurrentUser는 의존성에서 제외 (무한 루프 방지)
+  }, [accessToken,  setCurrentUser, queryClient, refetch]); // refreshCurrentUser는 의존성에서 제외 (무한 루프 방지)
   
   // userData 업데이트 처리
   useEffect(() => {
