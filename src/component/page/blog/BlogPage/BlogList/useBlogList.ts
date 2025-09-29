@@ -91,9 +91,7 @@ function useBlogList(props : BlogHomeProps) {
         }
         blogPosts = res.data;
       }
-      console.log("blogPosts", blogPosts)
       if (!blogPosts?.documents) return;
-      console.log("여기 오나")
       const updatedBlogPosts = {
         ...blogPosts,
         documents: blogPosts.documents.map(post => ({

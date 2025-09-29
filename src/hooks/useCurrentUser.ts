@@ -62,8 +62,10 @@ export const useCurrentUser = (): UserSummary | null => {
   
   // accessToken 변경 시 처리
   useEffect(() => {
+    console.log("여기가 실행되나", accessToken, prevTokenRef.current)
     // 토큰이 실제로 변경되었는지 확인
     if (prevTokenRef.current === accessToken) {
+      console.log("아무것도 실행 안 함")
       return; // 같은 토큰이면 아무것도 하지 않음
     }
     
@@ -89,6 +91,7 @@ export const useCurrentUser = (): UserSummary | null => {
   // userData 업데이트 처리
   useEffect(() => {
     // 로딩 중이면 처리하지 않음
+    console.log("여기가 오나부다", isSuccess, userData, accessToken)
     if (isFetching) return;
     
     if (isSuccess && userData && accessToken) {

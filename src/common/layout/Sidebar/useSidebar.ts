@@ -1,8 +1,12 @@
 import {useNavigate} from "react-router-dom";
+import {useCurrentUser} from "../../../hooks/useCurrentUser";
 
 
 export default function useSidebar() {
   const navigate = useNavigate();
+  
+  // 현재 사용자 정보
+  const currentUser = useCurrentUser();
   
   const onChatbotClick = () => {
     navigate(`/chat`)
@@ -19,6 +23,7 @@ export default function useSidebar() {
   return {
     onChatbotClick,
     onBlogClick,
-    onHomeClick
+    onHomeClick,
+    currentUser,
   }
 }

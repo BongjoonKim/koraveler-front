@@ -39,6 +39,7 @@ function useSliderMenu(props : SliderMenuProps) {
         
         // Context의 accessToken 제거 및 sessionStorage의 refreshToken 제거
         clearAuth();
+        clearCurrentUser();
         // 또는 개별적으로:
         // setAccessToken(null);
         // refreshTokenStorage.clear();
@@ -57,6 +58,7 @@ function useSliderMenu(props : SliderMenuProps) {
       // 서버 에러가 있어도 로컬 토큰은 제거
       setLoginUser({});
       clearAuth();
+      clearCurrentUser(); // 에러 시에도 초기화
       navigate("/login");
     }
   }, [setLoginUser, clearAuth, navigate]);

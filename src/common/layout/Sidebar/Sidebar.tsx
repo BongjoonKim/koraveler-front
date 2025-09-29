@@ -10,7 +10,8 @@ export interface SidebarProps {
 }
 
 function Sidebar() {
-  const {onChatbotClick, onBlogClick, onHomeClick} = useSidebar();
+  const {onChatbotClick, onBlogClick, onHomeClick, currentUser} = useSidebar();
+  console.log("currentUser", currentUser)
   return (
     <StyledSidebar>
       <NavigationContainer>
@@ -21,28 +22,31 @@ function Sidebar() {
         </LogoSection>
         
         <NavItemsContainer style={{height: "6rem"}}>
-          <NavItem>
-            <CusIconButton
-              aria-label="AI 챗봇"
-              onClick={onChatbotClick}
-              style={{
-                height: '48px',
-                width: '48px',
-                borderRadius: '24px',
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.2s ease',
-                // color: '#5f6368'
-              }}
-            >
-              <TbMessageChatbot size={24} />
-            </CusIconButton>
-          </NavItem>
-          
+          {currentUser ? (
+            <NavItem>
+              <CusIconButton
+                aria-label="AI 챗봇"
+                onClick={onChatbotClick}
+                style={{
+                  height: '48px',
+                  width: '48px',
+                  borderRadius: '24px',
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s ease',
+                  // color: '#5f6368'
+                }}
+              >
+                <TbMessageChatbot size={24} />
+              </CusIconButton>
+            </NavItem>
+          ) : (
+            <></>
+          )}
           <NavItem>
             <CusIconButton
               aria-label="블로그"
