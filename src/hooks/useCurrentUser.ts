@@ -1,24 +1,16 @@
 // src/hooks/useCurrentUser.ts
-import {useEffect, useCallback, useRef} from 'react';
-import { useAtom } from 'jotai';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../appConfig/AuthProvider';
-import { currentUserAtom } from '../stores/messengerStore/messengerStore';
 import { getLoginUser } from '../endpoints/login-endpoints';
 import useAuthEP from '../utils/useAuthEP';
 import type { UserSummary } from '../types/messenger/messengerTypes';
 
 export const useCurrentUser = (): UserSummary | null => {
   const { accessToken } = useAuth();
-  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
   const authEP = useAuthEP();
-  const queryClient = useQueryClient();
-  
-  // 이전 토큰을 추적하여 실제 토큰 변경만 감지
-  const prevTokenRef = useRef<string | null | undefined>(null);
   
   // 로그인한 사용자 정보 조회
-  const { data: userData, isSuccess, isError, isFetching, refetch } = useQuery({
+  const { data: userData } = useQuery({
     queryKey: ['currentUser', accessToken],
     queryFn: async () => {
       if (!accessToken) {
@@ -28,8 +20,18 @@ export const useCurrentUser = (): UserSummary | null => {
       try {
         const response = await authEP({ func: getLoginUser });
         console.log("사용자 정보 조회 성공:", response.data);
-        return response.data;
-      } catch (error : any) {
+        
+        // UserSummary 형태로 변환하여 반환
+        const userSummary: UserSummary = {
+          id: response.data.userId || response.data.id || '',
+          username: response.data.username || response.data.userId || '',
+          nickname: response.data.nickname || response.data.userName || response.data.username || '',
+          avatarUrl: response.data.profileImage || response.data.avatarUrl || null,
+          isOnline: true
+        };
+        
+        return userSummary;
+      } catch (error: any) {
         console.error('사용자 정보 조회 실패:', error);
         // AUTHENTICATION_FAILED 에러인 경우 null 반환
         if (error.message === 'AUTHENTICATION_FAILED') {
@@ -39,7 +41,7 @@ export const useCurrentUser = (): UserSummary | null => {
       }
     },
     enabled: !!accessToken,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 5, // 5분
     gcTime: 1000 * 60 * 10, // 10분
     refetchOnWindowFocus: true, // 창 포커스 시 재조회
     refetchOnReconnect: true,
@@ -52,71 +54,7 @@ export const useCurrentUser = (): UserSummary | null => {
     },
   });
   
-  // 수동으로 사용자 정보 새로고침
-  const refreshCurrentUser = useCallback(async () => {
-    if (accessToken) {
-      await queryClient.invalidateQueries({ queryKey: ['currentUser', accessToken] });
-      await refetch();
-    }
-  }, [accessToken, queryClient, refetch]);
-  
-  // accessToken 변경 시 처리
-  useEffect(() => {
-    console.log("여기가 실행되나", accessToken, prevTokenRef.current)
-    // 토큰이 실제로 변경되었는지 확인
-    if (prevTokenRef.current === accessToken) {
-      console.log("아무것도 실행 안 함")
-      return; // 같은 토큰이면 아무것도 하지 않음
-    }
-    
-    // 이전 토큰 업데이트
-    const previousToken = prevTokenRef.current;
-    prevTokenRef.current = accessToken;
-    
-    if (!accessToken) {
-      // 로그아웃 시 즉시 처리
-      setCurrentUser(null);
-      
-      if(previousToken) {
-        queryClient.removeQueries({ queryKey: ['currentUser', previousToken] , exact: true});
-        queryClient.cancelQueries({ queryKey: ['currentUser', previousToken] , exact: true});
-      }
-
-    } else {
-      // 로그인 시 즉시 재조회
-      queryClient.removeQueries({ queryKey: ['currentUser', previousToken] , exact: true});
-    }
-  }, [accessToken,  setCurrentUser, queryClient, refetch]); // refreshCurrentUser는 의존성에서 제외 (무한 루프 방지)
-  
-  // userData 업데이트 처리
-  useEffect(() => {
-    // 로딩 중이면 처리하지 않음
-    console.log("여기가 오나부다", isSuccess, userData, accessToken)
-    if (isFetching) return;
-    
-    if (isSuccess && userData && accessToken) {
-      const userSummary: UserSummary = {
-        id: userData.userId || userData.id || '',
-        username: userData.username || userData.userId || '',
-        nickname: userData.nickname || userData.userName || userData.username || '',
-        avatarUrl: userData.profileImage || userData.avatarUrl || null,
-        isOnline: true
-      };
-      
-      // 데이터가 실제로 변경된 경우에만 업데이트
-      if (JSON.stringify(currentUser) !== JSON.stringify(userSummary)) {
-        setCurrentUser(userSummary);
-        console.log("사용자 정보 설정:", userSummary);
-      }
-    } else if ((isError || (isSuccess && !userData)) && accessToken) {
-      if (currentUser !== null) {
-        setCurrentUser(null);
-        console.log("사용자 정보 조회 실패: null로 설정");
-      }
-    }
-  }, [userData, isSuccess, isError, accessToken, isFetching]); // currentUser와 setCurrentUser는 제외
-  
-  return currentUser;
+  return userData ?? null;
 };
 
 // 로그인/로그아웃 시 명시적으로 호출할 수 있는 유틸리티 함수
@@ -124,17 +62,15 @@ export const useCurrentUserActions = () => {
   const queryClient = useQueryClient();
   const { accessToken } = useAuth();
   
-  const refreshCurrentUser = useCallback(async () => {
+  const refreshCurrentUser = async () => {
     if (accessToken) {
-      await queryClient.invalidateQueries({ queryKey: ['currentUser'] });
-      await queryClient.refetchQueries({ queryKey: ['currentUser'] });
+      await queryClient.invalidateQueries({ queryKey: ['currentUser', accessToken] });
     }
-  }, [accessToken, queryClient]);
+  };
   
-  const clearCurrentUser = useCallback(() => {
+  const clearCurrentUser = () => {
     queryClient.removeQueries({ queryKey: ['currentUser'] });
-    queryClient.cancelQueries({ queryKey: ['currentUser'] });
-  }, [queryClient]);
+  };
   
   return { refreshCurrentUser, clearCurrentUser };
 };
