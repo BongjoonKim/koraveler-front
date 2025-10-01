@@ -8,6 +8,8 @@ import TechRoutes from "./TechRoutes";
 import ChatRoutes from "./ChatRoutes";
 import MainPage from "../component/page/MainPage";
 import LoginRoutes from "./LoginRoutes/LoginRoutes";
+import MainLayout from "../common/layout/MainLayout/MainLayout";
+import HomePage from "../component/page/homePage/HomePage";
 
 export default function RoutersTree() {
   return (

@@ -1,0 +1,52 @@
+import {ChangeEvent, useCallback, useEffect, useRef, useState} from "react";
+import {searchDocuments} from "../../../../endpoints/blog-endpoints";
+import {useRecoilState} from "recoil";
+import recoil from "../../../../stores/recoil";
+
+export default function useSearchModal(props : any) {
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [docs, setDocs] = useState<DocumentDTO[] | undefined>([]);
+  const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
+  const inputRef = useRef<HTMLInputElement>(null);
+  
+  const handleSearching = useCallback(async(event : ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setSearchValue(value);
+    try {
+      const resDocs = await searchDocuments({
+        params : {
+          value: value,
+          page: 0,
+          size : 100,
+        }
+      });
+      if (resDocs?.status !== 200) {
+        throw resDocs.statusText;
+      }
+      setDocs(resDocs.data.documents);
+      console.log("resDocs.data.documents", resDocs.data.documents)
+    } catch (e) {
+      setErrorMsg({
+        status : "error",
+        msg : e?.toString()
+      })
+    }
+  }, [searchValue]);
+  
+  useEffect(() => {
+    // Use setTimeout to ensure the input is rendered before focusing
+    const timeoutId = setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+    
+    // Cleanup the timeout to prevent memory leaks
+    return () => clearTimeout(timeoutId);
+  }, [])
+  
+  return {
+    searchValue,
+    docs,
+    handleSearching,
+    inputRef,
+  }
+}

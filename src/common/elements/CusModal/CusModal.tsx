@@ -45,7 +45,6 @@ export default function CusModal(props: CusModalProps) {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          maxWidth: 'calc(100vw - 2rem)',
           margin: 0
         }}
       >
