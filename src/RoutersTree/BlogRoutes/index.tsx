@@ -9,16 +9,18 @@ import MenuTab from "../../common/layout/TabLayout";
 import BlogLayout from "../../common/layout/BlogLayout/BlogLayout";
 import EditBlogPost from "../../component/page/blog/EditBlogPost";
 import BlogPostSetting from "../../common/widget/BlogPostSetting/BlogPostSetting";
+import MainLayout from "../../common/layout/MainLayout/MainLayout";
 
 interface BlogRoutesProps {
 
 };
 
 function BlogRoutes(props: BlogRoutesProps) {
-  
+  // BlogLayout은 Mainlayout을 변경 중
   return (
     <StyledBlogRoutes>
-      <BlogLayout>
+      {/*<BlogLayout>*/}
+      <MainLayout showHero={false}>
         <Routes>
           <Route path="/create/:id" element={<CreateBlogPost />} />
           <Route path="/view/:id" element={<ViewBlog />} />
@@ -26,7 +28,8 @@ function BlogRoutes(props: BlogRoutesProps) {
           <Route path="/home" element={<BlogPage />} />
           <Route path="/:type" element={<BlogPage />} />
         </Routes>
-      </BlogLayout>
+      </MainLayout>
+      {/*</BlogLayout>*/}
     </StyledBlogRoutes>
   )
 };

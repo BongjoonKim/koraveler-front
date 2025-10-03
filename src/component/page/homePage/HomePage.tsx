@@ -5,6 +5,10 @@ import {
   Utensils, Camera, Lightbulb, MessageCircle
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import useCusWeather from "../../../common/widget/CusWeather/useCusWeather";
+import CusWeather from "../../../common/widget/CusWeather";
+import LanguageHelp from "../../../common/widget/LanguageHelp/LanguageHelp";
+import FindRoute from "../../../common/widget/FindRoute/FindRoute";
 
 interface QuickAccessItem {
   icon: any;
@@ -24,6 +28,8 @@ interface InfoCard {
 
 function HomePage() {
   const navigate = useNavigate();
+  const {weatherData} = useCusWeather();
+  console.log("weatherData", weatherData)
   
   const quickAccessItems: QuickAccessItem[] = [
     { icon: Bus, label: 'Transportation', color: 'blue.500', path: '/transportation' },
@@ -33,57 +39,19 @@ function HomePage() {
     { icon: Lightbulb, label: 'Travel Tips', color: 'yellow.500', path: '/tips' },
     { icon: MessageCircle, label: 'Community Chat', color: 'pink.500', path: '/chat' },
   ];
-  
-  const infoCards: InfoCard[] = [
-    {
-      icon: Cloud,
-      bgColor: 'blue.100',
-      iconColor: 'blue.600',
-      label: "Today's Weather",
-      value: '22°C',
-      subtext: 'Partly Cloudy'
-    },
-    {
-      icon: DollarSign,
-      bgColor: 'green.100',
-      iconColor: 'green.600',
-      label: 'Exchange Rate',
-      value: '1,320₩',
-      subtext: 'per 1 USD'
-    },
-    {
-      icon: Phone,
-      bgColor: 'red.100',
-      iconColor: 'red.600',
-      label: 'Emergency',
-      value: '112',
-      subtext: 'Police / Ambulance'
-    }
-  ];
-  
   return (
     <>
       {/* Today's Info Cards */}
-      <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }} mt="-8">
-        <Grid columns={{ base: 1, md: 3 }} gap={4}>
-          {infoCards.map((card, index) => (
-            <Card.Root key={index} bg="white" shadow="md">
-              <Card.Body>
-                <Stack direction="row" align="center" gap={4}>
-                  <Box bg={card.bgColor} p={3} borderRadius="full">
-                    <card.icon size={28} color={card.iconColor} />
-                  </Box>
-                  <Box>
-                    <Text textStyle="sm" color="gray.500">{card.label}</Text>
-                    <Text textStyle="2xl" fontWeight="bold">{card.value}</Text>
-                    <Text textStyle="sm" color="gray.600">{card.subtext}</Text>
-                  </Box>
-                </Stack>
-              </Card.Body>
-            </Card.Root>
-          ))}
+      <Box maxW="7xl" mx="auto" px={{ base: 4, sm: 6, lg: 8 }} py={6}>
+        <Grid
+          templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
+          gap={4}
+        >
+          <CusWeather />
+          <LanguageHelp />
+          <FindRoute />
         </Grid>
-      </Container>
+      </Box>
       
       {/* Featured Destination */}
       <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }} mt={12}>

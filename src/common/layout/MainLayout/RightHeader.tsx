@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import { Stack, Button, IconButton, Box } from "@chakra-ui/react";
+import {Stack, Button, IconButton, Box, Portal, Menu} from "@chakra-ui/react";
 import { Search, User, Menu as MenuIcon } from "lucide-react";
 import {
   MenuRoot,
@@ -110,7 +110,7 @@ function RightHeader() {
         
         {/* User Menu with ref */}
         <Box ref={cusAvaRef}>
-          <MenuRoot open={isSliderOpen} onOpenChange={setSliderOpen}>
+          <MenuRoot open={isSliderOpen}>
             <MenuTrigger asChild>
               <IconButton
                 aria-label="User menu"
@@ -128,44 +128,43 @@ function RightHeader() {
                 )}
               </IconButton>
             </MenuTrigger>
-            
-            <Box ref={sliderRef}>
-              <MenuContent>
-                {loginUser ? (
-                  <>
-                    <MenuItem value="profile" onClick={handleProfile}>
-                      Profile
-                    </MenuItem>
-                    <MenuItem value="settings" onClick={handleSettings}>
-                      Settings
-                    </MenuItem>
-                    <MenuItem value="blogs" onClick={handleMyBlogs}>
-                      My Blogs
-                    </MenuItem>
-                    <MenuItem value="create" onClick={handleCreate}>
-                      Create Post
-                    </MenuItem>
-                    <MenuSeparator />
-                    <MenuItem value="logout" onClick={handleLogout} color="red.600">
-                      Logout
-                    </MenuItem>
-                  </>
-                ) : (
-                  <>
-                    <MenuItem value="login" onClick={handleLogin}>
-                      Login
-                    </MenuItem>
-                    <MenuItem value="signup" onClick={handleSignup}>
-                      Sign Up
-                    </MenuItem>
-                  </>
-                )}
-              </MenuContent>
-            </Box>
+          <Portal>
+            <Menu.Positioner>
+              <Box ref={sliderRef}>
+                  <MenuContent>
+                    {loginUser ? (
+                      <>
+                        <MenuItem value="profile" onClick={handleProfile}>
+                          Profile
+                        </MenuItem>
+                        <MenuItem value="blogs" onClick={handleMyBlogs}>
+                          My Blogs
+                        </MenuItem>
+                        <MenuItem value="create" onClick={handleCreate}>
+                          Chat
+                        </MenuItem>
+                        <MenuSeparator />
+                        <MenuItem value="logout" onClick={handleLogout} color="red.600">
+                          Logout
+                        </MenuItem>
+                      </>
+                    ) : (
+                      <>
+                        <MenuItem value="login" onClick={handleLogin}>
+                          Login
+                        </MenuItem>
+                        <MenuItem value="signup" onClick={handleSignup}>
+                          Sign Up
+                        </MenuItem>
+                      </>
+                    )}
+                  </MenuContent>
+                </Box>
+            </Menu.Positioner>
+          </Portal>
           </MenuRoot>
         </Box>
-        
-        {/* Mobile Menu Button */}
+      {/* Mobile Menu Button */}
         <IconButton
           aria-label="Open menu"
           variant="ghost"

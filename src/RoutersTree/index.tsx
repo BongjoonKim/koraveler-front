@@ -14,28 +14,28 @@ import HomePage from "../component/page/homePage/HomePage";
 export default function RoutersTree() {
   return (
     <Router>
-      <Routes>
-        <Route path="/*" element={<MainPage/>}/>
-        <Route path="/blog/*" element={<BlogRoutes/>}/>
-        <Route path="/travel/*" element={<TravelRoutes/>}/>
-        <Route path="/tech/*" element={<TechRoutes/>}/>
-        <Route path="/chat/*" element={<ChatRoutes/>}/>
-        <Route path="/login/*" element={<LoginRoutes/>}/>
-        <Route path="/setting/*" element={
-            <SettingRoutes/>
-        }/>
-        <Route path="*" element={
-          <AlertRoot status="error">
-            <AlertIndicator /> {/* AlertIcon → AlertIndicator */}
-            <AlertContent>
-              <AlertTitle>404 - 페이지를 찾을 수 없습니다!</AlertTitle>
-              <AlertDescription>
-                요청하신 페이지가 존재하지 않습니다.
-              </AlertDescription>
-            </AlertContent>
-          </AlertRoot>
-        }/>
-      </Routes>
+        <Routes>
+            <Route path="/*" element={<MainPage/>}/>
+            <Route path="/blog/*" element={<BlogRoutes/>}/>
+            <Route path="/travel/*" element={<TravelRoutes/>}/>
+            <Route path="/tech/*" element={<TechRoutes/>}/>
+            <Route path="/chat/*" element={<ChatRoutes/>}/>
+            <Route path="/login/*" element={<LoginRoutes/>}/>
+            <Route path="/setting/*" element={
+                <SettingRoutes/>
+            }/>
+          <Route path="*" element={
+            <AlertRoot status="error">
+              <AlertIndicator /> {/* AlertIcon → AlertIndicator */}
+              <AlertContent>
+                <AlertTitle>404 - 페이지를 찾을 수 없습니다!</AlertTitle>
+                <AlertDescription>
+                  요청하신 페이지가 존재하지 않습니다.
+                </AlertDescription>
+              </AlertContent>
+            </AlertRoot>
+          }/>
+        </Routes>
     </Router>
   );
 }

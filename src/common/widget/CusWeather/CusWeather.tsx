@@ -1,19 +1,43 @@
-import styled from 'styled-components';
+import React, { useEffect, useState } from 'react';
+import {
+  Box,
+  Card,
+  Stack,
+  Text,
+  Grid,
+  HStack,
+  VStack,
+  Flex,
+  Circle,
+  Badge
+} from "@chakra-ui/react";
+import {
+  Cloud,
+  Droplets,
+  Wind,
+  Thermometer,
+  Sun,
+  CloudRain,
+  CloudSnow,
+  Zap,
+  Eye,
+  Sunrise,
+  Sunset,
+  Navigation
+} from "lucide-react";
 import useCusWeather from "./useCusWeather";
-import {round} from "lodash";
-import { useEffect, useState } from 'react';
+import { round } from "lodash";
 
-export interface CusWeatherProps {};
+export interface CusWeatherProps {}
 
 function CusWeather(props: CusWeatherProps) {
-  const {weatherData} = useCusWeather(props);
+  const { weatherData } = useCusWeather(props);
   const [currentTime, setCurrentTime] = useState(new Date());
   
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
-    }, 10000);
-    
+    }, 60000);
     return () => clearInterval(timer);
   }, []);
   
@@ -25,203 +49,274 @@ function CusWeather(props: CusWeatherProps) {
     });
   };
   
-  const isDaytime = () => {
-    const hours = currentTime.getHours();
-    return hours >= 6 && hours < 18;
+  const getWeatherGradient = (iconCode?: string) => {
+    if (!iconCode) return "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+    
+    const gradientMap: { [key: string]: string } = {
+      '01d': "linear-gradient(135deg, #f5af19 0%, #f12711 100%)", // Clear day
+      '01n': "linear-gradient(135deg, #2c3e50 0%, #3498db 100%)", // Clear night
+      '02d': "linear-gradient(135deg, #56ccf2 0%, #2f80ed 100%)", // Few clouds day
+      '02n': "linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)", // Few clouds night
+      '03d': "linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%)", // Scattered clouds
+      '03n': "linear-gradient(135deg, #232526 0%, #414345 100%)", // Scattered clouds night
+      '04d': "linear-gradient(135deg, #757f9a 0%, #d7dde8 100%)", // Broken clouds
+      '04n': "linear-gradient(135deg, #373b44 0%, #4286f4 100%)", // Broken clouds night
+      '09d': "linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%)", // Shower rain
+      '09n': "linear-gradient(135deg, #141e30 0%, #243b55 100%)", // Shower rain night
+      '10d': "linear-gradient(135deg, #3a7bd5 0%, #3a6073 100%)", // Rain
+      '10n': "linear-gradient(135deg, #283048 0%, #859398 100%)", // Rain night
+      '11d': "linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)", // Thunderstorm
+      '11n': "linear-gradient(135deg, #16222a 0%, #3a6073 100%)", // Thunderstorm night
+      '13d': "linear-gradient(135deg, #e6dada 0%, #274046 100%)", // Snow
+      '13n': "linear-gradient(135deg, #2c5364 0%, #203a43 50%, #0f2027 100%)", // Snow night
+      '50d': "linear-gradient(135deg, #d3cce3 0%, #e9e4f0 100%)", // Mist
+      '50n': "linear-gradient(135deg, #485563 0%, #29323c 100%)", // Mist night
+    };
+    
+    return gradientMap[iconCode] || "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
   };
   
+  const getWeatherIcon = (iconCode?: string) => {
+    if (!iconCode) return <Cloud size={48} />;
+    
+    const iconComponents: { [key: string]: JSX.Element } = {
+      '01d': <Sun size={48} />,
+      '01n': <Sun size={48} />,
+      '02d': <Cloud size={48} />,
+      '02n': <Cloud size={48} />,
+      '03d': <Cloud size={48} />,
+      '03n': <Cloud size={48} />,
+      '04d': <Cloud size={48} />,
+      '04n': <Cloud size={48} />,
+      '09d': <CloudRain size={48} />,
+      '09n': <CloudRain size={48} />,
+      '10d': <CloudRain size={48} />,
+      '10n': <CloudRain size={48} />,
+      '11d': <Zap size={48} />,
+      '11n': <Zap size={48} />,
+      '13d': <CloudSnow size={48} />,
+      '13n': <CloudSnow size={48} />,
+      '50d': <Eye size={48} />,
+      '50n': <Eye size={48} />,
+    };
+    
+    return iconComponents[iconCode] || <Cloud size={48} />;
+  };
+  
+  const getWeatherDescription = (desc?: string) => {
+    if (!desc) return 'Loading...';
+    const translations: { [key: string]: string } = {
+      'clear sky': '맑음',
+      'few clouds': '구름 조금',
+      'scattered clouds': '구름 많음',
+      'broken clouds': '흐림',
+      'overcast clouds': '매우 흐림',
+      'shower rain': '소나기',
+      'rain': '비',
+      'thunderstorm': '천둥번개',
+      'snow': '눈',
+      'mist': '안개'
+    };
+    return translations[desc] || desc;
+  };
+  
+  const temp = weatherData?.main?.temp ? round(weatherData.main.temp - 273.15, 0) : null;
+  const feelsLike = weatherData?.main?.feels_like ? round(weatherData.main.feels_like - 273.15, 0) : null;
+  
   return (
-    <StyledWeatherCard>
-      <div className="top">
-        <div className="location">
-          <h2>{weatherData?.name}</h2>
-        </div>
-        <div className="time-container">
-          <div className="current-time">
-            {formatTime(currentTime)}
-          </div>
-          <div className="day-night-icon">
-            {isDaytime() ? (
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="sun-icon">
-                <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
-              </svg>
-            ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="moon-icon">
-                <path fillRule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clipRule="evenodd" />
-              </svg>
-            )}
-          </div>
-        </div>
-      </div>
-      
-      <div className="middle">
-        <div className="weather-icon">
-          <img
-            src={`https://openweathermap.org/img/wn/${weatherData?.weather?.[0].icon}@2x.png`}
-            alt="weather icon"
-          />
-          <span className="description">
-            {weatherData?.weather?.[0]?.description}
-          </span>
-        </div>
-        <div className="temperature">
-          <span className="value">
-            {round(weatherData?.main?.temp - 273.15, 1)}°
-          </span>
-        </div>
-      </div>
-      
-      <div className="bottom">
-        <div className="info-item">
-          <span className="label">Feels like</span>
-          <span className="value">
-            {round(weatherData?.main?.feels_like - 273.15, 1)}°
-          </span>
-        </div>
-        <div className="divider" />
-        <div className="info-item">
-          <span className="label">Humidity</span>
-          <span className="value">{weatherData?.main?.humidity}%</span>
-        </div>
-      </div>
-    </StyledWeatherCard>
+    <Card.Root
+      overflow="hidden"
+      css={{
+        background: getWeatherGradient(weatherData?.weather?.[0]?.icon),
+        transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+        backdropFilter: "blur(10px)",
+        border: "1px solid rgba(255, 255, 255, 0.1)",
+        "&:hover": {
+          transform: "translateY(-8px) scale(1.02)",
+          boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
+        }
+      }}
+    >
+      <Card.Body p={6}>
+        <VStack align="stretch" gap={4}>
+          {/* Header */}
+          <Flex justify="space-between" align="center">
+            <VStack align="start" gap={0}>
+              <HStack gap={1} opacity={0.9}>
+                <Navigation size={14} />
+                <Text fontSize="xs" fontWeight="medium" color="white">
+                  현재 위치
+                </Text>
+              </HStack>
+              <Text fontSize="xl" fontWeight="bold" color="white">
+                {weatherData?.name || "Seoul"}
+              </Text>
+            </VStack>
+            <Badge
+              colorScheme="whiteAlpha"
+              bg="whiteAlpha.200"
+              px={3}
+              py={1}
+              borderRadius="full"
+              fontSize="sm"
+              fontWeight="bold"
+            >
+              {formatTime(currentTime)}
+            </Badge>
+          </Flex>
+          
+          {/* Main Weather Display */}
+          <Grid
+            w={"100%"}
+            templateColumns={{base: "1fr", md: "repeat(2, 1fr)"}}
+            gap={"1rem"}
+            h={"7rem"}
+          >
+            <Box textAlign="center" py={4} justifyContent={"center"} h={"100%"}>
+              <Flex direction={"column"} justify="center" mb={3} >
+                <Circle
+                  size="100%"
+                  bg="whiteAlpha.200"
+                  backdropFilter="blur(10px)"
+                  css={{
+                    animation: "float 3s ease-in-out infinite",
+                    "@keyframes float": {
+                      "0%, 100%": { transform: "translateY(0)" },
+                      "50%": { transform: "translateY(-10px)" }
+                    }
+                  }}
+                >
+                  <Box color="white">
+                    {getWeatherIcon(weatherData?.weather?.[0]?.icon)}
+                  </Box>
+                </Circle>
+                <Text
+                  fontSize="lg"
+                  color="whiteAlpha.900"
+                  mt={2}
+                  fontWeight="medium"
+                >
+                  {weatherData?.weather?.[0]?.description
+                    ? getWeatherDescription(weatherData.weather[0].description)
+                    : 'Loading...'}
+                </Text>
+              </Flex>
+            </Box>
+            <Box textAlign="center" py={4} justifyContent={"center"}>
+              <Flex direction={"column"} justify="center" mb={3}>
+              <Text
+                fontSize="3rem"
+                fontWeight="bold"
+                color="white"
+                lineHeight="1"
+                css={{
+                  textShadow: "2px 2px 4px rgba(0,0,0,0.2)"
+                }}
+              >
+                {temp !== null ? `${temp}°` : '--°'}
+              </Text>
+              {feelsLike !== null && (
+                <Text fontSize="sm" color="whiteAlpha.800" mt={1}>
+                  체감 {feelsLike}°
+                </Text>
+              )}
+              </Flex>
+            </Box>
+          </Grid>
+          {/* Weather Details Grid */}
+          <Grid templateColumns="repeat(3, 1fr)" gap={3}>
+            <Box
+              bg="whiteAlpha.200"
+              backdropFilter="blur(10px)"
+              borderRadius="xl"
+              p={3}
+              textAlign="center"
+              transition="all 0.3s"
+              _hover={{
+                bg: "whiteAlpha.300",
+                transform: "translateY(-2px)"
+              }}
+            >
+              <Circle size="35px" bg="whiteAlpha.300" mb={2} mx="auto">
+                <Droplets size={18} color="white" />
+              </Circle>
+              <Text fontSize="xs" color="whiteAlpha.800">습도</Text>
+              <Text fontSize="lg" fontWeight="bold" color="white">
+                {weatherData?.main?.humidity || '--'}%
+              </Text>
+            </Box>
+            
+            <Box
+              bg="whiteAlpha.200"
+              backdropFilter="blur(10px)"
+              borderRadius="xl"
+              p={3}
+              textAlign="center"
+              transition="all 0.3s"
+              _hover={{
+                bg: "whiteAlpha.300",
+                transform: "translateY(-2px)"
+              }}
+            >
+              <Circle size="35px" bg="whiteAlpha.300" mb={2} mx="auto">
+                <Wind size={18} color="white" />
+              </Circle>
+              <Text fontSize="xs" color="whiteAlpha.800">풍속</Text>
+              <Text fontSize="lg" fontWeight="bold" color="white">
+                {weatherData?.wind?.speed || '--'} m/s
+              </Text>
+            </Box>
+            
+            <Box
+              bg="whiteAlpha.200"
+              backdropFilter="blur(10px)"
+              borderRadius="xl"
+              p={3}
+              textAlign="center"
+              transition="all 0.3s"
+              _hover={{
+                bg: "whiteAlpha.300",
+                transform: "translateY(-2px)"
+              }}
+            >
+              <Circle size="35px" bg="whiteAlpha.300" mb={2} mx="auto">
+                <Eye size={18} color="white" />
+              </Circle>
+              <Text fontSize="xs" color="whiteAlpha.800">가시거리</Text>
+              <Text fontSize="lg" fontWeight="bold" color="white">
+                {weatherData?.visibility ? `${(weatherData.visibility / 1000).toFixed(1)}km` : '--'}
+              </Text>
+            </Box>
+          </Grid>
+          
+          {/* Min/Max Temperature */}
+          {weatherData?.main?.temp_min && weatherData?.main?.temp_max && (
+            <HStack
+              justify="center"
+              gap={6}
+              pt={2}
+              borderTop="1px solid"
+              borderColor="whiteAlpha.200"
+            >
+              <HStack gap={2}>
+                <Text fontSize="sm" color="whiteAlpha.700">최저</Text>
+                <Text fontSize="md" fontWeight="bold" color="white">
+                  {round(weatherData.main.temp_min - 273.15, 0)}°
+                </Text>
+              </HStack>
+              <Box w="1px" h="20px" bg="whiteAlpha.300" />
+              <HStack gap={2}>
+                <Text fontSize="sm" color="whiteAlpha.700">최고</Text>
+                <Text fontSize="md" fontWeight="bold" color="white">
+                  {round(weatherData.main.temp_max - 273.15, 0)}°
+                </Text>
+              </HStack>
+            </HStack>
+          )}
+        </VStack>
+      </Card.Body>
+    </Card.Root>
   );
-};
+}
 
 export default CusWeather;
-
-const StyledWeatherCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 320px;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, #00B4DB 0%, #0083B0 100%);
-  border-radius: 1.25rem;
-  color: white;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-  }
-
-  .top {
-    margin-bottom: 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .location {
-      h2 {
-        font-size: 1.75rem;
-        font-weight: 700;
-        margin: 0;
-      }
-    }
-
-    .time-container {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 0.5rem 1rem;
-      border-radius: 0.75rem;
-      backdrop-filter: blur(10px);
-
-      .current-time {
-        font-size: 1.25rem;
-        font-weight: 500;
-      }
-
-      .day-night-icon {
-        display: flex;
-        align-items: center;
-
-        .sun-icon, .moon-icon {
-          width: 1.5rem;
-          height: 1.5rem;
-          color: #FFD700;
-          animation: rotate 20s linear infinite;
-        }
-
-        .moon-icon {
-          color: #F4F4F4;
-        }
-      }
-    }
-  }
-
-  .middle {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-
-    .weather-icon {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-
-      img {
-        width: 80px;
-        height: 80px;
-        margin-bottom: 0.5rem;
-      }
-
-      .description {
-        font-size: 1.1rem;
-        font-weight: 500;
-        text-transform: capitalize;
-      }
-    }
-
-    .temperature {
-      .value {
-        font-size: 3.5rem;
-        font-weight: 700;
-      }
-    }
-  }
-
-  .bottom {
-    display: flex;
-    justify-content: space-between;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: 1rem;
-
-    .info-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex: 1;
-
-      .label {
-        font-size: 0.875rem;
-        opacity: 0.8;
-        margin-bottom: 0.25rem;
-      }
-
-      .value {
-        font-size: 1.25rem;
-        font-weight: 600;
-      }
-    }
-
-    .divider {
-      width: 1px;
-      background: rgba(255, 255, 255, 0.2);
-      margin: 0 1rem;
-    }
-  }
-
-  @keyframes rotate {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-`;

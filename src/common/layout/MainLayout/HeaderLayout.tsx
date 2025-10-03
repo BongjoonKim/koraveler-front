@@ -15,8 +15,8 @@ function HeaderLayout() {
       borderColor="gray.200"
       position="sticky"
       top="0"
-      zIndex="50"
       shadow="sm"
+      zIndex={"999"}
     >
       <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }}>
         <Flex h="16" align="center" justify="space-between">

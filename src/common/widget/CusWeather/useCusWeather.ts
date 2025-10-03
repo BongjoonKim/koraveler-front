@@ -5,7 +5,7 @@ import {useRecoilState} from "recoil";
 import recoil from "../../../stores/recoil";
 import {getWeather} from "../../../endpoints/common-endpoints";
 
-export default function useCusWeather(props : CusWeatherProps) {
+export default function useCusWeather(props ?: CusWeatherProps) {
   const [weatherData, setWeatherData] = useState<WeatherData | any | undefined>(undefined);
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   

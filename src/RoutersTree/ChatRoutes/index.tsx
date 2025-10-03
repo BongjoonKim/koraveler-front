@@ -4,6 +4,7 @@ import CreateBlogPost from "../../component/page/blog/CreateBlogPost/CreateBlogP
 import AdminLayout from "../../common/layout/AdminLayout/AdminLayout";
 import TravelMessengerPage from "../../component/page/messenger/TravelMessengerPage";
 import BlogLayout from "../../common/layout/BlogLayout";
+import MainLayout from "../../common/layout/MainLayout/MainLayout";
 
 interface BlogRoutesProps {
 
@@ -13,11 +14,13 @@ function BlogRoutes(props: BlogRoutesProps) {
   
   return (
     <StyledBlogRoutes>
-      <BlogLayout>
+      {/*<BlogLayout>*/}
+      <MainLayout showHero={false}>
         <Routes>
           <Route path="/" element={<TravelMessengerPage />} />
         </Routes>
-      </BlogLayout>
+      </MainLayout>
+      {/*</BlogLayout>*/}
     </StyledBlogRoutes>
   )
 };
