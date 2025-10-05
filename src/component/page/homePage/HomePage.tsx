@@ -44,7 +44,7 @@ function HomePage() {
       {/* Today's Info Cards */}
       <Box maxW="7xl" mx="auto" px={{ base: 4, sm: 6, lg: 8 }} py={6}>
         <Grid
-          templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
+          templateColumns={{ base: "1fr", md: "repeat(1, 3fr)" }}
           gap={4}
         >
           <CusWeather />

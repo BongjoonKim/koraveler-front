@@ -20,7 +20,7 @@ import {
   Mic,
   Send,
   Camera,
-  History
+  History, ChevronUp, ChevronDown
 } from "lucide-react";
 import CusIconButton from "../../elements/buttons/CusIconButton";
 import CusButton from "../../elements/buttons/CusButton";
@@ -49,6 +49,7 @@ function LanguageHelp(props: LanguageHelpProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
   const [translationHistory, setTranslationHistory] = useState<Translation[]>([]);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
   
   // 자주 사용하는 구문들
   const quickPhrases: QuickPhrase[] = [
@@ -152,11 +153,18 @@ function LanguageHelp(props: LanguageHelpProps) {
     // TODO: Toast notification for copy success
   };
   
+  const handleCardClick = (e : any) => {
+    if ((e.target as HTMLElement).closest(".chakra-card__root"))
+      setIsExpanded(!isExpanded);
+  };
+  
   return (
     <Card.Root
       bg="white"
       shadow="lg"
       overflow="hidden"
+      onClick={handleCardClick}
+      // gridColumn={isExpanded ? { md: "span 2" } : "span 1"}
       css={{
         background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
         transition: "all 0.3s",
@@ -176,15 +184,24 @@ function LanguageHelp(props: LanguageHelpProps) {
                 Language Helper
               </Text>
             </HStack>
-            <Badge colorScheme="whiteAlpha" bg="whiteAlpha.300">
-              AI Powered
-            </Badge>
+            {/*<Badge colorScheme="whiteAlpha" bg="whiteAlpha.300">*/}
+            {/*  AI Powered*/}
+            {/*</Badge>*/}
+            <Box color="gray.400">
+              {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+            </Box>
           </HStack>
           
           {/* Tabs */}
+          <Box onClick={(e : any) => e.stopPropagation()}>
           <Tabs.Root
             value={selectedTab.toString()}
-            onValueChange={(e : any) => setSelectedTab(parseInt(e.value))}
+            onValueChange={(e : any) => {
+              setSelectedTab(parseInt(e.value))
+            }}
+            onClick={() => {
+              setIsExpanded(true)
+            }}
           >
             <Tabs.List bg="whiteAlpha.200" borderRadius="lg">
               <Tabs.Trigger value="0" color="black">
@@ -197,232 +214,239 @@ function LanguageHelp(props: LanguageHelpProps) {
                 History
               </Tabs.Trigger>
             </Tabs.List>
-            
-            <Tabs.Content value="0">
-              <VStack gap={3} mt={3}>
-                {/* Language Selector */}
-                <HStack justify="space-between" w="full">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    color="black"
-                    borderColor="whiteAlpha.400"
-                    _hover={{ bg: "whiteAlpha.200" }}
-                  >
-                    {sourceLang === 'en' ? 'English' : '한국어'}
-                  </Button>
-                  <CusIconButton
-                    aria-label="Swap languages"
-                    icon={<ArrowRightLeft size={18} />}
-                    size="sm"
-                    variant="ghost"
-                    color="black"
-                    onClick={swapLanguages}
-                    _hover={{ bg: "whiteAlpha.200" }}
-                  />
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    color="black"
-                    borderColor="whiteAlpha.400"
-                    _hover={{ bg: "whiteAlpha.200" }}
-                  >
-                    {targetLang === 'ko' ? '한국어' : 'English'}
-                  </Button>
-                </HStack>
-                
-                {/* Input Area */}
-                <Box position="relative" w="full">
-                  <Textarea
-                    value={sourceText}
-                    onChange={(e) => setSourceText(e.target.value)}
-                    placeholder="Enter text to translate..."
-                    rows={3}
-                    bg="whiteAlpha.200"
-                    borderColor="whiteAlpha.400"
-                    color="black"
-                    _placeholder={{ color: "whiteAlpha.600" }}
-                    _hover={{ borderColor: "whiteAlpha.600" }}
-                    _focus={{ borderColor: "white", bg: "whiteAlpha.300" }}
-                  />
-                  <HStack position="absolute" bottom={2} right={2} gap={1}>
-                    <CusIconButton
-                      aria-label="Voice input"
-                      icon={<Mic size={16} />}
-                      size="xs"
-                      variant="ghost"
-                      color="black"
-                      _hover={{ bg: "whiteAlpha.300" }}
-                    />
-                    <CusIconButton
-                      aria-label="Camera"
-                      icon={<Camera size={16} />}
-                      size="xs"
-                      variant="ghost"
-                      color="black"
-                      _hover={{ bg: "whiteAlpha.300" }}
-                    />
-                  </HStack>
-                </Box>
-                
-                {/* Translate Button */}
-                <CusButton
-                  w="full"
-                  leftIcon={<Send size={18} />}
-                  onClick={handleTranslate}
-                  isLoading={isLoading}
-                  loadingText="Translating..."
-                  bg="whiteAlpha.300"
-                  color="black"
-                  _hover={{ bg: "whiteAlpha.400" }}
-                >
-                  Translate
-                </CusButton>
-                
-                {/* Translation Result */}
-                {translatedText && (
-                  <Box
-                    w="full"
-                    p={3}
-                    bg="whiteAlpha.200"
-                    borderRadius="lg"
-                    borderWidth="1px"
-                    borderColor="whiteAlpha.400"
-                  >
-                    <HStack justify="space-between" mb={2}>
-                      <Text fontSize="xs" opacity={0.8}>
-                        Translation
-                      </Text>
-                      <HStack gap={1}>
+            {isExpanded && (
+              <>
+                <Tabs.Content value="0">
+                  <VStack gap={2} mt={3} h="20rem" overflowY="auto">
+                    {/* Language Selector */}
+                    <HStack justify="space-between" w="full">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        color="black"
+                        borderColor="whiteAlpha.400"
+                        _hover={{ bg: "whiteAlpha.200" }}
+                      >
+                        {sourceLang === 'en' ? 'English' : '한국어'}
+                      </Button>
+                      <CusIconButton
+                        aria-label="Swap languages"
+                        icon={<ArrowRightLeft size={18} />}
+                        size="sm"
+                        variant="ghost"
+                        color="black"
+                        onClick={swapLanguages}
+                        _hover={{ bg: "whiteAlpha.200" }}
+                      />
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        color="black"
+                        borderColor="whiteAlpha.400"
+                        _hover={{ bg: "whiteAlpha.200" }}
+                      >
+                        {targetLang === 'ko' ? '한국어' : 'English'}
+                      </Button>
+                    </HStack>
+                    
+                    {/* Input Area */}
+                    <Box position="relative" w="full">
+                      <Textarea
+                        value={sourceText}
+                        onChange={(e) => setSourceText(e.target.value)}
+                        placeholder="Enter text to translate..."
+                        rows={3}
+                        bg="whiteAlpha.200"
+                        borderColor="whiteAlpha.400"
+                        color="black"
+                        minH="3rem"
+                        maxH="8rem"
+                        overflow="auto"
+                        _placeholder={{ color: "whiteAlpha.600" }}
+                        _hover={{ borderColor: "whiteAlpha.600" }}
+                        _focus={{ borderColor: "white", bg: "whiteAlpha.300" }}
+                      />
+                      <HStack position="absolute" bottom={2} right={2} gap={1}>
                         <CusIconButton
-                          aria-label="Speak"
-                          icon={<Volume2 size={14} />}
+                          aria-label="Voice input"
+                          icon={<Mic size={16} />}
                           size="xs"
                           variant="ghost"
                           color="black"
-                          onClick={() => handleSpeak(translatedText, targetLang)}
                           _hover={{ bg: "whiteAlpha.300" }}
                         />
                         <CusIconButton
-                          aria-label="Copy"
-                          icon={<Copy size={14} />}
+                          aria-label="Camera"
+                          icon={<Camera size={16} />}
                           size="xs"
                           variant="ghost"
                           color="black"
-                          onClick={() => handleCopy(translatedText)}
                           _hover={{ bg: "whiteAlpha.300" }}
                         />
                       </HStack>
-                    </HStack>
-                    <Text fontSize="md">{translatedText}</Text>
-                  </Box>
-                )}
-              </VStack>
-            </Tabs.Content>
-            
-            <Tabs.Content value="1">
-              <VStack gap={2} mt={3} maxH="300px" overflowY="auto">
-                {quickPhrases.map((phrase, index) => (
-                  <Box
-                    key={index}
-                    w="full"
-                    p={3}
-                    bg="whiteAlpha.200"
-                    borderRadius="lg"
-                    _hover={{ bg: "whiteAlpha.300" }}
-                    cursor="pointer"
-                    onClick={() => {
-                      setSourceText(phrase.english);
-                      setTranslatedText(phrase.korean);
-                    }}
-                  >
-                    <HStack justify="space-between">
-                      <VStack align="start" gap={0.5}>
-                        <HStack>
-                          <Text fontWeight="bold" fontSize="md">
-                            {phrase.korean}
-                          </Text>
-                          <Badge size="xs" bg="whiteAlpha.300">
-                            {phrase.category}
-                          </Badge>
-                        </HStack>
-                        <Text fontSize="xs" opacity={0.8}>
-                          {phrase.pronunciation}
-                        </Text>
-                        <Text fontSize="sm">{phrase.english}</Text>
-                      </VStack>
-                      <HStack gap={1}>
-                        <CusIconButton
-                          aria-label="Speak Korean"
-                          icon={<Volume2 size={14} />}
-                          size="xs"
-                          variant="ghost"
-                          color="black"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSpeak(phrase.korean, 'ko');
-                          }}
-                          _hover={{ bg: "whiteAlpha.400" }}
-                        />
-                        <CusIconButton
-                          aria-label="Copy"
-                          icon={<Copy size={14} />}
-                          size="xs"
-                          variant="ghost"
-                          color="black"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCopy(phrase.korean);
-                          }}
-                          _hover={{ bg: "whiteAlpha.400" }}
-                        />
-                      </HStack>
-                    </HStack>
-                  </Box>
-                ))}
-              </VStack>
-            </Tabs.Content>
-            
-            <Tabs.Content value="2">
-              <VStack gap={2} mt={3} maxH="300px" overflowY="auto">
-                {translationHistory.length === 0 ? (
-                  <Box textAlign="center" py={4}>
-                    <History size={32} opacity={0.5} />
-                    <Text fontSize="sm" opacity={0.7} mt={2}>
-                      No translation history yet
-                    </Text>
-                  </Box>
-                ) : (
-                  translationHistory.map((item) => (
-                    <Box
-                      key={item.id}
-                      w="full"
-                      p={3}
-                      bg="whiteAlpha.200"
-                      borderRadius="lg"
-                      _hover={{ bg: "whiteAlpha.300" }}
-                      cursor="pointer"
-                      onClick={() => {
-                        setSourceText(item.source);
-                        setTranslatedText(item.target);
-                        setSelectedTab(0);
-                      }}
-                    >
-                      <Text fontSize="sm" fontWeight="medium">
-                        {item.source}
-                      </Text>
-                      <Text fontSize="sm" opacity={0.8}>
-                        → {item.target}
-                      </Text>
-                      <Text fontSize="xs" opacity={0.6} mt={1}>
-                        {new Date(item.timestamp).toLocaleTimeString()}
-                      </Text>
                     </Box>
-                  ))
-                )}
-              </VStack>
-            </Tabs.Content>
+                    
+                    {/* Translate Button */}
+                    <CusButton
+                      w="full"
+                      leftIcon={<Send size={18} />}
+                      onClick={handleTranslate}
+                      isLoading={isLoading}
+                      loadingText="Translating..."
+                      bg="whiteAlpha.300"
+                      color="black"
+                      _hover={{ bg: "whiteAlpha.400" }}
+                    >
+                      Translate
+                    </CusButton>
+                    
+                    {/* Translation Result */}
+                    {translatedText && (
+                      <Box
+                        w="full"
+                        p={3}
+                        bg="whiteAlpha.200"
+                        borderRadius="lg"
+                        borderWidth="1px"
+                        borderColor="whiteAlpha.400"
+                      >
+                        <HStack justify="space-between" mb={2}>
+                          <Text fontSize="xs" opacity={0.8}>
+                            Translation
+                          </Text>
+                          <HStack gap={1}>
+                            <CusIconButton
+                              aria-label="Speak"
+                              icon={<Volume2 size={14} />}
+                              size="xs"
+                              variant="ghost"
+                              color="black"
+                              onClick={() => handleSpeak(translatedText, targetLang)}
+                              _hover={{ bg: "whiteAlpha.300" }}
+                            />
+                            <CusIconButton
+                              aria-label="Copy"
+                              icon={<Copy size={14} />}
+                              size="xs"
+                              variant="ghost"
+                              color="black"
+                              onClick={() => handleCopy(translatedText)}
+                              _hover={{ bg: "whiteAlpha.300" }}
+                            />
+                          </HStack>
+                        </HStack>
+                        <Text fontSize="md">{translatedText}</Text>
+                      </Box>
+                    )}
+                  </VStack>
+                </Tabs.Content>
+                
+                <Tabs.Content value="1">
+                  <VStack gap={2} mt={3} h="20rem" overflowY="auto">
+                    {quickPhrases.map((phrase, index) => (
+                      <Box
+                        key={index}
+                        w="full"
+                        p={3}
+                        bg="whiteAlpha.200"
+                        borderRadius="lg"
+                        _hover={{ bg: "whiteAlpha.300" }}
+                        cursor="pointer"
+                        onClick={() => {
+                          setSourceText(phrase.english);
+                          setTranslatedText(phrase.korean);
+                        }}
+                      >
+                        <HStack justify="space-between">
+                          <VStack align="start" gap={0.5}>
+                            <HStack>
+                              <Text fontWeight="bold" fontSize="md">
+                                {phrase.korean}
+                              </Text>
+                              <Badge size="xs" bg="whiteAlpha.300">
+                                {phrase.category}
+                              </Badge>
+                            </HStack>
+                            <Text fontSize="xs" opacity={0.8}>
+                              {phrase.pronunciation}
+                            </Text>
+                            <Text fontSize="sm">{phrase.english}</Text>
+                          </VStack>
+                          <HStack gap={1}>
+                            <CusIconButton
+                              aria-label="Speak Korean"
+                              icon={<Volume2 size={14} />}
+                              size="xs"
+                              variant="ghost"
+                              color="black"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSpeak(phrase.korean, 'ko');
+                              }}
+                              _hover={{ bg: "whiteAlpha.400" }}
+                            />
+                            <CusIconButton
+                              aria-label="Copy"
+                              icon={<Copy size={14} />}
+                              size="xs"
+                              variant="ghost"
+                              color="black"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleCopy(phrase.korean);
+                              }}
+                              _hover={{ bg: "whiteAlpha.400" }}
+                            />
+                          </HStack>
+                        </HStack>
+                      </Box>
+                    ))}
+                  </VStack>
+                </Tabs.Content>
+                
+                <Tabs.Content value="2">
+                  <VStack gap={2} mt={3} h="20rem" overflowY="auto">
+                    {translationHistory.length === 0 ? (
+                      <Box textAlign="center" py={4}>
+                        <History size={32} opacity={0.5} />
+                        <Text fontSize="sm" opacity={0.7} mt={2}>
+                          No translation history yet
+                        </Text>
+                      </Box>
+                    ) : (
+                      translationHistory.map((item) => (
+                        <Box
+                          key={item.id}
+                          w="full"
+                          p={3}
+                          bg="whiteAlpha.200"
+                          borderRadius="lg"
+                          _hover={{ bg: "whiteAlpha.300" }}
+                          cursor="pointer"
+                          onClick={() => {
+                            setSourceText(item.source);
+                            setTranslatedText(item.target);
+                            setSelectedTab(0);
+                          }}
+                        >
+                          <Text fontSize="sm" fontWeight="medium">
+                            {item.source}
+                          </Text>
+                          <Text fontSize="sm" opacity={0.8}>
+                            → {item.target}
+                          </Text>
+                          <Text fontSize="xs" opacity={0.6} mt={1}>
+                            {new Date(item.timestamp).toLocaleTimeString()}
+                          </Text>
+                        </Box>
+                      ))
+                    )}
+                  </VStack>
+                </Tabs.Content>
+              </>
+            )}
           </Tabs.Root>
+          </Box>
         </VStack>
       </Card.Body>
     </Card.Root>

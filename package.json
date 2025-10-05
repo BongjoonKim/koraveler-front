@@ -7,7 +7,7 @@
     "@ag-grid-community/react": "^31.3.1",
     "@anthropic-ai/claude-code": "^0.2.64",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@chakra-ui/react": "^3.25.0",
+    "@chakra-ui/react": "3.27.0",
     "@emotion/core": "^11.0.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
