@@ -59,7 +59,10 @@ export const useTranslateQueries = () => {
 // ===== 이력 조회 =====
 
 // 번역 이력 조회
-export const useTranslationHistory = (params?: { page?: number; size?: number }) => {
+export const useTranslationHistory = (
+  params?: { page?: number; size?: number },
+  enabled: boolean = true,
+) => {
   const authEP = useAuthEP();
   
   return useQuery<PageResponse<TranslationHistory>>({
@@ -71,6 +74,7 @@ export const useTranslationHistory = (params?: { page?: number; size?: number })
       });
       return response.data;
     },
+    enabled,
     staleTime: 1000 * 60 * 5, // 5분
     refetchOnMount: 'always',
   });

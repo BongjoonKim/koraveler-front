@@ -49,7 +49,7 @@ function RightHeader() {
   
   // 내 블로그로 이동
   const handleMyBlogs = () => {
-    navigate('/blog/my');
+    navigate('/blog/home');
   };
   
   // 로그인 페이지로 이동

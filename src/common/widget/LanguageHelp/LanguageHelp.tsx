@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Box,
   Card,
   Text,
   HStack,
   VStack,
-  Input,
-  Button,
   Textarea,
-  IconButton,
   Tabs,
-  Badge
+  Badge,
+  Select,
+  createListCollection,
+  IconButton,
+  Separator,
+  Stack
 } from "@chakra-ui/react";
 import {
   Languages,
@@ -18,12 +20,21 @@ import {
   Volume2,
   Copy,
   Mic,
-  Send,
   Camera,
-  History, ChevronUp, ChevronDown
+  History,
+  ChevronUp,
+  ChevronDown,
+  Check,
+  Clock,
+  Globe
 } from "lucide-react";
-import CusIconButton from "../../elements/buttons/CusIconButton";
-import CusButton from "../../elements/buttons/CusButton";
+import {
+  LANGUAGE_OPTIONS,
+  SupportedTranslateLanguage,
+  TranslationRequest
+} from "../../../types/translation/translationTypes";
+import {useLikedTranslations, useTranslateQueries, useTranslationHistory} from "../../../hooks/useTranslationQueries";
+import LangHistory from "./subTabs/LangHistory";
 
 export interface LanguageHelpProps {}
 
@@ -34,103 +45,70 @@ interface Translation {
   timestamp: Date;
 }
 
-interface QuickPhrase {
-  korean: string;
-  english: string;
-  pronunciation: string;
-  category: string;
-}
-
 function LanguageHelp(props: LanguageHelpProps) {
   const [sourceText, setSourceText] = useState('');
   const [translatedText, setTranslatedText] = useState('');
-  const [sourceLang, setSourceLang] = useState<'ko' | 'en'>('en');
-  const [targetLang, setTargetLang] = useState<'ko' | 'en'>('ko');
+  const [sourceLang, setSourceLang] = useState<SupportedTranslateLanguage>("en");
+  const [targetLang, setTargetLang] = useState<SupportedTranslateLanguage>('ko');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
   const [translationHistory, setTranslationHistory] = useState<Translation[]>([]);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [copiedText, setCopiedText] = useState('');
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
   
-  // 자주 사용하는 구문들
-  const quickPhrases: QuickPhrase[] = [
-    {
-      korean: '안녕하세요',
-      english: 'Hello',
-      pronunciation: 'an-nyeong-ha-se-yo',
-      category: '인사'
-    },
-    {
-      korean: '감사합니다',
-      english: 'Thank you',
-      pronunciation: 'gam-sa-ham-ni-da',
-      category: '인사'
-    },
-    {
-      korean: '얼마예요?',
-      english: 'How much is it?',
-      pronunciation: 'eol-ma-ye-yo',
-      category: '쇼핑'
-    },
-    {
-      korean: '어디예요?',
-      english: 'Where is it?',
-      pronunciation: 'eo-di-ye-yo',
-      category: '길찾기'
-    },
-    {
-      korean: '맛있어요',
-      english: "It's delicious",
-      pronunciation: 'mas-iss-eo-yo',
-      category: '음식'
-    },
-    {
-      korean: '도와주세요',
-      english: 'Please help me',
-      pronunciation: 'do-wa-ju-se-yo',
-      category: '도움'
+  const sourceLanguageCollection = createListCollection({
+    items: LANGUAGE_OPTIONS,
+  });
+  const targetLanguageCollection = createListCollection({
+    items: LANGUAGE_OPTIONS,
+  });
+  
+  // mutation
+  const translateMutation = useTranslateQueries();
+  
+  const debouncedTranslate = useCallback(async (text: string) => {
+    if (!text.trim()) {
+      setTranslatedText("");
+      setIsLoading(false);
+      return;
     }
-  ];
-  
-  const handleTranslate = async () => {
-    if (!sourceText.trim()) return;
     
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
     setIsLoading(true);
+    
     try {
-      // TODO: ChatGPT/LLM API 연동
-      // const response = await fetch('/api/translate', {
-      //   method: 'POST',
-      //   body: JSON.stringify({
-      //     text: sourceText,
-      //     sourceLang,
-      //     targetLang
-      //   })
-      // });
-      // const data = await response.json();
-      // setTranslatedText(data.translation);
-      
-      // Mock translation for demo
-      setTimeout(() => {
-        const mockTranslation = sourceLang === 'en'
-          ? '안녕하세요, 번역된 텍스트입니다.'
-          : 'Hello, this is translated text.';
-        setTranslatedText(mockTranslation);
+      const translationRequest: TranslationRequest = {
+        sourceText: text,
+        sourceLanguage: sourceLang,
+        targetLanguage: targetLang
+      };
+      const response = await translateMutation.mutateAsync(translationRequest);
+      if (!abortControllerRef.current.signal.aborted && response.status === 200) {
+        setTranslatedText(response.data.targetText);
         
         // Add to history
         const newTranslation: Translation = {
           id: Date.now().toString(),
-          source: sourceText,
-          target: mockTranslation,
+          source: text,
+          target: response.data.targetText,
           timestamp: new Date()
         };
-        setTranslationHistory(prev => [newTranslation, ...prev.slice(0, 4)]);
-        
-        setIsLoading(false);
-      }, 1000);
+        setTranslationHistory(prev => [newTranslation, ...prev].slice(0, 10));
+      }
     } catch (error) {
-      console.error('Translation error:', error);
+      if (!abortControllerRef.current?.signal.aborted) {
+        console.error('Translation error:', error);
+      }
+    } finally {
       setIsLoading(false);
     }
-  };
+  }, [sourceLang, targetLang, translateMutation]);
   
   const swapLanguages = () => {
     setSourceLang(targetLang);
@@ -139,8 +117,7 @@ function LanguageHelp(props: LanguageHelpProps) {
     setTranslatedText(sourceText);
   };
   
-  const handleSpeak = (text: string, lang: 'ko' | 'en') => {
-    // Web Speech API 사용
+  const handleSpeak = (text: string, lang: SupportedTranslateLanguage) => {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = lang === 'ko' ? 'ko-KR' : 'en-US';
@@ -150,302 +127,498 @@ function LanguageHelp(props: LanguageHelpProps) {
   
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
-    // TODO: Toast notification for copy success
+    setCopiedText(text);
+    setTimeout(() => setCopiedText(''), 2000);
   };
   
-  const handleCardClick = (e : any) => {
+  const handleCardClick = (e: any) => {
     if ((e.target as HTMLElement).closest(".chakra-card__root"))
       setIsExpanded(!isExpanded);
   };
   
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    
+    setIsTyping(true);
+    
+    debounceTimerRef.current = setTimeout(() => {
+      setIsTyping(false);
+      debouncedTranslate(sourceText);
+    }, 1500);
+    
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [sourceText, sourceLang, targetLang]);
+  
   return (
     <Card.Root
       bg="white"
-      shadow="lg"
       overflow="hidden"
       onClick={handleCardClick}
-      // gridColumn={isExpanded ? { md: "span 2" } : "span 1"}
       css={{
-        background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-        transition: "all 0.3s",
+        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        cursor: "pointer",
+        border: "1px solid #e5e7eb",
         "&:hover": {
           transform: "translateY(-4px)",
-          boxShadow: "0 12px 24px rgba(0,0,0,0.15)"
+          boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
         }
       }}
     >
-      <Card.Body color="black">
+      <Card.Body>
         <VStack align="stretch" gap={4}>
           {/* Header */}
           <HStack justify="space-between">
-            <HStack gap={2}>
-              <Languages size={24} />
-              <Text fontSize="lg" fontWeight="semibold">
+            <HStack gap={3}>
+              <Box
+                p={2}
+                borderRadius="lg"
+                css={{
+                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  color: "white"
+                }}
+              >
+                <Languages size={24} />
+              </Box>
+              <Text fontSize="lg" fontWeight="semibold" color="gray.800">
                 Language Helper
               </Text>
             </HStack>
-            {/*<Badge colorScheme="whiteAlpha" bg="whiteAlpha.300">*/}
-            {/*  AI Powered*/}
-            {/*</Badge>*/}
             <Box color="gray.400">
               {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
             </Box>
           </HStack>
           
           {/* Tabs */}
-          <Box onClick={(e : any) => e.stopPropagation()}>
-          <Tabs.Root
-            value={selectedTab.toString()}
-            onValueChange={(e : any) => {
-              setSelectedTab(parseInt(e.value))
-            }}
-            onClick={() => {
-              setIsExpanded(true)
-            }}
-          >
-            <Tabs.List bg="whiteAlpha.200" borderRadius="lg">
-              <Tabs.Trigger value="0" color="black">
-                Translate
-              </Tabs.Trigger>
-              <Tabs.Trigger value="1" color="black">
-                Quick Phrases
-              </Tabs.Trigger>
-              <Tabs.Trigger value="2" color="black">
-                History
-              </Tabs.Trigger>
-            </Tabs.List>
-            {isExpanded && (
-              <>
-                <Tabs.Content value="0">
-                  <VStack gap={2} mt={3} h="20rem" overflowY="auto">
-                    {/* Language Selector */}
-                    <HStack justify="space-between" w="full">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        color="black"
-                        borderColor="whiteAlpha.400"
-                        _hover={{ bg: "whiteAlpha.200" }}
-                      >
-                        {sourceLang === 'en' ? 'English' : '한국어'}
-                      </Button>
-                      <CusIconButton
-                        aria-label="Swap languages"
-                        icon={<ArrowRightLeft size={18} />}
-                        size="sm"
-                        variant="ghost"
-                        color="black"
-                        onClick={swapLanguages}
-                        _hover={{ bg: "whiteAlpha.200" }}
-                      />
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        color="black"
-                        borderColor="whiteAlpha.400"
-                        _hover={{ bg: "whiteAlpha.200" }}
-                      >
-                        {targetLang === 'ko' ? '한국어' : 'English'}
-                      </Button>
-                    </HStack>
-                    
-                    {/* Input Area */}
-                    <Box position="relative" w="full">
-                      <Textarea
-                        value={sourceText}
-                        onChange={(e) => setSourceText(e.target.value)}
-                        placeholder="Enter text to translate..."
-                        rows={3}
-                        bg="whiteAlpha.200"
-                        borderColor="whiteAlpha.400"
-                        color="black"
-                        minH="3rem"
-                        maxH="8rem"
-                        overflow="auto"
-                        _placeholder={{ color: "whiteAlpha.600" }}
-                        _hover={{ borderColor: "whiteAlpha.600" }}
-                        _focus={{ borderColor: "white", bg: "whiteAlpha.300" }}
-                      />
-                      <HStack position="absolute" bottom={2} right={2} gap={1}>
-                        <CusIconButton
-                          aria-label="Voice input"
-                          icon={<Mic size={16} />}
-                          size="xs"
-                          variant="ghost"
-                          color="black"
-                          _hover={{ bg: "whiteAlpha.300" }}
-                        />
-                        <CusIconButton
-                          aria-label="Camera"
-                          icon={<Camera size={16} />}
-                          size="xs"
-                          variant="ghost"
-                          color="black"
-                          _hover={{ bg: "whiteAlpha.300" }}
-                        />
-                      </HStack>
-                    </Box>
-                    
-                    {/* Translate Button */}
-                    <CusButton
-                      w="full"
-                      leftIcon={<Send size={18} />}
-                      onClick={handleTranslate}
-                      isLoading={isLoading}
-                      loadingText="Translating..."
-                      bg="whiteAlpha.300"
-                      color="black"
-                      _hover={{ bg: "whiteAlpha.400" }}
-                    >
-                      Translate
-                    </CusButton>
-                    
-                    {/* Translation Result */}
-                    {translatedText && (
-                      <Box
-                        w="full"
-                        p={3}
-                        bg="whiteAlpha.200"
-                        borderRadius="lg"
-                        borderWidth="1px"
-                        borderColor="whiteAlpha.400"
-                      >
-                        <HStack justify="space-between" mb={2}>
-                          <Text fontSize="xs" opacity={0.8}>
-                            Translation
-                          </Text>
-                          <HStack gap={1}>
-                            <CusIconButton
-                              aria-label="Speak"
-                              icon={<Volume2 size={14} />}
-                              size="xs"
-                              variant="ghost"
-                              color="black"
-                              onClick={() => handleSpeak(translatedText, targetLang)}
-                              _hover={{ bg: "whiteAlpha.300" }}
-                            />
-                            <CusIconButton
-                              aria-label="Copy"
-                              icon={<Copy size={14} />}
-                              size="xs"
-                              variant="ghost"
-                              color="black"
-                              onClick={() => handleCopy(translatedText)}
-                              _hover={{ bg: "whiteAlpha.300" }}
-                            />
-                          </HStack>
-                        </HStack>
-                        <Text fontSize="md">{translatedText}</Text>
-                      </Box>
-                    )}
-                  </VStack>
-                </Tabs.Content>
-                
-                <Tabs.Content value="1">
-                  <VStack gap={2} mt={3} h="20rem" overflowY="auto">
-                    {quickPhrases.map((phrase, index) => (
-                      <Box
-                        key={index}
-                        w="full"
-                        p={3}
-                        bg="whiteAlpha.200"
-                        borderRadius="lg"
-                        _hover={{ bg: "whiteAlpha.300" }}
-                        cursor="pointer"
-                        onClick={() => {
-                          setSourceText(phrase.english);
-                          setTranslatedText(phrase.korean);
-                        }}
-                      >
-                        <HStack justify="space-between">
-                          <VStack align="start" gap={0.5}>
-                            <HStack>
-                              <Text fontWeight="bold" fontSize="md">
-                                {phrase.korean}
-                              </Text>
-                              <Badge size="xs" bg="whiteAlpha.300">
-                                {phrase.category}
-                              </Badge>
-                            </HStack>
-                            <Text fontSize="xs" opacity={0.8}>
-                              {phrase.pronunciation}
-                            </Text>
-                            <Text fontSize="sm">{phrase.english}</Text>
-                          </VStack>
-                          <HStack gap={1}>
-                            <CusIconButton
-                              aria-label="Speak Korean"
-                              icon={<Volume2 size={14} />}
-                              size="xs"
-                              variant="ghost"
-                              color="black"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleSpeak(phrase.korean, 'ko');
+          <Box onClick={(e: any) => e.stopPropagation()}>
+            <Tabs.Root
+              value={selectedTab.toString()}
+              onValueChange={(e: any) => {
+                setSelectedTab(parseInt(e.value));
+              }}
+              onClick={() => {
+                setIsExpanded(true);
+              }}
+            >
+              <Tabs.List
+                bg="gray.50"
+                borderRadius="xl"
+                p={1}
+                css={{
+                  border: "1px solid #e5e7eb",
+                }}
+              >
+                <Tabs.Trigger
+                  value="0"
+                  css={{
+                    color: "#6b7280",
+                    borderRadius: "lg",
+                    fontWeight: "500",
+                    transition: "all 0.2s",
+                    "&[data-selected]": {
+                      background: "white",
+                      color: "#6366f1",
+                      fontWeight: "600",
+                      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)"
+                    },
+                    "&:hover:not([data-selected])": {
+                      background: "#f9fafb"
+                    }
+                  }}
+                >
+                  Translate
+                </Tabs.Trigger>
+                <Tabs.Trigger
+                  value="1"
+                  css={{
+                    color: "#6b7280",
+                    borderRadius: "lg",
+                    fontWeight: "500",
+                    transition: "all 0.2s",
+                    "&[data-selected]": {
+                      background: "white",
+                      color: "#6366f1",
+                      fontWeight: "600",
+                      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)"
+                    },
+                    "&:hover:not([data-selected])": {
+                      background: "#f9fafb"
+                    }
+                  }}
+                >
+                  Quick Phrases
+                </Tabs.Trigger>
+                <Tabs.Trigger
+                  value="2"
+                  css={{
+                    color: "#6b7280",
+                    borderRadius: "lg",
+                    fontWeight: "500",
+                    transition: "all 0.2s",
+                    "&[data-selected]": {
+                      background: "white",
+                      color: "#6366f1",
+                      fontWeight: "600",
+                      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)"
+                    },
+                    "&:hover:not([data-selected])": {
+                      background: "#f9fafb"
+                    }
+                  }}
+                >
+                  History
+                </Tabs.Trigger>
+              </Tabs.List>
+              
+              {isExpanded && (
+                <>
+                  <Tabs.Content value="0">
+                    <VStack gap={4} mt={4} h="20rem" overflowY="auto">
+                      {/* Language Selector */}
+                      <HStack justify="space-between" w="full" gap={2}>
+                        <Select.Root
+                          collection={sourceLanguageCollection}
+                          value={[sourceLang]}
+                          onValueChange={(details: any) => {
+                            setSourceLang(details.value[0] as SupportedTranslateLanguage);
+                          }}
+                          size="md"
+                        >
+                          <Select.Trigger
+                            css={{
+                              background: "#f9fafb",
+                              border: "2px solid #e5e7eb",
+                              color: "#374151",
+                              borderRadius: "12px",
+                              fontWeight: "500",
+                              transition: "all 0.2s",
+                              "&:hover": {
+                                borderColor: "#9ca3af",
+                                background: "white"
+                              },
+                              "&:focus": {
+                                outline: "none",
+                                borderColor: "#6366f1",
+                                background: "white",
+                                boxShadow: "0 0 0 3px rgba(99, 102, 241, 0.1)"
+                              }
+                            }}
+                          >
+                            <Select.ValueText placeholder="Source Language" />
+                          </Select.Trigger>
+                          <Select.Positioner>
+                            <Select.Content
+                              css={{
+                                background: "white",
+                                borderRadius: "12px",
+                                boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
+                                border: "1px solid #e5e7eb",
+                                overflow: "hidden"
                               }}
-                              _hover={{ bg: "whiteAlpha.400" }}
-                            />
-                            <CusIconButton
-                              aria-label="Copy"
-                              icon={<Copy size={14} />}
-                              size="xs"
-                              variant="ghost"
-                              color="black"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleCopy(phrase.korean);
-                              }}
-                              _hover={{ bg: "whiteAlpha.400" }}
-                            />
-                          </HStack>
-                        </HStack>
-                      </Box>
-                    ))}
-                  </VStack>
-                </Tabs.Content>
-                
-                <Tabs.Content value="2">
-                  <VStack gap={2} mt={3} h="20rem" overflowY="auto">
-                    {translationHistory.length === 0 ? (
-                      <Box textAlign="center" py={4}>
-                        <History size={32} opacity={0.5} />
-                        <Text fontSize="sm" opacity={0.7} mt={2}>
-                          No translation history yet
-                        </Text>
-                      </Box>
-                    ) : (
-                      translationHistory.map((item) => (
-                        <Box
-                          key={item.id}
-                          w="full"
-                          p={3}
-                          bg="whiteAlpha.200"
-                          borderRadius="lg"
-                          _hover={{ bg: "whiteAlpha.300" }}
-                          cursor="pointer"
-                          onClick={() => {
-                            setSourceText(item.source);
-                            setTranslatedText(item.target);
-                            setSelectedTab(0);
+                            >
+                              {sourceLanguageCollection.items.map((item: any) => (
+                                <Select.Item
+                                  item={item}
+                                  key={item.value}
+                                  css={{
+                                    padding: "10px 16px",
+                                    transition: "background 0.2s",
+                                    "&:hover": {
+                                      background: "linear-gradient(90deg, #f3f4f6 0%, #f9fafb 100%)"
+                                    },
+                                    "&[data-selected]": {
+                                      background: "#ede9fe",
+                                      color: "#6366f1"
+                                    }
+                                  }}
+                                >
+                                  <HStack gap={2}>
+                                    <Text fontSize="lg">{item.flag}</Text>
+                                    <Text fontWeight="500">{item.label}</Text>
+                                  </HStack>
+                                  <Select.ItemIndicator />
+                                </Select.Item>
+                              ))}
+                            </Select.Content>
+                          </Select.Positioner>
+                        </Select.Root>
+                        
+                        <IconButton
+                          aria-label="Swap languages"
+                          size="md"
+                          variant="ghost"
+                          onClick={swapLanguages}
+                          css={{
+                            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                            color: "white",
+                            borderRadius: "12px",
+                            minWidth: "44px",
+                            "&:hover": {
+                              transform: "rotate(180deg)",
+                              background: "linear-gradient(135deg, #764ba2 0%, #667eea 100%)"
+                            },
+                            transition: "all 0.3s"
                           }}
                         >
-                          <Text fontSize="sm" fontWeight="medium">
-                            {item.source}
-                          </Text>
-                          <Text fontSize="sm" opacity={0.8}>
-                            → {item.target}
-                          </Text>
-                          <Text fontSize="xs" opacity={0.6} mt={1}>
-                            {new Date(item.timestamp).toLocaleTimeString()}
-                          </Text>
+                          <ArrowRightLeft size={20} />
+                        </IconButton>
+                        
+                        <Select.Root
+                          collection={targetLanguageCollection}
+                          value={[targetLang]}
+                          onValueChange={(details: any) => setTargetLang(details.value[0] as SupportedTranslateLanguage)}
+                          size="md"
+                        >
+                          <Select.Trigger
+                            css={{
+                              background: "#f9fafb",
+                              border: "2px solid #e5e7eb",
+                              color: "#374151",
+                              borderRadius: "12px",
+                              fontWeight: "500",
+                              transition: "all 0.2s",
+                              "&:hover": {
+                                borderColor: "#9ca3af",
+                                background: "white"
+                              },
+                              "&:focus": {
+                                outline: "none",
+                                borderColor: "#6366f1",
+                                background: "white",
+                                boxShadow: "0 0 0 3px rgba(99, 102, 241, 0.1)"
+                              }
+                            }}
+                          >
+                            <Select.ValueText placeholder="Target Language" />
+                          </Select.Trigger>
+                          <Select.Positioner>
+                            <Select.Content
+                              css={{
+                                background: "white",
+                                borderRadius: "12px",
+                                boxShadow: "0 10px 40px rgba(0, 0, 0, 0.15)",
+                                border: "1px solid #e5e7eb",
+                                overflow: "hidden"
+                              }}
+                            >
+                              {targetLanguageCollection.items.map((item: any) => (
+                                <Select.Item
+                                  item={item}
+                                  key={item.value}
+                                  css={{
+                                    padding: "10px 16px",
+                                    transition: "background 0.2s",
+                                    "&:hover": {
+                                      background: "linear-gradient(90deg, #f3f4f6 0%, #f9fafb 100%)"
+                                    },
+                                    "&[data-selected]": {
+                                      background: "#ede9fe",
+                                      color: "#6366f1"
+                                    }
+                                  }}
+                                >
+                                  <HStack gap={2}>
+                                    <Text fontSize="lg">{item.flag}</Text>
+                                    <Text fontWeight="500">{item.label}</Text>
+                                  </HStack>
+                                  <Select.ItemIndicator />
+                                </Select.Item>
+                              ))}
+                            </Select.Content>
+                          </Select.Positioner>
+                        </Select.Root>
+                      </HStack>
+                      
+                      {/* Input Area */}
+                      <Box position="relative" w="full">
+                        <Textarea
+                          value={sourceText}
+                          onChange={(e) => setSourceText(e.target.value)}
+                          placeholder={isTyping ? "Typing..." : "Enter text to translate..."}
+                          rows={3}
+                          css={{
+                            background: "#f9fafb",
+                            border: "2px solid #e5e7eb",
+                            color: "#111827",
+                            borderRadius: "12px",
+                            padding: "12px",
+                            paddingBottom: "40px",
+                            fontSize: "15px",
+                            minHeight: "100px",
+                            maxHeight: "150px",
+                            resize: "vertical",
+                            transition: "all 0.2s",
+                            "::placeholder": {
+                              color: "#9ca3af"
+                            },
+                            "&:hover": {
+                              borderColor: "#d1d5db",
+                              background: "#fcfcfc"
+                            },
+                            "&:focus": {
+                              outline: "none",
+                              borderColor: "#6366f1",
+                              background: "white",
+                              boxShadow: "0 0 0 3px rgba(99, 102, 241, 0.1)"
+                            }
+                          }}
+                        />
+                        <HStack position="absolute" bottom={2} right={2} gap={1}>
+                          <IconButton
+                            aria-label="Voice input"
+                            size="sm"
+                            variant="ghost"
+                            css={{
+                              color: "#6b7280",
+                              borderRadius: "8px",
+                              "&:hover": {
+                                background: "#e5e7eb",
+                                color: "#6366f1"
+                              }
+                            }}
+                          >
+                            <Mic size={18} />
+                          </IconButton>
+                          <IconButton
+                            aria-label="Camera"
+                            size="sm"
+                            variant="ghost"
+                            css={{
+                              color: "#6b7280",
+                              borderRadius: "8px",
+                              "&:hover": {
+                                background: "#e5e7eb",
+                                color: "#6366f1"
+                              }
+                            }}
+                          >
+                            <Camera size={18} />
+                          </IconButton>
+                        </HStack>
+                      </Box>
+                      
+                      {/* Translation Result */}
+                      {(translatedText || isLoading || isTyping) && (
+                        <Box
+                          w="full"
+                          p={4}
+                          css={{
+                            background: "linear-gradient(135deg, #ede9fe 0%, #fce7f3 100%)",
+                            border: "2px solid #e9d5ff",
+                            borderRadius: "12px",
+                            position: "relative",
+                            overflow: "hidden"
+                          }}
+                        >
+                          <Box
+                            css={{
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              height: "4px",
+                              background: "linear-gradient(90deg, #667eea 0%, #764ba2 100%)",
+                              opacity: isLoading ? 1 : 0,
+                              transition: "opacity 0.3s",
+                              "&::after": {
+                                content: '""',
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                height: "100%",
+                                background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)",
+                                animation: isLoading ? "shimmer 1.5s infinite" : "none"
+                              }
+                            }}
+                          />
+                          <HStack justify="space-between" mb={2}>
+                            <HStack gap={2}>
+                              <Globe size={14} color="#6366f1" />
+                              <Text fontSize="xs" color="purple.700" fontWeight="600">
+                                Translation
+                              </Text>
+                            </HStack>
+                            {translatedText && !isLoading && !isTyping && (
+                              <HStack gap={1}>
+                                <IconButton
+                                  aria-label="Speak"
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => handleSpeak(translatedText, targetLang)}
+                                  css={{
+                                    color: "#6366f1",
+                                    borderRadius: "8px",
+                                    "&:hover": {
+                                      background: "rgba(99, 102, 241, 0.1)"
+                                    }
+                                  }}
+                                >
+                                  <Volume2 size={16} />
+                                </IconButton>
+                                <IconButton
+                                  aria-label="Copy"
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => handleCopy(translatedText)}
+                                  css={{
+                                    color: copiedText === translatedText ? "#10b981" : "#6366f1",
+                                    borderRadius: "8px",
+                                    "&:hover": {
+                                      background: "rgba(99, 102, 241, 0.1)"
+                                    }
+                                  }}
+                                >
+                                  {copiedText === translatedText ? <Check size={16} /> : <Copy size={16} />}
+                                </IconButton>
+                              </HStack>
+                            )}
+                          </HStack>
+                          {(isLoading || isTyping) ? (
+                            <Text fontSize="sm" color="gray.500" fontStyle="italic">
+                              {isTyping ? "Waiting for input..." : "Translating..."}
+                            </Text>
+                          ) : (
+                            <Text fontSize="md" color="gray.800" lineHeight="1.6" fontWeight="500">
+                              {translatedText}
+                            </Text>
+                          )}
                         </Box>
-                      ))
-                    )}
-                  </VStack>
-                </Tabs.Content>
-              </>
-            )}
-          </Tabs.Root>
+                      )}
+                    </VStack>
+                  </Tabs.Content>
+                  
+                  <Tabs.Content value="1">
+                    <VStack gap={3} mt={4} h="20rem" overflowY="auto">
+                      <Box
+                        textAlign="center"
+                        py={8}
+                        css={{
+                          background: "#f9fafb",
+                          borderRadius: "12px",
+                          border: "1px dashed #d1d5db"
+                        }}
+                      >
+                        <Globe size={32} color="#9ca3af" style={{ margin: "0 auto 12px" }} />
+                        <Text fontSize="sm" color="gray.500">
+                          Quick phrases coming soon...
+                        </Text>
+                      </Box>
+                    </VStack>
+                  </Tabs.Content>
+                  
+                  <Tabs.Content value="2">
+                    <LangHistory selectedTabNumber={selectedTab}/>
+                  </Tabs.Content>
+                </>
+              )}
+            </Tabs.Root>
           </Box>
         </VStack>
       </Card.Body>
