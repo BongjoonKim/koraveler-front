@@ -1,8 +1,9 @@
-import {Badge, Box, HStack, Spinner, Text, VStack} from "@chakra-ui/react";
-import {Clock, History} from "lucide-react";
-import React, {useEffect, useRef, useState} from "react";
+import {Badge, Box, HStack, IconButton, Spinner, Text, useToastStyles, VStack} from "@chakra-ui/react";
+import {Clock, Heart, History, Trash2} from "lucide-react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {TranslationHistory} from "../../../../types/translation/translationTypes";
-import {useTranslationHistory} from "../../../../hooks/useTranslationQueries";
+import {useTranslationHistory, useToggleLike, useDeleteTranslation} from "../../../../hooks/useTranslationQueries";
+import CusIconButton from "../../../elements/buttons/CusIconButton";
 
 export interface LangHistoryProps {
   selectedTabNumber : number;
@@ -14,7 +15,7 @@ export default function LangHistory(props : LangHistoryProps) {
   const [hasMoreHistory, setHasMoreHistory] = useState(true);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null); // 스크롤 컨테이너 ref 추가
+  const containerRef = useRef<HTMLDivElement | null>(null);
   
   const {data : historyData, isLoading, isFetching} = useTranslationHistory(
     {
@@ -23,10 +24,88 @@ export default function LangHistory(props : LangHistoryProps) {
     },
     props.selectedTabNumber === 2,
   )
+  const toggleLikeMutation = useToggleLike();
+  const deleteTranslationMutation = useDeleteTranslation();
   
   const handleHistoryClick = (props : TranslationHistory) => {
   
   }
+  
+  const handleLikeToggle = async (item: TranslationHistory, e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const response = await toggleLikeMutation.mutateAsync(item.id);
+      setServerHistory(prev =>
+        prev.map(h => h.id === item.id ? response.data : h)
+      );
+    } catch (error) {
+      console.log("handleLikeToggle error", error)
+    }
+  };
+  
+  const handleDelete = async (item: TranslationHistory, e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await deleteTranslationMutation.mutateAsync(item.id);
+      setServerHistory(prev => prev.filter(h => h.id !== item.id));
+    } catch (error) {
+      console.log("handleDelete error", error)
+    }
+  };
+  
+  // IntersectionObserver 설정
+  const setupObserver = useCallback(() => {
+    // 이전 observer 정리
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+    
+    console.log("props.selectedTabNumber", props.selectedTabNumber)
+    console.log("hasMoreHistory", hasMoreHistory)
+    console.log("isFetching", isFetching)
+    console.log("isLoading", isLoading)
+    
+    // 조건 체크
+    if (!hasMoreHistory || isLoading || isFetching || props.selectedTabNumber !== 2) {
+      return;
+    }
+    
+    // DOM이 준비되었는지 확인 🔥
+    if (!containerRef.current || !loadMoreRef.current) {
+      return;
+    }
+    
+    // 새 observer 생성
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0];
+        console.log('Intersection detected:', {
+          isIntersecting: target.isIntersecting,
+          hasMoreHistory,
+          isFetching,
+          isLoading,
+          currentPage,
+          containerHeight: containerRef.current?.scrollHeight,
+          containerClientHeight: containerRef.current?.clientHeight,
+        });
+        
+        if (target.isIntersecting && hasMoreHistory && !isFetching && !isLoading) {
+          console.log('Loading next page:', currentPage + 1);
+          setCurrentPage(prev => prev + 1);
+        }
+      },
+      {
+        threshold: 0.1,
+        root: containerRef.current, // 이제 null이 아님을 보장
+        rootMargin: '100px',
+      }
+    );
+    
+    // observer 연결
+    observerRef.current.observe(loadMoreRef.current);
+    console.log('Observer attached successfully');
+    
+  }, [hasMoreHistory, isLoading, isFetching, props.selectedTabNumber, currentPage]);
   
   useEffect(() => {
     if (historyData) {
@@ -35,46 +114,34 @@ export default function LangHistory(props : LangHistoryProps) {
       } else {
         setServerHistory(prev => [...prev, ...historyData.content])
       }
+      setHasMoreHistory(!historyData?.last);
     }
-    setHasMoreHistory(!historyData?.last)
   }, [historyData, currentPage]);
   
+  // Observer 설정을 위한 별도의 useEffect 🔥
   useEffect(() => {
-    if (!hasMoreHistory || isLoading || isFetching || props.selectedTabNumber !== 2) {
-      return;
-    }
-    
-    if (observerRef.current) {
-      observerRef.current?.disconnect();
-    }
-    
-    observerRef.current = new IntersectionObserver((entries : any) => {
-      const target = entries[0]
-      console.log('Intersection detected:', {
-        isIntersecting: target.isIntersecting,
-        hasMoreHistory,
-        isFetching,
-        currentPage
-      });
-      if (entries[0].isIntersecting && hasMoreHistory && !isFetching) {
-        setCurrentPage(prev => prev + 1);
-      }
-    }, {
-      threshold: 0.5,
-      root: containerRef.current, // viewport를 root로 사용
-      rootMargin: '100px', // 100px 전에 미리 로드
-    })
-    
-    if (loadMoreRef.current) {
-      observerRef.current?.observe(loadMoreRef.current)
-    }
+    // DOM이 렌더링된 후 약간의 지연을 주고 observer 설정
+    const timer = setTimeout(() => {
+      setupObserver();
+    }, 100);
     
     return () => {
+      clearTimeout(timer);
       if (observerRef.current) {
-        observerRef.current?.disconnect();
+        observerRef.current.disconnect();
       }
+    };
+  }, [setupObserver]);
+  
+  // 데이터가 로드되고 DOM이 업데이트된 후 observer 재설정 🔥
+  useEffect(() => {
+    if (serverHistory.length > 0 && props.selectedTabNumber === 2) {
+      // DOM 업데이트를 기다린 후 observer 재설정
+      requestAnimationFrame(() => {
+        setupObserver();
+      });
     }
-  }, [hasMoreHistory, isLoading, isFetching, props.selectedTabNumber])
+  }, [serverHistory.length, props.selectedTabNumber, setupObserver]);
   
   // 탭 변경 시 이력 초기화
   useEffect(() => {
@@ -84,12 +151,6 @@ export default function LangHistory(props : LangHistoryProps) {
     }
   }, [props.selectedTabNumber]);
   
-  // const handleHistoryClick = (item: any) => {
-  //   if (props.onHistoryItemClick) {
-  //     props.onHistoryItemClick(item.sourceText, item.targetText);
-  //   }
-  // };
-  
   return (
     <VStack gap={3} mt={4} h="20rem" overflowY="auto" ref={containerRef}>
       {serverHistory.length === 0 && !isLoading ? (
@@ -97,7 +158,6 @@ export default function LangHistory(props : LangHistoryProps) {
           textAlign="center"
           py={8}
           css={{
-            // background: "#f9fafb",
             borderRadius: "12px",
             border: "1px dashed #d1d5db",
             height: "100%",
@@ -112,61 +172,83 @@ export default function LangHistory(props : LangHistoryProps) {
         </Box>
       ) : (
         <>
-          {serverHistory.map((item, index) => (
-            <Box
-              key={`${item.id}-${index}`}
-              w="full"
-              p={3}
-              css={{
-                background: index === 0 ? "linear-gradient(135deg, #f3f4f6 0%, #f9fafb 100%)" : "#f9fafb",
-                borderRadius: "12px",
-                border: index === 0 ? "2px solid #6366f1" : "1px solid #e5e7eb",
-                cursor: "pointer",
-                transition: "all 0.2s",
-                position: "relative",
-                height: "100%",
-                // overflow: "hidden",
-                "&:hover": {
-                  background: "white",
-                  borderColor: "#6366f1",
-                  transform: "translateX(4px)",
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
-                }
-              }}
-              onClick={() => handleHistoryClick(item)}
-            >
-              {index === 0 && (
-                <Badge
-                  css={{
-                    position: "absolute",
-                    top: "8px",
-                    right: "8px",
-                    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                    color: "white",
-                    fontSize: "10px",
-                    padding: "2px 8px",
-                    borderRadius: "6px"
-                  }}
-                >
-                  Latest
-                </Badge>
-              )}
-              <HStack justify="space-between" mb={1}>
-                <Text fontSize="sm" fontWeight="600" color="gray.800">
-                  {item.sourceText}
-                </Text>
-                <HStack gap={1} color="gray.400">
-                  <Clock size={12} />
-                  <Text fontSize="xs">
-                    {new Date(item.created).toLocaleTimeString()}
-                  </Text>
+          {serverHistory.map((item, index) => {
+            return (
+              <Box
+                key={`${item.id}-${index}`}
+                w="full"
+                p={4}
+                css={{
+                  background: "#fafbfc",
+                  borderRadius: "12px",
+                  border: "1px solid #e5e7eb",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                  position: "relative",
+                }}
+                onClick={() => handleHistoryClick(item)}
+              >
+                <HStack justify="space-between" mb={2}>
+                  <HStack gap={1} color="gray.400" fontSize="xs">
+                    <Clock size={12} />
+                    <Text>{new Date(item.created).toLocaleTimeString()}</Text>
+                  </HStack>
+                  {index === 0 && (
+                    <Badge
+                      colorScheme="purple"
+                      fontSize="10px"
+                      borderRadius="6px"
+                    >
+                      Latest
+                    </Badge>
+                  )}
                 </HStack>
-              </HStack>
-              <Text fontSize="sm" color="gray.600">
-                → {item.targetText}
-              </Text>
-            </Box>
-          ))}
+                
+                <HStack justify="space-between" align="flex-start" gap={3}>
+                  <VStack align="flex-start" flex={1} gap={1}>
+                    <Text fontSize="sm" fontWeight="600" color="gray.800">
+                      {item.sourceText}
+                    </Text>
+                    <HStack gap={2} wrap="wrap">
+                      <Text fontSize="sm" color="gray.600">
+                        → {item.targetText}
+                      </Text>
+                      {item.pronunciation && (
+                        <Text fontSize="xs" color="gray.500" fontStyle="italic">
+                          [{item.pronunciation}]
+                        </Text>
+                      )}
+                    </HStack>
+                  </VStack>
+                  
+                  <HStack gap={1} flexShrink={0}>
+                    <IconButton
+                      aria-label="Toggle like"
+                      size="sm"
+                      variant="outline"
+                      colorScheme={item.liked ? "pink" : "gray"}
+                      onClick={(e) => handleLikeToggle(item, e)}
+                    >
+                      <Heart
+                        size={18}
+                        fill={item.liked ? "#ec4899" : "none"}
+                        stroke={item.liked ? "#ec4899" : "#4b5563"}
+                        strokeWidth={2}
+                      />
+                    </IconButton>
+                    <IconButton
+                      aria-label="Delete translation"
+                      size="sm"
+                      variant="outline"
+                      colorScheme="red"
+                      onClick={(e) => handleDelete(item, e)}
+                    >
+                      <Trash2 size={18} strokeWidth={2} />
+                    </IconButton>
+                  </HStack>
+                </HStack>
+              </Box>
+            )})}
           
           {/* 무한 스크롤 트리거 요소 */}
           {hasMoreHistory && (

@@ -344,67 +344,6 @@ export const useExportTranslations = () => {
   });
 };
 
-// ===== 실시간 번역 (Optimistic Update) =====
-
-// 빠른 번역 (Optimistic Update 포함)
-export const useQuickTranslate = () => {
-  const authEP = useAuthEP();
-  const queryClient = useQueryClient();
-  
-  return useMutation<
-    AxiosResponse<TranslationResponse>,
-    Error,
-    TranslationRequest,
-    { previousHistory: PageResponse<TranslationHistory> | undefined }
-  >({
-    mutationFn: (data: TranslationRequest) =>
-      authEP({
-        func: translateText,
-        reqBody: data
-      }),
-    onMutate: async (newTranslation) => {
-      // 이전 데이터 백업
-      await queryClient.cancelQueries({ queryKey: ['translationHistory'] });
-      const previousHistory = queryClient.getQueryData<PageResponse<TranslationHistory>>(['translationHistory']);
-      
-      // Optimistic Update
-      queryClient.setQueryData(['translationHistory'], (old: PageResponse<TranslationHistory> | undefined) => {
-        if (!old) return old;
-        
-        const tempTranslation: TranslationHistory = {
-          id: 'temp-' + Date.now(),
-          userId: 'current-user',
-          sourceText: newTranslation.sourceText,
-          targetText: 'Translating...',
-          sourceLanguage: newTranslation.sourceLanguage,
-          targetLanguage: newTranslation.targetLanguage,
-          isLiked: false,
-          created: new Date().toISOString(),
-          updated: new Date().toISOString(),
-        };
-        
-        return {
-          ...old,
-          content: [tempTranslation, ...old.content]
-        };
-      });
-      
-      return { previousHistory };
-    },
-    onError: (err, newTranslation, context) => {
-      // 에러 시 롤백
-      if (context?.previousHistory) {
-        queryClient.setQueryData(['translationHistory'], context.previousHistory);
-      }
-      console.error('Quick translate failed:', err);
-    },
-    onSettled: () => {
-      // 완료 후 재조회
-      queryClient.invalidateQueries({ queryKey: ['translationHistory'] });
-    },
-  });
-};
-
 // ===== 유틸리티 함수 =====
 
 // 캐시된 번역 찾기

@@ -15,7 +15,7 @@ export interface TranslationResponse {
   targetLanguage: string;
   translatedAt: string;
   fromCache: boolean;
-  isLiked: boolean;
+  liked: boolean;
   pronunciation?: string;
   confidence?: number;
   alternatives?: string[];
@@ -28,7 +28,8 @@ export interface TranslationHistory {
   targetText: string;
   sourceLanguage: string;
   targetLanguage: string;
-  isLiked: boolean;
+  pronunciation: string;
+  liked: boolean;
   created: string;
   updated: string;
   expireAt?: string;
