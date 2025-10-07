@@ -49,7 +49,7 @@ function RightHeader() {
   
   // 내 블로그로 이동
   const handleMyBlogs = () => {
-    navigate('/blog/my');
+    navigate('/blog/home');
   };
   
   // 로그인 페이지로 이동
@@ -128,10 +128,23 @@ function RightHeader() {
                 )}
               </IconButton>
             </MenuTrigger>
-          <Portal>
-            <Menu.Positioner>
-              <Box ref={sliderRef}>
-                  <MenuContent>
+            <Portal>
+              <Menu.Positioner>
+                <Box
+                  ref={sliderRef}
+                  css={{
+                    zIndex: 99999,  // Box에 직접 높은 z-index 적용
+                    position: 'relative'
+                  }}
+                >
+                  <MenuContent
+                    css={{
+                      zIndex: 99999,  // MenuContent에도 직접 z-index 적용
+                      position: 'relative',
+                      backgroundColor: 'white',  // 배경색 명시
+                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'  // 그림자 추가
+                    }}
+                  >
                     {loginUser ? (
                       <>
                         <MenuItem value="profile" onClick={handleProfile}>
@@ -160,19 +173,19 @@ function RightHeader() {
                     )}
                   </MenuContent>
                 </Box>
-            </Menu.Positioner>
-          </Portal>
+              </Menu.Positioner>
+            </Portal>
           </MenuRoot>
         </Box>
-      {/* Mobile Menu Button */}
-        <IconButton
-          aria-label="Open menu"
-          variant="ghost"
-          borderRadius="full"
-          display={{ base: "flex", md: "none" }}
-        >
-          <MenuIcon size={20} />
-        </IconButton>
+        {/* Mobile Menu Button */}
+        {/*  <IconButton*/}
+        {/*    aria-label="Open menu"*/}
+        {/*    variant="ghost"*/}
+        {/*    borderRadius="full"*/}
+        {/*    display={{ base: "flex", md: "none" }}*/}
+        {/*  >*/}
+        {/*    <MenuIcon size={20} />*/}
+        {/*  </IconButton>*/}
       </Stack>
     </>
   );
