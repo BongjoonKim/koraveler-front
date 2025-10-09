@@ -22,6 +22,7 @@
     "@toast-ui/editor-plugin-color-syntax": "^3.1.0",
     "@toast-ui/react-editor": "^3.2.3",
     "@types/jest": "^27.5.2",
+    "@types/navermaps": "^3.9.1",
     "@types/node": "^16.18.96",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
