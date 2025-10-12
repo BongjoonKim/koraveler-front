@@ -11,7 +11,8 @@ import {
   Tabs,
   Badge,
   Spinner,
-  Grid
+  Grid,
+  Separator
 } from "@chakra-ui/react";
 import {
   MapPin,
@@ -26,14 +27,20 @@ import {
   Bookmark,
   RotateCcw,
   Map as MapIcon,
-  ChevronRight, ChevronUp, ChevronDown
+  ChevronRight,
+  ChevronUp,
+  ChevronDown
 } from "lucide-react";
 import CusButton from "../../elements/buttons/CusButton";
 import CusIconButton from "../../elements/buttons/CusIconButton";
 import MapInfo from "../maps/MapInfo";
-import { MapController } from "../../../types/maps/mapTypes";
+import UnifiedMapSearch from "../maps/MapSearch/UnifiedMapSearch";
+import { MapController, MapProvider } from "../../../types/maps/mapTypes";
+import { UnifiedSearchResult } from "../maps/MapSearch/UnifiedMapSearch";
 
-export interface FindRouteProps {}
+export interface FindRouteProps {
+  mapProvider?: MapProvider;
+}
 
 interface SavedRoute {
   id: string;
@@ -45,26 +52,23 @@ interface SavedRoute {
   favorite?: boolean;
 }
 
-interface PopularPlace {
-  name: string;
-  nameKr: string;
-  address: string;
-  category: string;
-  lat: number;
-  lng: number;
-}
-
 function FindRoute(props: FindRouteProps) {
+  const { mapProvider = 'kakao' } = props;
+  
   const [mapController, setMapController] = useState<MapController | null>(null);
-  const [mapCenter, setMapCenter] = useState({ lat: 37.5665, lng: 126.9780 }); // 서울 중심
+  const [mapCenter, setMapCenter] = useState({ lat: 37.5665, lng: 126.9780 });
   const [mapZoom, setMapZoom] = useState(13);
   const [fromLocation, setFromLocation] = useState('');
   const [toLocation, setToLocation] = useState('');
+  const [fromPlace, setFromPlace] = useState<UnifiedSearchResult | null>(null);
+  const [toPlace, setToPlace] = useState<UnifiedSearchResult | null>(null);
   const [routeType, setRouteType] = useState<'car' | 'transit' | 'walk'>('transit');
   const [isSearching, setIsSearching] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [searchMode, setSearchMode] = useState<'from' | 'to' | null>(null);
+  
   const [savedRoutes] = useState<SavedRoute[]>([
     {
       id: '1',
@@ -95,41 +99,6 @@ function FindRoute(props: FindRouteProps) {
     }
   ]);
   
-  const popularPlaces: PopularPlace[] = [
-    {
-      name: 'N Seoul Tower',
-      nameKr: 'N서울타워',
-      address: '남산공원, 용산구',
-      category: '랜드마크',
-      lat: 37.5511,
-      lng: 126.9882
-    },
-    {
-      name: 'Myeongdong',
-      nameKr: '명동',
-      address: '중구, 서울',
-      category: '쇼핑',
-      lat: 37.5636,
-      lng: 126.9869
-    },
-    {
-      name: 'Hongdae',
-      nameKr: '홍대',
-      address: '마포구, 서울',
-      category: '엔터테인먼트',
-      lat: 37.5563,
-      lng: 126.9219
-    },
-    {
-      name: 'Bukchon Village',
-      nameKr: '북촌한옥마을',
-      address: '종로구, 서울',
-      category: '문화',
-      lat: 37.5815,
-      lng: 126.9850
-    }
-  ];
-  
   const handleCardClick = (e : any) => {
     if ((e.target as HTMLElement).closest(".chakra-card__root"))
       setIsExpanded(!isExpanded);
@@ -151,13 +120,51 @@ function FindRoute(props: FindRouteProps) {
   };
   
   const handleSearch = async () => {
-    if (!fromLocation || !toLocation) return;
+    if (!fromPlace || !toPlace) {
+      alert('출발지와 도착지를 모두 선택해주세요.');
+      return;
+    }
     
     setIsSearching(true);
     try {
+      // 경로 탐색 로직 구현
+      if (mapController) {
+        // 출발지와 도착지 마커 표시
+        mapController.clearMarkers();
+        
+        // 출발지 마커
+        mapController.addMarker({
+          position: fromPlace.position,
+          title: fromPlace.name,
+          icon: mapProvider === 'kakao'
+            ? 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png'
+            : undefined
+        });
+        
+        // 도착지 마커
+        mapController.addMarker({
+          position: toPlace.position,
+          title: toPlace.name
+        });
+        
+        // 두 지점을 포함하는 영역으로 지도 조정
+        mapController.fitBounds({
+          sw: {
+            lat: Math.min(fromPlace.position.lat, toPlace.position.lat),
+            lng: Math.min(fromPlace.position.lng, toPlace.position.lng)
+          },
+          ne: {
+            lat: Math.max(fromPlace.position.lat, toPlace.position.lat),
+            lng: Math.max(fromPlace.position.lng, toPlace.position.lng)
+          }
+        });
+        
+        // 실제 경로 API 호출 (백엔드 구현 필요)
+        console.log(`Searching route from ${fromPlace.name} to ${toPlace.name}`);
+      }
+      
       setTimeout(() => {
         setIsSearching(false);
-        console.log(`Searching route from ${fromLocation} to ${toLocation}`);
       }, 1500);
     } catch (error) {
       console.error('Route search error:', error);
@@ -166,26 +173,34 @@ function FindRoute(props: FindRouteProps) {
   };
   
   const swapLocations = () => {
-    const temp = fromLocation;
+    const tempLocation = fromLocation;
+    const tempPlace = fromPlace;
+    
     setFromLocation(toLocation);
-    setToLocation(temp);
+    setFromPlace(toPlace);
+    setToLocation(tempLocation);
+    setToPlace(tempPlace);
   };
   
-  const setQuickLocation = (place: PopularPlace) => {
-    setToLocation(place.nameKr);
-    setMapCenter({ lat: place.lat, lng: place.lng });
-    setMapZoom(15);
+  const handlePlaceSelect = (place: UnifiedSearchResult) => {
+    if (searchMode === 'from') {
+      setFromLocation(place.name);
+      setFromPlace(place);
+      setSearchMode(null);
+    } else if (searchMode === 'to') {
+      setToLocation(place.name);
+      setToPlace(place);
+      setSearchMode(null);
+    }
     
+    // 지도 중심 이동
     if (mapController) {
-      mapController.addMarker({
-        position: { lat: place.lat, lng: place.lng },
-        title: place.nameKr
-      });
+      mapController.panTo(place.position);
+      mapController.setZoom(15);
     }
   };
   
   const toggleFavorite = (id: string) => {
-    // 즐겨찾기 토글 로직
     console.log('Toggle favorite:', id);
   };
   
@@ -199,29 +214,134 @@ function FindRoute(props: FindRouteProps) {
   };
   
   const getCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
-          
-          setMapCenter({ lat, lng });
-          setMapZoom(15);
-          
-          if (mapController) {
-            mapController.addMarker({
-              position: { lat, lng },
-              title: '현재 위치'
-            });
-          }
-          
-          setFromLocation('현재 위치');
-        },
-        (error) => {
-          console.error('Error getting location:', error);
-        }
-      );
+    if (!navigator.geolocation) {
+      alert('이 브라우저는 위치 정보를 지원하지 않습니다.');
+      return;
     }
+    
+    // 로딩 상태 표시 (선택적)
+    const loadingToast = document.createElement('div');
+    loadingToast.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      z-index: 10000;
+      font-size: 14px;
+    `;
+    loadingToast.textContent = '현재 위치를 가져오는 중...';
+    document.body.appendChild(loadingToast);
+    
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // 로딩 토스트 제거
+        document.body.removeChild(loadingToast);
+        
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        
+        console.log('Current position:', { lat, lng });
+        
+        setMapCenter({ lat, lng });
+        setMapZoom(15);
+        
+        if (mapController) {
+          mapController.clearMarkers();
+          mapController.addMarker({
+            position: { lat, lng },
+            title: '현재 위치',
+            icon: mapProvider === 'kakao'
+              ? 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png'
+              : undefined
+          });
+        }
+        
+        setFromLocation('현재 위치');
+        setFromPlace({
+          id: 'current-location',
+          name: '현재 위치',
+          address: '현재 위치',
+          position: { lat, lng },
+          provider: mapProvider as 'kakao' | 'naver'
+        });
+      },
+      (error) => {
+        // 로딩 토스트 제거
+        if (document.body.contains(loadingToast)) {
+          document.body.removeChild(loadingToast);
+        }
+        
+        console.error('Geolocation error:', error);
+        
+        let errorMessage = '위치를 가져올 수 없습니다. ';
+        
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage += '위치 권한을 허용해주세요.\n\n' +
+              '설정 방법:\n' +
+              '1. 브라우저 주소창 왼쪽의 자물쇠 아이콘 클릭\n' +
+              '2. 위치 권한을 "허용"으로 변경\n' +
+              '3. 페이지 새로고침';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage += '위치 정보를 사용할 수 없습니다.\n\n' +
+              '다음을 확인해주세요:\n' +
+              '• 기기의 위치 서비스가 켜져 있는지\n' +
+              '• Wi-Fi나 모바일 데이터가 연결되어 있는지';
+            
+            // 대체 위치 제안 (서울 시청)
+            const useDefaultLocation = window.confirm(
+              errorMessage + '\n\n' +
+              '대신 서울 시청을 현재 위치로 사용하시겠습니까?'
+            );
+            
+            if (useDefaultLocation) {
+              const defaultLat = 37.5665;
+              const defaultLng = 126.9780;
+              
+              setMapCenter({ lat: defaultLat, lng: defaultLng });
+              setMapZoom(15);
+              
+              if (mapController) {
+                mapController.clearMarkers();
+                mapController.addMarker({
+                  position: { lat: defaultLat, lng: defaultLng },
+                  title: '기본 위치 (서울 시청)',
+                  icon: mapProvider === 'kakao'
+                    ? 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png'
+                    : undefined
+                });
+              }
+              
+              setFromLocation('서울 시청 (기본 위치)');
+              setFromPlace({
+                id: 'default-location',
+                name: '서울 시청',
+                address: '서울특별시 중구 세종대로 110',
+                position: { lat: defaultLat, lng: defaultLng },
+                provider: mapProvider as 'kakao' | 'naver'
+              });
+              return;
+            }
+            break;
+          case error.TIMEOUT:
+            errorMessage += '요청 시간이 초과되었습니다. 다시 시도해주세요.';
+            break;
+          default:
+            errorMessage += '알 수 없는 오류가 발생했습니다.';
+        }
+        
+        alert(errorMessage);
+      },
+      {
+        enableHighAccuracy: true,  // 더 정확한 위치
+        timeout: 10000,           // 10초 타임아웃
+        maximumAge: 30000         // 30초까지 캐시된 위치 사용
+      }
+    );
   };
   
   return (
@@ -243,7 +363,6 @@ function FindRoute(props: FindRouteProps) {
     >
       <Card.Body color="black">
         <VStack align="stretch" gap={3}>
-          {/* 상단: 제목과 시간 */}
           <HStack justify="space-between">
             <HStack gap={2}>
               <MapIcon size={24} />
@@ -256,7 +375,6 @@ function FindRoute(props: FindRouteProps) {
             </Box>
           </HStack>
           
-          {/* Tabs */}
           <Box onClick={(e : MouseEvent) => e.stopPropagation()}>
             <Tabs.Root
               value={selectedTab.toString()}
@@ -271,66 +389,12 @@ function FindRoute(props: FindRouteProps) {
                   border: "1px solid #e5e7eb",
                 }}
               >
-                <Tabs.Trigger
-                  value="0"
-                  css={{
-                    color: "#6b7280",
-                    borderRadius: "lg",
-                    fontWeight: "500",
-                    transition: "all 0.2s",
-                    "&[data-selected]": {
-                      background: "white",
-                      color: "#6366f1",
-                      fontWeight: "600",
-                      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)"
-                    },
-                    "&:hover:not([data-selected])": {
-                      background: "#f9fafb"
-                    }
-                  }}
-                >
-                  경로 검색
-                </Tabs.Trigger>
-                <Tabs.Trigger
-                  value="1"
-                  css={{
-                    color: "#6b7280",
-                    borderRadius: "lg",
-                    fontWeight: "500",
-                    transition: "all 0.2s",
-                    "&[data-selected]": {
-                      background: "white",
-                      color: "#6366f1",
-                      fontWeight: "600",
-                      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)"
-                    },
-                    "&:hover:not([data-selected])": {
-                      background: "#f9fafb"
-                    }
-                  }}
-                >
-                  저장된 경로
-                </Tabs.Trigger>
-                <Tabs.Trigger
-                  value="2"
-                  css={{
-                    color: "#6b7280",
-                    borderRadius: "lg",
-                    fontWeight: "500",
-                    transition: "all 0.2s",
-                    "&[data-selected]": {
-                      background: "white",
-                      color: "#6366f1",
-                      fontWeight: "600",
-                      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)"
-                    },
-                    "&:hover:not([data-selected])": {
-                      background: "#f9fafb"
-                    }
-                  }}                >
-                  지도 보기
-                </Tabs.Trigger>
+                <Tabs.Trigger value="0">경로 검색</Tabs.Trigger>
+                <Tabs.Trigger value="1">저장된 경로</Tabs.Trigger>
+                <Tabs.Trigger value="2">지도 보기</Tabs.Trigger>
+                <Tabs.Trigger value="3">장소 검색</Tabs.Trigger>
               </Tabs.List>
+              
               {isExpanded && (
                 <>
                   <Tabs.Content value="0">
@@ -387,6 +451,12 @@ function FindRoute(props: FindRouteProps) {
                               bg="whiteAlpha.200"
                               borderColor="whiteAlpha.400"
                               color="black"
+                              readOnly
+                              cursor="pointer"
+                              onClick={() => {
+                                setSearchMode('from');
+                                setSelectedTab(3);
+                              }}
                               _placeholder={{ color: "whiteAlpha.600" }}
                               _hover={{ borderColor: "whiteAlpha.600" }}
                               _focus={{ borderColor: "white", bg: "whiteAlpha.300" }}
@@ -430,6 +500,12 @@ function FindRoute(props: FindRouteProps) {
                             bg="whiteAlpha.200"
                             borderColor="whiteAlpha.400"
                             color="black"
+                            readOnly
+                            cursor="pointer"
+                            onClick={() => {
+                              setSearchMode('to');
+                              setSelectedTab(3);
+                            }}
                             _placeholder={{ color: "whiteAlpha.600" }}
                             _hover={{ borderColor: "whiteAlpha.600" }}
                             _focus={{ borderColor: "white", bg: "whiteAlpha.300" }}
@@ -453,33 +529,6 @@ function FindRoute(props: FindRouteProps) {
                       >
                         경로 찾기
                       </CusButton>
-                      
-                      {/* 인기 장소 */}
-                      <Box w="full">
-                        <Text fontSize="sm" mb={2} opacity={0.9}>
-                          인기 목적지
-                        </Text>
-                        <Grid templateColumns="repeat(2, 1fr)" gap={2}>
-                          {popularPlaces.map((place, index) => (
-                            <Button
-                              key={index}
-                              size="sm"
-                              variant="outline"
-                              borderColor="whiteAlpha.400"
-                              color="black"
-                              fontSize="xs"
-                              onClick={() => setQuickLocation(place)}
-                              _hover={{ bg: "whiteAlpha.200" }}
-                              p={2}
-                            >
-                              <VStack align="start" gap={0} w="full">
-                                <Text fontWeight="bold">{place.nameKr}</Text>
-                                <Text opacity={0.8} fontSize="xs">{place.category}</Text>
-                              </VStack>
-                            </Button>
-                          ))}
-                        </Grid>
-                      </Box>
                     </VStack>
                   </Tabs.Content>
                   
@@ -539,36 +588,28 @@ function FindRoute(props: FindRouteProps) {
                           </HStack>
                         </Box>
                       ))}
-                      
-                      {savedRoutes.length === 0 && (
-                        <Box textAlign="center" py={4}>
-                          <Bookmark size={32} opacity={0.5} />
-                          <Text fontSize="sm" opacity={0.7} mt={2}>
-                            저장된 경로가 없습니다
-                          </Text>
-                        </Box>
-                      )}
                     </VStack>
                   </Tabs.Content>
                   
                   <Tabs.Content value="2">
                     <Box mt={3}>
-                      {/* MapInfo 컴포넌트 사용 */}
                       <Box
                         w="full"
-                        h="250px"
+                        minH="250px"
+                        aspectRatio={2}
                         borderRadius="lg"
-                        overflow="visible"
+                        overflow="hidden"
                         bg="whiteAlpha.200"
                         position="relative"
                       >
                         <MapInfo
-                          provider="naver"
+                          provider={mapProvider}
                           center={mapCenter}
                           zoom={mapZoom}
                           width="100%"
                           height="100%"
                           onMapLoad={(controller) => {
+                            console.log('Map loaded with controller:', controller);
                             setMapController(controller);
                           }}
                         />
@@ -598,6 +639,25 @@ function FindRoute(props: FindRouteProps) {
                           경로 보기
                         </CusButton>
                       </HStack>
+                    </Box>
+                  </Tabs.Content>
+                  
+                  <Tabs.Content value="3">
+                    <Box mt={3}>
+                      {searchMode && (
+                        <Box mb={2} p={2} bg="whiteAlpha.200" borderRadius="md">
+                          <Text fontSize="sm" color="black">
+                            {searchMode === 'from' ? '출발지' : '도착지'}를 선택해주세요
+                          </Text>
+                        </Box>
+                      )}
+                      
+                      <UnifiedMapSearch
+                        mapController={mapController}
+                        mapProvider={mapProvider}
+                        onPlaceSelect={handlePlaceSelect}
+                        height="350px"
+                      />
                     </Box>
                   </Tabs.Content>
                 </>
