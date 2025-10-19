@@ -11,14 +11,15 @@ import {createBookmark, deleteBookmark} from "../../../../../endpoints/bookmark-
 import {ERROR_MESSAGE} from "../../../../../stores/recoil/recoilConstants";
 import {ErrorMessageProps} from "../../../../../stores/recoil/types";
 import useAuthEP from "../../../../../utils/useAuthEP";
+import {useCurrentUser} from "../../../../../hooks/useCurrentUser";
 
 export default function useViewDocLayout(props : ViewDocLayoutProps) {
   const navigate = useNavigate();
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
-  const [loginUser, setLoginUser] = useRecoilState(recoil.userData);
   const [isBookmarked, setBookmarked] = useAtom(isBookmark);
   const [errMsg, setErrMsg] = useRecoilState(recoil.errMsg);
   const authEP = useAuthEP();
+  const currentUser = useCurrentUser();
   
   // 수정 화면으로 전환
   const handleEdit = useCallback(() => {
@@ -96,7 +97,7 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
     handleEdit,
     handleDelete,
     changeBookmark,
-    loginUser
+    currentUser,
   }
 
 }

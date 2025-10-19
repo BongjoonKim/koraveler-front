@@ -8,7 +8,6 @@ import useAuthEP from "../../../utils/useAuthEP";
 
 export default function useFolderTree(props: FolderTreeProps) {
   const [folders, setFolders] = useState<any>({});
-  const [loginUser, setLoginUser] = useRecoilState(recoil.userData);
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   const [selectedFolders, setSelectedFolders] = useState<TreeItemIndex[]>([]);
   const authEP = useAuthEP();

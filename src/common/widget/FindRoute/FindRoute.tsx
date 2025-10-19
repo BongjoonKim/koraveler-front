@@ -53,7 +53,7 @@ interface SavedRoute {
 }
 
 function FindRoute(props: FindRouteProps) {
-  const { mapProvider = 'kakao' } = props;
+  const { mapProvider = 'naver'} = props;
   
   const [mapController, setMapController] = useState<MapController | null>(null);
   const [mapCenter, setMapCenter] = useState({ lat: 37.5665, lng: 126.9780 });

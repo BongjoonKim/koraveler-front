@@ -16,7 +16,7 @@ import CusModal from "../../elements/CusModal";
 
 function RightHeader() {
   const {
-    loginUser,
+    currentUser,
     handleCreate,
     handleOpenModal,
     searchModalOpen,
@@ -95,7 +95,7 @@ function RightHeader() {
         </IconButton>
         
         {/* Create Button - 로그인한 사용자만 표시 */}
-        {loginUser && (
+        {currentUser && (
           <Button
             variant="solid"
             colorPalette="indigo"
@@ -118,10 +118,10 @@ function RightHeader() {
                 borderRadius="full"
                 onClick={handleAvatarClick}
               >
-                {loginUser ? (
+                {currentUser ? (
                   <CusAvatar
                     size="sm"
-                    name={loginUser?.userId || loginUser?.name}
+                    name={currentUser?.id || currentUser?.username}
                   />
                 ) : (
                   <User size={20} />
@@ -145,7 +145,7 @@ function RightHeader() {
                       boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'  // 그림자 추가
                     }}
                   >
-                    {loginUser ? (
+                    {currentUser ? (
                       <>
                         <MenuItem value="profile" onClick={handleProfile}>
                           Profile

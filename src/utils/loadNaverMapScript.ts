@@ -34,7 +34,7 @@ export function loadNaverMapScript(): Promise<void> {
     }
     
     // 새로운 API URL 형식 사용
-    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${clientId}&submodules=geocoder`;
+    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${clientId}&submodules=geocoder&language=en`;
     script.async = true;
     script.defer = true;
     
