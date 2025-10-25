@@ -22,26 +22,64 @@ function MapInfo(props: MapInfoProps) {
     onMapLoad
   } = props;
   
-  const [naverRawMap, setNaverRawMap] = useState<any>(null);
   const [kakaoRawMap, setKakaoRawMap] = useState<kakao.maps.Map | null>(null);
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [searchResults, setSearchResults] = useState<PlaceItem[]>([]);
   const [selectedPlace, setSelectedPlace] = useState<PlaceItem | null>(null);
   const [mapCenter, setMapCenter] = useState<MapPosition>(center);
-  const naverController = useNaverMapController(provider === 'naver' ? naverRawMap : null);
+  // const naverController = useNaverMapController(naverRawMap, provider);
   const kakaoController = useKakaoMapController(provider === 'kakao' ? kakaoRawMap : null);
   const hasLoadedRef = useRef(false);
   
   const placeSearchMutation = usePlaceQueries();
+  
+  const naverController = useNaverMapController({
+    center: center,
+    zoom: zoom,
+    onMapLoad: onMapLoad,
+    provider: provider
+  })
+  
   const mapController = provider === 'naver' ? naverController : kakaoController;
   
-  
-  // 네이버맵 로드 핸들러
-  const handleNaverMapLoad = useCallback((map: any) => {
-    if (!naverRawMap) {
-      setNaverRawMap(map);
+  const testClick = () => {
+    const data = {
+      addressEn
+        :
+        "839-1, Inwang-dong, Gyeongju-si, Gyeongsangbuk-do, Republic of Korea",
+      addressKo
+        :
+        "경북 경주시 인왕동 839-1",
+      category
+        :
+        "",
+      categoryEn
+        :
+        "",
+      id
+        :
+        "8089382",
+      lat
+        :
+        35.8346954,
+      lng
+        :
+        129.2190637,
+      name
+        :
+        "첨성대",
+      nameEn
+        :
+        "첨성대",
+      phone
+        :
+        "",
+      roadAddressKo
+        :
+        "",
     }
-  }, [naverRawMap]);
+    handlePlaceSelect(data)
+}
   
   // 카카오맵 로드 핸들러
   const handleKakaoMapLoad = useCallback((map: kakao.maps.Map) => {
@@ -61,12 +99,19 @@ function MapInfo(props: MapInfoProps) {
   // provider 변경 시 초기화
   useEffect(() => {
     hasLoadedRef.current = false;
-    setNaverRawMap(null);
     setKakaoRawMap(null);
     setSearchKeyword("");
     setSearchResults([]);
     setSelectedPlace(null);
   }, [provider]);
+  
+  // 컨트롤러가 준비되면 기존 검색 결과를 다시 표시
+  useEffect(() => {
+    if (mapController && searchResults.length > 0) {
+      displayPlacesOnMap(searchResults);
+    }
+  }, [mapController, searchResults]);
+  
   
   const handleSearch = useCallback(async() => {
     if (!searchKeyword.trim()) {
@@ -132,15 +177,20 @@ function MapInfo(props: MapInfoProps) {
     }
   }, [mapController]);
   
-  const handlePlaceSelect = useCallback((place : PlaceItem) => {
+  const handlePlaceSelect = (place : PlaceItem) => {
     setSelectedPlace(place);
+    const naver = (window as any).naver?.maps;
+    // console.log("position", place)
+    // console.log("mapController", mapController)
+    // console.log("naverController", naverController)
+    // console.log("네이버 지도 객체, ",  (window as any).naver?.maps);
     
     if (mapController) {
       const position = {lat : place.lat, lng: place.lng}
-      mapController.panTo(position);
-      mapController.setZoom(3);
+      // mapController.panTo(position);
+      mapController.setCenter(position);
     }
-  }, [mapController]);
+  }
   
   const clearSearch = useCallback(() => {
     setSearchKeyword("");
@@ -245,9 +295,11 @@ function MapInfo(props: MapInfoProps) {
             </Box>
             
             {/* 검색 결과 목록 */}
-            <Box flex={1} overflowY={"auto"}>
+            <Box flex={1} overflowY={"auto"}
+            
+            >
               {placeSearchMutation.isPending ? (
-                <VStack py={8}>
+                <VStack py={8} >
                   <Spinner size="lg" color="blue.500" />
                   <Text fontSize={"sm"} color="gray.600">Searching...</Text>
                 </VStack>
@@ -308,7 +360,10 @@ function MapInfo(props: MapInfoProps) {
                   ))}
                 </VStack>
               ) : (
-                <Box textAlign="center" py={12}>
+                <Box textAlign="center" py={12}
+                     onClick={testClick}
+  
+                >
                   <Search size={48} color="#d1d5db" style={{ margin: "0 auto 12px" }} />
                   <Text fontSize="sm" color="gray.500">
                     장소를 검색해보세요
@@ -330,7 +385,8 @@ function MapInfo(props: MapInfoProps) {
             zoom={zoom}
             width="100%"
             height="100%"
-            onMapLoad={handleNaverMapLoad}
+            provider={provider}
+            controller={naverController} // controller 전달
           />
         ) : (
           <KakaoMap

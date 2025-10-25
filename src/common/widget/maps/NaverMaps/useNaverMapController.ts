@@ -1,18 +1,158 @@
-import { useRef, useCallback } from 'react';
+import {useRef, useCallback, useState, useEffect} from 'react';
 import {
   MapBounds,
   MapController,
   MapMarker,
   MapMarkerOptions, MapPolyline,
   MapPolylineOptions,
-  MapPosition
+  MapPosition,
+  MapProvider
 } from '../../../../types/maps/mapTypes';
+import {isNaverMapLoaded, loadNaverMapScript} from "../../../../utils/loadNaverMapScript";
+import {NaverMapProps} from "./NaverMap";
 
-export function useNaverMapController(map: any): MapController | null {
+export function useNaverMapController(props: NaverMapProps) {
+  const {
+    center,
+    zoom,
+    onMapLoad,
+    provider
+  } = props;
+  
   const markersRef = useRef<Map<string, any>>(new Map());
   const polylinesRef = useRef<Map<string, any>>(new Map());
   const markerIdCounterRef = useRef(0);
   const polylineIdCounterRef = useRef(0);
+  
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const [isReady, setIsReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    loadNaverMapScript()
+      .then(() => {
+        console.log('NaverMap: Script loaded successfully');
+        setIsReady(true);
+      })
+      .catch((err) => {
+        console.error('Failed to load Naver Maps:', err);
+        setError('Naver Maps API load fail');
+      });
+  }, []);
+  
+  const initializeMap = useCallback(() => {
+    console.log("initializeMap mapRef", mapRef);
+    console.log("initializeMap mapInstanceRef", mapInstanceRef);
+    
+    if (!mapRef.current || mapInstanceRef.current) return;
+    
+    const naverMaps = (window as any).naver?.maps;
+    if (!naverMaps) {
+      console.error('NaverMap: naver.maps not available');
+      return;
+    }
+    
+    try {
+      console.log('NaverMap: Creating map instance...');
+      const mapOptions = {
+        center: new naverMaps.LatLng(center?.lat, center?.lng),
+        zoom: zoom,
+        draggable: true,
+        pinchZoom: true,
+        scrollWheel: true,
+        disableKineticPan: false,
+        zoomControl: true,
+        zoomControlOptions: {
+          style: naverMaps.ZoomControlStyle.SMALL,
+          position: naverMaps.Position.TOP_RIGHT
+        },
+        mapDataControl: false,
+        scaleControl: false,
+        logoControl: false,
+        mapTypeControl: false
+      };
+      
+      const mapInstance = new naverMaps.Map(mapRef.current, mapOptions);
+      mapInstanceRef.current = mapInstance;
+      console.log("mapInstance 정보", mapInstance);
+      console.log('NaverMap: Map instance created');
+      
+      setTimeout(() => {
+        if (mapInstanceRef.current) {
+          const naverEvent = naverMaps.Event;
+          naverEvent.trigger(mapInstanceRef.current, 'resize');
+          console.log('NaverMap: Map resized');
+        }
+      }, 100);
+      
+      let isFirstIdle = true;
+      naverMaps.Event.addListener(mapInstance, 'idle', () => {
+        if (isFirstIdle) {
+          isFirstIdle = false;
+          console.log('NaverMap: Map idle event fired');
+          
+          const naverEvent = naverMaps.Event;
+          naverEvent.trigger(mapInstance, 'resize');
+          
+          if (onMapLoad) {
+            setTimeout(() => {
+              onMapLoad(mapInstance);
+            }, 100);
+          }
+        }
+      });
+      
+    } catch (err: any) {
+      console.error('Map initialization error:', err);
+      setError(`initial map error: ${err.message}`);
+    }
+  }, []);
+  
+  useEffect(() => {
+    if (!isReady || !mapRef.current || mapInstanceRef.current) return;
+    console.log("여기여기", isNaverMapLoaded());
+    
+    const checkAndInit = () => {
+      if (isNaverMapLoaded()) {
+        initializeMap();
+      } else {
+        setTimeout(checkAndInit, 100);
+      }
+    };
+    
+    checkAndInit();
+  }, [isReady, isNaverMapLoaded]);
+  
+  useEffect(() => {
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.setZoom(zoom);
+    }
+  }, [zoom]);
+  
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+    
+    const handleResize = () => {
+      const naverMaps = (window as any).naver?.maps;
+      if (naverMaps && mapInstanceRef.current) {
+        const naverEvent = naverMaps.Event;
+        naverEvent.trigger(mapInstanceRef.current, 'resize');
+      }
+    };
+    
+    const resizeObserver = new ResizeObserver(() => {
+      handleResize();
+    });
+    
+    if (mapRef.current) {
+      resizeObserver.observe(mapRef.current);
+    }
+    
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [mapInstanceRef.current]);
   
   const getNaver = () => {
     const naver = (window as any).naver?.maps;
@@ -23,35 +163,36 @@ export function useNaverMapController(map: any): MapController | null {
   };
   
   const setCenter = useCallback((position: MapPosition) => {
-    if (!map) return;
+    console.log("여기 setCenter 오나", position, mapInstanceRef.current);
+    if (!mapInstanceRef.current) return;
     const naver = getNaver();
     if (!naver) return;
-    map.setCenter(new naver.LatLng(position.lat, position.lng));
-  }, [map]);
+    mapInstanceRef.current.setCenter(new naver.LatLng(position.lat, position.lng));
+  }, []);
   
   const getCenter = useCallback((): MapPosition => {
-    if (!map) return { lat: 0, lng: 0 };
-    const center = map.getCenter();
+    if (!mapInstanceRef.current) return { lat: 0, lng: 0 };
+    const center = mapInstanceRef.current.getCenter();
     return { lat: center.lat(), lng: center.lng() };
-  }, [map]);
+  }, []);
   
   const setZoom = useCallback((level: number) => {
-    if (map) map.setZoom(level);
-  }, [map]);
+    if (mapInstanceRef.current) mapInstanceRef.current.setZoom(level);
+  }, []);
   
   const getZoom = useCallback((): number => {
-    return map ? map.getZoom() : 0;
-  }, [map]);
+    return mapInstanceRef.current ? mapInstanceRef.current.getZoom() : 0;
+  }, []);
   
   const panTo = useCallback((position: MapPosition) => {
-    if (!map) return;
+    if (!mapInstanceRef.current) return;
     const naver = getNaver();
     if (!naver) return;
-    map.panTo(new naver.LatLng(position.lat, position.lng));
-  }, [map]);
+    mapInstanceRef.current.panTo(new naver.LatLng(position.lat, position.lng));
+  }, []);
   
   const fitBounds = useCallback((bounds: MapBounds, padding = 50) => {
-    if (!map) return;
+    if (!mapInstanceRef.current) return;
     const naver = getNaver();
     if (!naver) return;
     
@@ -59,11 +200,16 @@ export function useNaverMapController(map: any): MapController | null {
       new naver.LatLng(bounds.sw.lat, bounds.sw.lng),
       new naver.LatLng(bounds.ne.lat, bounds.ne.lng)
     );
-    map.fitBounds(naverBounds, { top: padding, right: padding, bottom: padding, left: padding });
-  }, [map]);
+    mapInstanceRef.current.fitBounds(naverBounds, {
+      top: padding,
+      right: padding,
+      bottom: padding,
+      left: padding
+    });
+  }, []);
   
   const addMarker = useCallback((options: MapMarkerOptions): MapMarker => {
-    if (!map) {
+    if (!mapInstanceRef.current) {
       console.error('Map not initialized');
       throw new Error('Map not initialized');
     }
@@ -77,7 +223,7 @@ export function useNaverMapController(map: any): MapController | null {
     const id = `marker-${++markerIdCounterRef.current}`;
     const markerOptions: any = {
       position: new naver.LatLng(options.position.lat, options.position.lng),
-      map: map,
+      map: mapInstanceRef.current,
       title: options.title,
       draggable: options.draggable || false
     };
@@ -114,7 +260,7 @@ export function useNaverMapController(map: any): MapController | null {
         markersRef.current.delete(id);
       }
     };
-  }, [map]);
+  }, []);
   
   const removeMarker = useCallback((marker: MapMarker) => {
     marker.remove();
@@ -126,7 +272,7 @@ export function useNaverMapController(map: any): MapController | null {
   }, []);
   
   const drawPolyline = useCallback((options: MapPolylineOptions): MapPolyline => {
-    if (!map) throw new Error('Map not initialized');
+    if (!mapInstanceRef.current) throw new Error('Map not initialized');
     const naver = getNaver();
     if (!naver) throw new Error('Naver Maps API not loaded');
     
@@ -134,7 +280,7 @@ export function useNaverMapController(map: any): MapController | null {
     const path = options.path.map(pos => new naver.LatLng(pos.lat, pos.lng));
     
     const polyline = new naver.Polyline({
-      map: map,
+      map: mapInstanceRef.current,
       path: path,
       strokeColor: options.strokeColor || '#5347AA',
       strokeWeight: options.strokeWeight || 5,
@@ -162,7 +308,7 @@ export function useNaverMapController(map: any): MapController | null {
         polylinesRef.current.delete(id);
       }
     };
-  }, [map]);
+  }, []);
   
   const removePolyline = useCallback((polyline: MapPolyline) => {
     polyline.remove();
@@ -193,9 +339,7 @@ export function useNaverMapController(map: any): MapController | null {
     });
   }, []);
   
-  const getRawMap = useCallback(() => map, [map]);
-  
-  if (!map) return null;
+  const getRawMap = useCallback(() => mapInstanceRef.current, []);
   
   return {
     setCenter,
@@ -211,6 +355,10 @@ export function useNaverMapController(map: any): MapController | null {
     removePolyline,
     clearPolylines,
     getCurrentLocation,
-    getRawMap
+    getRawMap,
+    error,
+    isReady,
+    mapRef,
+    map: mapInstanceRef.current
   };
 }
