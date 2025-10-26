@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {MouseEvent, useCallback, useEffect, useRef, useState} from 'react';
 import {
   Box,
   Card,
@@ -120,10 +120,10 @@ function LanguageHelp(props: LanguageHelpProps) {
           </HStack>
           
           {/* Tabs */}
-          <Box onClick={(e: any) => e.stopPropagation()}>
+          <Box onClick={(e: MouseEvent) => e.stopPropagation()}>
             <Tabs.Root
               value={selectedTab.toString()}
-              onValueChange={(e: any) => {
+              onValueChange={(e : { value: string }) => {
                 setSelectedTab(parseInt(e.value));
               }}
               onClick={() => {

@@ -10,10 +10,10 @@ import {SearchIcon} from "lucide-react";
 interface RightHeaderProps {
 
 }
-
+// 미사용 컴포넌트
 function RightHeader(props : RightHeaderProps) {
   const {
-    loginUser,
+    currentUser,
     isSliderOpen,
     setSliderOpen,
     handleAvatarClick,
@@ -57,7 +57,7 @@ function RightHeader(props : RightHeaderProps) {
       <CusAvatar
         ref={cusAvaRef}
         onClick={handleAvatarClick}
-        name={loginUser?.userId?.[0]}
+        name={currentUser?.id?.[0]}
       />
     </StyledRightHeader>
     </>

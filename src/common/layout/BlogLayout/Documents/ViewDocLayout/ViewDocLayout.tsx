@@ -20,7 +20,7 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
     handleDelete,
     handleEdit,
     changeBookmark,
-    loginUser
+    currentUser
   } = useViewDocLayout(props);
   
   return (
@@ -43,7 +43,7 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
             </Text>
           </HStack>
           
-          {loginUser.userId && (
+          {currentUser?.id && (
             <HStack gap={2}>
               <CusIconButton
                 aria-label={props?.isBookmarked ? 'bookmark-checked' : 'bookmark-not-check'}

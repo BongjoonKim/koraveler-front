@@ -6,6 +6,7 @@ import useAuthEP from "../../../utils/useAuthEP";
 import {getLoginUser} from "../../../endpoints/login-endpoints";
 import {UsersDTO} from "../../../types/users/UsersDTO";
 import {REFESHTOKEN_EXPIRED} from "../../../constants/ErrorCode";
+import {useCurrentUser} from "../../../hooks/useCurrentUser";
 
 
 function useRightHeader() {
@@ -13,12 +14,14 @@ function useRightHeader() {
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   const navigate = useNavigate();
   // const [loginUser, setLoginUser] = useAtom(LoginUser);
-  const [loginUser, setLoginUser] = useRecoilState(recoil.userData);
   const location = useLocation();
   const sliderRef = useRef<HTMLDivElement>(null);
   const cusAvaRef = useRef<HTMLDivElement>(null);
   const [searchModalOpen ,setSearchModalOpen] = useState<boolean>(false);
   const authEP = useAuthEP();
+  
+  const currentUser = useCurrentUser();
+  
   
   const handleAvatarClick = useCallback(async (event : MouseEvent<HTMLSpanElement>) => {
     setSliderOpen(prev => !prev);
@@ -30,35 +33,6 @@ function useRightHeader() {
     }
   }, [isSliderOpen]);
   
-  const getUserInfo = useCallback(async () => {
-    try {
-      const res = await authEP({
-        func : getLoginUser,
-      })
-      if (res.data) {
-        setLoginUser((prev : UsersDTO) => {
-          if (prev.userId === res.data?.userId) {
-            return prev;
-          } else {
-            return res.data
-          }
-        });
-      }
-    } catch (e) {
-      if (e === REFESHTOKEN_EXPIRED) {
-        // navigate("/login")
-        setErrorMsg({
-          status: "error",
-          msg: REFESHTOKEN_EXPIRED,
-        })
-      }
-      setErrorMsg({
-        status: "error",
-        msg: "retrieve failed",
-      })
-    }
-  }, [loginUser]);
-  
   const handleCreate = useCallback(() => {
     navigate("/blog/create")
   }, []);
@@ -67,10 +41,6 @@ function useRightHeader() {
     console.log("SearchModalOpen", searchModalOpen)
     setSearchModalOpen(prev => !prev);
   }
-  
-  useEffect(() => {
-    getUserInfo();
-  }, []);
   
   // 컴포넌트 외부 클릭 감지
   useEffect(() => {
@@ -91,7 +61,6 @@ function useRightHeader() {
   }, [sliderRef]);
   
   return {
-    loginUser,
     isSliderOpen,
     setSliderOpen,
     handleAvatarClick,
@@ -100,7 +69,8 @@ function useRightHeader() {
     sliderRef,
     cusAvaRef,
     handleOpenModal,
-    searchModalOpen
+    searchModalOpen,
+    currentUser
   }
 }
 

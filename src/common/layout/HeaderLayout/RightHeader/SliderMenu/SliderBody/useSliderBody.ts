@@ -5,6 +5,7 @@ import recoil from "../../../../../../stores/recoil";
 import {createDocument} from "../../../../../../endpoints/blog-endpoints";
 import useAuthEP from "../../../../../../utils/useAuthEP";
 
+// 미사용 컴포넌트
 export default function useSliderBody(props : SliderBodyProps) {
   const navigate = useNavigate();
   const loginUser = useRecoilValue(recoil.userData);

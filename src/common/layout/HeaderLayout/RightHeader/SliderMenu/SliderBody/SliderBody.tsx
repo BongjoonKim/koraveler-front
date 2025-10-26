@@ -7,6 +7,7 @@ export interface SliderBodyProps {
 
 };
 
+// 미사용 컴포넌트
 function SliderBody(props: SliderBodyProps) {
   const {navigate, loginUser,handleCreatePost} = useSliderBody(props);
   return (
