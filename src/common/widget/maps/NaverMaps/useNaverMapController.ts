@@ -13,7 +13,7 @@ import {NaverMapProps} from "./NaverMap";
 
 export function useNaverMapController(props: NaverMapProps) {
   const {
-    center,
+    center = { lat: 37.5665, lng: 126.9780 },
     zoom,
     onMapLoad,
     provider
@@ -28,6 +28,8 @@ export function useNaverMapController(props: NaverMapProps) {
   const mapInstanceRef = useRef<any>(null);
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mapReady, setMapReady] = useState(false); // 맵이 완전히 준비되었는지 추적
+  
   
   useEffect(() => {
     loadNaverMapScript()
@@ -78,11 +80,13 @@ export function useNaverMapController(props: NaverMapProps) {
       console.log("mapInstance 정보", mapInstance);
       console.log('NaverMap: Map instance created');
       
+      setMapReady(true);
+      
+      // resize 이벤트 트리거
       setTimeout(() => {
         if (mapInstanceRef.current) {
           const naverEvent = naverMaps.Event;
           naverEvent.trigger(mapInstanceRef.current, 'resize');
-          console.log('NaverMap: Map resized');
         }
       }, 100);
       
@@ -107,7 +111,7 @@ export function useNaverMapController(props: NaverMapProps) {
       console.error('Map initialization error:', err);
       setError(`initial map error: ${err.message}`);
     }
-  }, []);
+  }, [center.lat, center.lng, zoom, onMapLoad]);
   
   useEffect(() => {
     if (!isReady || !mapRef.current || mapInstanceRef.current) return;
@@ -122,7 +126,7 @@ export function useNaverMapController(props: NaverMapProps) {
     };
     
     checkAndInit();
-  }, [isReady, isNaverMapLoaded]);
+  }, [isReady, initializeMap]);
   
   useEffect(() => {
     if (mapInstanceRef.current) {
@@ -163,7 +167,7 @@ export function useNaverMapController(props: NaverMapProps) {
   };
   
   const setCenter = useCallback((position: MapPosition) => {
-    console.log("여기 setCenter 오나", position, mapInstanceRef.current);
+    console.log("여기 setCenter 오나", position);
     if (!mapInstanceRef.current) return;
     const naver = getNaver();
     if (!naver) return;
@@ -189,6 +193,28 @@ export function useNaverMapController(props: NaverMapProps) {
     const naver = getNaver();
     if (!naver) return;
     mapInstanceRef.current.panTo(new naver.LatLng(position.lat, position.lng));
+  }, []);
+  
+  // morph 메서드 추가 - 부드러운 애니메이션과 함께 위치와 줌 동시 변경
+  const morph = useCallback((position: MapPosition, zoom?: number, options?: {
+    duration?: number;
+    easing?: 'easeOutCubic' | 'linear';
+  }) => {
+    if (!mapInstanceRef.current) return;
+    const naver = getNaver();
+    if (!naver) return;
+    
+    const targetZoom = zoom !== undefined ? zoom : mapInstanceRef.current.getZoom();
+    const duration = options?.duration || 500; // 기본 500ms
+    
+    // morph 메서드 호출
+    mapInstanceRef.current.morph(
+      new naver.LatLng(position.lat, position.lng),
+      targetZoom,
+      {
+        duration: duration,
+      }
+    );
   }, []);
   
   const fitBounds = useCallback((bounds: MapBounds, padding = 50) => {
@@ -347,6 +373,7 @@ export function useNaverMapController(props: NaverMapProps) {
     setZoom,
     getZoom,
     panTo,
+    morph, // morph 메서드 추가
     fitBounds,
     addMarker,
     removeMarker,

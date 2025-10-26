@@ -38,7 +38,7 @@ function NaverMap(props: NaverMapProps) {
       <Box w={width} h={height} display="flex" alignItems="center" justifyContent="center" bg="gray.50" borderRadius="lg">
         <VStack gap={3}>
           <Spinner size="lg" color="blue.500" />
-          <Text fontSize="sm" color="gray.600">ì§€ë„ë¥¼ ë¶ˆëŸ¬ì˜¤ëŠ” ì¤‘...</Text>
+          <Text fontSize="sm" color="gray.600">조회 중...</Text>
         </VStack>
       </Box>
     );

@@ -40,6 +40,10 @@ export interface MapController {
   setZoom: (level: number) => void;
   getZoom: () => number;
   panTo: (position: MapPosition) => void;
+  morph?: (position: MapPosition, zoom?: number, options?: {
+    duration?: number;
+    easing?: 'easeOutCubic' | 'linear';
+  }) => void;
   fitBounds: (bounds: MapBounds, padding?: number) => void;
   
   addMarker: (options: MapMarkerOptions) => MapMarker;
