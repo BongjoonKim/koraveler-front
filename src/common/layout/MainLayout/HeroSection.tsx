@@ -11,7 +11,6 @@ function HeroSection() {
       position="relative"
       color="white"
       py={12}
-      overflow="hidden"
       // Chakra v3에서는 style prop 직접 사용
       style={{
         background: 'linear-gradient(to right, #6366f1, #a855f7, #ec4899)'

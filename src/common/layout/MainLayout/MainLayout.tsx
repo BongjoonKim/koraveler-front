@@ -10,10 +10,10 @@ export interface MainLayoutProps {
 
 function MainLayout({ children, showHero = false }: MainLayoutProps) {
   return (
-    <Box minH="100vh" bg="gray.50">
+    <Box minH="100vh" bg="gray.50" display={"flex"} flexDirection={"column"} h={"100%"}>
       <HeaderLayout />
       {showHero && <HeroSection />}
-      <Box as="main" flex="1">
+      <Box flex={'1'} height={"100%"} display="flex" flexDirection="column">
         {children}
       </Box>
     </Box>
