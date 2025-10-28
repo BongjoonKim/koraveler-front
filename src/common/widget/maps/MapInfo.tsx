@@ -385,10 +385,10 @@ function MapInfo(props: MapInfoProps) {
                 <Box textAlign="center" py={12} onClick={testClick}>
                   <Search size={48} color="#d1d5db" style={{ margin: "0 auto 12px" }} />
                   <Text fontSize="sm" color="gray.500">
-                    장소를 검색해보세요
+                    Search Places
                   </Text>
                   <Text fontSize="xs" color="gray.400" mt={1}>
-                    영어로 검색하시면 더 정확한 결과를 얻을 수 있습니다
+                    you can get some information
                   </Text>
                 </Box>
               )}

@@ -139,37 +139,37 @@ function HeroSection() {
           </Box>
           
           {/* 한국 관련 태그들 */}
-          <Flex
-            gap={3}
-            justify="center"
-            mt={6}
-            flexWrap="wrap"
-            px={4}
-          >
-            {['Seoul', 'Busan', 'Jeju', 'K-Culture', 'K-Food'].map((tag) => (
-              <Box
-                key={tag}
-                as="button"
-                px={4}
-                py={2}
-                borderRadius="full"
-                fontSize="sm"
-                fontWeight="medium"
-                transition="all 0.2s"
-                style={{
-                  backgroundColor: 'rgba(255,255,255,0.2)',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255,255,255,0.3)'
-                }}
-                _hover={{
-                  bg: "whiteAlpha.300",
-                  transform: "translateY(-2px)",
-                }}
-              >
-                {tag}
-              </Box>
-            ))}
-          </Flex>
+          {/*<Flex*/}
+          {/*  gap={3}*/}
+          {/*  justify="center"*/}
+          {/*  mt={6}*/}
+          {/*  flexWrap="wrap"*/}
+          {/*  px={4}*/}
+          {/*>*/}
+          {/*  {['Seoul', 'Busan', 'Jeju', 'K-Culture', 'K-Food'].map((tag) => (*/}
+          {/*    <Box*/}
+          {/*      key={tag}*/}
+          {/*      as="button"*/}
+          {/*      px={4}*/}
+          {/*      py={2}*/}
+          {/*      borderRadius="full"*/}
+          {/*      fontSize="sm"*/}
+          {/*      fontWeight="medium"*/}
+          {/*      transition="all 0.2s"*/}
+          {/*      style={{*/}
+          {/*        backgroundColor: 'rgba(255,255,255,0.2)',*/}
+          {/*        backdropFilter: 'blur(10px)',*/}
+          {/*        border: '1px solid rgba(255,255,255,0.3)'*/}
+          {/*      }}*/}
+          {/*      _hover={{*/}
+          {/*        bg: "whiteAlpha.300",*/}
+          {/*        transform: "translateY(-2px)",*/}
+          {/*      }}*/}
+          {/*    >*/}
+          {/*      {tag}*/}
+          {/*    </Box>*/}
+          {/*  ))}*/}
+          {/*</Flex>*/}
         </Box>
       </Container>
     </Box>

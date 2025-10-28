@@ -28,8 +28,6 @@ interface InfoCard {
 
 function HomePage() {
   const navigate = useNavigate();
-  const {weatherData} = useCusWeather();
-  console.log("weatherData", weatherData)
   
   const quickAccessItems: QuickAccessItem[] = [
     { icon: Bus, label: 'Transportation', color: 'blue.500', path: '/transportation' },

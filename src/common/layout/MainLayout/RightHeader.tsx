@@ -34,7 +34,7 @@ function RightHeader() {
     // 로그아웃 로직 추가
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    navigate('/login');
+    navigate('/home');
   };
   
   // 프로필 페이지로 이동
@@ -61,6 +61,10 @@ function RightHeader() {
   const handleSignup = () => {
     navigate('/signup');
   };
+  
+  const handleChat = () => {
+    navigate(`/chat`)
+  }
   
   return (
     <>
@@ -153,7 +157,7 @@ function RightHeader() {
                         <MenuItem value="blogs" onClick={handleMyBlogs}>
                           My Blogs
                         </MenuItem>
-                        <MenuItem value="create" onClick={handleCreate}>
+                        <MenuItem value="create" onClick={handleChat}>
                           Chat
                         </MenuItem>
                         <MenuSeparator />
