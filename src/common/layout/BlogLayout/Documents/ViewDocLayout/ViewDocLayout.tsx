@@ -60,7 +60,7 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
                 size="sm"
                 colorScheme="blue"
               >
-                수정
+                Edit
               </CusButton>
               <CusButton
                 variant="outline"
@@ -68,7 +68,7 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
                 size="sm"
                 colorScheme="red"
               >
-                삭제
+                Del
               </CusButton>
             </HStack>
           )}

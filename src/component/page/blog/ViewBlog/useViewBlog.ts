@@ -21,7 +21,6 @@ function useViewBlog(props : ViewBlogProps) {
     const getDocumentData = useCallback(async () => {
         try {
           if (id) {
-            console.log("여기 오나?")
             const res = await getDocument({params: {id: id}});
             if (res.status !== 200) {
               throw res.statusText;

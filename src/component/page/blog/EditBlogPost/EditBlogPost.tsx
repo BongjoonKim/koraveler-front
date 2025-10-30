@@ -80,6 +80,7 @@ function EditBlogPost(props: EditBlogPostProps) {
 export default EditBlogPost;
 
 const StyledEditBlogPost = styled.div`
-  height: 100%;
+  height: 0;
+  flex: 1;
   width: 100%;
 `;

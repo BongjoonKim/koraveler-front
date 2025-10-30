@@ -7,6 +7,7 @@ import {getLoginUser} from "../../../endpoints/login-endpoints";
 import {UsersDTO} from "../../../types/users/UsersDTO";
 import {REFESHTOKEN_EXPIRED} from "../../../constants/ErrorCode";
 import {useCurrentUser} from "../../../hooks/useCurrentUser";
+import {createDocument} from "../../../endpoints/blog-endpoints";
 
 
 function useRightHeader() {
@@ -33,8 +34,25 @@ function useRightHeader() {
     }
   }, [isSliderOpen]);
   
-  const handleCreate = useCallback(() => {
-    navigate("/blog/create")
+  const handleCreate = useCallback(async () => {
+    try {
+      const request: DocumentDTO = {
+        contents: "",
+        draft: true
+      }
+      
+      // 글 생성하기
+      const res = await authEP({
+        func: createDocument,
+        reqBody: request
+      })
+      navigate(`/blog/create/${res.data.id}`)
+    } catch (e) {
+      setErrorMsg({
+        status: "error",
+        msg: "글 생성에 실패했습니다.",
+      });
+    }
   }, []);
   
   const handleOpenModal = () => {

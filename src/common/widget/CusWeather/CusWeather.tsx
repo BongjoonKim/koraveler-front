@@ -23,6 +23,7 @@ import {
   ChevronUp,
   Wind
 } from "lucide-react";
+import useCusWeather from "./useCusWeather";
 
 // Weather data interface
 interface WeatherData {
@@ -43,31 +44,6 @@ interface WeatherData {
   };
   visibility?: number;
 }
-
-// Mock weather hook for demo
-const useCusWeather = () => {
-  // Mock data for demonstration
-  const weatherData: WeatherData = {
-    name: "Seoul",
-    main: {
-      temp: 295.15, // 22°C in Kelvin
-      feels_like: 294.15, // 21°C
-      temp_min: 293.15, // 20°C
-      temp_max: 297.15, // 24°C
-      humidity: 65
-    },
-    weather: [{
-      description: "partly cloudy",
-      icon: "02d"
-    }],
-    wind: {
-      speed: 3.5
-    },
-    visibility: 10000
-  };
-  
-  return { weatherData };
-};
 
 export interface CusWeatherProps {}
 

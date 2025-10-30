@@ -85,7 +85,6 @@ export default function useEditBlogPost(props : EditBlogPostProps) {
   }, [document, id]);
   
   useEffect(() => {
-    console.log("여기 오나")
     getDocumentData();
   }, [id])
   
