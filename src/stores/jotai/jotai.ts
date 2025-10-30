@@ -17,4 +17,4 @@ export const openBlogPostingModalAtom = atom<boolean>(false);
 
 
 // 검색
-export const searchInfoQueryAtom = atom<string | null>(null);
+export const searchInfoQueryAtom = atom<string | undefined>("");
