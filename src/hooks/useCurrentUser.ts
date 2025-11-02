@@ -57,20 +57,22 @@ export const useCurrentUser = (): UserSummary | null => {
   return userData ?? null;
 };
 
-// 로그인/로그아웃 시 명시적으로 호출할 수 있는 유틸리티 함수
-export const useCurrentUserActions = () => {
-  const queryClient = useQueryClient();
-  const { accessToken } = useAuth();
-  
-  const refreshCurrentUser = async () => {
-    if (accessToken) {
-      await queryClient.invalidateQueries({ queryKey: ['currentUser', accessToken] });
-    }
-  };
-  
-  const clearCurrentUser = () => {
-    queryClient.removeQueries({ queryKey: ['currentUser'] });
-  };
-  
-  return { refreshCurrentUser, clearCurrentUser };
-};
+// // 로그인/로그아웃 시 명시적으로 호출할 수 있는 유틸리티 함수
+// export const useCurrentUserActions = () => {
+//   const queryClient = useQueryClient();
+//   const { accessToken } = useAuth();
+//
+//   const refreshCurrentUser = async () => {
+//     if (accessToken) {
+//       await queryClient.invalidateQueries({ queryKey: ['currentUser', accessToken] });
+//     }
+//   };
+//
+//   const clearCurrentUser = () => {
+//     queryClient.removeQueries({
+//       queryKey: ['currentUser', accessToken]
+//     });
+//     }
+//
+//   return { refreshCurrentUser, clearCurrentUser };
+// };

@@ -37,6 +37,11 @@ import {useLikedTranslations, useTranslateQueries, useTranslationHistory} from "
 import LangHistory from "./subTabs/LangHistory";
 import QuickPhrase from "./subTabs/QuickPharse";
 import DoTranslation from "./subTabs/DoTranslation";
+import {useCurrentUser} from "../../../hooks/useCurrentUser";
+import NeedLogin from "../../../component/page/LoginPage/NeedLogin";
+import {useNavigate} from "react-router-dom";
+import {BLOG_LIST_SORTS, BlogListSortsOptionsType} from "../../../constants/constants";
+import styled from "styled-components";
 
 export interface LanguageHelpProps {}
 
@@ -61,8 +66,8 @@ function LanguageHelp(props: LanguageHelpProps) {
   const [copiedText, setCopiedText] = useState('');
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
-  
-
+  const currentUser = useCurrentUser();
+  const navigate = useNavigate();
   
   // mutation
   
@@ -121,105 +126,116 @@ function LanguageHelp(props: LanguageHelpProps) {
           
           {/* Tabs */}
           <Box onClick={(e: MouseEvent) => e.stopPropagation()}>
-            <Tabs.Root
-              value={selectedTab.toString()}
-              onValueChange={(e : { value: string }) => {
-                setSelectedTab(parseInt(e.value));
-              }}
-              onClick={() => {
-                setIsExpanded(true);
-              }}
-            >
-              <Tabs.List
-                bg="gray.50"
-                borderRadius="xl"
-                p={1}
-                css={{
-                  border: "1px solid #e5e7eb",
+            {!currentUser ? (
+              <>
+                {isExpanded ? (
+                  <NeedLogin
+                    feature="Route Finder"
+                    onLoginClick={() => navigate('/login')}
+                  />
+                ) : (<></>)}
+              </>
+            ) : (
+              <Tabs.Root
+                value={selectedTab.toString()}
+                onValueChange={(e : { value: string }) => {
+                  setSelectedTab(parseInt(e.value));
+                }}
+                onClick={() => {
+                  setIsExpanded(true);
                 }}
               >
-                <Tabs.Trigger
-                  value="0"
+                <Tabs.List
+                  bg="gray.50"
+                  borderRadius="xl"
+                  p={1}
                   css={{
-                    color: "#6b7280",
-                    borderRadius: "lg",
-                    fontWeight: "500",
-                    transition: "all 0.2s",
-                    "&[data-selected]": {
-                      background: "white",
-                      color: "#6366f1",
-                      fontWeight: "600",
-                      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)"
-                    },
-                    "&:hover:not([data-selected])": {
-                      background: "#f9fafb"
-                    }
+                    border: "1px solid #e5e7eb",
                   }}
                 >
-                  Translate
-                </Tabs.Trigger>
-                <Tabs.Trigger
-                  value="1"
-                  css={{
-                    color: "#6b7280",
-                    borderRadius: "lg",
-                    fontWeight: "500",
-                    transition: "all 0.2s",
-                    "&[data-selected]": {
-                      background: "white",
-                      color: "#6366f1",
-                      fontWeight: "600",
-                      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)"
-                    },
-                    "&:hover:not([data-selected])": {
-                      background: "#f9fafb"
-                    }
-                  }}
-                >
-                  Quick Phrases
-                </Tabs.Trigger>
-                <Tabs.Trigger
-                  value="2"
-                  css={{
-                    color: "#6b7280",
-                    borderRadius: "lg",
-                    fontWeight: "500",
-                    transition: "all 0.2s",
-                    "&[data-selected]": {
-                      background: "white",
-                      color: "#6366f1",
-                      fontWeight: "600",
-                      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)"
-                    },
-                    "&:hover:not([data-selected])": {
-                      background: "#f9fafb"
-                    }
-                  }}
-                >
-                  History
-                </Tabs.Trigger>
-              </Tabs.List>
-              
-              {isExpanded && (
-                <>
-                  <Tabs.Content value="0">
-                    <DoTranslation />
-                  </Tabs.Content>
-                  <Tabs.Content value="1">
-                    <QuickPhrase
-                      selectedTabNumber={selectedTab}
-                      onPhraseClick={(item) => {
-                        // 클릭한 항목으로 번역 필드 채우기 등의 동작
-                        // console.log('Selected phrase:', item);
-                      }}
-                    />
-                  </Tabs.Content>
-                  <Tabs.Content value="2">
-                    <LangHistory selectedTabNumber={selectedTab}/>
-                  </Tabs.Content>
-                </>
-              )}
-            </Tabs.Root>
+                  <Tabs.Trigger
+                    value="0"
+                    css={{
+                      color: "#6b7280",
+                      borderRadius: "lg",
+                      fontWeight: "500",
+                      transition: "all 0.2s",
+                      "&[data-selected]": {
+                        background: "white",
+                        color: "#6366f1",
+                        fontWeight: "600",
+                        boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)"
+                      },
+                      "&:hover:not([data-selected])": {
+                        background: "#f9fafb"
+                      }
+                    }}
+                  >
+                    Translate
+                  </Tabs.Trigger>
+                  <Tabs.Trigger
+                    value="1"
+                    css={{
+                      color: "#6b7280",
+                      borderRadius: "lg",
+                      fontWeight: "500",
+                      transition: "all 0.2s",
+                      "&[data-selected]": {
+                        background: "white",
+                        color: "#6366f1",
+                        fontWeight: "600",
+                        boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)"
+                      },
+                      "&:hover:not([data-selected])": {
+                        background: "#f9fafb"
+                      }
+                    }}
+                  >
+                    Quick Phrases
+                  </Tabs.Trigger>
+                  <Tabs.Trigger
+                    value="2"
+                    css={{
+                      color: "#6b7280",
+                      borderRadius: "lg",
+                      fontWeight: "500",
+                      transition: "all 0.2s",
+                      "&[data-selected]": {
+                        background: "white",
+                        color: "#6366f1",
+                        fontWeight: "600",
+                        boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)"
+                      },
+                      "&:hover:not([data-selected])": {
+                        background: "#f9fafb"
+                      }
+                    }}
+                  >
+                    History
+                  </Tabs.Trigger>
+                </Tabs.List>
+                
+                {isExpanded && (
+                  <>
+                    <Tabs.Content value="0">
+                      <DoTranslation />
+                    </Tabs.Content>
+                    <Tabs.Content value="1">
+                      <QuickPhrase
+                        selectedTabNumber={selectedTab}
+                        onPhraseClick={(item) => {
+                          // 클릭한 항목으로 번역 필드 채우기 등의 동작
+                          // console.log('Selected phrase:', item);
+                        }}
+                      />
+                    </Tabs.Content>
+                    <Tabs.Content value="2">
+                      <LangHistory selectedTabNumber={selectedTab}/>
+                    </Tabs.Content>
+                  </>
+                )}
+              </Tabs.Root>
+            )}
           </Box>
         </VStack>
       </Card.Body>
@@ -228,3 +244,4 @@ function LanguageHelp(props: LanguageHelpProps) {
 }
 
 export default LanguageHelp;
+

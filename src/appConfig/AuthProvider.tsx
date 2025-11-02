@@ -1,12 +1,16 @@
 // src/appConfig/AuthProvider.tsx
 
 import { createContext, ReactNode, useContext, useEffect, useState, useRef } from "react";
+import {useQueryClient} from "@tanstack/react-query";
 
 interface AuthContextType {
   accessToken: string | null | undefined;
   setAccessToken: (token: string | null | undefined) => void;
   clearAuth: () => void;
   refreshTokenIfNeeded: () => Promise<string | null>;
+  // 사용자 쿼리 관련 액션 추가
+  clearCurrentUserQuery: () => void;
+  refreshCurrentUserQuery: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -59,6 +63,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null | undefined>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const refreshingPromise = useRef<Promise<string | null> | null>(null);
+  const queryClient = useQueryClient();
   
   // 토큰 갱신 함수 (중복 호출 방지)
   const refreshTokenIfNeeded = async (): Promise<string | null> => {
@@ -107,6 +112,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return refreshingPromise.current;
   };
   
+  // 사용자 쿼리 초기화
+  const clearCurrentUserQuery = () => {
+    queryClient.setQueryData(["currentUser", accessToken], null);
+    
+    // 진행 중인 쿼리 취소
+    queryClient.cancelQueries({
+      queryKey: ["currentUser", accessToken]
+    });
+    // 모든 currentUser 쿼리 제거
+    queryClient.removeQueries({
+      queryKey: ['currentUser'],
+      exact: false
+    });
+  }
+  
+  const refreshCurrentUserQuery = async () => {
+    if (accessToken) {
+      await queryClient.invalidateQueries({
+        queryKey: ["currentUser", accessToken]
+      })
+    }
+  }
+  
+  // 로그아웃 함수
+  
+  
   // 초기 인증 체크 (마운트 시 한 번만)
   useEffect(() => {
     const initializeAuth = async () => {
@@ -125,9 +156,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [isInitialized]);
   
-  // 로그아웃
+  // 통합된 로그아웃 함수
   const clearAuth = () => {
     console.log('[Auth] Clearing authentication');
+    
+    // 1. 쿼리 먼저 정리
+    clearCurrentUserQuery();
+    
+    // 2. 토큰 제거
     setAccessToken(null);
     refreshTokenStorage.clear();
   };
@@ -142,7 +178,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       accessToken,
       setAccessToken,
       clearAuth,
-      refreshTokenIfNeeded
+      refreshTokenIfNeeded,
+      clearCurrentUserQuery,
+      refreshCurrentUserQuery
     }}>
       {children}
     </AuthContext.Provider>

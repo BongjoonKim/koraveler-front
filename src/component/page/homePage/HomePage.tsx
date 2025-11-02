@@ -31,11 +31,11 @@ function HomePage() {
   
   const quickAccessItems: QuickAccessItem[] = [
     { icon: Bus, label: 'Transportation', color: 'blue.500', path: '/transportation' },
-    { icon: Hotel, label: 'Accommodation', color: 'green.500', path: '/accommodation' },
+    // { icon: Hotel, label: 'Accommodation', color: 'green.500', path: '/accommodation' },
     { icon: Utensils, label: 'Food & Dining', color: 'orange.500', path: '/food' },
     { icon: Camera, label: 'Tourist Spots', color: 'purple.500', path: '/tourist-spots' },
-    { icon: Lightbulb, label: 'Travel Tips', color: 'yellow.500', path: '/tips' },
-    { icon: MessageCircle, label: 'Community Chat', color: 'pink.500', path: '/chat' },
+    // { icon: Lightbulb, label: 'Travel Tips', color: 'yellow.500', path: '/tips' },
+    // { icon: MessageCircle, label: 'Community Chat', color: 'pink.500', path: '/chat' },
   ];
   return (
     <>
@@ -86,7 +86,7 @@ function HomePage() {
       </Container>
       
       {/* Quick Access Grid */}
-      <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }} mt={12}>
+      <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }} mt={12} py={3}>
         <Text textStyle="2xl" fontWeight="bold" mb={6}>Quick Access</Text>
         <Grid columns={{ base: 2, md: 3, lg: 6 }} gap={4}>
           {quickAccessItems.map((item, index) => (

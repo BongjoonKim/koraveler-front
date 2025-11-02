@@ -37,6 +37,9 @@ import MapInfo from "../maps/MapInfo";
 import UnifiedMapSearch from "../maps/MapSearch/UnifiedMapSearch";
 import { MapController, MapProvider } from "../../../types/maps/mapTypes";
 import { UnifiedSearchResult } from "../maps/MapSearch/UnifiedMapSearch";
+import {useCurrentUser} from "../../../hooks/useCurrentUser";
+import NeedLogin from "../../../component/page/LoginPage/NeedLogin";
+import {useNavigate} from "react-router-dom";
 
 export interface FindRouteProps {
   mapProvider?: MapProvider;
@@ -64,11 +67,12 @@ function FindRoute(props: FindRouteProps) {
   const [toPlace, setToPlace] = useState<UnifiedSearchResult | null>(null);
   const [routeType, setRouteType] = useState<'car' | 'transit' | 'walk'>('transit');
   const [isSearching, setIsSearching] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(0);
+  const [selectedTab, setSelectedTab] = useState(2);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [searchMode, setSearchMode] = useState<'from' | 'to' | null>(null);
-  
+  const currentUser = useCurrentUser();
+  const navigate = useNavigate();
   const [savedRoutes] = useState<SavedRoute[]>([
     {
       id: '1',
@@ -374,295 +378,306 @@ function FindRoute(props: FindRouteProps) {
               {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
             </Box>
           </HStack>
-          
-          <Box onClick={(e : MouseEvent) => e.stopPropagation()}>
-            <Tabs.Root
-              value={selectedTab.toString()}
-              onValueChange={(e : { value: string }) => setSelectedTab(parseInt(e.value))}
-              onClick={() => setIsExpanded(true)}
-            >
-              <Tabs.List
-                bg="gray.50"
-                borderRadius="xl"
-                p={1}
-                css={{
-                  border: "1px solid #e5e7eb",
-                }}
-              >
-                {/*<Tabs.Trigger value="0">경로 검색</Tabs.Trigger>*/}
-                {/*<Tabs.Trigger value="1">저장된 경로</Tabs.Trigger>*/}
-                <Tabs.Trigger value="2">Korean Map</Tabs.Trigger>
-              </Tabs.List>
-              
-              {isExpanded && (
+            <Box onClick={(e : MouseEvent) => e.stopPropagation()}>
+              {!currentUser ? (
                 <>
-                  <Tabs.Content value="0">
-                    <VStack gap={3} mt={3}>
-                      {/* 이동 수단 선택 */}
-                      <HStack w="full" justify="center" gap={2}>
-                        <CusButton
-                          size="sm"
-                          leftIcon={<Train size={16} />}
-                          variant={routeType === 'transit' ? 'solid' : 'outline'}
-                          bg={routeType === 'transit' ? 'whiteAlpha.400' : 'transparent'}
-                          borderColor="whiteAlpha.400"
-                          color="black"
-                          onClick={() => setRouteType('transit')}
-                          _hover={{ bg: "whiteAlpha.300" }}
-                        >
-                          대중교통
-                        </CusButton>
-                        <CusButton
-                          size="sm"
-                          leftIcon={<Car size={16} />}
-                          variant={routeType === 'car' ? 'solid' : 'outline'}
-                          bg={routeType === 'car' ? 'whiteAlpha.400' : 'transparent'}
-                          borderColor="whiteAlpha.400"
-                          color="black"
-                          onClick={() => setRouteType('car')}
-                          _hover={{ bg: "whiteAlpha.300" }}
-                        >
-                          자동차
-                        </CusButton>
-                        <CusButton
-                          size="sm"
-                          leftIcon={<Footprints size={16} />}
-                          variant={routeType === 'walk' ? 'solid' : 'outline'}
-                          bg={routeType === 'walk' ? 'whiteAlpha.400' : 'transparent'}
-                          borderColor="whiteAlpha.400"
-                          color="black"
-                          onClick={() => setRouteType('walk')}
-                          _hover={{ bg: "whiteAlpha.300" }}
-                        >
-                          도보
-                        </CusButton>
-                      </HStack>
-                      
-                      {/* 위치 입력 */}
-                      <VStack w="full" gap={2} position="relative">
-                        <HStack w="full" gap={2}>
-                          <Box flex={1} position="relative">
-                            <Input
-                              value={fromLocation}
-                              onChange={(e) => setFromLocation(e.target.value)}
-                              placeholder="출발지"
-                              pl={10}
-                              bg="whiteAlpha.200"
+                  {isExpanded ? (
+                    <NeedLogin
+                      feature="Route Finder"
+                      onLoginClick={() => navigate('/login')}
+                    />
+                  ) : (<></>)}
+                </>
+                ) : (
+                <Tabs.Root
+                  value={selectedTab.toString()}
+                  onValueChange={(e : { value: string }) => setSelectedTab(parseInt(e.value))}
+                  onClick={() => setIsExpanded(true)}
+                >
+                  <Tabs.List
+                    bg="gray.50"
+                    borderRadius="xl"
+                    p={1}
+                    css={{
+                      border: "1px solid #e5e7eb",
+                    }}
+                  >
+                    {/*<Tabs.Trigger value="0">경로 검색</Tabs.Trigger>*/}
+                    {/*<Tabs.Trigger value="1">저장된 경로</Tabs.Trigger>*/}
+                    <Tabs.Trigger value="2">Korean Map</Tabs.Trigger>
+                  </Tabs.List>
+                  
+                  {isExpanded && (
+                    <>
+                      <Tabs.Content value="0">
+                        <VStack gap={3} mt={3}>
+                          {/* 이동 수단 선택 */}
+                          <HStack w="full" justify="center" gap={2}>
+                            <CusButton
+                              size="sm"
+                              leftIcon={<Train size={16} />}
+                              variant={routeType === 'transit' ? 'solid' : 'outline'}
+                              bg={routeType === 'transit' ? 'whiteAlpha.400' : 'transparent'}
                               borderColor="whiteAlpha.400"
                               color="black"
-                              readOnly
-                              cursor="pointer"
-                              onClick={() => {
-                                setSearchMode('from');
-                                setSelectedTab(3);
-                              }}
-                              _placeholder={{ color: "whiteAlpha.600" }}
-                              _hover={{ borderColor: "whiteAlpha.600" }}
-                              _focus={{ borderColor: "white", bg: "whiteAlpha.300" }}
+                              onClick={() => setRouteType('transit')}
+                              _hover={{ bg: "whiteAlpha.300" }}
+                            >
+                              대중교통
+                            </CusButton>
+                            <CusButton
+                              size="sm"
+                              leftIcon={<Car size={16} />}
+                              variant={routeType === 'car' ? 'solid' : 'outline'}
+                              bg={routeType === 'car' ? 'whiteAlpha.400' : 'transparent'}
+                              borderColor="whiteAlpha.400"
+                              color="black"
+                              onClick={() => setRouteType('car')}
+                              _hover={{ bg: "whiteAlpha.300" }}
+                            >
+                              자동차
+                            </CusButton>
+                            <CusButton
+                              size="sm"
+                              leftIcon={<Footprints size={16} />}
+                              variant={routeType === 'walk' ? 'solid' : 'outline'}
+                              bg={routeType === 'walk' ? 'whiteAlpha.400' : 'transparent'}
+                              borderColor="whiteAlpha.400"
+                              color="black"
+                              onClick={() => setRouteType('walk')}
+                              _hover={{ bg: "whiteAlpha.300" }}
+                            >
+                              도보
+                            </CusButton>
+                          </HStack>
+                          
+                          {/* 위치 입력 */}
+                          <VStack w="full" gap={2} position="relative">
+                            <HStack w="full" gap={2}>
+                              <Box flex={1} position="relative">
+                                <Input
+                                  value={fromLocation}
+                                  onChange={(e) => setFromLocation(e.target.value)}
+                                  placeholder="출발지"
+                                  pl={10}
+                                  bg="whiteAlpha.200"
+                                  borderColor="whiteAlpha.400"
+                                  color="black"
+                                  readOnly
+                                  cursor="pointer"
+                                  onClick={() => {
+                                    setSearchMode('from');
+                                    setSelectedTab(3);
+                                  }}
+                                  _placeholder={{ color: "whiteAlpha.600" }}
+                                  _hover={{ borderColor: "whiteAlpha.600" }}
+                                  _focus={{ borderColor: "white", bg: "whiteAlpha.300" }}
+                                />
+                                <Box position="absolute" left={3} top="50%" transform="translateY(-50%)">
+                                  <MapPin size={18} />
+                                </Box>
+                              </Box>
+                              <CusIconButton
+                                aria-label="현재 위치"
+                                icon={<Navigation size={16} />}
+                                size="sm"
+                                variant="ghost"
+                                color="black"
+                                onClick={getCurrentLocation}
+                                _hover={{ bg: "whiteAlpha.300" }}
+                              />
+                            </HStack>
+                            
+                            <CusIconButton
+                              aria-label="위치 바꾸기"
+                              icon={<RotateCcw size={16} />}
+                              size="xs"
+                              variant="ghost"
+                              color="black"
+                              position="absolute"
+                              right={12}
+                              top="50%"
+                              transform="translateY(-50%)"
+                              onClick={swapLocations}
+                              _hover={{ bg: "whiteAlpha.300" }}
+                              zIndex={2}
                             />
-                            <Box position="absolute" left={3} top="50%" transform="translateY(-50%)">
-                              <MapPin size={18} />
+                            
+                            <Box w="full" position="relative">
+                              <Input
+                                value={toLocation}
+                                onChange={(e) => setToLocation(e.target.value)}
+                                placeholder="도착지"
+                                pl={10}
+                                bg="whiteAlpha.200"
+                                borderColor="whiteAlpha.400"
+                                color="black"
+                                readOnly
+                                cursor="pointer"
+                                onClick={() => {
+                                  setSearchMode('to');
+                                  setSelectedTab(3);
+                                }}
+                                _placeholder={{ color: "whiteAlpha.600" }}
+                                _hover={{ borderColor: "whiteAlpha.600" }}
+                                _focus={{ borderColor: "white", bg: "whiteAlpha.300" }}
+                              />
+                              <Box position="absolute" left={3} top="50%" transform="translateY(-50%)">
+                                <Route size={18} />
+                              </Box>
                             </Box>
-                          </Box>
-                          <CusIconButton
-                            aria-label="현재 위치"
-                            icon={<Navigation size={16} />}
-                            size="sm"
-                            variant="ghost"
+                          </VStack>
+                          
+                          {/* 검색 버튼 */}
+                          <CusButton
+                            w="full"
+                            leftIcon={<Search size={18} />}
+                            onClick={handleSearch}
+                            isLoading={isSearching}
+                            loadingText="경로 검색 중..."
+                            bg="whiteAlpha.300"
                             color="black"
-                            onClick={getCurrentLocation}
-                            _hover={{ bg: "whiteAlpha.300" }}
-                          />
-                        </HStack>
-                        
-                        <CusIconButton
-                          aria-label="위치 바꾸기"
-                          icon={<RotateCcw size={16} />}
-                          size="xs"
-                          variant="ghost"
-                          color="black"
-                          position="absolute"
-                          right={12}
-                          top="50%"
-                          transform="translateY(-50%)"
-                          onClick={swapLocations}
-                          _hover={{ bg: "whiteAlpha.300" }}
-                          zIndex={2}
-                        />
-                        
-                        <Box w="full" position="relative">
-                          <Input
-                            value={toLocation}
-                            onChange={(e) => setToLocation(e.target.value)}
-                            placeholder="도착지"
-                            pl={10}
+                            _hover={{ bg: "whiteAlpha.400" }}
+                          >
+                            경로 찾기
+                          </CusButton>
+                        </VStack>
+                      </Tabs.Content>
+                      
+                      {/*<Tabs.Content value="1">*/}
+                      {/*  <VStack gap={2} mt={3} maxH="300px" overflowY="auto">*/}
+                      {/*    {savedRoutes.map((route) => (*/}
+                      {/*      <Box*/}
+                      {/*        key={route.id}*/}
+                      {/*        w="full"*/}
+                      {/*        p={3}*/}
+                      {/*        bg="whiteAlpha.200"*/}
+                      {/*        borderRadius="lg"*/}
+                      {/*        borderWidth="1px"*/}
+                      {/*        borderColor="whiteAlpha.300"*/}
+                      {/*        _hover={{ bg: "whiteAlpha.300" }}*/}
+                      {/*        cursor="pointer"*/}
+                      {/*        onClick={() => {*/}
+                      {/*          setFromLocation(route.from);*/}
+                      {/*          setToLocation(route.to);*/}
+                      {/*          setRouteType(route.type);*/}
+                      {/*          setSelectedTab(0);*/}
+                      {/*        }}*/}
+                      {/*      >*/}
+                      {/*        <HStack justify="space-between">*/}
+                      {/*          <VStack align="start" gap={1} flex={1}>*/}
+                      {/*            <HStack>*/}
+                      {/*              {getRouteIcon(route.type)}*/}
+                      {/*              <Text fontWeight="semibold" fontSize="sm">*/}
+                      {/*                {route.from}*/}
+                      {/*              </Text>*/}
+                      {/*            </HStack>*/}
+                      {/*            <HStack fontSize="xs" opacity={0.9}>*/}
+                      {/*              <ChevronRight size={12} />*/}
+                      {/*              <Text>{route.to}</Text>*/}
+                      {/*            </HStack>*/}
+                      {/*            <HStack fontSize="xs" gap={3}>*/}
+                      {/*              <HStack gap={1}>*/}
+                      {/*                <Clock size={12} />*/}
+                      {/*                <Text>{route.duration}</Text>*/}
+                      {/*              </HStack>*/}
+                      {/*              <Text>•</Text>*/}
+                      {/*              <Text>{route.distance}</Text>*/}
+                      {/*            </HStack>*/}
+                      {/*          </VStack>*/}
+                      {/*          <CusIconButton*/}
+                      {/*            aria-label="즐겨찾기"*/}
+                      {/*            icon={<Star size={16} fill={route.favorite ? 'white' : 'none'} />}*/}
+                      {/*            size="sm"*/}
+                      {/*            variant="ghost"*/}
+                      {/*            color="black"*/}
+                      {/*            onClick={(e) => {*/}
+                      {/*              e.stopPropagation();*/}
+                      {/*              toggleFavorite(route.id);*/}
+                      {/*            }}*/}
+                      {/*            _hover={{ bg: "whiteAlpha.400" }}*/}
+                      {/*          />*/}
+                      {/*        </HStack>*/}
+                      {/*      </Box>*/}
+                      {/*    ))}*/}
+                      {/*  </VStack>*/}
+                      {/*</Tabs.Content>*/}
+                      
+                      <Tabs.Content value="2">
+                        <Box mt={3}>
+                          <Box
+                            w="full"
+                            minH="250px"
+                            aspectRatio={2}
+                            borderRadius="lg"
+                            overflow="hidden"
                             bg="whiteAlpha.200"
-                            borderColor="whiteAlpha.400"
-                            color="black"
-                            readOnly
-                            cursor="pointer"
-                            onClick={() => {
-                              setSearchMode('to');
-                              setSelectedTab(3);
-                            }}
-                            _placeholder={{ color: "whiteAlpha.600" }}
-                            _hover={{ borderColor: "whiteAlpha.600" }}
-                            _focus={{ borderColor: "white", bg: "whiteAlpha.300" }}
-                          />
-                          <Box position="absolute" left={3} top="50%" transform="translateY(-50%)">
-                            <Route size={18} />
+                            position="relative"
+                          >
+                            <MapInfo
+                              provider={mapProvider}
+                              center={mapCenter}
+                              zoom={mapZoom}
+                              width="100%"
+                              height="100%"
+                              onMapLoad={(controller) => {
+                                console.log('Map loaded with controller:', controller);
+                                setMapController(controller);
+                              }}
+                            />
                           </Box>
+                          
+                          {/*<HStack mt={3} gap={2}>*/}
+                          {/*  <CusButton*/}
+                          {/*    size="sm"*/}
+                          {/*    leftIcon={<Navigation size={14} />}*/}
+                          {/*    flex={1}*/}
+                          {/*    bg="whiteAlpha.300"*/}
+                          {/*    color="black"*/}
+                          {/*    onClick={getCurrentLocation}*/}
+                          {/*    _hover={{ bg: "whiteAlpha.400" }}*/}
+                          {/*  >*/}
+                          {/*    내 위치*/}
+                          {/*  </CusButton>*/}
+                          {/*  <CusButton*/}
+                          {/*    size="sm"*/}
+                          {/*    leftIcon={<MapPin size={14} />}*/}
+                          {/*    flex={1}*/}
+                          {/*    bg="whiteAlpha.300"*/}
+                          {/*    color="black"*/}
+                          {/*    onClick={handleSearch}*/}
+                          {/*    _hover={{ bg: "whiteAlpha.400" }}*/}
+                          {/*  >*/}
+                          {/*    경로 보기*/}
+                          {/*  </CusButton>*/}
+                          {/*</HStack>*/}
                         </Box>
-                      </VStack>
+                      </Tabs.Content>
                       
-                      {/* 검색 버튼 */}
-                      <CusButton
-                        w="full"
-                        leftIcon={<Search size={18} />}
-                        onClick={handleSearch}
-                        isLoading={isSearching}
-                        loadingText="경로 검색 중..."
-                        bg="whiteAlpha.300"
-                        color="black"
-                        _hover={{ bg: "whiteAlpha.400" }}
-                      >
-                        경로 찾기
-                      </CusButton>
-                    </VStack>
-                  </Tabs.Content>
-                  
-                  {/*<Tabs.Content value="1">*/}
-                  {/*  <VStack gap={2} mt={3} maxH="300px" overflowY="auto">*/}
-                  {/*    {savedRoutes.map((route) => (*/}
-                  {/*      <Box*/}
-                  {/*        key={route.id}*/}
-                  {/*        w="full"*/}
-                  {/*        p={3}*/}
-                  {/*        bg="whiteAlpha.200"*/}
-                  {/*        borderRadius="lg"*/}
-                  {/*        borderWidth="1px"*/}
-                  {/*        borderColor="whiteAlpha.300"*/}
-                  {/*        _hover={{ bg: "whiteAlpha.300" }}*/}
-                  {/*        cursor="pointer"*/}
-                  {/*        onClick={() => {*/}
-                  {/*          setFromLocation(route.from);*/}
-                  {/*          setToLocation(route.to);*/}
-                  {/*          setRouteType(route.type);*/}
-                  {/*          setSelectedTab(0);*/}
-                  {/*        }}*/}
-                  {/*      >*/}
-                  {/*        <HStack justify="space-between">*/}
-                  {/*          <VStack align="start" gap={1} flex={1}>*/}
-                  {/*            <HStack>*/}
-                  {/*              {getRouteIcon(route.type)}*/}
-                  {/*              <Text fontWeight="semibold" fontSize="sm">*/}
-                  {/*                {route.from}*/}
-                  {/*              </Text>*/}
-                  {/*            </HStack>*/}
-                  {/*            <HStack fontSize="xs" opacity={0.9}>*/}
-                  {/*              <ChevronRight size={12} />*/}
-                  {/*              <Text>{route.to}</Text>*/}
-                  {/*            </HStack>*/}
-                  {/*            <HStack fontSize="xs" gap={3}>*/}
-                  {/*              <HStack gap={1}>*/}
-                  {/*                <Clock size={12} />*/}
-                  {/*                <Text>{route.duration}</Text>*/}
-                  {/*              </HStack>*/}
-                  {/*              <Text>•</Text>*/}
-                  {/*              <Text>{route.distance}</Text>*/}
-                  {/*            </HStack>*/}
-                  {/*          </VStack>*/}
-                  {/*          <CusIconButton*/}
-                  {/*            aria-label="즐겨찾기"*/}
-                  {/*            icon={<Star size={16} fill={route.favorite ? 'white' : 'none'} />}*/}
-                  {/*            size="sm"*/}
-                  {/*            variant="ghost"*/}
-                  {/*            color="black"*/}
-                  {/*            onClick={(e) => {*/}
-                  {/*              e.stopPropagation();*/}
-                  {/*              toggleFavorite(route.id);*/}
-                  {/*            }}*/}
-                  {/*            _hover={{ bg: "whiteAlpha.400" }}*/}
-                  {/*          />*/}
-                  {/*        </HStack>*/}
-                  {/*      </Box>*/}
-                  {/*    ))}*/}
-                  {/*  </VStack>*/}
-                  {/*</Tabs.Content>*/}
-                  
-                  <Tabs.Content value="2">
-                    <Box mt={3}>
-                      <Box
-                        w="full"
-                        minH="250px"
-                        aspectRatio={2}
-                        borderRadius="lg"
-                        overflow="hidden"
-                        bg="whiteAlpha.200"
-                        position="relative"
-                      >
-                        <MapInfo
-                          provider={mapProvider}
-                          center={mapCenter}
-                          zoom={mapZoom}
-                          width="100%"
-                          height="100%"
-                          onMapLoad={(controller) => {
-                            console.log('Map loaded with controller:', controller);
-                            setMapController(controller);
-                          }}
-                        />
-                      </Box>
-                      
-                      {/*<HStack mt={3} gap={2}>*/}
-                      {/*  <CusButton*/}
-                      {/*    size="sm"*/}
-                      {/*    leftIcon={<Navigation size={14} />}*/}
-                      {/*    flex={1}*/}
-                      {/*    bg="whiteAlpha.300"*/}
-                      {/*    color="black"*/}
-                      {/*    onClick={getCurrentLocation}*/}
-                      {/*    _hover={{ bg: "whiteAlpha.400" }}*/}
-                      {/*  >*/}
-                      {/*    내 위치*/}
-                      {/*  </CusButton>*/}
-                      {/*  <CusButton*/}
-                      {/*    size="sm"*/}
-                      {/*    leftIcon={<MapPin size={14} />}*/}
-                      {/*    flex={1}*/}
-                      {/*    bg="whiteAlpha.300"*/}
-                      {/*    color="black"*/}
-                      {/*    onClick={handleSearch}*/}
-                      {/*    _hover={{ bg: "whiteAlpha.400" }}*/}
-                      {/*  >*/}
-                      {/*    경로 보기*/}
-                      {/*  </CusButton>*/}
-                      {/*</HStack>*/}
-                    </Box>
-                  </Tabs.Content>
-                  
-                  {/*<Tabs.Content value="3">*/}
-                  {/*  <Box mt={3}>*/}
-                  {/*    {searchMode && (*/}
-                  {/*      <Box mb={2} p={2} bg="whiteAlpha.200" borderRadius="md">*/}
-                  {/*        <Text fontSize="sm" color="black">*/}
-                  {/*          {searchMode === 'from' ? '출발지' : '도착지'}를 선택해주세요*/}
-                  {/*        </Text>*/}
-                  {/*      </Box>*/}
-                  {/*    )}*/}
-                  {/*    */}
-                  {/*    <UnifiedMapSearch*/}
-                  {/*      mapController={mapController}*/}
-                  {/*      mapProvider={mapProvider}*/}
-                  {/*      onPlaceSelect={handlePlaceSelect}*/}
-                  {/*      height="350px"*/}
-                  {/*    />*/}
-                  {/*  </Box>*/}
-                  {/*</Tabs.Content>*/}
-                </>
+                      {/*<Tabs.Content value="3">*/}
+                      {/*  <Box mt={3}>*/}
+                      {/*    {searchMode && (*/}
+                      {/*      <Box mb={2} p={2} bg="whiteAlpha.200" borderRadius="md">*/}
+                      {/*        <Text fontSize="sm" color="black">*/}
+                      {/*          {searchMode === 'from' ? '출발지' : '도착지'}를 선택해주세요*/}
+                      {/*        </Text>*/}
+                      {/*      </Box>*/}
+                      {/*    )}*/}
+                      {/*    */}
+                      {/*    <UnifiedMapSearch*/}
+                      {/*      mapController={mapController}*/}
+                      {/*      mapProvider={mapProvider}*/}
+                      {/*      onPlaceSelect={handlePlaceSelect}*/}
+                      {/*      height="350px"*/}
+                      {/*    />*/}
+                      {/*  </Box>*/}
+                      {/*</Tabs.Content>*/}
+                    </>
+                  )}
+                </Tabs.Root>
               )}
-            </Tabs.Root>
-          </Box>
+              
+            </Box>
         </VStack>
       </Card.Body>
     </Card.Root>

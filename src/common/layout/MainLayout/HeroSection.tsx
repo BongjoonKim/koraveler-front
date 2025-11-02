@@ -55,20 +55,6 @@ function HeroSection() {
         }}
       />
       
-      {/* 태극 문양 스타일 장식 요소 */}
-      <Box
-        position="absolute"
-        top="-100px"
-        right="-100px"
-        width="300px"
-        height="300px"
-        borderRadius="full"
-        opacity={0.2}
-        style={{
-          background: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 70%)'
-        }}
-      />
-      
       <Box
         position="absolute"
         bottom="-150px"
@@ -214,38 +200,6 @@ function HeroSection() {
               </Box>
             ))}
           </Flex>
-          {/* 한국 관련 태그들 */}
-          {/*<Flex*/}
-          {/*  gap={3}*/}
-          {/*  justify="center"*/}
-          {/*  mt={6}*/}
-          {/*  flexWrap="wrap"*/}
-          {/*  px={4}*/}
-          {/*>*/}
-          {/*  {['Seoul', 'Busan', 'Jeju', 'K-Culture', 'K-Food'].map((tag) => (*/}
-          {/*    <Box*/}
-          {/*      key={tag}*/}
-          {/*      as="button"*/}
-          {/*      px={4}*/}
-          {/*      py={2}*/}
-          {/*      borderRadius="full"*/}
-          {/*      fontSize="sm"*/}
-          {/*      fontWeight="medium"*/}
-          {/*      transition="all 0.2s"*/}
-          {/*      style={{*/}
-          {/*        backgroundColor: 'rgba(255,255,255,0.2)',*/}
-          {/*        backdropFilter: 'blur(10px)',*/}
-          {/*        border: '1px solid rgba(255,255,255,0.3)'*/}
-          {/*      }}*/}
-          {/*      _hover={{*/}
-          {/*        bg: "whiteAlpha.300",*/}
-          {/*        transform: "translateY(-2px)",*/}
-          {/*      }}*/}
-          {/*    >*/}
-          {/*      {tag}*/}
-          {/*    </Box>*/}
-          {/*  ))}*/}
-          {/*</Flex>*/}
         </Box>
       </Container>
     </Box>

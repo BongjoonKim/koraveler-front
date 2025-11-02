@@ -1,65 +1,117 @@
-import styled from "styled-components";
+import React from "react";
+import { Box, Text, Select, Stack, Badge } from "@chakra-ui/react";
+import { BookOpen, TrendingUp, Clock, Star } from "lucide-react";
 import useBlogTitle from "./useBlogTitle";
 import {BLOG_LIST_SORTS, BlogListSortsOptionsType} from "../../../../../constants/constants";
+import styled from "styled-components";
 
-export interface BlogTitleProps {
-
-};
-
-function BlogTitle(props: BlogTitleProps) {
-  const {
-    curPageTitle,
-    sortOptions,
-    changeSort,
-    selectedOption
-  } = useBlogTitle(props);
+function BlogTitle({ ...props }) {
+  const { curPageTitle, sortOptions, changeSort, selectedOption } = useBlogTitle();
   
   return (
-    <StyledBlogTitle>
-      <div className="left">
-        <span className="title">
-          {curPageTitle}
-        </span>
-      </div>
-      <div className="right">
-        <StyledSelect
-          value={selectedOption || BLOG_LIST_SORTS.LATEST}
-          onChange={(e) => changeSort(e.target.value)}
+    <Box mb={12}>
+      {/* 그라데이션 헤더 - HomePage 스타일 일관성 */}
+      <Box
+        position="relative"
+        borderRadius="2xl"
+        overflow="hidden"
+        p={8}
+        mb={8}
+        style={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)'
+        }}
+      >
+        <Stack direction="row" align="center" justify="space-between">
+          <Stack direction="row" align="center" gap={3}>
+            <Box bg="white/20" p={3} borderRadius="xl">
+              <BookOpen size={32} color="white" />
+            </Box>
+            <Box>
+              <Text
+                color="white"
+                fontSize={{ base: "2xl", md: "3xl" }}
+                fontWeight="bold"
+              >
+                {curPageTitle || "Travel Stories & Tips"}
+              </Text>
+              <Text color="white/80" fontSize="md">
+                Discover Korea through our experiences
+              </Text>
+            </Box>
+          </Stack>
+          
+          {/* 정렬 옵션 */}
+          <StyledSelect
+            value={selectedOption || BLOG_LIST_SORTS.LATEST}
+            onChange={(e) => changeSort(e.target.value)}
+          >
+            {sortOptions.map((option: BlogListSortsOptionsType) => (
+              <option
+                key={option.value}
+                value={option.value}
+              >
+                {option.label}
+              </option>
+            ))}
+          </StyledSelect>
+        </Stack>
+      </Box>
+      
+      {/* 카테고리 필터 (Optional) */}
+      <Stack direction="row" gap={2} flexWrap="wrap">
+        <Badge
+          colorPalette="purple"
+          size="lg"
+          borderRadius="full"
+          px={4}
+          py={2}
+          cursor="pointer"
+          _hover={{ transform: "scale(1.05)" }}
         >
-          {sortOptions.map((option: BlogListSortsOptionsType) => (
-            <option
-              key={option.value}
-              value={option.value}
-            >
-              {option.label}
-            </option>
-          ))}
-        </StyledSelect>
-      </div>
-    </StyledBlogTitle>
-  )
-};
+          All Posts
+        </Badge>
+        <Badge
+          colorPalette="blue"
+          variant="outline"
+          size="lg"
+          borderRadius="full"
+          px={4}
+          py={2}
+          cursor="pointer"
+          _hover={{ bg: "blue.50" }}
+        >
+          Travel Tips
+        </Badge>
+        <Badge
+          colorPalette="green"
+          variant="outline"
+          size="lg"
+          borderRadius="full"
+          px={4}
+          py={2}
+          cursor="pointer"
+          _hover={{ bg: "green.50" }}
+        >
+          Culture
+        </Badge>
+        <Badge
+          colorPalette="orange"
+          variant="outline"
+          size="lg"
+          borderRadius="full"
+          px={4}
+          py={2}
+          cursor="pointer"
+          _hover={{ bg: "orange.50" }}
+        >
+          Food
+        </Badge>
+      </Stack>
+    </Box>
+  );
+}
 
 export default BlogTitle;
-
-const StyledBlogTitle = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  
-  .title {
-    font-size: 32px;
-    font-weight: 500;
-  }
-  
-  user-select: none;
-  
-  @media screen and (min-width: 1800px) {
-    max-width: 1800px;
-  }
-`;
 
 const StyledSelect = styled.select`
     padding: 8px 12px;

@@ -8,6 +8,7 @@ import {UsersDTO} from "../../../types/users/UsersDTO";
 import {REFESHTOKEN_EXPIRED} from "../../../constants/ErrorCode";
 import {useCurrentUser} from "../../../hooks/useCurrentUser";
 import {createDocument} from "../../../endpoints/blog-endpoints";
+import {useAuth} from "../../../appConfig/AuthProvider";
 
 
 function useRightHeader() {
@@ -20,6 +21,7 @@ function useRightHeader() {
   const cusAvaRef = useRef<HTMLDivElement>(null);
   const [searchModalOpen ,setSearchModalOpen] = useState<boolean>(false);
   const authEP = useAuthEP();
+  const { clearAuth, refreshCurrentUserQuery } = useAuth(); // AuthContext에서 모든 액션 가져오기
   
   const currentUser = useCurrentUser();
   
@@ -60,6 +62,49 @@ function useRightHeader() {
     setSearchModalOpen(prev => !prev);
   }
   
+  // 로그아웃 핸들러
+  const handleLogout = () => {
+    // clearAuth가 이제 모든 것을 처리
+    clearAuth(); // 쿼리 정리 + 토큰 제거를 한번에
+    
+    // localStorage 정리 (중복이지만 안전을 위해)
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    
+    // 홈으로 이동
+    navigate('/home');
+  };
+  
+  // 프로필 페이지로 이동
+  const handleProfile = () => {
+    navigate('/profile');
+  };
+  
+  // 설정 페이지로 이동
+  const handleSettings = () => {
+    navigate('/settings');
+  };
+  
+  // 내 블로그로 이동
+  const handleMyBlogs = () => {
+    navigate('/blog/home');
+  };
+  
+  // 로그인 페이지로 이동
+  const handleLogin = () => {
+    navigate('/login');
+  };
+  
+  // 회원가입 페이지로 이동
+  const handleSignup = () => {
+    navigate('/signup');
+  };
+  
+  const handleChat = () => {
+    navigate(`/chat`)
+  }
+  
+  
   // 컴포넌트 외부 클릭 감지
   useEffect(() => {
     const handleClickOutside = (event : any) => {
@@ -88,7 +133,14 @@ function useRightHeader() {
     cusAvaRef,
     handleOpenModal,
     searchModalOpen,
-    currentUser
+    currentUser,
+    handleProfile,
+    handleSettings,
+    handleMyBlogs,
+    handleLogin,
+    handleLogout,
+    handleSignup,
+    handleChat,
   }
 }
 
