@@ -1,4 +1,3 @@
-import {BlogTitleProps} from "./BlogTitle";
 import {useMatch} from "react-router-dom";
 import {SyntheticEvent, useEffect, useState} from "react";
 import {
@@ -13,7 +12,7 @@ import {useAtom} from "jotai";
 import {selBlogSortOpt} from "../../../../../stores/jotai/jotai";
 
 
-export default function useBlogTitle(props: BlogTitleProps) {
+export default function useBlogTitle() {
   const match = useMatch("/blog/:type");
   const [blogTitles, setBlogTitles] = useState<string[]>(Object.values(BLOG_PAGE_TYPE));
   const [curPageTitle, setCurPageTitle] = useState<BlogPageTypeType>(upperCase(BLOG_PAGE_TYPE.HOME));

@@ -17,7 +17,6 @@ export default function useCusWeather(props ?: CusWeatherProps) {
     // const url = `http://api.weatherstack.com?access_key=${apiKey}&query=Seoul`;
     try {
       const res = await getWeather();
-      console.log("날짜 결과 값", res);
       setWeatherData(res.data)
     } catch (e) {
       setErrorMsg({

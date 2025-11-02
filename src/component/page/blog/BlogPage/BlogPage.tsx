@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import BlogList from "./BlogList";
 import BlogTitle from "./BlogTitle";
+import {Box, Container} from "@chakra-ui/react";
 
 export interface BlogPageProps {
 
@@ -9,14 +10,28 @@ export interface BlogPageProps {
 function BlogPage(props: BlogPageProps) {
 
   return (
-    <StyledBlogPage>
-      <div className="blog-title">
+    <Box
+      h="calc(100vh-3rem)"
+      bg="gray.50"
+      pt={"2rem"}
+      pb={"4rem"}
+    >
+      <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }}>
         <BlogTitle />
-      </div>
-      <div className="blog-layout" >
         <BlogList />
-      </div>
-    </StyledBlogPage>
+      </Container>
+    </Box>
+    
+    
+    
+    // <StyledBlogPage>
+    //   <div className="blog-title">
+    //     <BlogTitle />
+    //   </div>
+    //   <div className="blog-layout" >
+    //     <BlogList />
+    //   </div>
+    // </StyledBlogPage>
   )
 };
 
