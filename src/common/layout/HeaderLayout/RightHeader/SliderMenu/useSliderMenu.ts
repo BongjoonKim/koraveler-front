@@ -8,14 +8,12 @@ import {useRecoilState} from "recoil";
 import recoil from "../../../../../stores/recoil";
 import {useAuth} from "../../../../../appConfig/AuthProvider";
 import {refreshTokenStorage} from "../../../../../appConfig/AuthProvider";
-import {useCurrentUserActions} from "../../../../../hooks/useCurrentUser";
 import {useQueryClient} from "@tanstack/react-query";
 
 function useSliderMenu(props : SliderMenuProps) {
   const [loginUser, setLoginUser] = useRecoilState(recoil.userData);
-  const {setAccessToken, clearAuth} = useAuth();
+  const {setAccessToken, clearAuth, clearCurrentUserQuery} = useAuth();
   const navigate = useNavigate();
-  const { clearCurrentUser } = useCurrentUserActions();
   const queryClient = useQueryClient();
   
   const handleAvatarClick = useCallback((event : MouseEventHandler<HTMLDivElement>) => {
@@ -39,11 +37,8 @@ function useSliderMenu(props : SliderMenuProps) {
         
         // Context의 accessToken 제거 및 sessionStorage의 refreshToken 제거
         clearAuth();
-        clearCurrentUser();
-        // 또는 개별적으로:
-        // setAccessToken(null);
-        // refreshTokenStorage.clear();
-        // clearCurrentUser()
+        
+        queryClient.removeQueries();
         
         // 로그아웃 시 모든 쿼리 캐시 제거
         queryClient.removeQueries();
@@ -58,7 +53,6 @@ function useSliderMenu(props : SliderMenuProps) {
       // 서버 에러가 있어도 로컬 토큰은 제거
       setLoginUser({});
       clearAuth();
-      clearCurrentUser(); // 에러 시에도 초기화
       navigate("/login");
     }
   }, [setLoginUser, clearAuth, navigate]);

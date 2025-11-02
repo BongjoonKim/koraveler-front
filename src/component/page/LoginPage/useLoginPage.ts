@@ -9,16 +9,14 @@ import recoil from "../../../stores/recoil";
 import {useAuth} from "../../../appConfig/AuthProvider";
 import {refreshTokenStorage} from "../../../appConfig/AuthProvider";
 import {UsersDTO} from "../../../types/users/UsersDTO";
-import {useCurrentUserActions} from "../../../hooks/useCurrentUser";
 
 export default function useLoginPage() {
   const [userInfo, setUserInfo] = useState<UsersDTO>(InitUsersDTO);
   const [userId, setUserId] = useState<string>("");
   const [errMsg, setErrMsg] = useRecoilState(recoil.errMsg);
-  const { refreshCurrentUser } = useCurrentUserActions();
   
   const navigate = useNavigate();
-  const {setAccessToken} = useAuth();
+  const {setAccessToken, refreshCurrentUserQuery} = useAuth();
   
   const handleChange = useCallback((event:ChangeEvent<HTMLInputElement>, type:string) => {
     if (type === "id") {
@@ -55,7 +53,7 @@ export default function useLoginPage() {
         // refreshToken은 sessionStorage에만 저장
         refreshTokenStorage.set(resToken.data.refreshToken!);
         
-        await refreshCurrentUser(); // 명시적으로 사용자 정보 업데이트
+        await refreshCurrentUserQuery(); // 명시적으로 사용자 정보 업데이트
         navigate('/blog/home');
       }
     } catch(e: any) {
@@ -65,7 +63,7 @@ export default function useLoginPage() {
         msg: e.response?.data?.message || "로그인에 실패했습니다."
       });
     }
-  }, [userInfo, setAccessToken, navigate, setErrMsg]);
+  }, [userInfo, setAccessToken, navigate, setErrMsg, refreshCurrentUserQuery]);
   
   const pressEnter = useCallback((event : KeyboardEvent) => {
     try {

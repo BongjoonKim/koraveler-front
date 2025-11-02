@@ -2,7 +2,6 @@
 
 import { useAuth } from "../appConfig/AuthProvider";
 import { useQueryClient } from '@tanstack/react-query';
-import {useCurrentUserActions} from "../hooks/useCurrentUser";
 
 interface AxiosProps {
   func?: any;
@@ -17,9 +16,8 @@ export interface FuncProps {
 }
 
 export default function useAuthEP() {
-  const { accessToken, refreshTokenIfNeeded } = useAuth();
+  const { accessToken, refreshTokenIfNeeded, refreshCurrentUserQuery } = useAuth();
   const queryClient = useQueryClient();
-  const {refreshCurrentUser} = useCurrentUserActions();
   
   return async (props: AxiosProps) => {
     try {
@@ -69,7 +67,7 @@ export default function useAuthEP() {
         
         // 토큰 갱신 후 성공했으면 currentUser 쿼리 즉시 실행
         console.log("현재 사용자 유저 갱신되나")
-        await refreshCurrentUser()
+        await refreshCurrentUserQuery()
         
         return result;
       }

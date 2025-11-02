@@ -25,46 +25,16 @@ function RightHeader() {
     handleAvatarClick,
     sliderRef,
     cusAvaRef,
+    handleProfile,
+    handleSettings,
+    handleMyBlogs,
+    handleLogin,
+    handleLogout,
+    handleSignup,
+    handleChat,
   } = useRightHeader();
   
-  const navigate = useNavigate();
-  
-  // 로그아웃 핸들러
-  const handleLogout = () => {
-    // 로그아웃 로직 추가
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    navigate('/home');
-  };
-  
-  // 프로필 페이지로 이동
-  const handleProfile = () => {
-    navigate('/profile');
-  };
-  
-  // 설정 페이지로 이동
-  const handleSettings = () => {
-    navigate('/settings');
-  };
-  
-  // 내 블로그로 이동
-  const handleMyBlogs = () => {
-    navigate('/blog/home');
-  };
-  
-  // 로그인 페이지로 이동
-  const handleLogin = () => {
-    navigate('/login');
-  };
-  
-  // 회원가입 페이지로 이동
-  const handleSignup = () => {
-    navigate('/signup');
-  };
-  
-  const handleChat = () => {
-    navigate(`/chat`)
-  }
+  console.log("currentUser", currentUser)
   
   return (
     <>
