@@ -9,33 +9,31 @@ function BlogTitle({ ...props }) {
   const { curPageTitle, sortOptions, changeSort, selectedOption } = useBlogTitle();
   
   return (
-    <Box mb={12}>
+    <Box mb={4}>
       {/* 그라데이션 헤더 - HomePage 스타일 일관성 */}
       <Box
         position="relative"
         borderRadius="2xl"
         overflow="hidden"
         p={8}
-        mb={8}
+        mb={4}
         style={{
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)'
         }}
+        h={"2rem"}
       >
-        <Stack direction="row" align="center" justify="space-between">
+        <Stack direction="row" align="center" justify="space-between" h={"100%"}>
           <Stack direction="row" align="center" gap={3}>
             <Box bg="white/20" p={3} borderRadius="xl">
-              <BookOpen size={32} color="white" />
+              <BookOpen size={16} color="white" />
             </Box>
             <Box>
               <Text
                 color="white"
-                fontSize={{ base: "2xl", md: "3xl" }}
+                fontSize={{ base: "xl", md: "2xl" }}
                 fontWeight="bold"
               >
                 {curPageTitle || "Travel Stories & Tips"}
-              </Text>
-              <Text color="white/80" fontSize="md">
-                Discover Korea through our experiences
               </Text>
             </Box>
           </Stack>
