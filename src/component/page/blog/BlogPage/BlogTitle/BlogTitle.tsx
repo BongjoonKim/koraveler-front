@@ -4,6 +4,7 @@ import { BookOpen, TrendingUp, Clock, Star } from "lucide-react";
 import useBlogTitle from "./useBlogTitle";
 import {BLOG_LIST_SORTS, BlogListSortsOptionsType} from "../../../../../constants/constants";
 import styled from "styled-components";
+import {Link} from "react-router-dom";
 
 function BlogTitle({ ...props }) {
   const { curPageTitle, sortOptions, changeSort, selectedOption } = useBlogTitle();
@@ -57,53 +58,84 @@ function BlogTitle({ ...props }) {
       
       {/* 카테고리 필터 (Optional) */}
       <Stack direction="row" gap={2} flexWrap="wrap">
-        <Badge
-          colorPalette="purple"
-          size="lg"
-          borderRadius="full"
-          px={4}
-          py={2}
-          cursor="pointer"
-          _hover={{ transform: "scale(1.05)" }}
-        >
-          All Posts
-        </Badge>
-        <Badge
-          colorPalette="blue"
-          variant="outline"
-          size="lg"
-          borderRadius="full"
-          px={4}
-          py={2}
-          cursor="pointer"
-          _hover={{ bg: "blue.50" }}
-        >
-          Travel Tips
-        </Badge>
-        <Badge
-          colorPalette="green"
-          variant="outline"
-          size="lg"
-          borderRadius="full"
-          px={4}
-          py={2}
-          cursor="pointer"
-          _hover={{ bg: "green.50" }}
-        >
-          Culture
-        </Badge>
-        <Badge
-          colorPalette="orange"
-          variant="outline"
-          size="lg"
-          borderRadius="full"
-          px={4}
-          py={2}
-          cursor="pointer"
-          _hover={{ bg: "orange.50" }}
-        >
-          Food
-        </Badge>
+        <Link className="box" to={`/blog/home`}>
+          <Badge
+            colorPalette="purple"
+            size="lg"
+            borderRadius="full"
+            px={4}
+            py={2}
+            cursor="pointer"
+            _hover={{ transform: "scale(1.05)" }}
+          >
+            All Posts
+          </Badge>
+        </Link>
+        <Link className="box" to={`/blog/my-blog`}>
+          <Badge
+            colorPalette="purple"
+            size="lg"
+            borderRadius="full"
+            px={4}
+            py={2}
+            cursor="pointer"
+            _hover={{ transform: "scale(1.05)" }}
+          >
+            My Post
+          </Badge>
+        </Link>
+        <Link className="box" to={`/blog/bookmark`}>
+          <Badge
+            colorPalette="blue"
+            variant="outline"
+            size="lg"
+            borderRadius="full"
+            px={4}
+            py={2}
+            cursor="pointer"
+            _hover={{ bg: "blue.50" }}
+          >
+            Bookmark
+          </Badge>
+        </Link>
+        <Link className="box" to={`/blog/draft`}>
+          <Badge
+            colorPalette="blue"
+            variant="outline"
+            size="lg"
+            borderRadius="full"
+            px={4}
+            py={2}
+            cursor="pointer"
+            _hover={{ bg: "blue.50" }}
+          >
+            Draft
+          </Badge>
+        </Link>
+        {/*<Badge*/}
+        {/*  colorPalette="green"*/}
+        {/*  variant="outline"*/}
+        {/*  size="lg"*/}
+        {/*  borderRadius="full"*/}
+        {/*  px={4}*/}
+        {/*  py={2}*/}
+        {/*  cursor="pointer"*/}
+        {/*  _hover={{ bg: "green.50" }}*/}
+        {/*>*/}
+        {/*  Culture*/}
+        {/*</Badge>*/}
+        {/*<Badge*/}
+        {/*  colorPalette="orange"*/}
+        {/*  variant="outline"*/}
+        {/*  size="lg"*/}
+        {/*  borderRadius="full"*/}
+        {/*  px={4}*/}
+        {/*  py={2}*/}
+        {/*  cursor="pointer"*/}
+        {/*  _hover={{ bg: "orange.50" }}*/}
+        {/*>*/}
+        {/*  Food*/}
+        {/*</Badge>*/}
       </Stack>
     </Box>
   );

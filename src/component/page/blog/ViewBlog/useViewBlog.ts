@@ -30,7 +30,6 @@ function useViewBlog(props : ViewBlogProps) {
               func : getIsBookmarked,
               params : {documentId : id},
             })
-            console.log("resBookmark", resBookmark)
             if (resBookmark.status !== 200) {
               throw resBookmark.statusText;
             }
