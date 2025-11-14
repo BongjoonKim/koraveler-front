@@ -10,6 +10,7 @@ import MainPage from "../component/page/MainPage";
 import LoginRoutes from "./LoginRoutes/LoginRoutes";
 import MainLayout from "../common/layout/MainLayout/MainLayout";
 import HomePage from "../component/page/homePage/HomePage";
+import AdminRoutes from "./AdminRoutes";
 
 export default function RoutersTree() {
   return (
@@ -24,6 +25,7 @@ export default function RoutersTree() {
             <Route path="/setting/*" element={
                 <SettingRoutes/>
             }/>
+          <Route path="/admin/*" element={<AdminRoutes />} />
           <Route path="*" element={
             <AlertRoot status="error">
               <AlertIndicator /> {/* AlertIcon → AlertIndicator */}

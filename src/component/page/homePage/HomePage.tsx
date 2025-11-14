@@ -9,6 +9,7 @@ import useCusWeather from "../../../common/widget/CusWeather/useCusWeather";
 import CusWeather from "../../../common/widget/CusWeather";
 import LanguageHelp from "../../../common/widget/LanguageHelp/LanguageHelp";
 import FindRoute from "../../../common/widget/FindRoute/FindRoute";
+import FeaturedSection from "./home/FeaturedSection/FeaturedSection";
 
 interface QuickAccessItem {
   icon: any;
@@ -52,38 +53,7 @@ function HomePage() {
       </Box>
       
       {/* Featured Destination */}
-      <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }} mt={12}>
-        <Text textStyle="2xl" fontWeight="bold" mb={6}>Featured This Month</Text>
-        <Box
-          position="relative"
-          borderRadius="2xl"
-          overflow="hidden"
-          shadow="lg"
-          h="80"
-          bgGradient="to-r"
-          gradientFrom="indigo.400"
-          gradientTo="purple.600"
-        >
-          <Box
-            position="absolute"
-            inset="0"
-            bgGradient="to-t"
-            gradientFrom="black/70"
-            gradientTo="transparent"
-          />
-          <Box position="absolute" bottom="0" left="0" right="0" p={8} color="white">
-            <Stack direction="row" align="center" gap={2} mb={2}>
-              <MapPin size={20} />
-              <Text textStyle="sm">Seoul</Text>
-            </Stack>
-            <Text textStyle="3xl" fontWeight="bold" mb={2}>Gyeongbokgung Palace</Text>
-            <Text textStyle="lg" mb={4}>Experience the grandeur of Korean royal history</Text>
-            <Button colorPalette="white" variant="solid" borderRadius="full" size="lg">
-              Explore More
-            </Button>
-          </Box>
-        </Box>
-      </Container>
+      <FeaturedSection/>
       
       {/* Quick Access Grid */}
       <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }} mt={12} py={3}>

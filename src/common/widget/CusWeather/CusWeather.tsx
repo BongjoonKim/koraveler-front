@@ -118,7 +118,7 @@ function CusWeather(props: CusWeatherProps) {
       transition="all 0.3s"
       _hover={{ boxShadow: "lg" }}
       onClick={handleCardClick}
-      gridColumn={isExpanded ? { md: "span 2" } : "span 1"}
+      // gridColumn={isExpanded ? { md: "span 2" } : "span 1"}
     >
       <Card.Body p={6}>
         <VStack align="stretch" gap={0}>

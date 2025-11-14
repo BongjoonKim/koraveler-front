@@ -6,6 +6,7 @@ import MenuHeader from "../../common/layout/MenuHeader";
 import AdminLayout from "../../common/layout/AdminLayout/AdminLayout";
 import MenuAdmin from "../../component/page/menu/admin/MenuAdmin";
 import FolderManagement from "../../component/page/menu/admin/FolderAdmin/FolderManagement";
+import FeatureAdminDashboard from "../../component/page/admin/Feature/FeaturedAdminDashboard";
 
 export default function AdminRoutes() {
   return (
@@ -14,6 +15,7 @@ export default function AdminRoutes() {
         <Routes>
           <Route path="/menu" element={<MenuAdmin />} />
           <Route path="/folder" element={<FolderManagement />} />
+          <Route path="/feature" element={<FeatureAdminDashboard />} />
         </Routes>
       </AdminLayout>
     </StyledAdminRoutes>
