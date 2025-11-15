@@ -42,7 +42,7 @@ const FeaturedEditModal: React.FC<FeaturedEditModalProps> = ({
     featuredGradientTo: '#764ba2',
     location: '',
     highlights: [],
-    ctaButtonText: '자세히 보기',
+    ctaButtonText: 'Details',
     displayPriority: 1
   });
   
@@ -186,7 +186,7 @@ const FeaturedEditModal: React.FC<FeaturedEditModalProps> = ({
                   <Field.Root className="w-full">
                     <FieldLabel>CTA 버튼 텍스트</FieldLabel>
                     <Input
-                      placeholder="자세히 보기"
+                      placeholder="Details"
                       value={featuredInfo.ctaButtonText}
                       onChange={(e) => updateField('ctaButtonText', e.target.value)}
                     />

@@ -6,15 +6,15 @@ import {
   Heading,
   Text,
   Spinner,
-  Alert,
   Badge,
-  HStack
+  HStack,
+  VStack
 } from '@chakra-ui/react';
 import {
   Sparkles,
   Clock,
   FileText,
-  History
+  History as HistoryIcon
 } from 'lucide-react';
 import ActiveFeaturedList from './components/ActiveFeaturedList';
 import FeaturedHistory from './components/FeaturedHistory';
@@ -27,75 +27,137 @@ const FeatureAdminDashboard: React.FC<FeatureAdminDashboardProps> = () => {
   const [selectedTab, setSelectedTab] = useState('active');
   const { data: activeFeatured, isLoading: isLoadingActive } = useFeaturedDocuments(10);
   
+  // 예약된 컨텐츠 수 계산
+  const scheduledCount = activeFeatured?.filter(d =>
+    d.featuredSchedule?.startDate &&
+    new Date(d.featuredSchedule.startDate) > new Date()
+  ).length || 0;
+  
   return (
-    <Container className="max-w-7xl mx-auto p-6">
-      {/* Header */}
-      <Box className="mb-8">
-        <HStack className="justify-between items-start mb-4">
+    <Container maxW="7xl" py={6}>
+      {/* Header Section */}
+      <VStack align="stretch" gap={6} mb={8}>
+        <HStack justify="space-between" align="start">
           <Box>
-            <Heading size="2xl" className="mb-2 text-gray-900">
+            <Heading size="xl" color="gray.900" mb={2}>
               Featured Content Manager
             </Heading>
-            <Text className="text-gray-600">
+            <Text color="gray.600" fontSize="md">
               관리자 페이지에서 홈페이지에 표시할 Featured 콘텐츠를 관리합니다
             </Text>
           </Box>
           <Badge
-            colorScheme="purple"
-            className="px-3 py-1 text-sm"
+            variant="subtle"
+            colorPalette="purple"
+            px={3}
+            py={1}
+            fontSize="sm"
+            borderRadius="md"
           >
             {isLoadingActive ? (
-              <Spinner size="xs" />
+              <HStack gap={2}>
+                <Spinner size="xs" />
+                <Text>Loading...</Text>
+              </HStack>
             ) : (
               `${activeFeatured?.length || 0} Active`
             )}
           </Badge>
         </HStack>
         
-        {/* Quick Stats */}
-        <HStack className="mt-6 gap-4">
-          <Box className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 flex-1">
-            <HStack className="justify-between">
-              <Box>
-                <Text className="text-purple-600 font-semibold">현재 활성</Text>
-                <Text className="text-2xl font-bold text-purple-900">
+        {/* Stats Cards */}
+        <HStack gap={4} w="full">
+          <Box
+            flex={1}
+            bg="gradient.to-br"
+            bgGradient="to-br"
+            gradientFrom="purple.50"
+            gradientTo="purple.100"
+            borderRadius="lg"
+            p={4}
+          >
+            <HStack justify="space-between" align="center">
+              <VStack align="start" gap={1}>
+                <Text
+                  color="purple.600"
+                  fontWeight="semibold"
+                  fontSize="sm"
+                >
+                  현재 활성
+                </Text>
+                <Text
+                  fontSize="2xl"
+                  fontWeight="bold"
+                  color="purple.900"
+                >
                   {activeFeatured?.length || 0}
                 </Text>
+              </VStack>
+              <Box color="purple.500">
+                <Sparkles size={24} />
               </Box>
-              <Sparkles className="text-purple-500" size={24} />
             </HStack>
           </Box>
           
-          <Box className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 flex-1">
-            <HStack className="justify-between">
-              <Box>
-                <Text className="text-blue-600 font-semibold">예약됨</Text>
-                <Text className="text-2xl font-bold text-blue-900">
-                  {activeFeatured?.filter(d =>
-                    d.featuredSchedule?.startDate &&
-                    new Date(d.featuredSchedule.startDate) > new Date()
-                  ).length || 0}
+          <Box
+            flex={1}
+            bg="gradient.to-br"
+            bgGradient="to-br"
+            gradientFrom="blue.50"
+            gradientTo="blue.100"
+            borderRadius="lg"
+            p={4}
+          >
+            <HStack justify="space-between" align="center">
+              <VStack align="start" gap={1}>
+                <Text
+                  color="blue.600"
+                  fontWeight="semibold"
+                  fontSize="sm"
+                >
+                  예약됨
                 </Text>
+                <Text
+                  fontSize="2xl"
+                  fontWeight="bold"
+                  color="blue.900"
+                >
+                  {scheduledCount}
+                </Text>
+              </VStack>
+              <Box color="blue.500">
+                <Clock size={24} />
               </Box>
-              <Clock className="text-blue-500" size={24} />
             </HStack>
           </Box>
         </HStack>
-      </Box>
+      </VStack>
       
-      {/* Tabs */}
+      {/* Tabs Section */}
       <Tabs.Root
         value={selectedTab}
-        onValueChange={(e : any) => setSelectedTab(e.value)}
-        className="w-full"
+        onValueChange={(details : any) => setSelectedTab(details.value)}
+        w="full"
       >
-        <Tabs.List className="mb-6 border-b border-gray-200">
+        <Tabs.List
+          borderBottomWidth="1px"
+          borderColor="gray.200"
+        >
           <Tabs.Trigger
             value="active"
-            className="px-6 py-3 font-medium text-gray-600 hover:text-purple-600
-                     data-[selected]:text-purple-600 data-[selected]:border-b-2
-                     data-[selected]:border-purple-600 transition-all duration-200
-                     flex items-center gap-2"
+            px={6}
+            py={3}
+            fontWeight="medium"
+            color="gray.600"
+            _hover={{ color: "purple.600" }}
+            _selected={{
+              color: "purple.600",
+              borderBottomWidth: "2px",
+              borderBottomColor: "purple.600"
+            }}
+            display="flex"
+            alignItems="center"
+            gap={2}
           >
             <Sparkles size={16} />
             활성 Featured
@@ -103,10 +165,19 @@ const FeatureAdminDashboard: React.FC<FeatureAdminDashboardProps> = () => {
           
           <Tabs.Trigger
             value="documents"
-            className="px-6 py-3 font-medium text-gray-600 hover:text-purple-600
-                     data-[selected]:text-purple-600 data-[selected]:border-b-2
-                     data-[selected]:border-purple-600 transition-all duration-200
-                     flex items-center gap-2"
+            px={6}
+            py={3}
+            fontWeight="medium"
+            color="gray.600"
+            _hover={{ color: "purple.600" }}
+            _selected={{
+              color: "purple.600",
+              borderBottomWidth: "2px",
+              borderBottomColor: "purple.600"
+            }}
+            display="flex"
+            alignItems="center"
+            gap={2}
           >
             <FileText size={16} />
             문서 목록
@@ -114,27 +185,38 @@ const FeatureAdminDashboard: React.FC<FeatureAdminDashboardProps> = () => {
           
           <Tabs.Trigger
             value="history"
-            className="px-6 py-3 font-medium text-gray-600 hover:text-purple-600
-                     data-[selected]:text-purple-600 data-[selected]:border-b-2
-                     data-[selected]:border-purple-600 transition-all duration-200
-                     flex items-center gap-2"
+            px={6}
+            py={3}
+            fontWeight="medium"
+            color="gray.600"
+            _hover={{ color: "purple.600" }}
+            _selected={{
+              color: "purple.600",
+              borderBottomWidth: "2px",
+              borderBottomColor: "purple.600"
+            }}
+            display="flex"
+            alignItems="center"
+            gap={2}
           >
-            <History size={16} />
+            <HistoryIcon size={16} />
             히스토리
           </Tabs.Trigger>
         </Tabs.List>
         
-        <Tabs.Content value="active" className="mt-6">
-          <ActiveFeaturedList />
-        </Tabs.Content>
-        
-        <Tabs.Content value="documents" className="mt-6">
-          <FeaturableDocuments />
-        </Tabs.Content>
-        
-        <Tabs.Content value="history" className="mt-6">
-          <FeaturedHistory />
-        </Tabs.Content>
+        <Box mt={6}>
+          <Tabs.Content value="active">
+            <ActiveFeaturedList />
+          </Tabs.Content>
+          
+          <Tabs.Content value="documents">
+            <FeaturableDocuments />
+          </Tabs.Content>
+          
+          <Tabs.Content value="history">
+            <FeaturedHistory />
+          </Tabs.Content>
+        </Box>
       </Tabs.Root>
     </Container>
   );

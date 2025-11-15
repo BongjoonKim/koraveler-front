@@ -47,7 +47,7 @@ const SetFeaturedModal: React.FC<SetFeaturedModalProps> = ({
       featuredGradientTo: '#764ba2',
       location: '',
       highlights: [],
-      ctaButtonText: '자세히 보기',
+      ctaButtonText: 'Details',
       displayPriority: 1
     },
     startDate: new Date().toISOString().slice(0, 16),
@@ -191,7 +191,7 @@ const SetFeaturedModal: React.FC<SetFeaturedModalProps> = ({
                   <Field.Root className="w-full">
                     <FieldLabel>CTA 버튼 텍스트</FieldLabel>
                     <Input
-                      placeholder="자세히 보기"
+                      placeholder="Details"
                       value={featuredData.featuredInfo?.ctaButtonText}
                       onChange={(e) => updateFeaturedInfo('ctaButtonText', e.target.value)}
                     />

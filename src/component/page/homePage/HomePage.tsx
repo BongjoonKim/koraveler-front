@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Container, Grid, Text, Button, Card, Stack, IconButton } from "@chakra-ui/react";
 import {
   Cloud, DollarSign, Phone, MapPin, Bus, Hotel,
-  Utensils, Camera, Lightbulb, MessageCircle
+  Utensils, Camera, Lightbulb, MessageCircle, Notebook
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useCusWeather from "../../../common/widget/CusWeather/useCusWeather";
@@ -31,10 +31,12 @@ function HomePage() {
   const navigate = useNavigate();
   
   const quickAccessItems: QuickAccessItem[] = [
-    { icon: Bus, label: 'Transportation', color: 'blue.500', path: '/transportation' },
+    { icon : Notebook, label : "blog", color: "green.500", path: '/blog/home'},
+    { icon: MessageCircle, label: 'Chat', color: 'purple.500', path: '/chat' },
+    // { icon: Bus, label: 'Transportation', color: 'blue.500', path: '/transportation' },
     // { icon: Hotel, label: 'Accommodation', color: 'green.500', path: '/accommodation' },
-    { icon: Utensils, label: 'Food & Dining', color: 'orange.500', path: '/food' },
-    { icon: Camera, label: 'Tourist Spots', color: 'purple.500', path: '/tourist-spots' },
+    // { icon: Utensils, label: 'Food & Dining', color: 'orange.500', path: '/food' },
+    // { icon: Camera, label: 'Chat', color: 'purple.500', path: '/tourist-spots' },
     // { icon: Lightbulb, label: 'Travel Tips', color: 'yellow.500', path: '/tips' },
     // { icon: MessageCircle, label: 'Community Chat', color: 'pink.500', path: '/chat' },
   ];
