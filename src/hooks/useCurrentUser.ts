@@ -27,7 +27,8 @@ export const useCurrentUser = (): UserSummary | null => {
           username: response.data.username || response.data.userId || '',
           nickname: response.data.nickname || response.data.userName || response.data.username || '',
           avatarUrl: response.data.profileImage || response.data.avatarUrl || null,
-          isOnline: true
+          roles: response.data.roles || [],
+          isOnline: true,
         };
         
         return userSummary;

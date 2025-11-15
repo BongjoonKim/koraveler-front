@@ -124,6 +124,7 @@ export interface UserSummary {
   nickname?: string;
   avatarUrl?: string;
   isOnline: boolean;
+  roles ?: string[];
 }
 
 export interface ChannelListResponse {

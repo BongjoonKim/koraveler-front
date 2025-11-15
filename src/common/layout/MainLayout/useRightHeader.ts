@@ -104,6 +104,10 @@ function useRightHeader() {
     navigate(`/chat`)
   }
   
+  const handleAdmin = () => {
+    navigate("/admin/menu")
+  }
+  
   
   // 컴포넌트 외부 클릭 감지
   useEffect(() => {
@@ -141,6 +145,7 @@ function useRightHeader() {
     handleLogout,
     handleSignup,
     handleChat,
+    handleAdmin,
   }
 }
 
