@@ -11,6 +11,7 @@ import LoginRoutes from "./LoginRoutes/LoginRoutes";
 import MainLayout from "../common/layout/MainLayout/MainLayout";
 import HomePage from "../component/page/homePage/HomePage";
 import AdminRoutes from "./AdminRoutes";
+import ForbiddenPage from "../component/page/error/ForbiddenPage";
 
 export default function RoutersTree() {
   return (
@@ -26,6 +27,7 @@ export default function RoutersTree() {
                 <SettingRoutes/>
             }/>
           <Route path="/admin/*" element={<AdminRoutes />} />
+          <Route path="/error/403" element={<ForbiddenPage />} />
           <Route path="*" element={
             <AlertRoot status="error">
               <AlertIndicator /> {/* AlertIcon → AlertIndicator */}

@@ -3,6 +3,7 @@ import {forwardRef, lazy, Suspense, useCallback} from "react";
 import {uuid} from "../../../../../../utils/commonUtils";
 import useUpdateEditor from "./useUpdateEditor";
 import TinyEditor from "../../../../../elements/CusEditor/TinyEditor";
+import QuillEditor from "../../../../../elements/CusEditor/QuillEditor";
 // import CusEditor from "../../../../../elements/CusEditor/CusEditor";
 
 export interface UpdateEditorProps extends DocumentDTO{
@@ -14,26 +15,15 @@ const CusEditor = lazy(() => import("../../../../../../common/elements/CusEditor
 
 function UpdateEditor(props: UpdateEditorProps, ref : any) {
   const {
-    onUploadImg,
     handleImageUpload,
     getEditorConfig
   } = useUpdateEditor(props);
   
   return (
-    <Suspense>
+    <Suspense fallback={<div>Loading editor...</div>}>
       <StyledUpdateEditor>
-        {/*{props.contents !== undefined && (*/}
-        {/*  <CusEditor*/}
-        {/*    ref={ref}*/}
-        {/*    hooks={{*/}
-        {/*      addImageBlobHook : onUploadImg*/}
-        {/*    }}*/}
-        {/*    initialValue={props.contents}*/}
-        {/*  />*/}
-        {/*)}*/}
-        
         {(props.contents !== undefined) && (
-          <TinyEditor
+          <QuillEditor
             ref={ref}
             handleImageUpload={handleImageUpload}
             getEditorConfig={getEditorConfig}
@@ -48,6 +38,6 @@ function UpdateEditor(props: UpdateEditorProps, ref : any) {
 export default forwardRef(UpdateEditor);
 
 const StyledUpdateEditor = styled.div`
-  height: 100%;
-  width: 100%;
+    height: 100%;
+    width: 100%;
 `;

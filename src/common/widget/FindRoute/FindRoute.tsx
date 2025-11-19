@@ -351,12 +351,11 @@ function FindRoute(props: FindRouteProps) {
   return (
     <Card.Root
       bg="white"
-      shadow="lg"
       overflow="hidden"
       onClick={handleCardClick}
       css={{
-        background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-        transition: "all 0.3s",
+        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         cursor: "pointer",
         border: "1px solid #e5e7eb",
         "&:hover": {
@@ -365,11 +364,25 @@ function FindRoute(props: FindRouteProps) {
         }
       }}
     >
-      <Card.Body color="black">
-        <VStack align="stretch" gap={3}>
+      <Card.Body
+        color="black"
+        css={{
+          flex : "direction,"
+        }}
+      >
+        <VStack align="stretch" gap={4}>
           <HStack justify="space-between">
             <HStack gap={2}>
-              <MapIcon size={24} />
+              <Box
+                p={2}
+                borderRadius="lg"
+                css={{
+                  background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                  color: "white"
+                }}
+              >
+                <MapIcon size={24} />
+              </Box>
               <Text fontSize="lg" fontWeight="semibold">
                 Route Finder
               </Text>
@@ -379,7 +392,7 @@ function FindRoute(props: FindRouteProps) {
             </Box>
           </HStack>
             <Box onClick={(e : MouseEvent) => e.stopPropagation()}>
-              {!currentUser ? (
+              {(!currentUser && isExpanded) ? (
                 <>
                   {isExpanded ? (
                     <NeedLogin
@@ -404,7 +417,26 @@ function FindRoute(props: FindRouteProps) {
                   >
                     {/*<Tabs.Trigger value="0">경로 검색</Tabs.Trigger>*/}
                     {/*<Tabs.Trigger value="1">저장된 경로</Tabs.Trigger>*/}
-                    <Tabs.Trigger value="2">Korean Map</Tabs.Trigger>
+                    <Tabs.Trigger
+                      value="2"
+                      css={{
+                        color: "#6b7280",
+                        borderRadius: "lg",
+                        fontWeight: "500",
+                        transition: "all 0.2s",
+                        "&[data-selected]": {
+                          background: "white",
+                          color: "#6366f1",
+                          fontWeight: "600",
+                          boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)"
+                        },
+                        "&:hover:not([data-selected])": {
+                          background: "#f9fafb"
+                        }
+                      }}
+                    >
+                      Korean Map
+                    </Tabs.Trigger>
                   </Tabs.List>
                   
                   {isExpanded && (

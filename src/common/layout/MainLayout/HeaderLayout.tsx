@@ -5,7 +5,6 @@ import LeftHeader from "./LeftHeader";
 import RightHeader from "./RightHeader";
 
 function HeaderLayout() {
-  const location = useLocation();
   
   return (
     <Box

@@ -46,7 +46,7 @@ function LeftHeader() {
       <KoravelerLogo1 />
       
       {/* Navigation Menu - Desktop */}
-      <Stack direction="row" gap={6} display={{ base: "none", md: "flex" }}>
+      <Stack direction="row" gap={6} display={{ base: "flex", md: "flex" }}>
         {menus.map((menu: MenusDTO, index: number) => (
           <Link key={menu.id || index} to={`${process.env.REACT_APP_URI}${menu.url}`}>
               <Text

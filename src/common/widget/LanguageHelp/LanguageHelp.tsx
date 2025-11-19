@@ -113,7 +113,7 @@ function LanguageHelp(props: LanguageHelpProps) {
                   color: "white"
                 }}
               >
-                <Languages size={24} />
+                <Languages size={20} />
               </Box>
               <Text fontSize="lg" fontWeight="semibold" color="gray.800">
                 Language Helper
@@ -126,14 +126,15 @@ function LanguageHelp(props: LanguageHelpProps) {
           
           {/* Tabs */}
           <Box onClick={(e: MouseEvent) => e.stopPropagation()}>
-            {!currentUser ? (
+            {(!currentUser && isExpanded)? (
               <>
-                {isExpanded ? (
+                {isExpanded && (
                   <NeedLogin
                     feature="Route Finder"
                     onLoginClick={() => navigate('/login')}
                   />
-                ) : (<></>)}
+                  
+                )}
               </>
             ) : (
               <Tabs.Root

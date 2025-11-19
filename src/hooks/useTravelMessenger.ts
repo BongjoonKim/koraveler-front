@@ -10,6 +10,8 @@ import { useChatManager } from './useChatManager';
 import { useWebSocket } from './useWebSocket';
 import { useCreateChannel } from './useMessengerQueries';
 import type { Channel } from '../types/messenger/messengerTypes';
+import {useCurrentUser} from "./useCurrentUser";
+import {useNavigate} from "react-router-dom";
 
 const toaster = createToaster({
   placement: 'top-right',
@@ -37,7 +39,8 @@ export const useTravelMessenger = () => {
     channelType: 'GROUP'
   });
   const [isMobile, setIsMobile] = useState(false);
-  
+  const currentUser = useCurrentUser();
+  const navigate = useNavigate();
   
   // Hooks
   const {
@@ -143,8 +146,12 @@ export const useTravelMessenger = () => {
   
   // 모달 관련 핸들러
   const handleOpenCreateModal = useCallback(() => {
-    setShowCreateModal(true);
-  }, []);
+    if (currentUser) {
+      setShowCreateModal(true);
+    } else {
+      navigate("/login")
+    }
+  }, [currentUser]);
   
   const handleCloseCreateModal = useCallback(() => {
     setShowCreateModal(false);

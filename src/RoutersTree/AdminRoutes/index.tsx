@@ -7,9 +7,11 @@ import AdminLayout from "../../common/layout/AdminLayout/AdminLayout";
 import MenuAdmin from "../../component/page/menu/admin/MenuAdmin";
 import FolderManagement from "../../component/page/menu/admin/FolderAdmin/FolderManagement";
 import FeatureAdminDashboard from "../../component/page/admin/Feature/FeaturedAdminDashboard";
+import ProtectedRoute from "../ProtectedRoute";
 
 export default function AdminRoutes() {
   return (
+    <ProtectedRoute requiredRoles={["admin"]}>
     <StyledAdminRoutes>
       <AdminLayout>
         <Routes>
@@ -19,6 +21,7 @@ export default function AdminRoutes() {
         </Routes>
       </AdminLayout>
     </StyledAdminRoutes>
+    </ProtectedRoute>
   )
 }
 

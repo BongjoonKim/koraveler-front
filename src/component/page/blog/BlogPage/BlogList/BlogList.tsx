@@ -42,19 +42,19 @@ const StyledBlogList = styled.ul`
 
   @media screen and (min-width: 1200px) {
     display: grid;
-    grid-template-columns: repeat(3, calc(33.3% - 2rem * 2 / 3));
+    grid-template-columns: repeat(3, calc(33.3% - 1rem * 2 / 3));
     grid-gap: 2rem;
     //width: 100%;
   }
   
   @media screen and (min-width: 1500px) {
     display: grid;
-    grid-template-columns: repeat(3, calc(25% - 2rem * 3 / 4));
+    grid-template-columns: repeat(3, calc(33.3%  - 2rem * 2 / 3));
     grid-gap: 2rem;
     
   @media screen and (min-width: 1800px) {
     display: grid;
-    grid-template-columns: repeat(3, calc(25% - 2rem * 3 / 4));
+    grid-template-columns: repeat(3, calc(33.3%  - 2rem * 2 / 3));
     grid-gap: 2rem;
     max-width: 1800px;
 `;
