@@ -9,44 +9,63 @@ import {getDocument, saveDocument} from "../../../../endpoints/blog-endpoints";
 import {S3URLFindRegex} from "../../../../constants/RegexConstants";
 import {BLOG_SAVE_TYPE} from "../../../../constants/constants";
 import useAuthEP from "../../../../utils/useAuthEP";
+import { Editor } from "@tiptap/react";
 
 export default function useEditBlogPost(props : EditBlogPostProps) {
   const [errMsg, setErrMsg] = useRecoilState(recoil.errMsg);
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<Editor | null>(null);
   const [document, setDocument] = useState<DocumentDTO>()
   const [uploadedList, setUploadedList] = useAtom<any[]>(uploadedInfo);
   const {id} = useParams();
   const navigate = useNavigate();
-  const authEP = useAuthEP()
+  const authEP = useAuthEP();
   
+  // 글 편집 저장 - Tiptap 버전
   const handleEdit = useCallback(async (saveOrDraft: string) => {
     if (editorRef?.current){
-      // TinyMCE에서는 인스턴스에 직접 접근
+      // Tiptap 에디터 인스턴스
       const editorInstance = editorRef.current;
       
-      // TinyMCE는 HTML 콘텐츠를 직접 가져올 수 있음
-      const contents = editorInstance.getContent();
+      // Tiptap에서 HTML 콘텐츠 가져오기
+      const contents = editorInstance.getHTML();
       
-      // 정규 표현식을 사용하여 이미지 URL 패턴 찾기
-      const regex = S3URLFindRegex;
+      // 이미지 URL 추출 - Tiptap도 <img src="..."> 형식 사용
+      const imgRegex = new RegExp(`<img[^>]+src="([^"]+)"[^>]*>`, 'gi');
       let matches;
-      const values = [];
+      const imageUrls = [];
       
-      while ((matches = regex!.exec(contents)) !== null) {
-        values.push(matches[1]);
+      while ((matches = imgRegex.exec(contents)) !== null) {
+        imageUrls.push(matches[1]);
       }
+      
+      // S3 URL만 필터링 (S3URLFindRegex 사용)
+      const s3ImageUrls = imageUrls.filter(url => {
+        return S3URLFindRegex.test(url);
+      });
       
       let isDraft: boolean = false;
       if (saveOrDraft === BLOG_SAVE_TYPE.SAVE) {
         isDraft = false;
-      } else if (saveOrDraft == BLOG_SAVE_TYPE.DRAFT) {
+      } else if (saveOrDraft === BLOG_SAVE_TYPE.DRAFT) {
         isDraft = true;
+      }
+      
+      // 썸네일 URL 처리
+      let thumbnailUrl = "";
+      if (s3ImageUrls.length > 0) {
+        // 첫 번째 S3 이미지를 썸네일로 사용
+        thumbnailUrl = s3ImageUrls[0];
+        
+        // haries-img를 haries-thumbnail로 변경 (필요한 경우)
+        if (thumbnailUrl.includes('haries-img')) {
+          thumbnailUrl = thumbnailUrl.replace('haries-img', 'haries-thumbnail');
+        }
       }
       
       const request: DocumentDTO = {
         ...document,
         contents: contents,
-        thumbnailImgUrl: values[0] || "", // 썸네일 URL이 없는 경우를 대비한 기본값 추가
+        thumbnailImgUrl: thumbnailUrl || document?.thumbnailImgUrl || "", // 기존 썸네일 유지 옵션
         draft: isDraft,
       }
       
@@ -55,17 +74,31 @@ export default function useEditBlogPost(props : EditBlogPostProps) {
           func: saveDocument,
           reqBody: request
         })
-        navigate(`/blog/view/${id}`)
+        
+        if (saveRes.status === 200) {
+          navigate(`/blog/view/${id}`)
+        } else {
+          throw new Error("저장 실패");
+        }
       } catch (e) {
+        console.error("저장 에러:", e);
         setErrMsg({
           status: "error",
-          msg: "save failed",
+          msg: "저장에 실패했습니다.",
         })
       }
+    } else {
+      setErrMsg({
+        status: "error",
+        msg: "에디터가 초기화되지 않았습니다.",
+      })
     }
-  }, [document, uploadedList, navigate, setErrMsg]);
+  }, [document, uploadedList, navigate, setErrMsg, id, authEP]);
   
+  // 문서 데이터 가져오기
   const getDocumentData = useCallback(async () => {
+    if (!id) return;
+    
     try {
       const res = await getDocument({
         params : {
@@ -73,16 +106,46 @@ export default function useEditBlogPost(props : EditBlogPostProps) {
         }
       });
       console.log("글 정보", res);
+      
       if (res.data) {
         setDocument(res.data)
       }
     } catch (e) {
+      console.error("문서 불러오기 실패:", e);
       setErrMsg({
         status: "error",
-        msg: "retrieve failed",
+        msg: "문서를 불러오는데 실패했습니다.",
       })
     }
-  }, [document, id]);
+  }, [id, setErrMsg]);
+  
+  // 편집할 때 유용한 추가 메서드들
+  const clearContent = useCallback(() => {
+    if (editorRef?.current) {
+      editorRef.current.chain().focus().clearContent().run();
+    }
+  }, []);
+  
+  const insertText = useCallback((text: string) => {
+    if (editorRef?.current) {
+      editorRef.current.chain().focus().insertContent(text).run();
+    }
+  }, []);
+  
+  const getWordCount = useCallback(() => {
+    if (editorRef?.current) {
+      const text = editorRef.current.getText();
+      return text.split(/\s+/).filter(word => word.length > 0).length;
+    }
+    return 0;
+  }, []);
+  
+  const isEditorEmpty = useCallback(() => {
+    if (editorRef?.current) {
+      return editorRef.current.isEmpty;
+    }
+    return true;
+  }, []);
   
   useEffect(() => {
     getDocumentData();
@@ -92,6 +155,11 @@ export default function useEditBlogPost(props : EditBlogPostProps) {
     editorRef,
     document,
     setDocument,
-    handleEdit
+    handleEdit,
+    // 추가 유틸리티 메서드
+    clearContent,
+    insertText,
+    getWordCount,
+    isEditorEmpty,
   }
 }

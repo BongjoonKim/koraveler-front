@@ -1,6 +1,6 @@
 import {MutableRefObject, useCallback, useRef, useState} from "react";
 import {CreateBlogPostProps} from "./CreateBlogPost";
-import {Editor} from "@toast-ui/react-editor";
+import { Editor } from "@tiptap/react";
 import {createAfterSaveDocument, createDocument, saveDocument} from "../../../../endpoints/blog-endpoints";
 import {useRecoilState} from "recoil";
 import recoil from "../../../../stores/recoil";
@@ -15,22 +15,23 @@ import useAuthEP from "../../../../utils/useAuthEP";
 
 function useCreateBlogPost(props : CreateBlogPostProps) {
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<Editor | null>(null);
   const [document, setDocument] = useState<DocumentDTO>()
   const [uploadedList, setUploadedList] = useAtom<any[]>(uploadedInfo);
   const navigate = useNavigate();
   const {id} = useParams();
   const authEP = useAuthEP();
   
-  // 글 생성
+  // 글 생성 - Tiptap 버전
   const handleCreate = useCallback(async (saveOrDraft: string) => {
     console.log("handleCreate", editorRef.current);
     if (editorRef?.current) {
-      // TinyMCE에서는 인스턴스에 직접 접근
+      // Tiptap 에디터 인스턴스
+      console.log("editorRef.current")
       const editorInstance = editorRef.current;
       
-      // TinyMCE는 HTML 콘텐츠를 직접 가져올 수 있음
-      const contents = editorInstance.getContent();
+      // Tiptap에서 HTML 콘텐츠 가져오기
+      const contents = editorInstance.getHTML();
       
       let isDraft: boolean = false;
       if (saveOrDraft === BLOG_SAVE_TYPE.SAVE) {
@@ -50,7 +51,6 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
         const res = await authEP({
           func: createDocument,
           reqBody: request
-          
         })
         
         // 이미지가 있다면 이미지의 주소를 new에서 "글 아이디" 폴더로 이동
@@ -73,8 +73,7 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
             `${process.env["REACT_APP_AWS_S3_URI"]}/${res.data.id}/`
           );
           
-          // 정규 표현식을 사용하여 이미지 URL 패턴을 찾습니다.
-          // TinyMCE는 이미지를 <img src="..."> 형태로 저장하므로 정규식 패턴 수정
+          // Tiptap은 이미지를 <img src="..."> 형태로 저장
           const imgRegex = new RegExp(`<img[^>]+src="(${process.env["REACT_APP_AWS_S3_URI"]}[^"]+)"[^>]*>`, 'gi');
           let matches;
           const values = [];
@@ -92,7 +91,6 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
           const saveRes = await authEP({
             func: createAfterSaveDocument,
             reqBody: newDocument
-            
           })
         }
         if (res.status === 200) {
@@ -109,7 +107,7 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
         });
       }
     }
-  }, [document, uploadedList, navigate, setErrorMsg]);
+  }, [document, uploadedList, navigate, setErrorMsg, authEP]);
   
   
   return {
