@@ -1,44 +1,32 @@
 import styled from "styled-components";
-import {forwardRef, lazy, Suspense, useCallback} from "react";
-import {uuid} from "../../../../../../utils/commonUtils";
+import {forwardRef, Suspense} from "react";
 import useUpdateEditor from "./useUpdateEditor";
-import TinyEditor from "../../../../../elements/CusEditor/TinyEditor";
-// import CusEditor from "../../../../../elements/CusEditor/CusEditor";
+import TiptapEditor from "../../../../../elements/CusEditor/TipTabEditor";
 
 export interface UpdateEditorProps extends DocumentDTO{
 
 };
 
-const CusEditor = lazy(() => import("../../../../../../common/elements/CusEditor"));
-
-
 function UpdateEditor(props: UpdateEditorProps, ref : any) {
   const {
-    onUploadImg,
     handleImageUpload,
-    getEditorConfig
+    handleContentChange,
   } = useUpdateEditor(props);
   
   return (
     <Suspense>
       <StyledUpdateEditor>
-        {/*{props.contents !== undefined && (*/}
-        {/*  <CusEditor*/}
-        {/*    ref={ref}*/}
-        {/*    hooks={{*/}
-        {/*      addImageBlobHook : onUploadImg*/}
-        {/*    }}*/}
-        {/*    initialValue={props.contents}*/}
-        {/*  />*/}
-        {/*)}*/}
-        
         {(props.contents !== undefined) && (
-          <TinyEditor
+          <TiptapEditor
             ref={ref}
             handleImageUpload={handleImageUpload}
-            getEditorConfig={getEditorConfig}
+            onChange={handleContentChange}
             initialValue={props.contents}
+            placeholder="내용을 입력하세요..."
           />
+          // <div>
+          //   sdfsdsdf
+          // </div>
         )}
       </StyledUpdateEditor>
     </Suspense>
@@ -48,6 +36,9 @@ function UpdateEditor(props: UpdateEditorProps, ref : any) {
 export default forwardRef(UpdateEditor);
 
 const StyledUpdateEditor = styled.div`
-  height: 100%;
-  width: 100%;
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 `;

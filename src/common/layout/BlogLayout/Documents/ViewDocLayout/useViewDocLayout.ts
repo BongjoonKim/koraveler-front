@@ -47,7 +47,7 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
           Keys : fileKeyList
         });
       }
-      navigate(`/blog/home`)
+      navigate(-1)
       // 이상이 없으면 view 화면으로 이동
     } catch (e) {
       setErrorMsg({

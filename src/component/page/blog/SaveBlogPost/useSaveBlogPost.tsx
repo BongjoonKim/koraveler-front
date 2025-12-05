@@ -8,6 +8,7 @@ import {S3URLFindRegex} from "../../../../constants/RegexConstants";
 import {BLOG_SAVE_TYPE} from "../../../../constants/constants";
 import {getDocument, saveDocument} from "../../../../endpoints/blog-endpoints";
 import useAuthEP from "../../../../utils/useAuthEP";
+import { Editor } from "@tiptap/react";
 
 export interface useSaveBlogPostProps {
 
@@ -15,7 +16,7 @@ export interface useSaveBlogPostProps {
 
 function useSaveBlogPost(props : useSaveBlogPostProps) {
   const [errMsg, setErrMsg] = useRecoilState(recoil.errMsg);
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<Editor | null>(null);
   const [document, setDocument] = useState<DocumentDTO>()
   const [uploadedList, setUploadedList] = useAtom<any[]>(uploadedInfo);
   const {id} = useParams();
@@ -26,88 +27,100 @@ function useSaveBlogPost(props : useSaveBlogPostProps) {
   const [folders, setFolders] = useState<any>({});
   const [disclose, setDisclose] = useState<boolean>(true);
   
-  // 글 저장
+  // 글 저장 - Tiptap 버전
   const handleEdit = useCallback(async (saveOrDraft: string) => {
     if (editorRef?.current){
-      // TinyMCE에서는 인스턴스에 직접 접근
+      // Tiptap 에디터 인스턴스
       const editorInstance = editorRef.current;
-
-      // TinyMCE는 HTML 콘텐츠를 직접 가져올 수 있음
-      const contents = editorInstance.getContent();
-
+      
+      // Tiptap에서 HTML 콘텐츠 가져오기
+      const contents = editorInstance.getHTML();
+      
       // 정규 표현식을 사용하여 이미지 URL 패턴 찾기
       const regex = S3URLFindRegex;
       let settingThumbnailUrl : string = "";
-
+      
       const match = contents.match(regex);
-
+      
       if (match && match[0]) {
         // 찾은 URL
         const originalUrl = match[0];
         console.log("원본 URL:", originalUrl);
-
-        // haries-img를 haries-thumbnail로 변경
+        
+        // haries-img를 haries-thumbnail로 변경 (필요한 경우)
         settingThumbnailUrl = originalUrl.replace('haries-img', 'haries-thumbnail');
         console.log("변경된 URL:", settingThumbnailUrl);
-
-        // 첫 번째 URL만 변경하여 반환
       }
-
+      
       let isDraft: boolean = false;
       if (saveOrDraft === BLOG_SAVE_TYPE.SAVE) {
         isDraft = false;
-      } else if (saveOrDraft == BLOG_SAVE_TYPE.DRAFT) {
+      } else if (saveOrDraft === BLOG_SAVE_TYPE.DRAFT) {
         isDraft = true;
       }
-
+      
       const request: DocumentDTO = {
         ...document,
         contents: contents,
-        thumbnailImgUrl: settingThumbnailUrl, // 썸네일 URL이 없는 경우를 대비한 기본값 추가
+        thumbnailImgUrl: settingThumbnailUrl || "", // 썸네일 URL이 없는 경우를 대비한 기본값 추가
         draft: isDraft,
         disclose : disclose,
         folderId : selectedFolder
       }
-
-
+      
       try {
         const saveRes = await authEP({
           func: saveDocument,
           reqBody: request
         })
-        navigate(`/blog/view/${id}`)
+        
+        if (saveRes.status === 200) {
+          navigate(`/blog/view/${id}`)
+        } else {
+          throw new Error("저장 실패");
+        }
       } catch (e) {
+        console.error("저장 에러:", e);
         setErrMsg({
           status: "error",
-          msg: "save failed",
+          msg: "저장에 실패했습니다.",
         })
       }
+    } else {
+      setErrMsg({
+        status: "error",
+        msg: "에디터가 초기화되지 않았습니다.",
+      })
     }
-  }, [document, uploadedList, navigate, setErrMsg, selectedFolder, disclose]);
+  }, [document, uploadedList, navigate, setErrMsg, selectedFolder, disclose, id, authEP]);
   
   const handleSaveModalOpen = () => {
     setOpenBlogPostingModal(true);
   }
   
   const getDocumentData = useCallback(async () => {
+    if (!id) return;
+    
     try {
       const res = await getDocument({
         params : {
           id : id
         }
       });
+      
       if (res.data) {
         setDocument(res.data)
         setSelectedFolder(res.data.folderId);
-        
+        setDisclose(res.data.disclose ?? true);
       }
     } catch (e) {
+      console.error("문서 불러오기 실패:", e);
       setErrMsg({
         status: "error",
-        msg: "retrieve failed",
+        msg: "문서를 불러오는데 실패했습니다.",
       })
     }
-  }, [document, id]);
+  }, [id, setErrMsg]);
   
   const modalClose = () => {
     setOpenBlogPostingModal(prev => !prev)

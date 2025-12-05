@@ -80,6 +80,7 @@ function CreateBlogPost(props: CreateBlogPostProps) {
 export default CreateBlogPost;
 
 const StyledCreateBlogPost = styled.div`
+  display: flex;
   height: 100%;
   width: 100%;
 `;

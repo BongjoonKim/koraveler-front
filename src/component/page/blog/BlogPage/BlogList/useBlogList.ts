@@ -19,9 +19,14 @@ function useBlogList(props : BlogHomeProps) {
   const authEP = useAuthEP();
   
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
+  console.log("match", match)
+  
   
   // 블로그 글 목록 조회
   const getDocuments = useCallback(async () => {
+    console.log("match", match)
+    
+    console.log("match?.params?.type", match?.params?.type)
     try {
       let blogPosts : DocumentsInfo = {
         totalDocsCnt : 0,

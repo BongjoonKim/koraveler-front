@@ -37,6 +37,9 @@ function BlogRoutes(props: BlogRoutesProps) {
 export default BlogRoutes;
 
 const StyledBlogRoutes = styled.div`
-  height: 100%;
-  width: 100%;
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 `;

@@ -1,8 +1,7 @@
 import styled from "styled-components";
-import CusEditor from "../../../../../elements/CusEditor/CusEditor";
 import {forwardRef} from "react";
 import useCreateEditor from "./useCreateEditor";
-import TinyEditor from "../../../../../elements/CusEditor/TinyEditor";
+import TiptapEditor from "../../../../../elements/CusEditor/TipTabEditor";
 
 export interface CreateDocumentProps extends DocumentDTO{
 
@@ -10,26 +9,20 @@ export interface CreateDocumentProps extends DocumentDTO{
 
 function CreateEditor(props: CreateDocumentProps, ref : any) {
   const {
-    onUploadImg,
     handleImageUpload,
-    getEditorConfig,
+    handleContentChange,
   } = useCreateEditor(props);
+  
   console.log("파일 전체 확인", props)
+  
   return (
     <StyledCreateDocument>
-      {/*<CusEditor*/}
-      {/*  ref={ref}*/}
-      {/*  hooks={{*/}
-      {/*    addImageBlobHook: onUploadImg*/}
-      {/*  }}*/}
-      {/*/>*/}
-      {props?.id && (
-        <TinyEditor
-          ref={ref}
-          handleImageUpload={handleImageUpload}
-          getEditorConfig={getEditorConfig}
-        />
-      )}
+      <TiptapEditor
+        ref={ref}
+        handleImageUpload={handleImageUpload}
+        onChange={handleContentChange}
+        placeholder="내용을 입력하세요..."
+      />
     </StyledCreateDocument>
   )
 };
@@ -37,6 +30,9 @@ function CreateEditor(props: CreateDocumentProps, ref : any) {
 export default forwardRef(CreateEditor);
 
 const StyledCreateDocument = styled.div`
-  height: 100%;
-  width: 100%;
+    height: 100%;
+    width: 100%;
+    min-height: 0;  /* 추가 */
+    display: flex;  /* 추가 */
+    flex-direction: column;  /* 추가 */
 `;

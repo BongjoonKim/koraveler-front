@@ -2,7 +2,7 @@
 
 import {ChangeEvent, useCallback, useState, KeyboardEvent} from "react";
 import {InitUsersDTO} from "../../../types/users/initialUsers";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {login} from "../../../endpoints/login-endpoints";
 import {useRecoilState} from "recoil";
 import recoil from "../../../stores/recoil";
@@ -16,6 +16,7 @@ export default function useLoginPage() {
   const [errMsg, setErrMsg] = useRecoilState(recoil.errMsg);
   
   const navigate = useNavigate();
+  const location = useLocation();
   const {setAccessToken, refreshCurrentUserQuery} = useAuth();
   
   const handleChange = useCallback((event:ChangeEvent<HTMLInputElement>, type:string) => {
@@ -53,8 +54,13 @@ export default function useLoginPage() {
         // refreshToken은 sessionStorage에만 저장
         refreshTokenStorage.set(resToken.data.refreshToken!);
         
+        
+        const fromWhere = location.state?.from || "/home"
+        console.log("fromWhere", fromWhere)
+        
+        navigate(fromWhere);
         await refreshCurrentUserQuery(); // 명시적으로 사용자 정보 업데이트
-        navigate('/blog/home');
+        
       }
     } catch(e: any) {
       console.error("Login failed:", e);

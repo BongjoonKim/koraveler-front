@@ -10,6 +10,7 @@ import {
 import {upperCase} from "lodash";
 import {useAtom} from "jotai";
 import {selBlogSortOpt} from "../../../../../stores/jotai/jotai";
+import {useCurrentUser} from "../../../../../hooks/useCurrentUser";
 
 
 export default function useBlogTitle() {
@@ -18,6 +19,7 @@ export default function useBlogTitle() {
   const [curPageTitle, setCurPageTitle] = useState<BlogPageTypeType>(upperCase(BLOG_PAGE_TYPE.HOME));
   const [sortOptions, setSortOptions] = useState<BlogListSortsOptionsType[]>(BLOG_LIST_SORTS_OPTIONS);
   const [selectedOption, setSelectedOption] = useAtom(selBlogSortOpt);
+  const currentUser = useCurrentUser();
   
   const findCurPageTitle = () => {
     const curPage = blogTitles.find((bt:string) => bt === match?.params?.type);
@@ -41,6 +43,7 @@ export default function useBlogTitle() {
     curPageTitle,
     sortOptions,
     changeSort,
-    selectedOption: selectedOption || BLOG_LIST_SORTS.LATEST  // 여기서도 기본값 보장
+    selectedOption: selectedOption || BLOG_LIST_SORTS.LATEST,  // 여기서도 기본값 보장
+    currentUser,
   }
 }

@@ -38,7 +38,7 @@ function LeftHeader(props : LeftHeaderProps) {
     <StyledLeftHeader isHome={!!(location.pathname === "/home")}>
       <Link
         className="title"
-        to={`${process.env.PUBLIC_URL}/blog/home`}
+        to={`${process.env.PUBLIC_URL}/home`}
         onClick={handleLogoClick} // 로고 클릭 이벤트 추가
         onMouseEnter={() => handleMenuHover("home")} // 여기에 추가!
       >
