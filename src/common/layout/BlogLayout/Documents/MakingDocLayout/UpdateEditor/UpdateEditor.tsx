@@ -24,6 +24,9 @@ function UpdateEditor(props: UpdateEditorProps, ref : any) {
             initialValue={props.contents}
             placeholder="내용을 입력하세요..."
           />
+          // <div>
+          //   sdfsdsdf
+          // </div>
         )}
       </StyledUpdateEditor>
     </Suspense>
@@ -33,6 +36,9 @@ function UpdateEditor(props: UpdateEditorProps, ref : any) {
 export default forwardRef(UpdateEditor);
 
 const StyledUpdateEditor = styled.div`
-    height: 100%;
+    flex: 1;
     width: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 `;

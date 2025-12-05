@@ -32,4 +32,7 @@ export default forwardRef(CreateEditor);
 const StyledCreateDocument = styled.div`
     height: 100%;
     width: 100%;
+    min-height: 0;  /* 추가 */
+    display: flex;  /* 추가 */
+    flex-direction: column;  /* 추가 */
 `;

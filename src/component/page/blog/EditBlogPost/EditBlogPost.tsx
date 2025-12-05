@@ -36,7 +36,7 @@ function EditBlogPost(props: EditBlogPostProps) {
     setDisclose,
   } = useSaveBlogPost(props)
   return (
-    <StyledEditBlogPost>
+    <StyledEditBlogPost className={"StyledEditBlogPost"}>
       <MakeDocLayout
         type={"UPDATE"}
         document={document}
@@ -80,7 +80,12 @@ function EditBlogPost(props: EditBlogPostProps) {
 export default EditBlogPost;
 
 const StyledEditBlogPost = styled.div`
-  height: 0;
-  flex: 1;
-  width: 100%;
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    height: calc(100vh - 64px);  /* 헤더 높이만큼 빼기 */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
 `;

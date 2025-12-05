@@ -36,8 +36,8 @@ const TravelMessengerPage: React.FC = () => {
   } = useTravelMessenger();
   
   return (
-    <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }} h={"100%"}>
-    <Box position="relative" h="100%" overflow="hidden">
+    <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }} h={"100%"} flex={"1"} flexDirection={"column"} display={"flex"}>
+    <Box position="relative" h="100%" overflow="hidden" display={'flex'} flex={"1"} flexDirection={"column"}>
       
       <Flex h="100%" bg="gray.50">
         {/* 채널 사이드바 - 모바일에서는 조건부 렌더링 */}

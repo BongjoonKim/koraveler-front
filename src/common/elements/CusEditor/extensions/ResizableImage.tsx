@@ -3,6 +3,15 @@
 import { Node } from "@tiptap/core";
 import { NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react";
 import React, { useCallback, useRef, useState, useEffect } from "react";
+import styled from "styled-components";
+
+// 크기 조절 프리셋
+const SIZE_PRESETS = [
+  { label: "25%", value: 25 },
+  { label: "50%", value: 50 },
+  { label: "75%", value: 75 },
+  { label: "100%", value: 100 },
+];
 
 // 리사이즈 가능한 이미지 컴포넌트
 const ResizableImageComponent = (props: any) => {
@@ -11,11 +20,41 @@ const ResizableImageComponent = (props: any) => {
   const imageRef = useRef<HTMLImageElement>(null);
   const [isResizing, setIsResizing] = useState(false);
   const [showHandles, setShowHandles] = useState(false);
+  const [naturalSize, setNaturalSize] = useState({ width: 0, height: 0 });
   
   // 이미지 클릭 시 핸들 표시
   useEffect(() => {
     setShowHandles(selected);
   }, [selected]);
+  
+  // 이미지의 원본 크기 저장
+  const handleImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    setNaturalSize({
+      width: img.naturalWidth,
+      height: img.naturalHeight,
+    });
+  }, []);
+  
+  // 퍼센트 기반 크기 조절
+  const setImageSizePercent = useCallback(
+    (percent: number) => {
+      if (!containerRef.current?.parentElement) return;
+      
+      const parentWidth = containerRef.current.parentElement.offsetWidth - 40; // padding 고려
+      const newWidth = Math.round((parentWidth * percent) / 100);
+      
+      // 원본 비율 유지
+      const aspectRatio = naturalSize.width / naturalSize.height || 1;
+      const newHeight = Math.round(newWidth / aspectRatio);
+      
+      updateAttributes({
+        width: `${newWidth}px`,
+        height: `${newHeight}px`,
+      });
+    },
+    [updateAttributes, naturalSize]
+  );
   
   // 리사이즈 시작
   const startResize = useCallback(
@@ -103,23 +142,32 @@ const ResizableImageComponent = (props: any) => {
     return cursors[direction] || "pointer";
   };
   
+  // 현재 크기가 몇 퍼센트인지 계산
+  const getCurrentPercent = useCallback(() => {
+    if (!containerRef.current?.parentElement || !imageRef.current) return null;
+    
+    const parentWidth = containerRef.current.parentElement.offsetWidth - 40;
+    const currentWidth = imageRef.current.offsetWidth;
+    const percent = Math.round((currentWidth / parentWidth) * 100);
+    
+    // 가장 가까운 프리셋 찾기
+    const closest = SIZE_PRESETS.find(p => Math.abs(p.value - percent) <= 5);
+    return closest?.value || null;
+  }, []);
+  
   return (
     <NodeViewWrapper
       className="resizable-image-wrapper"
       style={{
-        display: node.attrs.align === "center" ? "flex" : "inline-block",
-        justifyContent: node.attrs.align === "center" ? "center" : "flex-start",
+        display: "flex",
+        justifyContent: node.attrs.align === "center" ? "center" :
+          node.attrs.align === "right" ? "flex-end" : "flex-start",
         width: "100%",
         margin: "1em 0",
       }}
     >
-      <div
+      <ImageContainer
         ref={containerRef}
-        style={{
-          position: "relative",
-          display: "inline-block",
-          maxWidth: "100%",
-        }}
         data-drag-handle
       >
         <img
@@ -127,6 +175,7 @@ const ResizableImageComponent = (props: any) => {
           src={node.attrs.src}
           alt={node.attrs.alt || ""}
           title={node.attrs.title || ""}
+          onLoad={handleImageLoad}
           style={{
             width: node.attrs.width || "auto",
             height: node.attrs.height || "auto",
@@ -143,6 +192,25 @@ const ResizableImageComponent = (props: any) => {
           }}
           draggable={false}
         />
+        
+        {/* 크기 조절 버튼 - 선택됐을 때만 표시 */}
+        {showHandles && !isResizing && (
+          <SizeButtonContainer>
+            {SIZE_PRESETS.map((preset) => (
+              <SizeButton
+                key={preset.value}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setImageSizePercent(preset.value);
+                }}
+                $isActive={getCurrentPercent() === preset.value}
+                title={`이미지 크기 ${preset.label}로 설정`}
+              >
+                {preset.label}
+              </SizeButton>
+            ))}
+          </SizeButtonContainer>
+        )}
         
         {/* 리사이즈 핸들들 - 선택됐을 때만 표시 */}
         {showHandles && !isResizing && (
@@ -192,10 +260,59 @@ const ResizableImageComponent = (props: any) => {
             />
           </>
         )}
-      </div>
+      </ImageContainer>
     </NodeViewWrapper>
   );
 };
+
+// 스타일 컴포넌트
+const ImageContainer = styled.div`
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+`;
+
+const SizeButtonContainer = styled.div`
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  background: white;
+  padding: 6px 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 20;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid white;
+  }
+`;
+
+const SizeButton = styled.button<{ $isActive: boolean }>`
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid ${({ $isActive }) => ($isActive ? '#4a90e2' : '#ddd')};
+  background: ${({ $isActive }) => ($isActive ? '#4a90e2' : 'white')};
+  color: ${({ $isActive }) => ($isActive ? 'white' : '#333')};
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    border-color: #4a90e2;
+    background: ${({ $isActive }) => ($isActive ? '#4a90e2' : '#f0f7ff')};
+  }
+`;
 
 // 리사이즈 핸들 컴포넌트
 interface ResizeHandleProps {
@@ -263,6 +380,22 @@ export const ResizableImage = Node.create({
   
   parseHTML() {
     return [
+      // figure로 감싸진 이미지 파싱
+      {
+        tag: "figure[data-align] img",
+        getAttrs: (dom: any) => {
+          const figure = dom.closest("figure");
+          return {
+            src: dom.getAttribute("src"),
+            alt: dom.getAttribute("alt"),
+            title: dom.getAttribute("title"),
+            width: dom.style.width || dom.getAttribute("width") || "400px",
+            height: dom.style.height || dom.getAttribute("height") || "auto",
+            align: figure?.getAttribute("data-align") || dom.getAttribute("data-align") || "center",
+          };
+        },
+      },
+      // 일반 이미지 파싱
       {
         tag: "img[src]",
         getAttrs: (dom: any) => ({
@@ -277,8 +410,30 @@ export const ResizableImage = Node.create({
     ];
   },
   
+  // 중요: HTML 출력 시 정렬 정보와 스타일 포함
   renderHTML({ HTMLAttributes }) {
-    return ["img", HTMLAttributes];
+    const { src, alt, title, width, height, align } = HTMLAttributes;
+    
+    // 이미지를 감싸는 figure와 함께 출력하여 정렬 유지
+    return [
+      "figure",
+      {
+        style: `display: flex; justify-content: ${
+          align === "center" ? "center" : align === "right" ? "flex-end" : "flex-start"
+        }; margin: 1em 0;`,
+        "data-align": align,
+      },
+      [
+        "img",
+        {
+          src,
+          alt: alt || "",
+          title: title || "",
+          style: `width: ${width}; height: ${height}; max-width: 100%; border-radius: 4px;`,
+          "data-align": align,
+        },
+      ],
+    ];
   },
   
   addNodeView() {

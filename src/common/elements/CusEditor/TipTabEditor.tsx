@@ -46,6 +46,7 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
   const { initialValue = "", handleImageUpload, onChange, placeholder = "내용을 입력하세요..." } = props;
   const [isDragging, setIsDragging] = useState(false);
   const [isTableActive, setIsTableActive] = useState(false);
+  const [draggedTable, setDraggedTable] = useState<any>(null);
   
   const editor = useEditor({
     extensions: [
@@ -354,6 +355,63 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
     };
   }, [editor, isInTable]);
   
+  // 테이블 드래그 핸들 표시를 위한 useEffect
+  useEffect(() => {
+    if (!editor) return;
+    
+    const { view } = editor;
+    
+    const updateTableHandles = () => {
+      const tables = view.dom.querySelectorAll('table');
+      
+      tables.forEach((table: any) => {
+        // 이미 핸들이 있으면 스킵
+        if (table.previousSibling?.classList?.contains('table-drag-handle')) return;
+        
+        // 테이블 래퍼 생성
+        const wrapper = document.createElement('div');
+        wrapper.className = 'table-wrapper-with-handle';
+        wrapper.style.position = 'relative';
+        
+        // 드래그 핸들 생성
+        const handle = document.createElement('div');
+        handle.className = 'table-drag-handle';
+        handle.innerHTML = '⋮⋮'; // 드래그 아이콘
+        handle.draggable = true;
+        handle.contentEditable = 'false';
+        
+        // 드래그 이벤트 처리
+        handle.addEventListener('dragstart', (e) => {
+          e.dataTransfer!.effectAllowed = 'move';
+          e.dataTransfer!.setData('text/html', table.outerHTML);
+          setDraggedTable(table);
+          table.style.opacity = '0.5';
+        });
+        
+        handle.addEventListener('dragend', () => {
+          if (draggedTable) {
+            draggedTable.style.opacity = '1';
+            setDraggedTable(null);
+          }
+        });
+        
+        // 테이블을 래퍼로 감싸기
+        table.parentNode?.insertBefore(wrapper, table);
+        wrapper.appendChild(handle);
+        wrapper.appendChild(table);
+      });
+    };
+    
+    // 초기 실행
+    updateTableHandles();
+    
+    // 에디터 업데이트 시 실행
+    editor.on('update', updateTableHandles);
+    
+    return () => {
+      editor.off('update', updateTableHandles);
+    };
+  }, [editor, draggedTable]);
   
   // 드래그 오버 이벤트
   useEffect(() => {
@@ -749,7 +807,9 @@ export default TiptapEditor;
 // 스타일 컴포넌트들
 const StyledTiptapEditor = styled.div`
     width: 100%;
-    height: 100%;
+    //height: 100%;      /* 추가 */
+    flex: 1;
+    min-height: 0;     /* 추가 */
     display: flex;
     flex-direction: column;
     position: relative;
@@ -839,9 +899,24 @@ const Separator = styled.div`
 
 const EditorContainer = styled.div`
     flex: 1;
-    overflow-y: auto;
+    overflow-y: auto;  /* 여기서 스크롤 */
     background: white;
+    min-height: 0;
 
+    /* EditorContent가 생성하는 wrapper */
+    //> div {
+    //    flex: 1;
+    //    min-height: 0;
+    //    display: flex;
+    //    flex-direction: column;
+    //}
+    //
+    //> .tiptap {
+    //    flex: 1;
+    //    min-height: 0;
+    //    overflow-y: auto
+    //}
+    
     .ProseMirror {
         min-height: 100%;
         padding: 20px;
@@ -1032,6 +1107,69 @@ const EditorContainer = styled.div`
             .tableWrapper {
                 position: relative;
                 overflow-x: auto;
+            }
+
+            .table-wrapper-with-handle {
+                position: relative;
+                margin: 1em 0;
+
+                &:hover .table-drag-handle {
+                    opacity: 1;
+                }
+            }
+
+            .table-drag-handle {
+                position: absolute;
+                left: -30px;
+                top: 0;
+                width: 20px;
+                height: 30px;
+                background: #f0f0f0;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: move;
+                user-select: none;
+                opacity: 0;
+                transition: opacity 0.2s;
+                font-size: 12px;
+                color: #666;
+
+                &:hover {
+                    background: #e0e0e0;
+                    border-color: #4a90e2;
+                    color: #4a90e2;
+                }
+
+                &:active {
+                    background: #d0d0d0;
+                }
+            }
+
+            /* 드래그 중인 테이블 스타일 */
+            table.dragging {
+                opacity: 0.5;
+                cursor: move;
+            }
+
+            /* 드롭 존 표시 */
+            .drop-indicator {
+                height: 2px;
+                background: #4a90e2;
+                margin: 10px 0;
+                position: relative;
+
+                &::before {
+                    content: '▼';
+                    position: absolute;
+                    top: -10px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    color: #4a90e2;
+                    font-size: 12px;
+                }
             }
 
             /* ProseMirror 테이블 선택 */

@@ -63,7 +63,8 @@ export default MakingDocumentLayout;
 const StyledMakeDocLayout = styled.div`
     display: flex;
     flex-direction: column;
-    height: 100%;
+    flex: 1;           /* height: 100% 대신 */
+    min-height: 0;     /* 추가 */
     width: 100%;
 
     .blog-header {
@@ -120,7 +121,10 @@ const StyledMakeDocLayout = styled.div`
     .blog-body {
         flex: 1;
         width: 100%;
-        overflow-y: auto;
+        min-height: 0;
+        overflow: hidden;  /* hidden으로 변경 */
+        display: flex;     /* 추가 */
+        flex-direction: column;  /* 추가 */
         /* TinyMCE 에디터 테두리 제거 */
         .tox-tinymce {
             border: none !important;
