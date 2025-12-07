@@ -44,7 +44,7 @@ function RightHeader() {
       >
         <SearchModal onClose={handleOpenModal}/>
       </CusModal>
-      <Stack direction="row" gap={4}>
+      <Stack direction="row" gap={4} h={"full"} alignItems="center">
         {/* Search Button - Desktop */}
         <Button
           variant="ghost"
@@ -65,6 +65,7 @@ function RightHeader() {
           borderRadius="full"
           display={{ base: "flex", sm: "none" }}
           onClick={handleOpenModal}
+          
         >
           <Search size={20} />
         </IconButton>
@@ -99,7 +100,7 @@ function RightHeader() {
                     name={currentUser?.id || currentUser?.username}
                   />
                 ) : (
-                  <User size={20} />
+                  <User size={"full"} />
                 )}
               </IconButton>
             </MenuTrigger>

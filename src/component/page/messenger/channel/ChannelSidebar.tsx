@@ -26,7 +26,13 @@ const ChannelSidebar: React.FC<ChannelSidebarProps> = ({
                                                          isMobile
                                                        }) => {
   return (
-    <Box w={isMobile ? "100%" : "320px"} bg="white" borderRight="1px" borderColor="gray.200" flexShrink={0}>
+    <Box
+      w={isMobile ? "100%" : "320px"}
+      bg="white"
+      flexShrink={0}
+      borderRight="1px"
+      borderLeft="1px solid #e7e7e7"
+    >
       {/* 헤더 */}
       <Box p={4} borderBottom="1px" borderColor="gray.200" bg="blue.600" height="4rem">
         <Flex justify="space-between" align="center">

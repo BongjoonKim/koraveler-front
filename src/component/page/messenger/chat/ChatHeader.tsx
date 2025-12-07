@@ -50,8 +50,7 @@ export default function ChatHeader() {
         align="center"
         justify="space-between"
         p={4}
-        borderBottom="1px solid"
-        borderColor="gray.200"
+        border="1px solid #e7e7e7"
         bg="white"
         height="4rem"
       >

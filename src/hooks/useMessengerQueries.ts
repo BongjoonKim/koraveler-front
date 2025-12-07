@@ -127,6 +127,7 @@ export const useChannelMembers = (channelId: string | null) => {
       return response.data;
     },
     enabled: !!channelId,
+    staleTime: 1000,
   });
 };
 
@@ -152,7 +153,6 @@ export const useOnlineMembers = (channelId: string | null) => {
 export const useCreateChannel = () => {
   const authEP = useAuthEP();
   const queryClient = useQueryClient();
-  console.log("여기도 오나")
   return useMutation({
     mutationFn: (data: {
       name: string;
@@ -249,7 +249,7 @@ export const useChannelMessages = (channelId: string | null) => {
       return response.data;
     },
     enabled: !!channelId,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000,
   });
 };
 

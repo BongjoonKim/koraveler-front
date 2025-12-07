@@ -43,7 +43,7 @@ function HomePage() {
   return (
     <>
       {/* Today's Info Cards */}
-      <Box maxW="7xl" mx="auto" px={{ base: 4, sm: 6, lg: 8 }} py={6} w={"100%"}>
+      <Box maxW="7xl" mx="auto" py={6} w={"100%"} px={{ base: 4, sm: 4, lg: 4 }}>
         <Grid
           templateColumns={{ base: "1fr", md: "repeat(1, 3fr)" }}
           gap={4}
@@ -58,7 +58,7 @@ function HomePage() {
       <FeaturedSection/>
       
       {/* Quick Access Grid */}
-      <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }} mt={12} py={3}>
+      <Container maxW="7xl" px={{ base: 4, sm: 4, lg: 4 }} mt={12} py={3}>
         <Text textStyle="2xl" fontWeight="bold" mb={6}>Quick Access</Text>
         <Grid columns={{ base: 2, md: 3, lg: 6 }} gap={4}>
           {quickAccessItems.map((item, index) => (

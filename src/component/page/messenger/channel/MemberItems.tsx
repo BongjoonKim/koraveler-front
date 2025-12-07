@@ -17,7 +17,6 @@ export default function MemberItem({
                       formatLastSeen
                     }: any) {
   const [showActions, setShowActions] = useState(false);
-  
   return (
     <Box
       position="relative"
@@ -45,13 +44,13 @@ export default function MemberItem({
               borderRadius="full"
               p="1px"
             >
-              {member.isMuted ? (
-                <VolumeX size={10} className="text-gray-400" />
-              ) : isOnline ? (
-                <Circle size={8} className="text-green-500 fill-green-500" />
-              ) : (
-                <Circle size={8} className="text-gray-300 fill-gray-300" />
-              )}
+              <Box
+                w="10px"
+                h="10px"
+                borderRadius="full"
+                bg={isOnline ? "green.500" : "gray.300"}
+                border="2px solid white"
+              />
             </Box>
           </Box>
           
@@ -61,7 +60,7 @@ export default function MemberItem({
                 {member.nickname || member.userId}
                 {isCurrentUser && (
                   <Text as="span" color="gray.500" fontSize="xs" ml={1}>
-                    (나)
+                    (Me)
                   </Text>
                 )}
               </Text>
@@ -69,7 +68,7 @@ export default function MemberItem({
             </HStack>
             <HStack gap={2}>
               <Text fontSize="xs" color="gray.500" truncate>
-                {isOnline ? '활동 중' : `마지막 접속: ${formatLastSeen(member.lastSeenAt)}`}
+                {isOnline ? 'Online' : `Last Access: ${formatLastSeen(member.lastSeenAt)}`}
               </Text>
               {getNotificationIcon(member.notificationLevel)}
             </HStack>

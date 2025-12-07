@@ -22,8 +22,18 @@ function HeroSection() {
   
   return (
     <Box
+      w={"100%"}
+      // maxW={"7xl"}
+      display="flex"
+      justifyContent="center"
+      // padding={"0 1.5rem"}
+    >
+    <Box
       position="relative"
       color="white"
+      w={"100%"}
+      // maxW="7xl"
+      px={{ base: 0, md : 6}}
       py={12}
       // Chakra v3에서는 style prop 직접 사용
       style={{
@@ -202,6 +212,7 @@ function HeroSection() {
           </Flex>
         </Box>
       </Container>
+    </Box>
     </Box>
   );
 }

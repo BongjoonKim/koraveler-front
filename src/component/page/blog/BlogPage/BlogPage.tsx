@@ -12,11 +12,9 @@ function BlogPage(props: BlogPageProps) {
   return (
     <Box
       h="calc(100vh-3rem)"
-      bg="gray.50"
-      pt={"2rem"}
-      pb={"4rem"}
+      pb={"2rem"}
     >
-      <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }}>
+      <Container maxW="7xl" px={{ base: 4, sm: 4, lg: 4}}>
         <BlogTitle />
         <BlogList />
       </Container>
