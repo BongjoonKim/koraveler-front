@@ -87,6 +87,8 @@ const TravelMessengerPage: React.FC = () => {
                     p={4}
                     maxW={isMobile ? "100%" : "100%"}
                     bg="gray.50"  // ✅ 메시지 배경: 연한 회색
+                    borderRight={"1px solid #e7e7e7"}
+                    borderLeft={"1px solid #e7e7e7"}
                   >
                     {isLoadingMessages ? (
                       <Flex justify="center" align="center" h="100%">

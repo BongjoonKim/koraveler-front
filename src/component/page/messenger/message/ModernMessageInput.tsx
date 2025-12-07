@@ -294,7 +294,7 @@ const ModernMessageInput: React.FC = () => {
       )}
       
       {/* 메인 입력 영역 */}
-      <Box bg={"#fafafa"} padding={"0.75rem 1rem 1rem"}>
+      <Box bg={"#fafafa"} padding={"0.75rem 1rem 1rem"} borderRight={"1px solid #e7e7e7"} borderLeft={"1px solid #e7e7e7"}>
         <StyledInputWrapper isAIMode={isAIMode}>
           {/* 입력 필드 */}
           <StyledContentEditable
