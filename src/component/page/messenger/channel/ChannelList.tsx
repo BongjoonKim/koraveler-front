@@ -15,7 +15,15 @@ const ChannelList: React.FC<ChannelListProps> = ({
                                                    onChannelSelect
                                                  }) => {
   return (
-    <VStack gap={1} px={2} pb={4} overflowY="auto" flex={1}>
+    <VStack
+      gap={1}
+      px={2}
+      pb={4}
+      overflowY="auto"
+      flex={1}
+      borderLeft="1px"
+      borderColor="gray200"
+    >
       {channels.map((channel) => (
         <Box
           key={channel.id}

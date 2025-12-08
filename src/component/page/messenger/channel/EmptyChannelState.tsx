@@ -9,7 +9,7 @@ interface EmptyChannelStateProps {
 
 const EmptyChannelState: React.FC<EmptyChannelStateProps> = ({ onCreateChannel }) => {
   return (
-    <Flex flex={1} align="center" justify="center" direction="column" bg={"#e4ecff"}>
+    <Flex flex={1} align="center" justify="center" direction="column" bg={"#fafafa"} border={"1px solid #e7e7e7"}>
       <Avatar.Root size="xl" bg="blue.500" mb={4}>
         <Avatar.Fallback>
           <MessageCircle size={32} />

@@ -9,8 +9,8 @@ export interface HeaderLayoutProps {
 function HeaderLayout(props: HeaderLayoutProps) {
   return (
     <StyledHeaderLayout {...props}>
-        <LeftHeader />
-        <RightHeader />
+        {/*<LeftHeader />*/}
+        {/*<RightHeader />*/}
     </StyledHeaderLayout>
   )
 };

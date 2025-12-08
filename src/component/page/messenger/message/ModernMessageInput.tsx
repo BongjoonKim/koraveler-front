@@ -294,7 +294,7 @@ const ModernMessageInput: React.FC = () => {
       )}
       
       {/* 메인 입력 영역 */}
-      <StyledMainInput>
+      <Box bg={"#fafafa"} padding={"0.75rem 1rem 1rem"} borderRight={"1px solid #e7e7e7"} borderLeft={"1px solid #e7e7e7"}>
         <StyledInputWrapper isAIMode={isAIMode}>
           {/* 입력 필드 */}
           <StyledContentEditable
@@ -376,7 +376,7 @@ const ModernMessageInput: React.FC = () => {
             </HStack>
           </StyledBottomControls>
         </StyledInputWrapper>
-      </StyledMainInput>
+      </Box>
       
       {/* 숨겨진 파일 입력 */}
       <input
@@ -396,10 +396,7 @@ export default ModernMessageInput;
 // Styled Components
 const StyledInputContainer = styled(Box)<{ isAIMode: boolean }>`
   position: relative;
-  background: ${props => props.isAIMode ?
-  'linear-gradient(to bottom, #faf9fb, #ffffff)' :
-  '#ffffff'};
-  border-top: 1px solid #e5e7eb;
+  bg: '#fafafa';
   transition: all 0.3s ease;
 `;
 
@@ -507,6 +504,7 @@ const StyledModelOption = styled(Box)<{ isSelected: boolean }>`
 
 const StyledMainInput = styled(Box)`
   padding: 0.75rem 1rem 1rem;
+  background : '#fafafa' ;
 `;
 
 const StyledInputWrapper = styled(Box)<{ isAIMode: boolean }>`

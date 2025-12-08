@@ -33,6 +33,7 @@ import {
 } from '../../../../hooks/useMessengerQueries';
 import MemberItem from "./MemberItems";
 import InviteUserModal from "./InviteUserModal";
+import {useCurrentUser} from "../../../../hooks/useCurrentUser";
 
 const toaster = createToaster({
   placement: 'top-right',
@@ -46,18 +47,18 @@ interface ChannelMemberListProps {
 }
 
 export default function ChannelMemberList({
-                                            channelId,
-                                            isVisible,
-                                            onClose,
-                                            currentUserId
-                                          }: ChannelMemberListProps) {
+    channelId,
+    isVisible,
+    onClose,
+    currentUserId
+  }: ChannelMemberListProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
   const [editingNickname, setEditingNickname] = useState(false);
   const [newNickname, setNewNickname] = useState('');
   const [showInviteModal, setShowInviteModal] = useState(false);
-  const [currentUser] = useAtom(currentUserAtom);
   const [selectedChannel] = useAtom(selectedChannelAtom);
+  const currentUser = useCurrentUser();
   
   // 실제 데이터 가져오기
   const { data: members = [], isLoading, refetch: refetchMembers } = useChannelMembers(channelId);

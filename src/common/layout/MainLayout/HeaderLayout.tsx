@@ -8,22 +8,29 @@ function HeaderLayout() {
   
   return (
     <Box
-      as="header"
-      bg="white"
-      borderBottomWidth="1px"
-      borderColor="gray.200"
-      position="sticky"
+      w={"100%"}
       top="0"
-      shadow="sm"
-      zIndex={"999"}
+      display="flex"
+      justifyContent="center"
     >
-      <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }}>
-        <Flex h="16" align="center" justify="space-between">
-          <LeftHeader />
-          <RightHeader />
-        </Flex>
-      </Container>
+      <Box
+        as="header"
+        bg="white"
+        // borderColor="gray.200"
+        position="sticky"
+        zIndex={"999"}
+        maxW="7xl"
+        w="100%"  // 추가: 전체 너비 사용
+      >
+        <Container maxW="7xl" px={{ base: 4, md : 4, lg : 4}}>
+          <Flex h="16" align="center" justify="space-between" padding={"0.5rem 0"}>
+            <LeftHeader />
+            <RightHeader />
+          </Flex>
+        </Container>
+      </Box>
     </Box>
+  
   );
 }
 

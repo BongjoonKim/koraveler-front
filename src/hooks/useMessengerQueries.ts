@@ -127,6 +127,7 @@ export const useChannelMembers = (channelId: string | null) => {
       return response.data;
     },
     enabled: !!channelId,
+    staleTime: 1000 * 10,
   });
 };
 
@@ -144,7 +145,7 @@ export const useOnlineMembers = (channelId: string | null) => {
       return response.data;
     },
     enabled: !!channelId,
-    refetchInterval: 30000, // 30초마다 새로고침
+    refetchInterval: 1000 * 10, // 10초마다 새로고침
   });
 };
 
@@ -152,7 +153,6 @@ export const useOnlineMembers = (channelId: string | null) => {
 export const useCreateChannel = () => {
   const authEP = useAuthEP();
   const queryClient = useQueryClient();
-  console.log("여기도 오나")
   return useMutation({
     mutationFn: (data: {
       name: string;
@@ -249,7 +249,7 @@ export const useChannelMessages = (channelId: string | null) => {
       return response.data;
     },
     enabled: !!channelId,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000,
   });
 };
 

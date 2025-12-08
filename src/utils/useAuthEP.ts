@@ -66,7 +66,6 @@ export default function useAuthEP() {
         });
         
         // 토큰 갱신 후 성공했으면 currentUser 쿼리 즉시 실행
-        console.log("현재 사용자 유저 갱신되나")
         await refreshCurrentUserQuery()
         
         return result;
