@@ -1,6 +1,18 @@
 // 멤버 아이템 컴포넌트
 import React, {useState} from "react";
-import {Box, Flex, HStack, IconButton, Menu, MenuContent, MenuItem, MenuTrigger, Text, VStack} from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  HStack,
+  IconButton,
+  Menu,
+  MenuContent,
+  MenuItem,
+  MenuTrigger,
+  Portal,
+  Text,
+  VStack
+} from "@chakra-ui/react";
 import CusAvatar from "../../../../common/elements/CusAvatar";
 import {Bell, Circle, Edit2, MessageCircle, MoreVertical, UserMinus, VolumeX} from "lucide-react";
 
@@ -82,7 +94,7 @@ export default function MemberItem({
         
         {/* 액션 버튼들 */}
         {showActions && (
-          <Menu.Root>
+          <Menu.Root positioning={{placement : "left-middle"}}>
             <MenuTrigger asChild>
               <IconButton
                 size="xs"
@@ -93,32 +105,39 @@ export default function MemberItem({
                 <MoreVertical size={14} />
               </IconButton>
             </MenuTrigger>
-            <MenuContent>
-              {!isCurrentUser && (
-                <>
-                  <MenuItem value="message">
-                    <MessageCircle size={14} />
-                    <Text ml={2}>메시지 보내기</Text>
-                  </MenuItem>
-                  <MenuItem value="remove" onClick={() => onRemove()}>
-                    <UserMinus size={14} />
-                    <Text ml={2}>채널에서 제거</Text>
-                  </MenuItem>
-                </>
-              )}
-              {isCurrentUser && (
-                <>
-                  <MenuItem value="notifications" onClick={() => onToggleNotifications()}>
-                    <Bell size={14} />
-                    <Text ml={2}>알림 설정</Text>
-                  </MenuItem>
-                  <MenuItem value="nickname">
-                    <Edit2 size={14} />
-                    <Text ml={2}>닉네임 변경</Text>
-                  </MenuItem>
-                </>
-              )}
-            </MenuContent>
+            <Portal>
+              <Menu.Positioner>
+                <MenuContent>
+                  {!isCurrentUser && (
+                    <>
+                      <MenuItem value="message">
+                        <MessageCircle size={14} />
+                        <Text ml={2}>메시지 보내기</Text>
+                      </MenuItem>
+
+                    </>
+                  )}
+                  {isCurrentUser && (
+                    <>
+                      <MenuItem value="notifications" onClick={() => onToggleNotifications()}>
+                        <Bell size={14} />
+                        <Text ml={2}>알림 설정</Text>
+                      </MenuItem>
+                      <MenuItem value="nickname">
+                        <Edit2 size={14} />
+                        <Text ml={2}>닉네임 변경</Text>
+                      </MenuItem>
+                      {(member.roleId == "OWNER") && (
+                        <MenuItem value="remove" onClick={() => onRemove()}>
+                          <UserMinus size={14} />
+                          <Text ml={2}>채널에서 제거</Text>
+                        </MenuItem>
+                      )}
+                    </>
+                  )}
+                </MenuContent>
+              </Menu.Positioner>
+            </Portal>
           </Menu.Root>
         )}
       </Flex>

@@ -248,8 +248,9 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
               w={8}
               h={8}
               borderRadius="full"
-              bg="gradient-to-br from-blue-400 to-purple-500"
-              color="white"
+              // bg="gradient-to-br from-blue-400 to-purple-500"
+              border={"1px solid #dedede"}
+              color="black"
               display="flex"
               alignItems="center"
               justifyContent="center"
@@ -267,7 +268,7 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
                   objectFit="cover"
                 />
               ) : (
-                (message.userNickname || message.userId || 'U').charAt(0).toUpperCase()
+                (message.userNickname || message.userId).charAt(0).toUpperCase()
               )}
             </Box>
           )}

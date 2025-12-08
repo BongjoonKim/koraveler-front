@@ -29,7 +29,7 @@ import {
   MenuRoot,
   MenuTrigger,
 } from "@chakra-ui/react";
-import {ChevronLeft, Phone, Settings, Star, Users} from "lucide-react";
+import {ChevronLeft, Info, LogOut, Phone, Settings, Star, Users} from "lucide-react";
 import { selectedChannelAtom, showMemberListAtom } from "../../../../stores/messengerStore/messengerStore";
 import { useState } from "react";
 
@@ -116,17 +116,19 @@ export default function ChatHeader() {
               <MenuContent
                 css={{
                   zIndex: 9999,  // CSS prop으로 z-index 설정
-                  position: 'relative'
+                  position: 'relative',
                 }}
               >
-                <MenuItem onClick={() => setIsModalOpen(true)}>
+                <MenuItem onClick={() => setIsModalOpen(true)} css={{ cursor: "pointer" }}>
+                  <Info size={14} style={{ marginRight: '8px' }} />
                   채널 정보
                 </MenuItem>
-                <MenuItem onClick={handleShowMembers}>
+                <MenuItem onClick={handleShowMembers} css={{ cursor: "pointer" }}>
                   <Users size={14} style={{ marginRight: '8px' }} />
                   멤버 관리
                 </MenuItem>
-                <MenuItem color="red.500">
+                <MenuItem color="red.500" css={{ cursor: "pointer" }}>
+                  <LogOut size={14} style={{ marginRight: '8px' }}  />
                   채널 나가기
                 </MenuItem>
               </MenuContent>
