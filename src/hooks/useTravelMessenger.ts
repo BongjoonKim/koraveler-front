@@ -1,5 +1,5 @@
 // src/hooks/useTravelMessenger.ts
-import { useState, useRef, useEffect, useCallback } from 'react';
+import {useState, useRef, useEffect, useCallback, useLayoutEffect} from 'react';
 import { useAtom } from 'jotai';
 import { createToaster } from '@chakra-ui/react';
 import {
@@ -9,9 +9,10 @@ import {
 import { useChatManager } from './useChatManager';
 import { useWebSocket } from './useWebSocket';
 import { useCreateChannel } from './useMessengerQueries';
-import type { Channel } from '../types/messenger/messengerTypes';
+import type {Channel, Message} from '../types/messenger/messengerTypes';
 import {useCurrentUser} from "./useCurrentUser";
 import {useNavigate} from "react-router-dom";
+import moment from "moment";
 
 const toaster = createToaster({
   placement: 'top-right',
@@ -47,6 +48,9 @@ export const useTravelMessenger = () => {
     channels,
     messages,
     isLoadingMessages,
+    isFetchingMore,
+    hasMoreMessages,
+    fetchNextPage,
     refetchMessages,
     handleSendMessage,
     isSendingMessage
@@ -55,6 +59,69 @@ export const useTravelMessenger = () => {
   const { startTyping, stopTyping } = useWebSocket();
   const createChannelMutation = useCreateChannel();
   
+  // 메세지 스크롤 감지를 위한 ref
+  const scrollContainerRef = useRef<HTMLDivElement>(null!);
+  const prevScrollDataRef = useRef<{ height: number; top: number } | null>(null);
+  const isInitialLoadRef = useRef(true);
+  const loadMoreTriggerRef = useRef<HTMLDivElement>(null!);
+  
+  useLayoutEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    
+    // 초기 로드 시 맨 아래로
+    if (isInitialLoadRef.current && messages.length > 0) {
+      container.scrollTop = container.scrollHeight;
+      isInitialLoadRef.current = false;
+      return;
+    }
+    
+    // 이전 메시지 로드 후 스크롤 위치 복원
+    if (prevScrollDataRef.current) {
+      const { height: prevHeight } = prevScrollDataRef.current;
+      const newHeight = container.scrollHeight;
+      const heightDiff = newHeight - prevHeight;
+      
+      if (heightDiff > 0) {
+        container.scrollTop = heightDiff;
+      }
+      prevScrollDataRef.current = null;
+    }
+  }, [messages])
+  
+  // 이전 메시지 로드
+  const fetchMoreMessages = useCallback(() => {
+    if (!hasMoreMessages || isFetchingMore) return;
+    
+    const container = scrollContainerRef.current;
+    if (container) {
+      // 현재 스크롤 상태 저장
+      prevScrollDataRef.current = {
+        height: container.scrollHeight,
+        top: container.scrollTop,
+      };
+    }
+    
+    fetchNextPage();
+  }, [hasMoreMessages, isFetchingMore, fetchNextPage]);
+  
+  // 무한 스크롤 이벤트 핸들러
+  useEffect(() => {
+    const trigger = loadMoreTriggerRef.current;
+    if (!trigger) return;
+    
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isInitialLoadRef.current) {
+          fetchMoreMessages();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    
+    observer.observe(trigger);
+    return () => observer.disconnect();
+  }, [fetchMoreMessages]);
   // 화면 크기 감지
   useEffect(() => {
     const checkMobile = () => {
@@ -79,13 +146,6 @@ export const useTravelMessenger = () => {
     }
   }, [isMobile, selectedChannel, setShowMemberList]);
   
-  // 메시지 자동 스크롤
-  useEffect(() => {
-    if (messages.length > 0) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages]);
-  
   // WebSocket 메시지 수신 시 refetch
   useEffect(() => {
     const handleWebSocketMessage = () => {
@@ -97,6 +157,15 @@ export const useTravelMessenger = () => {
       // cleanup
     };
   }, [refetchMessages]);
+  
+  // ref 초기화
+  useEffect(() => {
+    // 메세지 스크롤 감지를 위한 ref
+    isInitialLoadRef.current = true;
+    // const scrollContainerRef = useRef<HTMLDivElement>(null!);
+    // const prevScrollDataRef = useRef<{ height: number; top: number } | null>(null);
+    // const loadMoreTriggerRef = useRef<HTMLDivElement>(null!);
+  }, [selectedChannel]);
   
   useEffect(() => {
     return () => {
@@ -136,8 +205,9 @@ export const useTravelMessenger = () => {
   
   // 채널 선택 핸들러
   const handleChannelSelect = useCallback((channel: Channel) => {
+    // console.log("채널 선택 ", channel.id,channel)
     setSelectedChannel(channel);
-  }, [setSelectedChannel]);
+  }, [selectedChannel]);
   
   // 채널 필터링
   const filteredChannels = channels.filter((channel) =>
@@ -174,9 +244,23 @@ export const useTravelMessenger = () => {
   const shouldShowSidebar = !isMobile || !selectedChannel;
   const shouldShowChat = !isMobile || selectedChannel;
   
+  const isSameDay = (inx: number, oldOneDate ?: string, newOneDate ?: string) => {
+    // console.log("isSameDay, oldOneDate", oldOneDate)
+    // console.log("isSameDay, newOneDate", newOneDate);
+    // console.log("moment(newOneDate)",     moment.duration(moment(newOneDate).diff(moment(oldOneDate))).asDays()
+    // )
+    // moment(newOneDate).subtract(oldOneDate)
+    if (inx === 0) {
+      return true;
+    }
+    return !(moment.duration(moment(newOneDate).diff(moment(oldOneDate))).asDays() > 1);
+  }
+  
   return {
     // Refs
     messagesEndRef,
+    scrollContainerRef,
+    loadMoreTriggerRef,
     
     // State
     selectedChannel,
@@ -189,6 +273,9 @@ export const useTravelMessenger = () => {
     // Chat data
     messages,
     isLoadingMessages,
+    isFetchingMore,
+    hasMoreMessages,
+    fetchMoreMessages,
     isSendingMessage,
     isMobile,
     shouldShowSidebar,
@@ -208,5 +295,6 @@ export const useTravelMessenger = () => {
     createChannelMutation,
     startTyping,
     stopTyping,
+    isSameDay,
   };
 };

@@ -302,12 +302,18 @@ export default function ChannelMemberList({
           {/* 멤버 통계 */}
           <HStack px={4} pb={2} gap={4}>
             <Text fontSize="sm" color="gray.600">
-              전체 {members.length}명
+              Total {members.length}
             </Text>
             <HStack gap={1}>
-              <Circle size={8} className="text-green-500 fill-green-500" />
+              <Box
+                w="10px"
+                h="10px"
+                borderRadius="full"
+                bg={activeMembersOnline?.length ? "green.500" : "gray.300"}
+                border="2px solid white"
+              />
               <Text fontSize="sm" color="gray.600">
-                온라인 {activeMembersOnline.length}명
+                Online {activeMembersOnline.length}
               </Text>
             </HStack>
           </HStack>

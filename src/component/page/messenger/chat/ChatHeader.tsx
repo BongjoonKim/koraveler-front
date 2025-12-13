@@ -77,19 +77,19 @@ export default function ChatHeader() {
               )}
             </HStack>
             <Text fontSize="sm" color="gray.500">
-              멤버 {selectedChannel.memberCount}명
+              Member {selectedChannel.memberCount}
             </Text>
           </VStack>
         </HStack>
         
         <HStack gap={2}>
-          <IconButton
-            aria-label="중요 메시지"
-            size="sm"
-            variant="ghost"
-          >
-            <Star size={16} />
-          </IconButton>
+          {/*<IconButton*/}
+          {/*  aria-label="중요 메시지"*/}
+          {/*  size="sm"*/}
+          {/*  variant="ghost"*/}
+          {/*>*/}
+          {/*  <Star size={16} />*/}
+          {/*</IconButton>*/}
           
           {/* 멤버 목록 보기 버튼 추가 */}
           <IconButton
