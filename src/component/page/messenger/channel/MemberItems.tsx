@@ -114,7 +114,12 @@ export default function MemberItem({
                         <MessageCircle size={14} />
                         <Text ml={2}>메시지 보내기</Text>
                       </MenuItem>
-
+                      {(member.roleId != "OWNER") && (
+                        <MenuItem value="remove" onClick={() => onRemove()}>
+                          <UserMinus size={14} />
+                          <Text ml={2}>채널에서 제거</Text>
+                        </MenuItem>
+                      )}
                     </>
                   )}
                   {isCurrentUser && (
@@ -127,12 +132,6 @@ export default function MemberItem({
                         <Edit2 size={14} />
                         <Text ml={2}>닉네임 변경</Text>
                       </MenuItem>
-                      {(member.roleId == "OWNER") && (
-                        <MenuItem value="remove" onClick={() => onRemove()}>
-                          <UserMinus size={14} />
-                          <Text ml={2}>채널에서 제거</Text>
-                        </MenuItem>
-                      )}
                     </>
                   )}
                 </MenuContent>

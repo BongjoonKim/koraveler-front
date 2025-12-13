@@ -54,9 +54,10 @@ export const useMyChannels = (params?: { size?: number; sortBy?: string; sortDir
         func: getMyChannels,
         params
       });
+      console.log("getMyChannels, ", response.data)
       return response.data;
     },
-    staleTime: 1000 * 60 * 5, // 5분
+    staleTime: 1000 * 60 * 1, // 1분
     refetchOnMount: 'always', // 컴포넌트 마운트 시마다 새로고침
     
   });
@@ -234,22 +235,28 @@ export const useLeaveChannel = () => {
 // useMessengerQueries.ts
 export const useChannelMessages = (channelId: string | null) => {
   const authEP = useAuthEP();
-  
-  return useQuery<MessageListResponse>({
+  return useInfiniteQuery<MessageListResponse>({
     queryKey: ['messages', channelId],
-    queryFn: async () => {
+    queryFn: async ({pageParam}) => {
+      // console.log("변화 인식", channelId)
       const response = await authEP({
-        func: getChannelMessages,
+        func : getChannelMessages,
         params: {
-          channelId: channelId!,
-          page: 0,  // 일단 첫 페이지만
-          size: 50
+          channelId : channelId!,
+          size: 20,
+          cursor:pageParam ?? undefined
         }
-      });
+      })
       return response.data;
     },
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => {
+      return lastPage.hasMore ? lastPage.cursor : undefined;
+    },
     enabled: !!channelId,
-    staleTime: 1000,
+    staleTime: 0,           // ✅ 항상 stale 상태로 간주
+    gcTime: 0,              // ✅ 캐시 즉시 삭제 (채널 변경 시 이전 데이터 제거)
+    refetchOnMount: true,   // ✅ 마운트 시 항상 refetch
   });
 };
 
@@ -269,7 +276,7 @@ export const useReplies = (parentMessageId: string | null) => {
     enabled: !!parentMessageId,
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => {
-      return lastPage.hasNext ? lastPage.nextCursor : undefined;
+      return lastPage.hasMore ? lastPage.cursor : undefined;
     },
   });
 };
@@ -289,7 +296,7 @@ export const useMentionedMessages = () => {
     },
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => {
-      return lastPage.hasNext ? lastPage.nextCursor : undefined;
+      return lastPage.hasMore ? lastPage.cursor : undefined;
     },
   });
 };
@@ -467,7 +474,12 @@ export const useAddMember = () => {
     mutationFn: ({ channelId, userId }: { channelId: string; userId: string }) =>
       authEP({ func: addMember, params: { channelId, userId } }),
     onSuccess: (_, variables) => {
+      // 멤버 목록 새로고침
       queryClient.invalidateQueries({ queryKey: ['members', variables.channelId] });
+      // ✅ 내 채널 목록도 새로고침 (memberCount 업데이트)
+      queryClient.invalidateQueries({ queryKey: ['channels', 'my'] });
+      // ✅ 해당 채널 상세 정보도 새로고침
+      queryClient.invalidateQueries({ queryKey: ['channels', variables.channelId] });
     },
   });
 };

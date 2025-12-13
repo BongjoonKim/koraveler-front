@@ -139,10 +139,10 @@ export interface ChannelListResponse {
 // MessageListResponse 수정
 export interface MessageListResponse {
   messages: Message[];
-  hasNext: boolean;
-  nextCursor?: string;    // cursor 기반 페이징용 (선택적)
-  currentPage?: number;   // ✅ 추가: 현재 페이지 번호
-  totalPages?: number;    // ✅ 추가: 전체 페이지 수
+  hasMore: boolean;
+  cursor?: string;    // cursor 기반 페이징용 (선택적)
+  // currentPage?: number;   // ✅ 추가: 현재 페이지 번호
+  // totalPages?: number;    // ✅ 추가: 전체 페이지 수
   totalCount: number;
 }
 

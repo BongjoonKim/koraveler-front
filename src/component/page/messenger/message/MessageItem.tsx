@@ -1,5 +1,5 @@
 // src/component/page/messenger/message/MessageItem.tsx
-import React, { useState } from 'react';
+import React, {memo, useState} from 'react';
 import { useAtom } from 'jotai';
 import {
   Box,
@@ -59,7 +59,7 @@ const toaster = createToaster({
   placement: "top",
 });
 
-const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
+const MessageItem: React.FC<MessageItemProps> = memo(({ message }) => {
   const [currentUser] = useAtom(currentUserAtom);
   const [, setContextMenu] = useAtom(contextMenuAtom);
   const [isEditing, setIsEditing] = useState(false);
@@ -491,10 +491,10 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
                     </HStack>
                   </MenuItem>
                   <MenuItem>
-                    <HStack gap={2}>
-                      <Star size={16} />
-                      <Text>즐겨찾기</Text>
-                    </HStack>
+                    {/*<HStack gap={2}>*/}
+                    {/*  <Star size={16} />*/}
+                    {/*  <Text>즐겨찾기</Text>*/}
+                    {/*</HStack>*/}
                   </MenuItem>
                   <MenuItem>
                     <HStack gap={2}>
@@ -551,6 +551,14 @@ const MessageItem: React.FC<MessageItemProps> = ({ message }) => {
       )}
     </Box>
   );
-};
+}, (prevProps, nextProps) => {
+  // 메시지 ID와 주요 속성이 같으면 재렌더링 방지
+  return (
+    prevProps.message.id === nextProps.message.id &&
+    prevProps.message.message === nextProps.message.message &&
+    prevProps.message.isEdited === nextProps.message.isEdited &&
+    prevProps.message.isPinned === nextProps.message.isPinned
+  );
+});
 
 export default MessageItem;
