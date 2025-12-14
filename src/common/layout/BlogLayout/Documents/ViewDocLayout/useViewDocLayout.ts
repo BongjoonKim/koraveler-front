@@ -19,7 +19,7 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
   const [isBookmarked, setBookmarked] = useAtom(isBookmark);
   const [errMsg, setErrMsg] = useRecoilState(recoil.errMsg);
   const authEP = useAuthEP();
-  const currentUser = useCurrentUser();
+  const {data : currentUser} = useCurrentUser();
   
   // 수정 화면으로 전환
   const handleEdit = useCallback(() => {

@@ -12,15 +12,15 @@ import ProtectedRoute from "../ProtectedRoute";
 export default function AdminRoutes() {
   return (
     <ProtectedRoute requiredRoles={["admin"]}>
-    <StyledAdminRoutes>
-      <AdminLayout>
-        <Routes>
-          <Route path="/menu" element={<MenuAdmin />} />
-          <Route path="/folder" element={<FolderManagement />} />
-          <Route path="/feature" element={<FeatureAdminDashboard />} />
-        </Routes>
-      </AdminLayout>
-    </StyledAdminRoutes>
+      <StyledAdminRoutes>
+        <AdminLayout>
+          <Routes>
+            <Route path="/menu" element={<MenuAdmin />} />
+            <Route path="/folder" element={<FolderManagement />} />
+            <Route path="/feature" element={<FeatureAdminDashboard />} />
+          </Routes>
+        </AdminLayout>
+      </StyledAdminRoutes>
     </ProtectedRoute>
   )
 }

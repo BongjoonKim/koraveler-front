@@ -19,7 +19,7 @@ function useRightHeader() {
   const cusAvaRef = useRef<HTMLDivElement>(null);
   const [searchModalOpen ,setSearchModalOpen] = useState<boolean>(false);
   const authEP = useAuthEP();
-  const currentUser = useCurrentUser();
+  const {data : currentUser } = useCurrentUser();
   
   const handleAvatarClick = useCallback(async (event : MouseEvent<HTMLSpanElement>) => {
     setSliderOpen(prev => !prev);

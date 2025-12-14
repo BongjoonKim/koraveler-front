@@ -20,7 +20,7 @@ export const useWebSocket = () => {
   const [, setTypingUsers] = useAtom(typingUsersAtom);
   const [, triggerMessageRefetch] = useAtom(triggerMessageRefetchAtom);
   const { accessToken } = useAuth();
-  const currentUser = useCurrentUser();
+  const {data : currentUser} = useCurrentUser();
   const queryClient = useQueryClient();
   const subscriptionsRef = useRef<Map<string, any>>(new Map());
   

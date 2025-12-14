@@ -23,7 +23,7 @@ import {
   BellOff
 } from 'lucide-react';
 import { useAtom } from 'jotai';
-import { currentUserAtom, selectedChannelAtom } from '../../../../stores/messengerStore/messengerStore';
+import { selectedChannelAtom } from '../../../../stores/messengerStore/messengerStore';
 import {
   useChannelMembers,
   useOnlineMembers,
@@ -58,7 +58,7 @@ export default function ChannelMemberList({
   const [newNickname, setNewNickname] = useState('');
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [selectedChannel] = useAtom(selectedChannelAtom);
-  const currentUser = useCurrentUser();
+  const {data : currentUser} = useCurrentUser();
   
   // 실제 데이터 가져오기
   const { data: members = [], isLoading, refetch: refetchMembers } = useChannelMembers(channelId);

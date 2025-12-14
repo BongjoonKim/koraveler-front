@@ -6,7 +6,7 @@ import {
   AvatarGroup,
   Badge,
   Box,
-  Button, Dialog,
+  Button, createToaster, Dialog,
   Flex,
   HStack,
   IconButton, Menu, Portal,
@@ -32,17 +32,46 @@ import {
 import {ChevronLeft, Info, LogOut, Phone, Settings, Star, Users} from "lucide-react";
 import { selectedChannelAtom, showMemberListAtom } from "../../../../stores/messengerStore/messengerStore";
 import { useState } from "react";
+import {useDeleteChannel, useLeaveChannel} from "../../../../hooks/useMessengerQueries";
+
+const toaster = createToaster({
+  placement: 'top',
+});
 
 export default function ChatHeader() {
   const [selectedChannel, setSelectedChannel] = useAtom(selectedChannelAtom);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showMemberList, setShowMemberList] = useAtom(showMemberListAtom);
+  const leaveChannelMutation = useLeaveChannel();
+  
   
   const handleShowMembers = () => {
     setShowMemberList(true);
   };
   
   if (!selectedChannel) return null;
+  
+  const handleOutChannel = async () => {
+    try {
+      await leaveChannelMutation.mutateAsync(selectedChannel.id);
+      
+      toaster.create({
+        title: '채널을 나갔습니다',
+        description: `#${selectedChannel.name} 채널에서 퇴장했습니다.`,
+        status: 'success',
+        duration: 3000,
+      });
+      
+      setSelectedChannel(null);
+    } catch (error) {
+      toaster.create({
+        title: '채널 나가기 실패',
+        description: '잠시 후 다시 시도해주세요.',
+        status: 'error',
+        duration: 3000,
+      });
+    }
+  }
   
   return (
     <>
@@ -127,7 +156,7 @@ export default function ChatHeader() {
                   <Users size={14} style={{ marginRight: '8px' }} />
                   멤버 관리
                 </MenuItem>
-                <MenuItem color="red.500" css={{ cursor: "pointer" }}>
+                <MenuItem onClick={handleOutChannel} color="red.500" css={{ cursor: "pointer" }}>
                   <LogOut size={14} style={{ marginRight: '8px' }}  />
                   채널 나가기
                 </MenuItem>
