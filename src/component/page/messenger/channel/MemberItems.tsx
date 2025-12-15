@@ -21,14 +21,18 @@ export default function MemberItem({
                       isOnline,
                       isSelected,
                       isCurrentUser,
+                      currentUserRole,
                       onClick,
                       onRemove,
+                     onTransferRoleOwner,
                       onToggleNotifications,
                       getMemberStatusBadge,
                       getNotificationIcon,
                       formatLastSeen
                     }: any) {
   const [showActions, setShowActions] = useState(false);
+  console.log("currentUser", currentUserRole)
+  
   return (
     <Box
       position="relative"
@@ -120,6 +124,12 @@ export default function MemberItem({
                           <Text ml={2}>채널에서 제거</Text>
                         </MenuItem>
                       )}
+                      {(currentUserRole == "OWNER") && (member?.roleId != "OWNER") && (
+                        <MenuItem value="remove" onClick={() => onTransferRoleOwner(member.id)}>
+                          <UserMinus size={14} />
+                          <Text ml={2}>Transer Owner Role</Text>
+                        </MenuItem>
+                      )}
                     </>
                   )}
                   {isCurrentUser && (
@@ -131,6 +141,10 @@ export default function MemberItem({
                       <MenuItem value="nickname">
                         <Edit2 size={14} />
                         <Text ml={2}>닉네임 변경</Text>
+                      </MenuItem>
+                      <MenuItem value="remove" onClick={() => onRemove()}>
+                        <UserMinus size={14} />
+                        <Text ml={2}>Exit Channel</Text>
                       </MenuItem>
                     </>
                   )}

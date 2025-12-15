@@ -31,7 +31,7 @@ import {
   banMember,
   unbanMember,
   uploadFile,
-  uploadMultipleFiles, getReplies, getMentionedMessages,
+  uploadMultipleFiles, getReplies, getMentionedMessages, updateMemberRole,
 } from '../endpoints/messenger-endpoints';
 import {
   Channel, ChannelApiResponse,
@@ -149,6 +149,39 @@ export const useOnlineMembers = (channelId: string | null) => {
     refetchInterval: 1000 * 10, // 10초마다 새로고침
   });
 };
+
+// 멤버 권한 변경
+export const useUpdateMemberRole = () => {
+  const authEP = useAuthEP();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({channelId, userId, roleId}: {
+      channelId : string;
+      userId : string;
+      roleId : string;
+    }) => authEP({
+      func: updateMemberRole,
+      params : { channelId, userId, roleId }
+    }),
+    onSuccess: (_, variables) => {
+      
+      // 멤버 목록 새로고침
+      queryClient.invalidateQueries(({
+        queryKey: ["members", variables.channelId]
+      }));
+      
+      // 채널 목록 새로고침
+      queryClient.invalidateQueries(({
+        queryKey: ['channels', 'my']
+      }));
+      
+      // 온라인 멤버 새로고침
+      queryClient.invalidateQueries(({
+        queryKey: ['members', 'online', variables.channelId]
+      }));
+    }
+  })
+}
 
 // 채널 생성 뮤테이션
 export const useCreateChannel = () => {
