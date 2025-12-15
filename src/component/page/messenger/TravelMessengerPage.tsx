@@ -149,14 +149,8 @@ const TravelMessengerPage: React.FC = () => {
                     {/* 상단 무한 스크롤 감지용 */}
                     <div ref={loadMoreTriggerRef} style={{height: "1px"}}/>
                     <VStack gap={4} align="stretch">
-                      {/*{(isLoadingMessages || isFetchingMore) && (*/}
-                      {/*  <Flex justify="center" align="center" h="100%">*/}
-                      {/*    <Spinner size="lg" color="blue.500"/>*/}
-                      {/*  </Flex>*/}
-                      {/*)}*/}
                       {messages.map((message, inx) => {
                         const showDevider = !isSameDay(inx, messages[inx - 1]?.createdAt, message.createdAt);
-                        console.log("showDevider",message.message, message.createdAt )
                         return (
                           <>
                             {showDevider && (<MessageDateDivider date={message.createdAt} />)}
@@ -166,7 +160,6 @@ const TravelMessengerPage: React.FC = () => {
                       })}
                       <div ref={messagesEndRef}/>
                     </VStack>
-
                   </Box>
                   
                   <ModernMessageInput/>

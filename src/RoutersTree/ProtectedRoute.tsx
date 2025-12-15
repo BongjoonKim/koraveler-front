@@ -1,5 +1,6 @@
 import {useCurrentUser} from "../hooks/useCurrentUser";
 import {Navigate, useLocation} from "react-router-dom";
+import {Flex, Spinner, Text} from "@chakra-ui/react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -10,9 +11,26 @@ export default function ProtectedRoute({
   children,
   requiredRoles = []
 }: ProtectedRouteProps) {
-  const currentUser = useCurrentUser();
+  const {data : currentUser, isLoading} = useCurrentUser();
   const location = useLocation();
-  console.log("currentUsercurrentUser", currentUser)
+  //
+  if (isLoading) {
+    return (
+      <Flex
+        h={"100%"}
+        align={"center"}
+        justify={"center"}
+        direction={"column"}
+        gap={4}
+      >
+        <Spinner size="xl" color="blue.500"/>
+        <Text color={"gray.600"}>
+          Loading...
+        </Text>
+      </Flex>
+    )
+  }
+  console.log("currentUser", currentUser)
   if (!currentUser) {
     return <Navigate to={'/login'} state={{from: location.pathname}} replace />
   }
@@ -26,6 +44,7 @@ export default function ProtectedRoute({
       return <Navigate to={"/error/403"} replace />
     }
   }
+  
   return (
     <>
       {children}

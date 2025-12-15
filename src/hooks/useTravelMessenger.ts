@@ -64,16 +64,30 @@ export const useTravelMessenger = () => {
   const prevScrollDataRef = useRef<{ height: number; top: number } | null>(null);
   const isInitialLoadRef = useRef(true);
   const loadMoreTriggerRef = useRef<HTMLDivElement>(null!);
+  const lastMessageIdRef = useRef<string | null>(null);
   
   useLayoutEffect(() => {
     const container = scrollContainerRef.current;
+    
     if (!container) return;
     
-    // 초기 로드 시 맨 아래로
+    // lastMessageIdRef는 항상 마지막 메세지의 ID 값을 가진다
+    if (!lastMessageIdRef.current && messages.length > 0) {
+      lastMessageIdRef.current = messages.slice(-1)[0]?.id ?? null;
+    }
+    
+    // 초기 로드 이거나 or 메세지 길이가 하나 늘어나는 경우
     if (isInitialLoadRef.current && messages.length > 0) {
       container.scrollTop = container.scrollHeight;
       isInitialLoadRef.current = false;
       return;
+    } else if (messages.length > 0 && lastMessageIdRef.current) {
+      if (messages.slice(-1)[0].id !== lastMessageIdRef.current) {
+        container.scrollTop = container.scrollHeight;
+        isInitialLoadRef.current = false;
+        lastMessageIdRef.current = messages.slice(-1)[0].id;
+        return;
+      }
     }
     
     // 이전 메시지 로드 후 스크롤 위치 복원
@@ -162,6 +176,7 @@ export const useTravelMessenger = () => {
   useEffect(() => {
     // 메세지 스크롤 감지를 위한 ref
     isInitialLoadRef.current = true;
+    lastMessageIdRef.current = null;
     // const scrollContainerRef = useRef<HTMLDivElement>(null!);
     // const prevScrollDataRef = useRef<{ height: number; top: number } | null>(null);
     // const loadMoreTriggerRef = useRef<HTMLDivElement>(null!);

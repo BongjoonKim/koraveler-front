@@ -5,6 +5,7 @@ import AdminLayout from "../../common/layout/AdminLayout/AdminLayout";
 import TravelMessengerPage from "../../component/page/messenger/TravelMessengerPage";
 import BlogLayout from "../../common/layout/BlogLayout";
 import MainLayout from "../../common/layout/MainLayout/MainLayout";
+import ProtectedRoute from "../ProtectedRoute";
 
 interface BlogRoutesProps {
 
@@ -13,15 +14,17 @@ interface BlogRoutesProps {
 function BlogRoutes(props: BlogRoutesProps) {
   
   return (
-    <StyledBlogRoutes>
-      {/*<BlogLayout>*/}
-      <MainLayout showHero={false}>
-        <Routes>
-          <Route path="/" element={<TravelMessengerPage />} />
-        </Routes>
-      </MainLayout>
-      {/*</BlogLayout>*/}
-    </StyledBlogRoutes>
+    <ProtectedRoute requiredRoles={["user", "admin"]}>
+      <StyledBlogRoutes>
+        {/*<BlogLayout>*/}
+        <MainLayout showHero={false}>
+          <Routes>
+            <Route path="/" element={<TravelMessengerPage />} />
+          </Routes>
+        </MainLayout>
+        {/*</BlogLayout>*/}
+      </StyledBlogRoutes>
+    </ProtectedRoute>
   )
 };
 

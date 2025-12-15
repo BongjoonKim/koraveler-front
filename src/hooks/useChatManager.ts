@@ -50,7 +50,7 @@ export const useChatManager = (): ChatManagerReturn => {
   
   // 메세지 새로 조회하기
   const prevMessagesRef = useRef<Message[]>([]);
-  const prevPagesLengthRef = useRef<number>(0);
+  const prevTotalCntRef = useRef<number>(0);
   
   
   // 현재 사용자 정보
@@ -81,39 +81,20 @@ export const useChatManager = (): ChatManagerReturn => {
   const messages = useMemo(() => {
     if (!messagesData?.pages) return prevMessagesRef.current;
     
-    const currentPagesLength = messagesData.pages.length;
-    const prevPagesLength = prevPagesLengthRef.current;
-    
-    // 페이지 수가 같으면 기존 배열 반환 (변경 없음)
-    if (currentPagesLength === prevPagesLength && prevMessagesRef.current.length > 0) {
-      return prevMessagesRef.current;
-    }
-    
-    // 새 페이지가 추가된 경우 (이전 메시지 로드)
-    if (currentPagesLength > prevPagesLength && prevPagesLength > 0) {
-      // 새로 추가된 페이지만 처리
-      const newPages = messagesData.pages.slice(prevPagesLength);
-      const newMessages = newPages
-        .slice()
-        .reverse()
-        .flatMap(page => page.messages || []);
-      
-      // 기존 메시지 앞에 새 메시지 추가
-      const merged = [...newMessages, ...prevMessagesRef.current];
-      
-      prevPagesLengthRef.current = currentPagesLength;
-      prevMessagesRef.current = merged;
-      
-      return merged;
-    }
-    
-    // 초기 로드 또는 채널 변경
     const allMessages = messagesData.pages
       .slice()
       .reverse()
       .flatMap(page => page.messages || []);
     
-    prevPagesLengthRef.current = currentPagesLength;
+    const currentTotalCnt = allMessages.length;
+    const prevTotalCnt = prevTotalCntRef.current;
+    
+    // 페이지 수가 같으면 기존 배열 반환 (변경 없음)
+    if (currentTotalCnt === prevTotalCnt && prevMessagesRef.current.length > 0) {
+      return prevMessagesRef.current;
+    }
+    
+    prevTotalCntRef.current = currentTotalCnt;
     prevMessagesRef.current = allMessages;
     // console.log("allMessages", allMessages)
     return allMessages;
@@ -124,7 +105,7 @@ export const useChatManager = (): ChatManagerReturn => {
     if (selectedChannel) {
       markAsReadMutation.mutate({ channelId: selectedChannel.id });
       prevMessagesRef.current = [];
-      prevPagesLengthRef.current = 0;
+      prevTotalCntRef.current = 0;
     }
   }, [selectedChannel?.id]);
   

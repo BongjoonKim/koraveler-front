@@ -23,11 +23,11 @@ import {
   BellOff
 } from 'lucide-react';
 import { useAtom } from 'jotai';
-import { currentUserAtom, selectedChannelAtom } from '../../../../stores/messengerStore/messengerStore';
+import { selectedChannelAtom } from '../../../../stores/messengerStore/messengerStore';
 import {
   useChannelMembers,
   useOnlineMembers,
-  useRemoveMember,
+  useRemoveMember, useUpdateMemberRole,
   useUpdateMyNickname,
   useUpdateNotificationSettings
 } from '../../../../hooks/useMessengerQueries';
@@ -58,7 +58,7 @@ export default function ChannelMemberList({
   const [newNickname, setNewNickname] = useState('');
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [selectedChannel] = useAtom(selectedChannelAtom);
-  const currentUser = useCurrentUser();
+  const {data : currentUser} = useCurrentUser();
   
   // 실제 데이터 가져오기
   const { data: members = [], isLoading, refetch: refetchMembers } = useChannelMembers(channelId);
@@ -68,6 +68,11 @@ export default function ChannelMemberList({
   const removeMemberMutation = useRemoveMember();
   const updateNicknameMutation = useUpdateMyNickname();
   const updateNotificationMutation = useUpdateNotificationSettings();
+  const updateMemberRoleMutation = useUpdateMemberRole();
+  
+  // 현재 사용자의 멤버 정보 찾기
+  const currentUserMember = members.find(m => m.userId === currentUser?.id);
+  const currentUserRole = currentUserMember?.roleId || "MEMBER";
   
   // 초대 모달이 닫힐 때 멤버 목록 새로고침
   const handleInviteModalClose = () => {
@@ -107,11 +112,11 @@ export default function ChannelMemberList({
   };
   
   const handleRemoveMember = async (userId: string) => {
-    if (window.confirm('정말 이 멤버를 채널에서 제거하시겠습니까?')) {
+    if (window.confirm('Do you really want to delete this member?')) {
       try {
         await removeMemberMutation.mutateAsync({ channelId, userId });
         toaster.create({
-          title: '멤버를 제거했습니다',
+          title: 'Deleted Member',
           status: 'success',
           duration: 2000
         });
@@ -125,6 +130,39 @@ export default function ChannelMemberList({
       }
     }
   };
+  
+  const handleTransferOwnership = async (targetUserId: string) => {
+    try {
+      if (!selectedChannel?.id) {
+        toaster.create(
+          {
+            title: 'Select Channel First',
+            status: 'error',
+            duration: 2000
+          }
+        );
+        return;
+      }
+      await updateMemberRoleMutation.mutateAsync({
+        channelId : selectedChannel!.id,
+        userId : targetUserId,
+        roleId : "OWNER"
+      })
+      
+      toaster.create({
+        title : "Owner role transferred successfully",
+        status  :"success",
+        duration : 2000
+      })
+      await refetchMembers();
+    } catch (error) {
+      toaster.create({
+        title : "Authority Change Fail",
+        status : "error",
+        duration : 2000
+      })
+    }
+  }
   
   const handleUpdateNickname = async () => {
     if (!newNickname.trim()) return;
@@ -341,8 +379,10 @@ export default function ChannelMemberList({
                         isOnline={true}
                         isSelected={selectedMember === member.id}
                         isCurrentUser={member.userId === currentUser?.id}
+                        currentUserRole={currentUserRole} // ✅ 추가
                         onClick={() => handleMemberClick(member.id)}
                         onRemove={() => handleRemoveMember(member.userId)}
+                        onTransferRoleOwner={() => handleTransferOwnership(member.userId)}
                         onToggleNotifications={() => handleToggleNotifications(member)}
                         getMemberStatusBadge={getMemberStatusBadge}
                         getNotificationIcon={getNotificationIcon}
@@ -365,8 +405,10 @@ export default function ChannelMemberList({
                         isOnline={false}
                         isSelected={selectedMember === member.id}
                         isCurrentUser={member.userId === currentUser?.id}
+                        currentUserRole={currentUserRole} // ✅ 추가
                         onClick={() => handleMemberClick(member.id)}
                         onRemove={() => handleRemoveMember(member.userId)}
+                        onTransferRoleOwner={() => handleTransferOwnership(member.userId)}
                         onToggleNotifications={() => handleToggleNotifications(member)}
                         getMemberStatusBadge={getMemberStatusBadge}
                         getNotificationIcon={getNotificationIcon}
@@ -389,6 +431,7 @@ export default function ChannelMemberList({
                         isOnline={false}
                         isSelected={selectedMember === member.id}
                         isCurrentUser={member.userId === currentUser?.id}
+                        currentUserRole={currentUserRole} // ✅ 추가
                         onClick={() => handleMemberClick(member.id)}
                         onRemove={() => handleRemoveMember(member.userId)}
                         onToggleNotifications={() => handleToggleNotifications(member)}

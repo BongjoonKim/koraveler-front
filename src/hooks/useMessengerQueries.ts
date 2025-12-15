@@ -31,7 +31,7 @@ import {
   banMember,
   unbanMember,
   uploadFile,
-  uploadMultipleFiles, getReplies, getMentionedMessages,
+  uploadMultipleFiles, getReplies, getMentionedMessages, updateMemberRole,
 } from '../endpoints/messenger-endpoints';
 import {
   Channel, ChannelApiResponse,
@@ -149,6 +149,39 @@ export const useOnlineMembers = (channelId: string | null) => {
     refetchInterval: 1000 * 10, // 10초마다 새로고침
   });
 };
+
+// 멤버 권한 변경
+export const useUpdateMemberRole = () => {
+  const authEP = useAuthEP();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({channelId, userId, roleId}: {
+      channelId : string;
+      userId : string;
+      roleId : string;
+    }) => authEP({
+      func: updateMemberRole,
+      params : { channelId, userId, roleId }
+    }),
+    onSuccess: (_, variables) => {
+      
+      // 멤버 목록 새로고침
+      queryClient.invalidateQueries(({
+        queryKey: ["members", variables.channelId]
+      }));
+      
+      // 채널 목록 새로고침
+      queryClient.invalidateQueries(({
+        queryKey: ['channels', 'my']
+      }));
+      
+      // 온라인 멤버 새로고침
+      queryClient.invalidateQueries(({
+        queryKey: ['members', 'online', variables.channelId]
+      }));
+    }
+  })
+}
 
 // 채널 생성 뮤테이션
 export const useCreateChannel = () => {
@@ -317,30 +350,46 @@ export const useSendMessage = () => {
       mentionedUserIds?: string[];
       clientId?: string;
     }) => authEP({ func: sendMessage, params: data }),
-    
     onSuccess: (response, variables) => {
-      // 채널 목록 업데이트
-      queryClient.setQueryData(
-        ['channels', 'my'],
-        (old: ChannelListResponse | undefined) => {
-          if (!old) return old;
-          
-          return {
-            ...old,
-            channels: old.channels.map((channel: Channel) =>
-              channel.id === variables.channelId
-                ? {
-                  ...channel,
-                  lastMessage: response.data,
-                  lastMessageAt: response.data.createdAt,
-                  unreadMessageCount: 0
-                }
-                : channel
-            )
+      
+      // ✅ isMyMessage 추가
+      response.data.isMyMessage = true;
+      
+      // ✅ 메시지 목록에 새 메시지 추가
+      queryClient.setQueryData(['messages', variables.channelId], (old: any) => {
+        if (!old?.pages) return old;
+        
+        const newPages = [...old.pages];
+        
+        // 첫 번째 페이지(최신 메시지들)에 새 메시지 추가
+        if (newPages.length > 0) {
+          newPages[0] = {
+            ...newPages[0],
+            messages: [...newPages[0].messages, response.data] // ✅ 단순히 추가
           };
         }
-      );
-    }
+        console.log("old", old)
+        console.log("newPages", newPages)
+        return { ...old, pages: newPages };
+      });
+      
+      // ✅ 채널 목록 업데이트
+      queryClient.setQueryData(['channels', 'my'], (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          channels: old.channels.map((channel: Channel) =>
+            channel.id === variables.channelId
+              ? {
+                ...channel,
+                lastMessage: response.data,
+                lastMessageAt: response.data.createdAt
+              }
+              : channel
+          )
+        };
+      });
+    },
   });
 };
 

@@ -23,7 +23,7 @@ function useRightHeader() {
   const authEP = useAuthEP();
   const { clearAuth, refreshCurrentUserQuery } = useAuth(); // AuthContext에서 모든 액션 가져오기
   
-  const currentUser = useCurrentUser();
+  const {data : currentUser } = useCurrentUser();
   
   
   const handleAvatarClick = useCallback(async (event : MouseEvent<HTMLSpanElement>) => {

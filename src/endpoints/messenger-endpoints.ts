@@ -220,6 +220,13 @@ export const updateMyNickname = async (props: FuncProps) => {
   });
 };
 
+export const updateMemberRole = async (props : FuncProps) => {
+  return await request.put(`/api/v1/channels/${props.params.channelId}/members/${props.params.userId}/role`, null, {
+    headers: { Authorization: `Bearer ${props.accessToken}` },
+    params: { roleId: props.params.roleId }
+  })
+}
+
 // 알림 설정 변경
 export const updateNotificationSettings = async (props: FuncProps) => {
   return await request.put(`/api/v1/channels/${props.params.channelId}/members/my-notifications`, {}, {

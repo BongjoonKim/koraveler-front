@@ -11,6 +11,7 @@ interface AuthContextType {
   // 사용자 쿼리 관련 액션 추가
   clearCurrentUserQuery: () => void;
   refreshCurrentUserQuery: () => Promise<void>;
+  isInitialized: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -180,7 +181,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       clearAuth,
       refreshTokenIfNeeded,
       clearCurrentUserQuery,
-      refreshCurrentUserQuery
+      refreshCurrentUserQuery,
+      isInitialized,
     }}>
       {children}
     </AuthContext.Provider>

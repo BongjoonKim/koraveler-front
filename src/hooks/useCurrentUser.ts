@@ -5,12 +5,18 @@ import { getLoginUser } from '../endpoints/login-endpoints';
 import useAuthEP from '../utils/useAuthEP';
 import type { UserSummary } from '../types/messenger/messengerTypes';
 
-export const useCurrentUser = (): UserSummary | null => {
-  const { accessToken } = useAuth();
+interface UseCurrentUserReturn  {
+  data : UserSummary | null;
+  isLoading : boolean;
+  isError : boolean;
+}
+
+export const useCurrentUser = (): UseCurrentUserReturn => {
+  const {accessToken, isInitialized} = useAuth();
   const authEP = useAuthEP();
   
   // 로그인한 사용자 정보 조회
-  const { data: userData } = useQuery({
+  const {data, isLoading, isError} = useQuery({
     queryKey: ['currentUser', accessToken],
     queryFn: async () => {
       if (!accessToken) {
@@ -18,7 +24,7 @@ export const useCurrentUser = (): UserSummary | null => {
       }
       
       try {
-        const response = await authEP({ func: getLoginUser });
+        const response = await authEP({func: getLoginUser});
         console.log("사용자 정보 조회 성공:", response.data);
         
         // UserSummary 형태로 변환하여 반환
@@ -41,9 +47,9 @@ export const useCurrentUser = (): UserSummary | null => {
         throw error; // 다른 에러는 재시도를 위해 throw
       }
     },
-    enabled: !!accessToken,
+    enabled: isInitialized && !!accessToken,
     staleTime: 1000 * 60 * 5, // 5분
-    gcTime: 1000 * 60 * 10, // 10분
+    gcTime: 1000 * 60 * 20, // 0분
     refetchOnWindowFocus: true, // 창 포커스 시 재조회
     refetchOnReconnect: true,
     retry: (failureCount, error) => {
@@ -55,25 +61,9 @@ export const useCurrentUser = (): UserSummary | null => {
     },
   });
   
-  return userData ?? null;
+  return {
+   data : data ?? null,
+   isLoading : !isInitialized || isLoading,
+   isError
+  }
 };
-
-// // 로그인/로그아웃 시 명시적으로 호출할 수 있는 유틸리티 함수
-// export const useCurrentUserActions = () => {
-//   const queryClient = useQueryClient();
-//   const { accessToken } = useAuth();
-//
-//   const refreshCurrentUser = async () => {
-//     if (accessToken) {
-//       await queryClient.invalidateQueries({ queryKey: ['currentUser', accessToken] });
-//     }
-//   };
-//
-//   const clearCurrentUser = () => {
-//     queryClient.removeQueries({
-//       queryKey: ['currentUser', accessToken]
-//     });
-//     }
-//
-//   return { refreshCurrentUser, clearCurrentUser };
-// };
