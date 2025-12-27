@@ -3,25 +3,25 @@ import {ReactNode} from "react";
 import useTabLayout from "./useTabLayout";
 import CusTab from "../../elements/CusTab";
 
-export interface AdminMenuTabProps {
+export interface UserMenuTabProps {
   children : ReactNode;
 }
 
-function AdminTabLayout(props : AdminMenuTabProps) {
+function UserTabLayout(props : UserMenuTabProps) {
   const {
-    adminTabList,
-    handleChangeAdminTab,
+    userTabList,
+    handleChangeUserTab,
     currentPath,
   } = useTabLayout(props);
   
   // currentPath와 일치하는 탭의 value를 기본값으로 설정
-  const defaultValue = adminTabList.find(tab => tab.value === currentPath)?.value || adminTabList[0]?.value;
+  const defaultValue = userTabList.find(tab => tab.value === currentPath)?.value || userTabList[0]?.value;
   
   return (
     <StyledMenuTab>
       <CusTab
-        onChange={handleChangeAdminTab} // 이제 (value: string) => void 함수
-        tabs={adminTabList}
+        onChange={handleChangeUserTab} // 이제 (value: string) => void 함수
+        tabs={userTabList}
         defaultValue={defaultValue} // defaultIndex 대신 defaultValue 사용
         variant="line" // 원하는 스타일 추가
         colorPalette="blue" // 원하는 색상 추가
@@ -31,7 +31,7 @@ function AdminTabLayout(props : AdminMenuTabProps) {
   )
 }
 
-export default AdminTabLayout;
+export default UserTabLayout;
 
 const StyledMenuTab = styled.div`
     display: flex;

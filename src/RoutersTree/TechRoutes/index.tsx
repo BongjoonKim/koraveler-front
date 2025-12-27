@@ -8,7 +8,6 @@ import MenuHeader from "../../common/layout/MenuHeader";
 import MenuTab from "../../common/layout/TabLayout";
 import BlogLayout from "../../common/layout/BlogLayout/BlogLayout";
 import EditBlogPost from "../../component/page/blog/EditBlogPost";
-import AdminLayout from "../../common/layout/AdminLayout/AdminLayout";
 import TechHome from "../../component/page/tech/TechHome";
 
 interface TechRoutesProps {
@@ -19,11 +18,11 @@ function TechRoutes(props: TechRoutesProps) {
   
   return (
     <StyledTechRoutes>
-      <AdminLayout>
+      {/*<AdminMenu>*/}
         <Routes>
           <Route path="/home" element={<TechHome />} />
         </Routes>
-      </AdminLayout>
+      {/*</AdminMenu>*/}
     </StyledTechRoutes>
   )
 };

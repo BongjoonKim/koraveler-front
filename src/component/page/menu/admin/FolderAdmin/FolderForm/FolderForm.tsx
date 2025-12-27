@@ -1,7 +1,8 @@
-import {useEffect, useState} from "react";
-import {createFolder, updateFolder} from "../../../../../../endpoints/folders-endpoints";
+import {FormEvent, useEffect, useState} from "react";
+import {createFolder, deleteFolder, updateFolder} from "../../../../../../endpoints/folders-endpoints";
 import styled from "styled-components";
 import useAuthEP from "../../../../../../utils/useAuthEP";
+import {useCreateFolder, useDeleteFolder, useUpdateFolder} from "../../../../../../hooks/useFolderQueries";
 
 interface FolderFormProps {
   userId?: string;
@@ -19,6 +20,9 @@ export default function FolderForm( {
  onCancel
 } : FolderFormProps) {
   const isEditMode = !!folder?.id;
+  const createFolderMutation = useCreateFolder();
+  const updateFolderMutation = useUpdateFolder();
+  const deleteFolderMutation = useDeleteFolder();
   
   // 폼 상태 관리
   const [formData, setFormData] = useState<FoldersDTO & { parentName?: string }>({
@@ -88,16 +92,10 @@ export default function FolderForm( {
       console.log("form정보 보기", formData)
       if (isEditMode) {
         // 폴더 업데이트
-        await authEP({
-          func: updateFolder,
-          params: formData,
-        })
+        await updateFolderMutation.mutateAsync(formData);
       } else {
         // 새 폴더 생성
-        await authEP({
-          func: createFolder,
-          params : formData,
-        })
+        await createFolderMutation.mutateAsync(formData);
       }
       
       if (onSuccess) {
@@ -110,6 +108,30 @@ export default function FolderForm( {
       setIsSubmitting(false);
     }
   };
+  
+  const handleDelete = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+    
+    if (!folder?.id) {
+      setError("There is no delete folder");
+      return;
+    }
+    
+    try {
+      await deleteFolderMutation.mutateAsync(folder.id);
+      if (onSuccess) {
+        onSuccess();
+      }
+    } catch (error) {
+      setError("there is error while you delete folder")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+  
+  console.log("parentFolder", parentFolder)
   
   return (
     <StyledFolderForm>
@@ -139,7 +161,7 @@ export default function FolderForm( {
           value={parentFolder?.name}
           onChange={handleChange}
           required
-          disabled={!!parentFolder}
+          disabled={!parentFolder}
         />
         <small>부모 폴더가 있는 경우 자동으로 설정됩니다.</small>
       </div>
@@ -167,12 +189,23 @@ export default function FolderForm( {
       </div>
       
       <div className="form-actions">
+        {isEditMode && (
+          <button
+            type="button"
+            disabled={isSubmitting}
+            onClick={handleDelete}
+            style={{ background: '#d32f2f', color: 'white' }}  // 삭제 버튼 스타일
+          
+          >
+            Delete
+          </button>
+        )}
         <button
           type="button"
           onClick={onCancel}
           disabled={isSubmitting}
         >
-          취소
+        취소
         </button>
         <button
           type="submit"
@@ -187,9 +220,9 @@ export default function FolderForm( {
 };
 
 const StyledFolderForm = styled.div`
-.folder-tree-container {
-  width: 100%;
-  height: 100%;
+    .folder-tree-container {
+        width: 100%;
+        height: 100%;
   border: 1px solid #ddd;
   border-radius: 4px;
   overflow: auto;

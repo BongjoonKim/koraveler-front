@@ -10,6 +10,7 @@ import styled from "styled-components";
 import CusModal from "../../../../../../common/elements/CusModal";
 import FolderInfo from "../FolderInfo";
 import useAuthEP from "../../../../../../utils/useAuthEP";
+import {useMyFolders} from "../../../../../../hooks/useFolderQueries";
 
 interface FolderManagementProps {
   userId?: string;
@@ -21,7 +22,9 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
-  const [folders, setFolders] = useState<any>({});
+  // const [folders, setFolders] = useState<any>({});
+  
+  const {data : folders} = useMyFolders();
   const [folderModal, setFolderModal] = useState<boolean>(false);
   const authEP = useAuthEP();
   
@@ -32,40 +35,41 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
     // 선택된 항목이 없으면 선택 해제
     if (!items || items.length === 0) {
       setSelectedFolder(null);
+      setShowForm(false);
       return;
     }
     
     const newSelectedFolder = folders[items[0]].data;
     
-    
     // 현재 선택된 폴더와 새로 선택한 폴더가 같으면 선택 해제
     if (selectedFolder && selectedFolder.id === newSelectedFolder.id) {
       setSelectedFolder(null);
+      setShowForm(false);
     } else {
       // 다른 폴더이거나 처음 선택하는 경우
       setSelectedFolder(newSelectedFolder);
     }
   };
   
-  const getAllFolders = useCallback(async () => {
-    try {
-      const res = await authEP({
-        func : getAllLoginUserFolders,
-      })
-      
-      console.log("Folder response", res.data);
-      console.log("Folder response type:", typeof res.data);
-      console.log("Folder response length:", res.data?.length);
-      
-      setFolders(res.data || []);
-    } catch (e) {
-      console.error("Error fetching folders:", e);
-      setErrorMsg({
-        status: "error",
-        msg: "retrieve failed",
-      });
-    }
-  }, [setErrorMsg]);
+  // const getAllFolders = useCallback(async () => {
+  //   try {
+  //     const res = await authEP({
+  //       func : getAllLoginUserFolders,
+  //     })
+  //
+  //     console.log("Folder response", res.data);
+  //     console.log("Folder response type:", typeof res.data);
+  //     console.log("Folder response length:", res.data?.length);
+  //
+  //     setFolders(res.data || []);
+  //   } catch (e) {
+  //     console.error("Error fetching folders:", e);
+  //     setErrorMsg({
+  //       status: "error",
+  //       msg: "retrieve failed",
+  //     });
+  //   }
+  // }, [setErrorMsg]);
   
   const getParentFolderData = useCallback(async() => {
     try {
@@ -91,7 +95,7 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
   const handleCreateFolder = () => {
     setFormMode('create');
     setShowForm(true);
-    setFolderModal(true)
+    // setFolderModal(true)
   };
   
   // 폴더 편집 버튼 핸들러
@@ -99,7 +103,7 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
     if (selectedFolder) {
       setFormMode('edit');
       setShowForm(true);
-      setFolderModal(true)
+      // setFolderModal(true)
     }
   };
   
@@ -119,12 +123,6 @@ const FolderManagement: React.FC<FolderManagementProps> = ({ userId }) => {
   const closeFolderModal = () => {
     setFolderModal(false);
   }
-  
-  useEffect(() => {
-    getAllFolders();
-  }, []);
-  
-  console.log("선택한 폴더", selectedFolder)
   
   return (
     <StyledFolderManagement>

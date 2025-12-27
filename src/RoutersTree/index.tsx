@@ -12,6 +12,7 @@ import MainLayout from "../common/layout/MainLayout/MainLayout";
 import HomePage from "../component/page/homePage/HomePage";
 import AdminRoutes from "./AdminRoutes";
 import ForbiddenPage from "../component/page/error/ForbiddenPage";
+import UserRoutes from "./UserRoutes";
 
 export default function RoutersTree() {
   return (
@@ -23,10 +24,11 @@ export default function RoutersTree() {
             <Route path="/tech/*" element={<TechRoutes/>}/>
             <Route path="/chat/*" element={<ChatRoutes/>}/>
             <Route path="/login/*" element={<LoginRoutes/>}/>
-            <Route path="/setting/*" element={
-                <SettingRoutes/>
-            }/>
+            {/*<Route path="/setting/*" element={*/}
+            {/*    <SettingRoutes/>*/}
+            {/*}/>*/}
           <Route path="/admin/*" element={<AdminRoutes />} />
+          <Route path="/user/*" element={<UserRoutes />} />
           <Route path="/error/403" element={<ForbiddenPage />} />
           <Route path="*" element={
             <AlertRoot status="error">

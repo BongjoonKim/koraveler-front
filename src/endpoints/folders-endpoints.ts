@@ -3,7 +3,7 @@ import {AxiosResponse} from "axios";
 import {FuncProps} from "../utils/useAuthEP";
 
 export async function getAllLoginUserFolders(props : FuncProps) {
-  return (await request.get(`/ps/folders/all`, {
+  return (await request.get(`/folders/all`, {
     headers: {
       Authorization : `Bearer ${props.accessToken}`
     }
@@ -11,7 +11,7 @@ export async function getAllLoginUserFolders(props : FuncProps) {
 }
 
 export async function getParentFolder(props : FuncProps) {
-  return (await request.get(`/ps/folders?child-id=${props.params.childId}`, {
+  return (await request.get(`/folders?child-id=${props.params.childId}`, {
     headers: {
       Authorization : `Bearer ${props.accessToken}`
     }
@@ -19,7 +19,7 @@ export async function getParentFolder(props : FuncProps) {
 }
 
 export async function createFolder(props : FuncProps) {
-  return (await request.post(`/ps/folders`, props.params, {
+  return (await request.post(`/folders`, props.params, {
     headers: {
       Authorization : `Bearer ${props.accessToken}`
     }
@@ -27,7 +27,15 @@ export async function createFolder(props : FuncProps) {
 }
 
 export async function updateFolder(props : FuncProps) {
-  return (await request.put(`/ps/folders`, props.params, {
+  return (await request.put(`/folders`, props.params, {
+    headers: {
+      Authorization : `Bearer ${props.accessToken}`
+    }
+  })) as AxiosResponse<any>;
+}
+
+export async function deleteFolder(props : FuncProps) {
+  return (await request.delete(`/folders?id=${props.params.id}`, {
     headers: {
       Authorization : `Bearer ${props.accessToken}`
     }
