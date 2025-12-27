@@ -33,6 +33,7 @@ function RightHeader() {
     handleSignup,
     handleChat,
     handleAdmin,
+    handleUser,
   } = useRightHeader();
   
   console.log("currentUser", currentUser)
@@ -133,6 +134,9 @@ function RightHeader() {
                           Chat
                         </MenuItem>
                         <MenuSeparator />
+                        <MenuItem value="admin/menu" onClick={handleUser}>
+                          User
+                        </MenuItem>
                         {currentUser.roles?.includes("admin") ? (
                           <MenuItem value="admin/menu" onClick={handleAdmin}>
                             Admin

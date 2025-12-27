@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, {useState, useCallback, useEffect, MouseEvent} from 'react';
 import {
   Box,
   Flex,
@@ -9,7 +9,7 @@ import {
   IconProps,
   BoxProps,
 } from '@chakra-ui/react';
-import { ChevronRight } from 'lucide-react';
+import {ChevronDown, ChevronRight, Folder, FolderOpen} from 'lucide-react';
 import {
   StaticTreeDataProvider,
   Tree,
@@ -90,33 +90,6 @@ interface CustomIconProps extends IconProps {
   isOpen?: boolean;
 }
 
-// SVG 아이콘 컴포넌트들
-const FolderIcon: React.FC<CustomIconProps> = ({ isOpen = false, ...props }) => (
-  <Icon viewBox="0 0 24 24" {...props}>
-    <path
-      fill="currentColor"
-      d="M10 4H4C2.89543 4 2 4.89543 2 6V18C2 19.1046 2.89543 20 4 20H20C21.1046 20 22 19.1046 22 18V8C22 6.89543 21.1046 6 20 6H12L10 4Z"
-    />
-  </Icon>
-);
-
-const FileIcon: React.FC<IconProps> = (props) => (
-  <Icon viewBox="0 0 24 24" {...props}>
-    <path
-      fill="currentColor"
-      d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z"
-    />
-    <path
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      fill="none"
-      d="M14 2V8H20"
-    />
-  </Icon>
-);
-
 const GlobeIcon: React.FC<IconProps> = (props) => (
   <Icon viewBox="0 0 24 24" {...props}>
     <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
@@ -141,7 +114,13 @@ export default function FolderTree(props: FolderTreeProps) {
   const { folders, handleFolderSelect, selectedFolderId } = props;
   
   // 트리 상태 관리
-  const [expandedItems, setExpandedItems] = useState<TreeItemIndex[]>(['root']);
+  const [expandedItems, setExpandedItems] = useState<TreeItemIndex[]>(() => {
+    // folders가 있으면 모든 폴더 ID를 초기 확장 상태로 설정
+    if (folders && Object.keys(folders).length > 0) {
+      return Object.keys(folders).filter(key => folders[key]?.isFolder);
+    }
+    return ['root'];
+  });
   const [selectedItems, setSelectedItems] = useState<TreeItemIndex[]>([]);
   
   // 색상 정의 (하드코딩으로 변경)
@@ -159,7 +138,7 @@ export default function FolderTree(props: FolderTreeProps) {
   const scrollThumbHoverBg = '#a0aec0';
   
   // selectedFolderId가 변경될 때 selectedItems 업데이트
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedFolderId) {
       const foundKey = Object.keys(folders || {}).find(key =>
         folders[key].data?.id === selectedFolderId
@@ -201,94 +180,101 @@ export default function FolderTree(props: FolderTreeProps) {
     }
   }, [expandedItems]);
   
-  const renderItemArrow = React.useCallback(({ item, context }: any) => (
-    <Flex align="center" justify="center" w={2} h={4} mr={0}>
-      {item.isFolder && item.children && item.children.length > 0 && (
-        <Box
-          onClick={(e) => handleArrowClick(item.index, context.isExpanded, e)}
-          cursor="pointer"
-          p={0}
-          borderRadius="sm"
-          _hover={{ bg: hoverBg }}
-          transition="all 0.2s"
-          ml="1.5rem"
-        >
-          <ChevronRight
-            size={4}
-            color={iconColor}
-            transform={context.isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'}
-          />
-        </Box>
-      )}
-    </Flex>
-  ), [iconColor, textColor, hoverBg, handleArrowClick]);
-  
-  const renderItemTitle = React.useCallback(({ item, context }: any) => (
-    <Flex
-      align="center"
-      py={0}
-      px={0}
-      mx={0}
-      borderRadius="md"
-      cursor="pointer"
-      transition="all 0.2s"
-      _hover={{
-        transform: 'translateX(2px)',
-      }}
-    >
-      {/* 아이콘 */}
-      <Box mr={2}>
-        {item.isFolder ? (
-          <FolderIcon
-            boxSize={4}
-            color={folderColor}
-            filter="drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1))"
-            isOpen={context.isExpanded}
-          />
-        ) : (
-          <FileIcon
-            boxSize={4}
-            color={iconColor}
-            filter="drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1))"
-          />
-        )}
-      </Box>
+  const handleToggleExpand = useCallback((itemIndex: TreeItemIndex, e: MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
       
-      {/* 콘텐츠 */}
-      <Flex align="center" justify="space-between" flex={1} gap={3}>
+      setExpandedItems(prev => {
+        if (!prev.includes(itemIndex)) {
+          return [...prev, itemIndex]
+        } else {
+          return prev.filter(el => el !==itemIndex);
+        }
+      })
+  }, [expandedItems])
+  
+  const renderItemArrow = useCallback(() => null, []);
+  
+  const renderItemTitle = useCallback(({ item, context }: any) => {
+    const isExpanded = expandedItems.includes(item.index);
+    const hasChildren = item.isFolder && item.children && item.children.length > 0;
+    
+    return (
+      <Flex
+        align="center"
+        // py={2}
+        // px={3}
+        borderRadius="md"
+        cursor="pointer"
+        // bg={context.isSelected ? selectedBg : 'transparent'}
+        // _hover={{ bg: context.isSelected ? selectedBg : hoverBg }}
+        transition="all 0.2s"
+        width="100%"
+      >
+        {/* ✅ lucide 폴더 아이콘 - 열림/닫힘 상태에 따라 다른 아이콘 */}
+        <Box mr={2} flexShrink={0}>
+          {isExpanded ? (
+            <FolderOpen size={20} color="#90c7ec" />
+          ) : (
+            <Folder size={20} color="#90c7ec" />
+          )}
+        </Box>
+        
+        {/* 폴더 이름 */}
         <Text
           fontSize="sm"
           fontWeight="medium"
           color={textColor}
-          truncate
           flex={1}
+          truncate
         >
           {item.data?.name || 'Untitled'}
         </Text>
         
-        {/* 공개 폴더 배지 */}
+        {/* 공개 배지 */}
         {item.data?.public && (
-          <Tooltip label="공개 폴더" fontSize="xs" hasArrow>
-            <Badge
-              colorScheme="green"
-              variant="solid"
-              borderRadius="full"
-              px={2}
-              py={0.5}
-              fontSize="10px"
-              display="flex"
-              alignItems="center"
-              gap={1}
-              bg="green.500"
-            >
-              <GlobeIcon boxSize={2.5} />
-              공개
-            </Badge>
-          </Tooltip>
+          <Badge
+            colorScheme="green"
+            variant="solid"
+            borderRadius="full"
+            px={2}
+            py={0.5}
+            fontSize="10px"
+            display="flex"
+            alignItems="center"
+            gap={1}
+            mr={2}
+          >
+            <GlobeIcon boxSize={2.5} />
+            공개
+          </Badge>
+        )}
+        
+        {/* ✅ 화살표 버튼 - 오른쪽에 배치 */}
+        {hasChildren && (
+          <Box
+            onClick={(e) => handleToggleExpand(item.index, e)}
+            cursor="pointer"
+            p={1}
+            borderRadius="md"
+            _hover={{ bg: 'gray.200' }}
+            transition="all 0.2s"
+            flexShrink={0}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            {isExpanded ? (
+              <ChevronDown size={18} color="#718096" />
+            ) : (
+              <ChevronRight size={18} color="#718096" />
+            )}
+          </Box>
         )}
       </Flex>
-    </Flex>
-  ), [selectedBg, hoverBg, selectedBorderColor, folderColor, iconColor, textColor]);
+    );
+  }, [expandedItems, handleToggleExpand, selectedBg, hoverBg, folderColor, textColor]);
+  
   
   // 로딩 상태 처리
   if (!folders || Object.keys(folders).length <= 1) {
@@ -314,56 +300,6 @@ export default function FolderTree(props: FolderTreeProps) {
       py={3}
       maxH="400px"
       overflowY="auto"
-      css={{
-        "border": "1px solid var(--chakra-colors-gray-200)",
-        "border-radius": "8px",
-        '&::-webkit-scrollbar': {
-          width: '6px',
-        },
-        '&::-webkit-scrollbar-track': {
-          background: scrollTrackBg,
-        },
-        '&::-webkit-scrollbar-thumb': {
-          background: scrollThumbBg,
-          borderRadius: '3px',
-          '&:hover': {
-            background: scrollThumbHoverBg,
-          },
-        },
-        // react-complex-tree 기본 들여쓰기 패딩 조정
-        '.rct-tree-item-title-container': {
-          gap: '0px !important', // flexbox 간격 제거
-        },
-        // 여닫이 아이콘과 폴더 버튼이 겹치지 않도록 조정
-        '.rct-tree-item-title-container > div:first-child': {
-          position: 'relative',
-          zIndex: '10 !important',
-          marginRight: '0px !important', // 간격 제거
-        },
-        '.rct-tree-item-button': {
-          position: 'relative',
-          zIndex: '5 !important',
-        },
-        // 선택된 아이템의 왼쪽 표시를 숨기고 오른쪽에 표시
-        '.rct-tree-item-li[data-rct-item-selected="true"]::before': {
-          display: 'none !important', // 기본 왼쪽 표시 숨김
-        },
-        '.rct-tree-item-li[data-rct-item-selected="true"] .rct-tree-item-title-container': {
-          backgroundColor: `${selectedBg} !important`,
-          borderRadius: '6px !important',
-        },
-        '.rct-tree-item-li[data-rct-item-selected="true"]::after': {
-          content: '""',
-          position: 'absolute',
-          right: '8px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          width: '3px',
-          height: '20px',
-          backgroundColor: '#3182ce', // 파란색
-          borderRadius: '2px',
-        },
-      }}
     >
       <ControlledTreeEnvironment
         items={folders}
@@ -375,8 +311,12 @@ export default function FolderTree(props: FolderTreeProps) {
           },
         }}
         // 폴더 클릭 시 확장/축소를 비활성화
-        onExpandItem={() => {}} // 빈 함수로 비활성화
-        onCollapseItem={() => {}} // 빈 함수로 비활성화
+        // onExpandItem={(item) => {
+        //   setExpandedItems(prev => [...prev, item.index])
+        // }} // 빈 함수로 비활성화
+        // onCollapseItem={(item) => {
+        //   setExpandedItems(prev => prev.filter(id => id !== item.index))
+        // }} // 빈 함수로 비활성화
         onSelectItems={handleSelectionChange}
         canDragAndDrop={false}
         canDropOnFolder={true}

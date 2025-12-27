@@ -108,6 +108,10 @@ function useRightHeader() {
     navigate("/admin/menu")
   }
   
+  const handleUser = () => {
+    navigate("/user/folder")
+  }
+  
   
   // 컴포넌트 외부 클릭 감지
   useEffect(() => {
@@ -146,6 +150,7 @@ function useRightHeader() {
     handleSignup,
     handleChat,
     handleAdmin,
+    handleUser,
   }
 }
 
