@@ -66,6 +66,7 @@ const StyledMakeDocLayout = styled.div`
     flex: 1;           /* height: 100% 대신 */
     min-height: 0;     /* 추가 */
     width: 100%;
+    overflow: hidden;  /* 추가 */
 
     .blog-header {
         padding: 2rem 1rem 1rem 1rem;
