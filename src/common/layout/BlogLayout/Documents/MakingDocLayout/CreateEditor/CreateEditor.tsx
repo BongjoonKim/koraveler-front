@@ -30,9 +30,10 @@ function CreateEditor(props: CreateDocumentProps, ref : any) {
 export default forwardRef(CreateEditor);
 
 const StyledCreateDocument = styled.div`
-    height: 100%;
+    flex:1;
     width: 100%;
     min-height: 0;  /* 추가 */
+    height: 0;
     display: flex;  /* 추가 */
     flex-direction: column;  /* 추가 */
 `;

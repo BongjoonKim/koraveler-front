@@ -786,6 +786,20 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
       <EditorContainer>
         <EditorContent editor={editor} />
       </EditorContainer>
+      {/*<div*/}
+      {/*  style={{*/}
+      {/*    height: "200rem",*/}
+      {/*    overflow: "auto",*/}
+      {/*    flex: 1,*/}
+      {/*    flexShrink: 1*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  sdfsdfsdf*/}
+      {/*  sdf*/}
+      {/*  <p>sdfsdf</p>*/}
+      {/*  <p>sdfsdf</p>*/}
+      {/*  <p>sdfsdf</p>*/}
+      {/*</div>*/}
       
       {/* 드래그 오버레이 */}
       {isDragging && (
@@ -807,7 +821,7 @@ export default TiptapEditor;
 // 스타일 컴포넌트들
 const StyledTiptapEditor = styled.div`
     width: 100%;
-    //height: 100%;      /* 추가 */
+    height: 0;      /* 추가 */
     flex: 1;
     min-height: 0;     /* 추가 */
     display: flex;
@@ -902,14 +916,14 @@ const EditorContainer = styled.div`
     overflow-y: auto;  /* 여기서 스크롤 */
     background: white;
     min-height: 0;
+    height: 0;
 
     /* EditorContent가 생성하는 wrapper */
-    //> div {
-    //    flex: 1;
-    //    min-height: 0;
-    //    display: flex;
-    //    flex-direction: column;
-    //}
+    > div {
+        min-height: 100%;
+        //display: flex;
+        //flex-direction: column;
+    }
     //
     //> .tiptap {
     //    flex: 1;
