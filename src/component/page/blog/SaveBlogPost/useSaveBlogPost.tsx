@@ -126,6 +126,10 @@ function useSaveBlogPost(props : useSaveBlogPostProps) {
     setOpenBlogPostingModal(prev => !prev)
   }
   
+  const goBack = () => {
+    navigate("/blog/home")
+  }
+  
   useEffect(() => {
     getDocumentData();
   }, [id])
@@ -144,6 +148,7 @@ function useSaveBlogPost(props : useSaveBlogPostProps) {
     setSelectedFolder,
     disclose,
     setDisclose,
+    goBack,
   }
 }
 

@@ -12,7 +12,7 @@ export interface MakeDocLayoutProps {
   setDocument ?: any;
   handleSave : (saveOrDraft : string) => void;
   handleSaveModalOpen : () => void;
-  
+  handleCancel?: () => void;
 };
 
 function MakingDocumentLayout(props: MakeDocLayoutProps) {
@@ -49,6 +49,7 @@ function MakingDocumentLayout(props: MakeDocLayoutProps) {
             Draft
           </CusButton>
           <CusButton
+            onClick={props.handleCancel}
           >
             Cancel
           </CusButton>

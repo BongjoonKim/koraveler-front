@@ -34,6 +34,7 @@ function EditBlogPost(props: EditBlogPostProps) {
     setSelectedFolder,
     disclose,
     setDisclose,
+    goBack,
   } = useSaveBlogPost(props)
   return (
     <StyledEditBlogPost className={"StyledEditBlogPost"}>
@@ -43,6 +44,7 @@ function EditBlogPost(props: EditBlogPostProps) {
         setDocument={setDocument}
         handleSave={(saveOrDraft : string) => handleEdit(saveOrDraft)}
         handleSaveModalOpen={handleSaveModalOpen}
+        handleCancel={goBack}
       >
         <UpdateEditor
           ref={editorRef}

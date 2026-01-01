@@ -33,6 +33,7 @@ function CreateBlogPost(props: CreateBlogPostProps) {
     setSelectedFolder,
     disclose,
     setDisclose,
+    goBack,
   } = useSaveBlogPost(props)
   
   return (
@@ -43,6 +44,7 @@ function CreateBlogPost(props: CreateBlogPostProps) {
         setDocument={setDocument}
         handleSave={(saveOrDraft : string) => handleEdit(saveOrDraft)}
         handleSaveModalOpen={handleSaveModalOpen}
+        handleCancel={goBack}
       >
         <CreateEditor
           ref={editorRef}
