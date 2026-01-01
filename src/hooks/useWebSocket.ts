@@ -31,23 +31,9 @@ export const useWebSocket = () => {
     // 방법 1: URL 파라미터로 토큰 전달
     const wsUrl = `${process.env.REACT_APP_BACKEND_URI}/ws?token=${encodeURIComponent(accessToken)}`;
     
-    // 방법 2: 커스텀 SockJS 옵션으로 헤더 설정 (SockJS 3.0+ 필요)
-    const sockJsOptions = {
-      transportOptions: {
-        xhr: {
-          beforeSend: (xhr: XMLHttpRequest) => {
-            xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
-          }
-        }
-      }
-    };
-    
     const client = new Client({
       // 방법 1 사용 시
       webSocketFactory: () => new SockJS(wsUrl),
-      
-      // 방법 2 사용 시 (SockJS 버전에 따라 작동 안 할 수 있음)
-      // webSocketFactory: () => new SockJS(`${process.env.REACT_APP_BACKEND_URI}/ws`, null, sockJsOptions),
       
       connectHeaders: {
         Authorization: `Bearer ${accessToken}`  // STOMP 레벨 인증용
@@ -124,7 +110,7 @@ export const useWebSocket = () => {
     
     // 메시지 구독
     const messageSubscription = client.subscribe(
-      `/topic/channel/${channelId}/messages`,
+      `/topic/channel/${channelId}/new-message`,
       (message) => {
         const newMessage = JSON.parse(message.body);
         
@@ -167,7 +153,7 @@ export const useWebSocket = () => {
     
     // 메시지 업데이트 이벤트 구독
     const updateSubscription = client.subscribe(
-      `/topic/channel/${channelId}/message-updates`,
+      `/topic/channel/${channelId}/message-updated`,
       (message) => {
         const updateEvent = JSON.parse(message.body);
         
@@ -175,18 +161,28 @@ export const useWebSocket = () => {
         queryClient.invalidateQueries({
           queryKey: ['messages', channelId]
         });
+        
+        // 채널 목록도 업데이트 (마지막 메시지, 읽지 않은 수 등)
+        queryClient.invalidateQueries({
+          queryKey: ['channels', 'my']
+        });
       }
     );
     
     // 메시지 삭제 이벤트 구독
     const deleteSubscription = client.subscribe(
-      `/topic/channel/${channelId}/message-deletes`,
+      `/topic/channel/${channelId}/message-deleted`,
       (message) => {
         const deleteEvent = JSON.parse(message.body);
         
         // 메시지 목록 refetch
         queryClient.invalidateQueries({
           queryKey: ['messages', channelId]
+        });
+        
+        // 채널 목록도 업데이트 (마지막 메시지, 읽지 않은 수 등)
+        queryClient.invalidateQueries({
+          queryKey: ['channels', 'my']
         });
       }
     );
@@ -219,20 +215,20 @@ export const useWebSocket = () => {
   };
   
   // 메시지 전송 (WebSocket 직접 전송 - 선택사항)
-  const sendMessageViaWebSocket = (channelId: string, message: any) => {
-    const client = stompClientRef.current;
-    if (!client?.connected) return;
-    
-    client.publish({
-      destination: `/app/chat/${channelId}/send`,
-      body: JSON.stringify(message),
-    });
-  };
+  // const sendMessageViaWebSocket = (channelId: string, message: any) => {
+  //   const client = stompClientRef.current;
+  //   if (!client?.connected) return;
+  //
+  //   client.publish({
+  //     destination: `/app/chat/${channelId}/send`,
+  //     body: JSON.stringify(message),
+  //   });
+  // };
   
   return {
     startTyping,
     stopTyping,
-    sendMessageViaWebSocket,
+    // sendMessageViaWebSocket,
     isConnected: stompClientRef.current?.connected || false
   };
 };
