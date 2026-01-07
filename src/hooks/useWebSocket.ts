@@ -93,6 +93,68 @@ export const useWebSocket = () => {
     };
   }, [accessToken, setIsConnected]);
   
+  // 사용자 개인 채널 이벤트 구독 (항상)
+  useEffect(() => {
+    const client = stompClientRef.current;
+    
+    if (!client?.connected || !currentUser) return;
+    
+    // 이전 사용자 정보의 구독 해제
+    subscriptionsRef.current.forEach((sub, key) => {
+      if (key.startsWith("user/")) {
+        sub.unsubscribe();
+        subscriptionsRef.current.delete(key);
+      }
+    })
+    
+    // 채널 생성 이벤트
+    const channelCreatedSub = client.subscribe(
+      `/topic/user/${currentUser.id}/channel-created`,
+      (message) => {
+        const event = JSON.parse(message.body);
+        console.log('새 채널 생성됨:', event);
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', 'my']
+        });
+      }
+    );
+    
+    // 채널 참여 이벤트
+    const channelJoinedSub = client.subscribe(
+      `/topic/user/${currentUser.id}/channel-joined`,
+      (message) => {
+        const event = JSON.parse(message.body);
+        console.log('채널 참여:', event);
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', 'my']
+        });
+      }
+    );
+    
+    // 채널 탈퇴 이벤트
+    const channelLeftSub = client.subscribe(
+      `/topic/user/${currentUser.id}/channel-left`,
+      (message) => {
+        const event = JSON.parse(message.body);
+        console.log('채널 탈퇴:', event);
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', 'my']
+        });
+        
+        if (selectedChannel?.id === event.channelId) {
+          console.log('현재 채널에서 탈퇴했습니다.');
+        }
+      }
+    );
+    
+    subscriptionsRef.current.set('user/channel-created', channelCreatedSub);
+    subscriptionsRef.current.set('user/channel-joined', channelJoinedSub);
+    subscriptionsRef.current.set('user/channel-left', channelLeftSub);
+  }, [currentUser?.id, queryClient, selectedChannel?.id])
+  
   // 채널 구독
   useEffect(() => {
     const client = stompClientRef.current;
@@ -187,10 +249,229 @@ export const useWebSocket = () => {
       }
     );
     
+    // 채널 업데이트 구독
+    const channelUpdatedSub = client.subscribe(
+      `/topic/channel/${channelId}/channel-updated`,
+      (message) => {
+        const event = JSON.parse(message.body);
+        console.log('채널 업데이트됨:', event);
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', channelId]
+        });
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', 'my']
+        });
+      }
+    );
+
+    // 채널 삭제/아카이브 구독
+    const channelDeletedSub = client.subscribe(
+      `/topic/channel/${channelId}/channel-deleted`,
+      (message) => {
+        const event = JSON.parse(message.body);
+        console.log('채널 삭제/아카이브됨:', event);
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', 'my']
+        });
+      }
+    );
+
+    // 채널 아카이브 구독
+    const channelArchivedSub = client.subscribe(
+      `/topic/channel/${channelId}/channel-archived`,
+      (message) => {
+        const event = JSON.parse(message.body);
+        console.log('채널 아카이브됨:', event);
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', channelId]
+        });
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', 'my']
+        });
+      }
+    );
+
+    // 멤버 참여 구독
+    const memberJoinedSub = client.subscribe(
+      `/topic/channel/${channelId}/member-joined`,
+      (message) => {
+        const event = JSON.parse(message.body);
+        console.log('새 멤버 참여:', event);
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', channelId]
+        });
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', 'my']
+        });
+        
+        queryClient.invalidateQueries({
+          queryKey: ['members', channelId]
+        });
+      }
+    );
+
+    // 멤버 탈퇴 구독
+    const memberLeftSub = client.subscribe(
+      `/topic/channel/${channelId}/member-left`,
+      (message) => {
+        const event = JSON.parse(message.body);
+        console.log('멤버 탈퇴:', event);
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', channelId]
+        });
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', 'my']
+        });
+        
+        queryClient.invalidateQueries({
+          queryKey: ['members', channelId]
+        });
+      }
+    );
+
+    // 채널 설정 업데이트 구독
+    const settingsUpdatedSub = client.subscribe(
+      `/topic/channel/${channelId}/settings-updated`,
+      (message) => {
+        const event = JSON.parse(message.body);
+        console.log('채널 설정 업데이트됨:', event);
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', channelId]
+        });
+      }
+    );
+    
+    // ✅ 추가: 멤버 추가 구독
+    const memberAddedSub = client.subscribe(
+      `/topic/channel/${channelId}/member-added`,
+      (message) => {
+        console.log("멤버 추가")
+        const event = JSON.parse(message.body);
+        console.log('멤버 추가됨:', event);
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', channelId]
+        });
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', 'my']
+        });
+        
+        queryClient.invalidateQueries({
+          queryKey: ['members', channelId]
+        });
+      }
+    );
+
+// ✅ 추가: 멤버 제거 구독
+    const memberRemovedSub = client.subscribe(
+      `/topic/channel/${channelId}/member-removed`,
+      (message) => {
+        const event = JSON.parse(message.body);
+        console.log('멤버 제거됨:', event);
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', channelId]
+        });
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', 'my']
+        });
+        
+        queryClient.invalidateQueries({
+          queryKey: ['members', channelId]
+        });
+      }
+    );
+
+    //멤버 역할 변경 구독
+    const memberRoleUpdatedSub = client.subscribe(
+      `/topic/channel/${channelId}/member-role-updated`,
+      (message) => {
+        const event = JSON.parse(message.body);
+        console.log('멤버 역할 변경됨:', event);
+        
+        queryClient.invalidateQueries({
+          queryKey: ['members', channelId]
+        });
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channels', channelId]
+        });
+      }
+    );
+
+    // 멤버 음소거 구독
+    const memberMutedSub = client.subscribe(
+      `/topic/channel/${channelId}/member-muted`,
+      (message) => {
+        const event = JSON.parse(message.body);
+        console.log('멤버 음소거됨:', event);
+        
+        queryClient.invalidateQueries({
+          queryKey: ['members', channelId]
+        });
+      }
+    );
+
+    // 멤버 음소거 해제 구독
+    const memberUnmutedSub = client.subscribe(
+      `/topic/channel/${channelId}/member-unmuted`,
+      (message) => {
+        const event = JSON.parse(message.body);
+        console.log('멤버 음소거 해제됨:', event);
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channel-members', channelId]
+        });
+      }
+    );
+
+    // 멤버 상태 변경 구독
+    const memberStatusUpdatedSub = client.subscribe(
+      `/topic/channel/${channelId}/member-status-updated`,
+      (message) => {
+        const event = JSON.parse(message.body);
+        console.log('멤버 상태 변경됨:', event);
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channel-members', channelId]
+        });
+        
+        queryClient.invalidateQueries({
+          queryKey: ['channel', channelId]
+        });
+      }
+    );
+    
     subscriptionsRef.current.set(`channel/${channelId}/messages`, messageSubscription);
     subscriptionsRef.current.set(`channel/${channelId}/typing`, typingSubscription);
     subscriptionsRef.current.set(`channel/${channelId}/updates`, updateSubscription);
     subscriptionsRef.current.set(`channel/${channelId}/deletes`, deleteSubscription);
+    
+    subscriptionsRef.current.set(`channel/${channelId}/channel-updated`, channelUpdatedSub);
+    subscriptionsRef.current.set(`channel/${channelId}/channel-deleted`, channelDeletedSub);
+    subscriptionsRef.current.set(`channel/${channelId}/channel-archived`, channelArchivedSub);
+    subscriptionsRef.current.set(`channel/${channelId}/member-joined`, memberJoinedSub);
+    subscriptionsRef.current.set(`channel/${channelId}/member-left`, memberLeftSub);
+    subscriptionsRef.current.set(`channel/${channelId}/settings-updated`, settingsUpdatedSub);
+    
+    subscriptionsRef.current.set(`channel/${channelId}/member-added`, memberAddedSub);
+    subscriptionsRef.current.set(`channel/${channelId}/member-removed`, memberRemovedSub);
+    subscriptionsRef.current.set(`channel/${channelId}/member-role-updated`, memberRoleUpdatedSub);
+    subscriptionsRef.current.set(`channel/${channelId}/member-muted`, memberMutedSub);
+    subscriptionsRef.current.set(`channel/${channelId}/member-unmuted`, memberUnmutedSub);
+    subscriptionsRef.current.set(`channel/${channelId}/member-status-updated`, memberStatusUpdatedSub);
     
   }, [selectedChannel?.id, currentUser?.id, queryClient, setTypingUsers, triggerMessageRefetch]);
   
