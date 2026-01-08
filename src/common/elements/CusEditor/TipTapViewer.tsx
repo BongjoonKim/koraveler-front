@@ -15,6 +15,7 @@ import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
 import Image from "@tiptap/extension-image";
 import styled from "styled-components";
+import ViewerVideo from "./extensions/ViewerVideo";
 
 export interface TiptapViewerProps {
   contents?: string;
@@ -81,6 +82,7 @@ function TiptapViewer({ contents }: TiptapViewerProps) {
           class: "viewer-image",
         },
       }),
+      ViewerVideo,
       Link.configure({
         openOnClick: true,
         HTMLAttributes: {
@@ -150,6 +152,17 @@ const StyledTiptapViewer = styled.div`
     
     &:focus {
       outline: none;
+    }
+    
+    /* 비디오 스타일 👈 추가 */
+    .viewer-video-wrapper {
+        margin: 1em 0;
+
+        video {
+            display: block;
+            border-radius: 4px;
+            background: #000;
+        }
     }
     
     /* figure 태그 스타일 - 이미지 정렬 */

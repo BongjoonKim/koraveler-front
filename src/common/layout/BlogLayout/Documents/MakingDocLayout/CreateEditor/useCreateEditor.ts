@@ -58,6 +58,56 @@ export default function useCreateEditor(props : CreateDocumentProps) {
     });
   }, [uploadedList, setUploadedList, setErrorMsg, props]);
   
+  // Tiptap용 비디오 업로더
+  const handleVideoUpload = useCallback((blobInfo: any, progress: (percent: number) => void) => {
+    return new Promise<string>(async (resolve, reject) => {
+      try {
+        console.log("비디오 파일 보기", props);
+        const blob = blobInfo.blob();
+        const fileName = uuid();
+        
+        // 비디오 파일 확장자 추출
+        const extension = blob.type.split('/')[1] || 'mp4';
+        const file = new File([blob], `${fileName}.${extension}`, { type: blob.type });
+        const fileKey = `${props?.id || "new"}/videos/${fileName}.${extension}`;
+        
+        // 진행률 업데이트
+        progress(10);
+        
+        // S3에 파일 업로드
+        const res = await s3Utils.uploadFile({ fileKey, file });
+        
+        // 진행률 업데이트
+        progress(90);
+        
+        // 업로드된 파일 목록 상태 업데이트
+        setUploadedList((prev: any[]) => {
+          return [
+            ...prev,
+            {
+              blob: blob,
+              key: `${fileKey}`,
+              type: 'video',
+            }
+          ];
+        });
+        
+        // 최종 진행률
+        progress(100);
+        
+        // 비디오 URL 반환
+        resolve(res);
+      } catch (e) {
+        setErrorMsg({
+          status: "error",
+          msg: "Video upload failed",
+        });
+        reject(e);
+      }
+    });
+  }, [uploadedList, setUploadedList, setErrorMsg, props]);
+  
+  
   // 콘텐츠 변경 핸들러 (Tiptap용)
   const handleContentChange = useCallback((content: string) => {
     // 필요시 content를 상위 컴포넌트로 전달하거나 저장
@@ -66,6 +116,7 @@ export default function useCreateEditor(props : CreateDocumentProps) {
   
   return {
     handleImageUpload,
+    handleVideoUpload,
     handleContentChange,
   }
 }
