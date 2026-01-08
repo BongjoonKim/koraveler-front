@@ -10,6 +10,7 @@ export interface UpdateEditorProps extends DocumentDTO{
 function UpdateEditor(props: UpdateEditorProps, ref : any) {
   const {
     handleImageUpload,
+    handleVideoUpload,
     handleContentChange,
   } = useUpdateEditor(props);
   
@@ -20,6 +21,7 @@ function UpdateEditor(props: UpdateEditorProps, ref : any) {
           <TiptapEditor
             ref={ref}
             handleImageUpload={handleImageUpload}
+            handleVideoUpload={handleVideoUpload}
             onChange={handleContentChange}
             initialValue={props.contents}
             placeholder="내용을 입력하세요..."

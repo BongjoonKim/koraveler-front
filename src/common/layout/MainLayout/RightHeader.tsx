@@ -134,7 +134,7 @@ function RightHeader() {
                           Chat
                         </MenuItem>
                         <MenuSeparator />
-                        <MenuItem value="admin/menu" onClick={handleUser}>
+                        <MenuItem value="user/folder" onClick={handleUser}>
                           User
                         </MenuItem>
                         {currentUser.roles?.includes("admin") ? (

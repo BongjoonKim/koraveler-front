@@ -10,6 +10,7 @@ export interface CreateDocumentProps extends DocumentDTO{
 function CreateEditor(props: CreateDocumentProps, ref : any) {
   const {
     handleImageUpload,
+    handleVideoUpload,
     handleContentChange,
   } = useCreateEditor(props);
   
@@ -20,6 +21,7 @@ function CreateEditor(props: CreateDocumentProps, ref : any) {
       <TiptapEditor
         ref={ref}
         handleImageUpload={handleImageUpload}
+        handleVideoUpload={handleVideoUpload}
         onChange={handleContentChange}
         placeholder="내용을 입력하세요..."
       />

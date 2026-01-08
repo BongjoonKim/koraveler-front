@@ -125,9 +125,9 @@ export default function MemberItem({
                         </MenuItem>
                       )}
                       {(currentUserRole == "OWNER") && (member?.roleId != "OWNER") && (
-                        <MenuItem value="remove" onClick={() => onTransferRoleOwner(member.id)}>
+                        <MenuItem value="transferRole" onClick={() => onTransferRoleOwner(member.id)}>
                           <UserMinus size={14} />
-                          <Text ml={2}>Transer Owner Role</Text>
+                          <Text ml={2}>Transfer Owner Role</Text>
                         </MenuItem>
                       )}
                     </>

@@ -18,6 +18,7 @@ import Gapcursor from "@tiptap/extension-gapcursor";
 import styled from "styled-components";
 import ResizableImage from "./extensions/ResizableImage";
 import {columnResizing, tableEditing, goToNextCell, fixTables, mergeCells, splitCell} from 'prosemirror-tables';
+import ResizableVideo from "./extensions/ResizableVideo";
 
 
 // Type definitions for Tiptap extensions
@@ -32,18 +33,27 @@ declare module '@tiptap/core' {
         height?: number;
       }) => ReturnType;
     };
+    ResizableVideo: {
+      setResizableVideo: (options: {
+        src: string;
+        width?: number;
+        height?: number;
+        controls?: boolean;
+      }) => ReturnType;
+    };
   }
 }
 
 export interface TiptapEditorProps {
   initialValue?: string;
   handleImageUpload?: (blobInfo: any, progress: (percent: number) => void) => Promise<string>;
+  handleVideoUpload?: (blobInfo: any, progress: (percent: number) => void) => Promise<string>;
   onChange?: (content: string) => void;
   placeholder?: string;
 }
 
 const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) => {
-  const { initialValue = "", handleImageUpload, onChange, placeholder = "내용을 입력하세요..." } = props;
+  const { initialValue = "", handleImageUpload, handleVideoUpload, onChange, placeholder = "내용을 입력하세요..." } = props;
   const [isDragging, setIsDragging] = useState(false);
   const [isTableActive, setIsTableActive] = useState(false);
   const [draggedTable, setDraggedTable] = useState<any>(null);
@@ -56,6 +66,7 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
         },
       }),
       ResizableImage,
+      ResizableVideo,
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -120,6 +131,7 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
         if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files.length > 0) {
           const files = Array.from(event.dataTransfer.files);
           const imageFile = files.find(file => file.type.startsWith("image/"));
+          const videoFile = files.find(file => file.type.startsWith("video/"));
           
           if (imageFile) {
             event.preventDefault();
@@ -137,6 +149,24 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
             // 이미지 파일 처리
             setTimeout(() => {
               handleImageFile(imageFile);
+            }, 0);
+            
+            return true;
+          }
+          
+          if (videoFile) {
+            event.preventDefault();
+            event.stopPropagation();
+            const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
+            if (coordinates) {
+              const pos = coordinates.pos;
+              const tr = view.state.tr;
+              tr.setSelection(TextSelection.create(view.state.doc, pos));
+              view.dispatch(tr);
+            }
+            
+            setTimeout(() => {
+              handleVideoFile(videoFile);
             }, 0);
             
             return true;
@@ -275,6 +305,51 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
     },
     [handleImageUpload, editor]
   );
+  
+  const handleVideoFile = useCallback(async (file : File) => {
+    if (!file.type.match(/^video\//)) {
+      console.error("Not a video file");
+      setIsDragging(false);
+      return;
+    }
+    
+    if (handleVideoUpload && editor) {
+      try {
+        console.log("Uploading video:", file.name);
+        
+        const progress = (percent: number) => {
+          console.log(`Upload progress: ${percent}%`);
+        };
+        
+        const blobInfo = {
+          blob: () => file,
+        }
+        
+        const videoUrl = await handleVideoUpload(blobInfo, progress);
+        
+        if (videoUrl) {
+          editor
+            .chain()
+            .focus()
+            .setResizableVideo({
+              src: videoUrl,
+              width: 640,
+              height: 360,
+              controls: true,
+            })
+            .run();
+          console.log("Video inserted successfully");
+        }
+      } catch (error) {
+        console.error("Failed to upload video", error);
+        alert("비디오 업로드에 실패했습니다.");
+      } finally {
+        setIsDragging(false);
+      }
+    } else {
+      setIsDragging(false)
+    }
+  }, [handleVideoUpload, editor])
   
   // TiptapEditor 컴포넌트 내부에 커스텀 명령어 추가
   const handleMergeCells = useCallback(() => {
@@ -662,6 +737,25 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
           >
             🖼️ Image
           </ToolbarButton>
+          
+          {/* Video Button */}
+          <ToolbarButton
+            onClick={() => {
+              const input = document.createElement("input");
+              input.setAttribute("type", "file");
+              input.setAttribute("accept", "video/*");
+              input.click();
+              
+              input.onchange = async () => {
+                if (input.files && input.files[0]) {
+                  await handleVideoFile(input.files[0]);
+                }
+              };
+            }}
+            title="Insert Video"
+          >
+            🎬 Video
+          </ToolbarButton>
           <ToolbarButton
             onClick={() => {
               const url = window.prompt("Enter URL:");
@@ -806,7 +900,7 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
         <DropOverlay>
           <DropMessage>
             <span>📷</span>
-            <p>이미지를 여기에 놓으세요</p>
+            <p>Drop your Image or Video</p>
           </DropMessage>
         </DropOverlay>
       )}
@@ -1076,7 +1170,22 @@ const EditorContainer = styled.div`
                 transition: outline 0.15s;
             }
         }
+        
+        /* 비디오 스타일 */
+        .resizable-video-wrapper {
+            user-select: none;
 
+            video {
+                transition: outline 0.15s;
+            }
+
+            &.selected {
+                video {
+                    outline: 2px solid #4a90e2;
+                }
+            }
+        }
+        
         ul,
         ol {
             padding-left: 2em;
