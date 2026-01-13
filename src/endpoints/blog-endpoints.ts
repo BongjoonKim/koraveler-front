@@ -1,6 +1,7 @@
 import {request} from "../appConfig/request-response";
 import {AxiosResponse} from "axios";
 import {FuncProps} from "../utils/useAuthEP";
+import {DocumentViewResponse, IncreaseViewRequest, ViewStatsDTO} from "../types/blog/blogTypes";
 
 export async function createDocument(props : FuncProps) {
   return (await request.post("blog/document", props.reqBody, {
@@ -100,4 +101,24 @@ export async function getFeaturedHistory(props: FuncProps) {
       Authorization: `Bearer ${props.accessToken}`
     }
   })) as AxiosResponse<DocumentsInfo>;
+}
+
+/// ViewEndPoints
+
+// 블로그 글 조회수 보기
+export async function getViews(props: FuncProps) {
+  return (await request.get(`api/v1/views/ps/${props.params.documentId}`)
+  ) as AxiosResponse<DocumentViewResponse>;
+}
+
+// 조회수 증가 api
+export async function increaseView(props : FuncProps) {
+  return (await request.post(`api/v1/views/ps/${props.params.documentId}`)
+  ) as AxiosResponse<IncreaseViewRequest>;
+}
+
+// 블로그 상세 조회 통계
+export async function getViewStats(props: FuncProps) {
+  return (await request.get(`api/v1/views/ps/${props.params.documentId}/stats`)
+  ) as AxiosResponse<ViewStatsDTO>;
 }
