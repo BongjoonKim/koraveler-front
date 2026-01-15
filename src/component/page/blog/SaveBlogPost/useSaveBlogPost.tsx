@@ -27,6 +27,26 @@ function useSaveBlogPost(props : useSaveBlogPostProps) {
   const [folders, setFolders] = useState<any>({});
   const [disclose, setDisclose] = useState<boolean>(true);
   
+  // 컴포넌트 외부 또는 내부에 추가
+  const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.mov', '.avi', '.mkv', '.quicktime'];
+  
+  const generateThumbnailUrl = (originalUrl: string): string => {
+    // 버킷 변경: haries-img -> haries-thumbnail
+    let thumbnailUrl = originalUrl.replace('haries-img', 'haries-thumbnail');
+    
+    // 영상 파일인 경우 확장자를 .jpg로 변경
+    const lowerUrl = thumbnailUrl.toLowerCase();
+    for (const ext of VIDEO_EXTENSIONS) {
+      if (lowerUrl.endsWith(ext)) {
+        const extIndex = thumbnailUrl.toLowerCase().lastIndexOf(ext);
+        thumbnailUrl = thumbnailUrl.substring(0, extIndex) + '.jpg';
+        break;
+      }
+    }
+    
+    return thumbnailUrl;
+  };
+  
   // 글 저장 - Tiptap 버전
   const handleEdit = useCallback(async (saveOrDraft: string) => {
     if (editorRef?.current){
@@ -41,14 +61,15 @@ function useSaveBlogPost(props : useSaveBlogPostProps) {
       let settingThumbnailUrl : string = "";
       
       const match = contents.match(regex);
-      
+
+      // 수정된 코드 (generateThumbnailUrl 사용):
       if (match && match[0]) {
         // 찾은 URL
         const originalUrl = match[0];
         console.log("원본 URL:", originalUrl);
         
-        // haries-img를 haries-thumbnail로 변경 (필요한 경우)
-        settingThumbnailUrl = originalUrl.replace('haries-img', 'haries-thumbnail');
+        // 이미지/영상에 따라 썸네일 URL 생성
+        settingThumbnailUrl = generateThumbnailUrl(originalUrl);
         console.log("변경된 URL:", settingThumbnailUrl);
       }
       

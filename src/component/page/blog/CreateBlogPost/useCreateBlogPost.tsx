@@ -22,6 +22,27 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
   const {id} = useParams();
   const authEP = useAuthEP();
   
+  // 썸네일 URL 생성 함수 추가 (컴포넌트 외부 또는 내부에 추가)
+  const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.mov', '.avi', '.mkv', '.quicktime'];
+  
+  const generateThumbnailUrl = (originalUrl: string): string => {
+    // 버킷 변경: haries-img -> haries-thumbnail
+    let thumbnailUrl = originalUrl.replace('haries-img', 'haries-thumbnail');
+    
+    // 영상 파일인 경우 확장자를 .jpg로 변경
+    const lowerUrl = thumbnailUrl.toLowerCase();
+    for (const ext of VIDEO_EXTENSIONS) {
+      if (lowerUrl.endsWith(ext)) {
+        // 대소문자 구분 없이 확장자 찾아서 .jpg로 교체
+        const extIndex = thumbnailUrl.toLowerCase().lastIndexOf(ext);
+        thumbnailUrl = thumbnailUrl.substring(0, extIndex) + '.jpg';
+        break;
+      }
+    }
+    
+    return thumbnailUrl;
+  };
+  
   // 글 생성 - Tiptap 버전
   const handleCreate = useCallback(async (saveOrDraft: string) => {
     console.log("handleCreate", editorRef.current);
@@ -86,7 +107,7 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
           newDocument.contents = newContents;
           // 첫 번째 이미지를 썸네일로 사용
           if (values.length > 0) {
-            newDocument.thumbnailImgUrl = values[0];
+            newDocument.thumbnailImgUrl = generateThumbnailUrl(values[0]);
           }
           const saveRes = await authEP({
             func: createAfterSaveDocument,

@@ -9,6 +9,7 @@ export interface SimpleViewerProps extends DocumentDTO{
 
 function SimpleDocViewer(props: SimpleViewerProps) {
   const navigate = useNavigate();
+  console.log("props", props)
   return (
     <StyledSimpleViewer
       onClick={() => {

@@ -51,27 +51,29 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
             
             <HStack gap={2}>
               {currentUser?.id && (
-                <CusIconButton
-                  aria-label={props?.isBookmarked ? 'bookmark-checked' : 'bookmark-not-check'}
-                  variant="ghost"
-                  colorScheme={props?.isBookmarked ? "yellow" : "gray"}
-                  onClick={changeBookmark}
-                  size="sm"
-                >
-                  {props?.isBookmarked ? <IoBookmarkSharp/> : <CiBookmark />}
-                </CusIconButton>
+                <>
+                  <CusIconButton
+                    aria-label={props?.isBookmarked ? 'bookmark-checked' : 'bookmark-not-check'}
+                    variant="ghost"
+                    colorScheme={props?.isBookmarked ? "yellow" : "gray"}
+                    onClick={changeBookmark}
+                    size="sm"
+                  >
+                    {props?.isBookmarked ? <IoBookmarkSharp/> : <CiBookmark />}
+                  </CusIconButton>
+                  <CusIconButton
+                    aria-label="like"
+                    variant="ghost"
+                    colorScheme="red"
+                    size="sm"
+                  >
+                    <HStack gap={1}>
+                      <IoHeartOutline />
+                      <Text fontSize="sm">{0}</Text>
+                    </HStack>
+                  </CusIconButton>
+                </>
               )}
-              <CusIconButton
-                aria-label="like"
-                variant="ghost"
-                colorScheme="red"
-                size="sm"
-              >
-                <HStack gap={1}>
-                  <IoHeartOutline />
-                  <Text fontSize="sm">{0}</Text>
-                </HStack>
-              </CusIconButton>
               {currentUser?.id && (
                 <HStack gap={2}>
                   <CusButton

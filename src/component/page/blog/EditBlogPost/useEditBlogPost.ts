@@ -20,6 +20,26 @@ export default function useEditBlogPost(props : EditBlogPostProps) {
   const navigate = useNavigate();
   const authEP = useAuthEP();
   
+  // 컴포넌트 외부 또는 내부에 추가
+  const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.mov', '.avi', '.mkv', '.quicktime'];
+  
+  const generateThumbnailUrl = (originalUrl: string): string => {
+    // 버킷 변경: haries-img -> haries-thumbnail
+    let thumbnailUrl = originalUrl.replace('haries-img', 'haries-thumbnail');
+    
+    // 영상 파일인 경우 확장자를 .jpg로 변경
+    const lowerUrl = thumbnailUrl.toLowerCase();
+    for (const ext of VIDEO_EXTENSIONS) {
+      if (lowerUrl.endsWith(ext)) {
+        const extIndex = thumbnailUrl.toLowerCase().lastIndexOf(ext);
+        thumbnailUrl = thumbnailUrl.substring(0, extIndex) + '.jpg';
+        break;
+      }
+    }
+    
+    return thumbnailUrl;
+  };
+  
   // 글 편집 저장 - Tiptap 버전
   const handleEdit = useCallback(async (saveOrDraft: string) => {
     if (editorRef?.current){
@@ -49,17 +69,11 @@ export default function useEditBlogPost(props : EditBlogPostProps) {
       } else if (saveOrDraft === BLOG_SAVE_TYPE.DRAFT) {
         isDraft = true;
       }
-      
-      // 썸네일 URL 처리
+
+      // 수정된 코드:
       let thumbnailUrl = "";
       if (s3ImageUrls.length > 0) {
-        // 첫 번째 S3 이미지를 썸네일로 사용
-        thumbnailUrl = s3ImageUrls[0];
-        
-        // haries-img를 haries-thumbnail로 변경 (필요한 경우)
-        if (thumbnailUrl.includes('haries-img')) {
-          thumbnailUrl = thumbnailUrl.replace('haries-img', 'haries-thumbnail');
-        }
+        thumbnailUrl = generateThumbnailUrl(s3ImageUrls[0]);
       }
       
       const request: DocumentDTO = {
