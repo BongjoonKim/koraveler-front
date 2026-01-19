@@ -2,7 +2,7 @@
 
 import { Node, mergeAttributes } from "@tiptap/core";
 import { NodeViewWrapper, NodeViewProps, ReactNodeViewRenderer } from "@tiptap/react";
-import React, { useCallback, useRef, useState } from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import styled from "styled-components";
 
 // Type declaration for the command
@@ -214,16 +214,32 @@ const ResizableVideoComponent: React.FC<NodeViewProps> = ({
         setIsResizing(false);
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
+        window.removeEventListener("blur", handleMouseUp);
+        
       };
       
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
+      // 추가: 브라우저 포커스 이탈 시에도 리사이즈 종료
+      window.addEventListener("blur", handleMouseUp);
     },
     [width, height, aspectRatio, updateAttributes]
   );
   
+  useEffect(() => {
+    // 컴포넌트 언마운트 시 혹시 남아있는 이벤트 정리
+    return () => {
+      setIsResizing(false);
+    };
+  }, []);
+  
   return (
-    <NodeViewWrapper>
+    <NodeViewWrapper
+      style={{
+        display: "flex",
+        justifyContent: "center"
+      }}
+    >
       <VideoWrapper
         ref={wrapperRef}
         className={`resizable-video-wrapper ${selected ? "selected" : ""}`}
@@ -238,7 +254,10 @@ const ResizableVideoComponent: React.FC<NodeViewProps> = ({
           loop={loop}
           muted={muted}
           onLoadedMetadata={handleLoadedMetadata}
-          style={{ height: `${height}px` }}
+          style={{
+            height: `${height}px`,
+            pointerEvents: isResizing ? "none" : "auto"
+          }}
         />
         
         {selected && (
@@ -297,7 +316,7 @@ const VideoWrapper = styled.div`
     position: relative;
     display: inline-block;
     width: 100%;
-    max-width: 1152px;
+    max-width: 100%;
     margin: 1em 0;
     display: flex;
     justify-content: center;

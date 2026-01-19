@@ -127,11 +127,15 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
         // 드래그 상태 즉시 해제
         setIsDragging(false);
         
+        console.log("드롭 처리", event)
+        
         // 파일 드롭 처리
         if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files.length > 0) {
           const files = Array.from(event.dataTransfer.files);
           const imageFile = files.find(file => file.type.startsWith("image/"));
           const videoFile = files.find(file => file.type.startsWith("video/"));
+          
+          console.log("files", files)
           
           if (imageFile) {
             event.preventDefault();
@@ -532,39 +536,39 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
     };
     
     const handleDrop = async (e: DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      
+      // e.preventDefault();
+      // e.stopPropagation();
+
       // 드래그 상태 즉시 리셋
       dragCounter = 0;
       setIsDragging(false);
-      
+
       // 파일 처리는 editorProps.handleDrop에서 처리됨
     };
-    
+
     // 윈도우 레벨에서 드래그 종료 감지
     const handleWindowDragEnd = () => {
       dragCounter = 0;
       setIsDragging(false);
     };
-    
+
     // 이벤트 리스너 등록
     editorElement.addEventListener("dragover", handleDragOver);
     editorElement.addEventListener("dragenter", handleDragEnter);
     editorElement.addEventListener("dragleave", handleDragLeave);
-    editorElement.addEventListener("drop", handleDrop);
+    // editorElement.addEventListener("drop", handleDrop);
     window.addEventListener("dragend", handleWindowDragEnd);
     window.addEventListener("mouseup", handleWindowDragEnd); // 안전장치
-    
+
     return () => {
       // 이벤트 리스너 제거
       editorElement.removeEventListener("dragover", handleDragOver);
       editorElement.removeEventListener("dragenter", handleDragEnter);
       editorElement.removeEventListener("dragleave", handleDragLeave);
-      editorElement.removeEventListener("drop", handleDrop);
+      // editorElement.removeEventListener("drop", handleDrop);
       window.removeEventListener("dragend", handleWindowDragEnd);
       window.removeEventListener("mouseup", handleWindowDragEnd);
-      
+
       // 컴포넌트 언마운트 시 상태 리셋
       setIsDragging(false);
     };
