@@ -47,7 +47,7 @@ const ViewerVideo = Node.create({
           return {
             src: video?.getAttribute('src'),
             width: parseInt(String(width)),
-            height: video?.clientHeight || 360,
+            height: video?.clientHeight || "100%",
             controls: video?.hasAttribute('controls') ?? true,
           };
         },
@@ -76,7 +76,7 @@ const ViewerVideo = Node.create({
       {
         "data-video-wrapper": "",
         class: "viewer-video-wrapper",
-        style: `width: ${width}px; max-width: 100%;`,
+        style: `width: 100%; max-width: 100%; height: 100%`,
       },
       [
         "video",

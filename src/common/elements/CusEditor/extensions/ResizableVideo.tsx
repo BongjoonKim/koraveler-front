@@ -296,9 +296,11 @@ export default ResizableVideo;
 const VideoWrapper = styled.div`
     position: relative;
     display: inline-block;
-    max-width: 100%;
+    width: 100%;
+    max-width: 1152px;
     margin: 1em 0;
-
+    display: flex;
+    justify-content: center;
     &.selected {
         outline: 2px solid #4a90e2;
         outline-offset: 2px;
