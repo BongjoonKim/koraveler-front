@@ -10,6 +10,7 @@ import {IoBookmarkSharp, IoChatbubbleOutline, IoEyeOutline, IoHeartOutline} from
 import CusIconButton from "../../../../elements/buttons/CusIconButton";
 import { HStack, VStack, Text, Box } from "@chakra-ui/react";
 import {View} from "lucide-react";
+import DocComment from "../DocComment/DocComment";
 
 export interface ViewDocLayoutProps extends DocumentDTO{
   children ?: ReactNode;
@@ -118,6 +119,7 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
           {props.children}
         </Box>
       </VStack>
+      <DocComment />
     </StyledViewDocLayout>
   )
 }
