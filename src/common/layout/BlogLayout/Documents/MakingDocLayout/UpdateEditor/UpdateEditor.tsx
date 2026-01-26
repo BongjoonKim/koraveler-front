@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import {forwardRef, Suspense} from "react";
 import useUpdateEditor from "./useUpdateEditor";
-import TiptapEditor from "../../../../../elements/CusEditor/TipTabEditor";
+import TiptapEditor from "../../../../../elements/CusEditor/TipTapEditor";
 
 export interface UpdateEditorProps extends DocumentDTO{
 
