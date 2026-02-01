@@ -69,6 +69,8 @@ function DocComment({
     setShowReplies(!showReplies);
   };
   
+  console.log("comment", comment)
+  
   return (
     <Box ml={{ base: `${indentLevel}rem`, md: `${indentLevel * 2}rem` }}
       borderBottom="1px solid"
@@ -89,7 +91,7 @@ function DocComment({
         <HStack justify={"space-between"} w={"full"} py={2}>
           <VStack  align={"flex-start"}>
             <Text fontWeight={"600"} fontSize={"sm"}>
-              {comment?.userName || "sdsdf"}
+              {comment?.userId}
             </Text>
             <Text color="gray.500" fontSize="xs">
               {moment(comment?.created).format("YYYY.MM.DD")}
@@ -100,7 +102,7 @@ function DocComment({
               </Text>
             )}
           </VStack>
-          {comment?.amIWriter || true && (
+          {comment?.amIWriter && (
             <Menu.Root>
               <Menu.Trigger asChild>
                 <IconButton

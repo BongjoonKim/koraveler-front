@@ -1,11 +1,12 @@
-// src/common/layout/BlogLayout/Documents/ViewDocLayout/EditComment.tsx
+// src/common/layout/BlogLayout/Documents/DocComment/EditComment/EditComment.tsx
 
 import React from "react";
 import { Box, Button, HStack, Text, VStack } from "@chakra-ui/react";
-import {CommentDTO} from "../../../../../../types/documents/CommentDTO";
+import { CommentDTO } from "../../../../../../types/documents/CommentDTO";
 import useEditComment from "./useEditComment";
 import CusAvatar from "../../../../../elements/CusAvatar";
 import TipTapEditor from "../../../../../elements/CusEditor/TipTapEditor";
+import CommentEditor from "../../../../../elements/CusEditor/CommentEditor";
 
 export interface EditCommentProps {
   comment: CommentDTO;
@@ -14,14 +15,14 @@ export interface EditCommentProps {
     name?: string;
     profileImg?: string;
   };
-  onUpdate?: (comment: Partial<CommentDTO>) => Promise<CommentDTO>;
+  onUpdateSuccess?: (comment: CommentDTO) => void;
   onCancel?: () => void;
 }
 
 function EditComment({
                        comment,
                        currentUser,
-                       onUpdate,
+                       onUpdateSuccess,
                        onCancel,
                      }: EditCommentProps) {
   const {
@@ -29,39 +30,13 @@ function EditComment({
     isSubmitting,
     handleImageUpload,
     handleVideoUpload,
-    buildUpdateData,
+    handleSubmit,
     handleCancel,
-    startSubmit,
-    endSubmit,
-    handleUpdateComplete,
   } = useEditComment({
     comment,
+    onUpdateSuccess,
     onCancel,
   });
-  
-  // 수정 제출
-  const handleSubmit = async () => {
-    const updateData = buildUpdateData();
-    
-    // 변경사항이 없으면 취소와 동일하게 처리
-    if (!updateData) {
-      handleCancel();
-      return;
-    }
-    
-    startSubmit();
-    
-    try {
-      const updatedComment = await onUpdate?.(updateData);
-      if (updatedComment) {
-        handleUpdateComplete(updatedComment);
-      }
-    } catch (error) {
-      console.error("댓글 수정 실패:", error);
-    } finally {
-      endSubmit();
-    }
-  };
   
   // 권한 체크 (본인 댓글만 수정 가능)
   if (!currentUser?.id || currentUser.id !== comment.userId) {
@@ -79,13 +54,13 @@ function EditComment({
       border="1px solid"
       borderColor="blue.200"
     >
-      <HStack align="flex-start" gap={3}>
+      <HStack align="flex-start" gap={3} height={"20rem"}>
         <CusAvatar
           size="md"
           name={currentUser.name || currentUser.id}
           src={currentUser.profileImg}
         />
-        <VStack flex={1} align="stretch" gap={3}>
+        <VStack flex={1} align="stretch" gap={3} height={"100%"}>
           <HStack justify="space-between">
             <Text fontSize="sm" fontWeight="600">
               {comment.userName || currentUser.name || currentUser.id}
@@ -100,13 +75,15 @@ function EditComment({
             borderRadius="md"
             overflow="hidden"
             bg="white"
+            display={"flex"}
+            flexDirection={"column"}
+            flex={1}
           >
-            <TipTapEditor
+            <CommentEditor
               ref={editorRef}
               initialValue={comment.content}
               placeholder="댓글을 수정하세요..."
               handleImageUpload={handleImageUpload}
-              handleVideoUpload={handleVideoUpload}
             />
           </Box>
           <HStack justify="flex-end" gap={2}>

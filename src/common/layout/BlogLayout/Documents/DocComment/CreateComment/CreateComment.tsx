@@ -1,10 +1,11 @@
-// src/common/layout/BlogLayout/Documents/DocComment/CreateComment/CreateComment.ts
+// src/common/layout/BlogLayout/Documents/DocComment/CreateComment/CreateComment.tsx
 import React from "react";
 import { Box, Button, HStack, Text, VStack } from "@chakra-ui/react";
 import useCreateComment from "./useCreateComment";
-import {CommentDTO} from "../../../../../../types/documents/CommentDTO";
+import { CommentDTO } from "../../../../../../types/documents/CommentDTO";
 import CusAvatar from "../../../../../elements/CusAvatar";
 import TipTapEditor from "../../../../../elements/CusEditor/TipTapEditor";
+import CommentEditor from "../../../../../elements/CusEditor/CommentEditor";
 
 export interface CreateCommentProps {
   documentId: string;
@@ -16,7 +17,7 @@ export interface CreateCommentProps {
     name?: string;
     profileImg?: string;
   };
-  onSubmit?: (comment: Partial<CommentDTO>) => Promise<CommentDTO>;
+  onSubmitSuccess?: (comment: CommentDTO) => void;
   onCancel?: () => void;
   isCompact?: boolean;
 }
@@ -27,7 +28,7 @@ function CreateComment({
                          depth = 0,
                          replyToUserName,
                          currentUser,
-                         onSubmit,
+                         onSubmitSuccess,
                          onCancel,
                          isCompact = false,
                        }: CreateCommentProps) {
@@ -38,37 +39,15 @@ function CreateComment({
     handleFocus,
     handleImageUpload,
     handleVideoUpload,
-    buildCommentData,
+    handleSubmit,
     handleCancel,
-    startSubmit,
-    endSubmit,
-    handleSubmitComplete,
   } = useCreateComment({
     documentId,
     parentId,
     depth,
+    onSubmitSuccess,
     onCancel,
   });
-  
-  const handleSubmit = async () => {
-    const commentData = buildCommentData();
-    if (!commentData) {
-      return;
-    }
-    
-    startSubmit();
-    
-    try {
-      const createdComment = await onSubmit?.(commentData);
-      if (createdComment) {
-        handleSubmitComplete(createdComment);
-      }
-    } catch (error) {
-      console.error("댓글 작성 실패:", error);
-    } finally {
-      endSubmit();
-    }
-  };
   
   // 로그인하지 않은 경우
   if (!currentUser?.id) {
@@ -142,13 +121,13 @@ function CreateComment({
   // 기본 모드
   return (
     <Box p={4} borderBottom="1px solid" borderColor="gray.200">
-      <HStack align="flex-start" gap={3}>
+      <HStack align="flex-start" gap={3} height={"20rem"}>
         <CusAvatar
           size="md"
           name={currentUser.name || currentUser.id}
           src={currentUser.profileImg}
         />
-        <VStack flex={1} align="stretch" gap={3}>
+        <VStack flex={1} align="stretch" gap={3} height={"100%"}>
           <Text fontSize="sm" fontWeight="600">
             {currentUser.name || currentUser.id}
           </Text>
@@ -159,30 +138,30 @@ function CreateComment({
             overflow="hidden"
             transition="border-color 0.2s"
             onFocus={handleFocus}
+            display={"flex"}
+            flexDirection={"column"}
+            flex={1}
           >
-            <TipTapEditor
+            <CommentEditor
               ref={editorRef}
               placeholder={placeholderText}
               handleImageUpload={handleImageUpload}
-              handleVideoUpload={handleVideoUpload}
             />
           </Box>
-          {isFocused && (
-            <HStack justify="flex-end" gap={2}>
-              <Button size="sm" variant="ghost" onClick={handleCancel}>
-                취소
-              </Button>
-              <Button
-                size="sm"
-                colorScheme="blue"
-                onClick={handleSubmit}
-                loading={isSubmitting}
-                disabled={isSubmitting}
-              >
-                댓글 작성
-              </Button>
-            </HStack>
-          )}
+          <HStack justify="flex-end" gap={2}>
+            <Button size="sm" variant="ghost" onClick={handleCancel}>
+              취소
+            </Button>
+            <Button
+              size="sm"
+              colorScheme="blue"
+              onClick={handleSubmit}
+              loading={isSubmitting}
+              disabled={isSubmitting}
+            >
+              댓글 작성
+            </Button>
+          </HStack>
         </VStack>
       </HStack>
     </Box>

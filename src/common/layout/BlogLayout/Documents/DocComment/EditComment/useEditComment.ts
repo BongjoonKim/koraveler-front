@@ -1,9 +1,10 @@
-// src/common/layout/BlogLayout/Documents/DocComment/EditComment/EditComment.ts
+// src/common/layout/BlogLayout/Documents/DocComment/EditComment/useEditComment.ts
 
 import { useRef, useState, useCallback, useEffect } from "react";
 import { Editor } from "@tiptap/react";
-import {CommentDTO} from "../../../../../../types/documents/CommentDTO";
+import { CommentDTO } from "../../../../../../types/documents/CommentDTO";
 import useFileUploadInDoc from "../../../../../../hooks/useFileUploadInDoc";
+import { useUpdateComment } from "../../../../../../hooks/useCommentQueries";
 
 export interface UseEditCommentProps {
   comment: CommentDTO;
@@ -17,8 +18,10 @@ export default function useEditComment({
                                          onCancel,
                                        }: UseEditCommentProps) {
   const editorRef = useRef<Editor | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditorReady, setIsEditorReady] = useState(false);
+  
+  // React Query mutation
+  const updateMutation = useUpdateComment(comment.documentId);
   
   // 댓글용 파일 업로드 훅
   const { handleImageUpload, handleVideoUpload, clearUploadedList } =
@@ -57,24 +60,36 @@ export default function useEditComment({
     clearUploadedList();
   }, [clearUploadedList]);
   
-  // 수정 데이터 생성
-  const buildUpdateData = useCallback((): Partial<CommentDTO> | null => {
+  // 수정 제출 — mutation 직접 호출
+  const handleSubmit = useCallback(async () => {
     const content = getContent();
     if (!content) {
-      return null;
+      // 내용이 비어있으면 취소와 동일하게 처리
+      clearEditor();
+      onCancel?.();
+      return;
     }
     
-    // 내용이 변경되지 않았으면 null 반환
+    // 내용이 변경되지 않았으면 취소와 동일하게 처리
     if (content === comment.content) {
-      return null;
+      clearEditor();
+      onCancel?.();
+      return;
     }
     
-    return {
+    const updateData: Partial<CommentDTO> = {
       id: comment.id,
       documentId: comment.documentId,
       content,
     };
-  }, [comment.id, comment.documentId, comment.content, getContent]);
+    
+    updateMutation.mutate(updateData, {
+      onSuccess: (updatedComment) => {
+        clearEditor();
+        onUpdateSuccess?.(updatedComment);
+      },
+    });
+  }, [comment.id, comment.documentId, comment.content, getContent, updateMutation, clearEditor, onUpdateSuccess, onCancel]);
   
   // 취소 핸들러
   const handleCancel = useCallback(() => {
@@ -82,35 +97,14 @@ export default function useEditComment({
     onCancel?.();
   }, [clearEditor, onCancel]);
   
-  // 제출 상태 관리
-  const startSubmit = useCallback(() => {
-    setIsSubmitting(true);
-  }, []);
-  
-  const endSubmit = useCallback(() => {
-    setIsSubmitting(false);
-  }, []);
-  
-  // 수정 성공 후 처리
-  const handleUpdateComplete = useCallback(
-    (updatedComment: CommentDTO) => {
-      clearEditor();
-      onUpdateSuccess?.(updatedComment);
-    },
-    [clearEditor, onUpdateSuccess]
-  );
-  
   return {
     editorRef,
-    isSubmitting,
+    isSubmitting: updateMutation.isPending,
     isEditorReady,
     handleImageUpload,
     handleVideoUpload,
     getContent,
-    buildUpdateData,
+    handleSubmit,
     handleCancel,
-    startSubmit,
-    endSubmit,
-    handleUpdateComplete,
   };
 }

@@ -11,6 +11,7 @@ import CusIconButton from "../../../../elements/buttons/CusIconButton";
 import { HStack, VStack, Text, Box } from "@chakra-ui/react";
 import {View} from "lucide-react";
 import DocComment from "../DocComment/DocComment";
+import CommentSection from "./CommentSection";
 
 export interface ViewDocLayoutProps extends DocumentDTO{
   children ?: ReactNode;
@@ -25,8 +26,6 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
     currentUser,
     views,
   } = useViewDocLayout(props);
-  
-  console.log("views", views)
   
   return (
     <StyledViewDocLayout>
@@ -119,7 +118,7 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
           {props.children}
         </Box>
       </VStack>
-      <DocComment />
+      <CommentSection documentId={props.id!} />
     </StyledViewDocLayout>
   )
 }

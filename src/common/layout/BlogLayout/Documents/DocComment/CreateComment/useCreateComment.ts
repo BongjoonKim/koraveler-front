@@ -2,8 +2,9 @@
 
 import { useRef, useState, useCallback } from "react";
 import { Editor } from "@tiptap/react";
-import {CommentDTO} from "../../../../../../types/documents/CommentDTO";
+import { CommentDTO } from "../../../../../../types/documents/CommentDTO";
 import useFileUploadInDoc from "../../../../../../hooks/useFileUploadInDoc";
+import { useCreateComment as useCreateCommentMutation } from "../../../../../../hooks/useCommentQueries";
 
 export interface UseCreateCommentProps {
   documentId: string;
@@ -21,8 +22,10 @@ export default function useCreateComment({
                                            onCancel,
                                          }: UseCreateCommentProps) {
   const editorRef = useRef<Editor | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  
+  // React Query mutation
+  const createMutation = useCreateCommentMutation(documentId);
   
   // 댓글용 파일 업로드 훅 (경로: comments/{documentId})
   const { handleImageUpload, handleVideoUpload, clearUploadedList } =
@@ -58,20 +61,25 @@ export default function useCreateComment({
     clearUploadedList();
   }, [clearUploadedList]);
   
-  // 댓글 제출 데이터 생성
-  const buildCommentData = useCallback((): Partial<CommentDTO> | null => {
+  // 댓글 제출 — mutation 직접 호출
+  const handleSubmit = useCallback(async () => {
     const content = getContent();
-    if (!content) {
-      return null;
-    }
+    if (!content) return;
     
-    return {
+    const commentData: Partial<CommentDTO> = {
       documentId,
       content,
       parentId,
       depth,
     };
-  }, [documentId, parentId, depth, getContent]);
+    
+    createMutation.mutate(commentData, {
+      onSuccess: (createdComment) => {
+        clearEditor();
+        onSubmitSuccess?.(createdComment);
+      },
+    });
+  }, [documentId, parentId, depth, getContent, createMutation, clearEditor, onSubmitSuccess]);
   
   // 취소 핸들러
   const handleCancel = useCallback(() => {
@@ -79,37 +87,16 @@ export default function useCreateComment({
     onCancel?.();
   }, [clearEditor, onCancel]);
   
-  // 제출 상태 관리
-  const startSubmit = useCallback(() => {
-    setIsSubmitting(true);
-  }, []);
-  
-  const endSubmit = useCallback(() => {
-    setIsSubmitting(false);
-  }, []);
-  
-  // 제출 성공 후 처리
-  const handleSubmitComplete = useCallback(
-    (createdComment: CommentDTO) => {
-      clearEditor();
-      onSubmitSuccess?.(createdComment);
-    },
-    [clearEditor, onSubmitSuccess]
-  );
-  
   return {
     editorRef,
-    isSubmitting,
+    isSubmitting: createMutation.isPending,
     isFocused,
     handleFocus,
     handleImageUpload,
     handleVideoUpload,
     getContent,
     clearEditor,
-    buildCommentData,
+    handleSubmit,
     handleCancel,
-    startSubmit,
-    endSubmit,
-    handleSubmitComplete,
   };
 }

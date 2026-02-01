@@ -1019,8 +1019,8 @@ const EditorContainer = styled.div`
     /* EditorContent가 생성하는 wrapper */
     > div {
         min-height: 100%;
-        //display: flex;
-        //flex-direction: column;
+        display: flex;
+        flex-direction: column;
     }
     //
     //> .tiptap {
@@ -1031,7 +1031,8 @@ const EditorContainer = styled.div`
     
     .ProseMirror {
         min-height: 100%;
-        padding: 20px;
+        flex: 1;
+        padding: 1rem;
         outline: none;
         font-family: Arial, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", "Segoe UI", Roboto,
         Helvetica, Arial, sans-serif;
