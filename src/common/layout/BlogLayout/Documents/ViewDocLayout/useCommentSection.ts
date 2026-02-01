@@ -15,6 +15,8 @@ import {
 import { CommentDTO } from "../../../../../types/documents/CommentDTO";
 import useAuthEP from "../../../../../utils/useAuthEP";
 import { getReplies } from "../../../../../endpoints/comment-endpoints";
+import {useAtom} from "jotai";
+import {expandedCommentsAtom} from "../../../../../stores/jotai/jotai";
 
 export interface UseCommentSectionProps {
   documentId: string;
@@ -41,7 +43,7 @@ export default function useCommentSection({ documentId }: UseCommentSectionProps
   const [loadedReplies, setLoadedReplies] = useState<Record<string, CommentDTO[]>>({});
   
   // 대댓글 펼침 상태
-  const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
+  const [expandedComments, setExpandedComments] = useAtom(expandedCommentsAtom)
   
   // ============ 조회 (React Query) ============
   
@@ -89,6 +91,8 @@ export default function useCommentSection({ documentId }: UseCommentSectionProps
   
   const handleToggleReplies = useCallback(
     (commentId: string, replyCount?: number) => {
+      console.log("commentId", commentId)
+      
       setExpandedComments((prev) => {
         const newSet = new Set(prev);
         if (newSet.has(commentId)) {
@@ -103,7 +107,7 @@ export default function useCommentSection({ documentId }: UseCommentSectionProps
         return newSet;
       });
     },
-    [loadedReplies, handleLoadReplies]
+    [loadedReplies, handleLoadReplies, expandedComments]
   );
   
   // ============ 답글 작성 시작 ============
@@ -136,7 +140,7 @@ export default function useCommentSection({ documentId }: UseCommentSectionProps
         setExpandedComments((prev) => new Set(prev).add(created.parentId!));
       }
     },
-    [handleLoadReplies]
+    [handleLoadReplies, expandedComments]
   );
   
   // ============ 수정 모드 시작 ============

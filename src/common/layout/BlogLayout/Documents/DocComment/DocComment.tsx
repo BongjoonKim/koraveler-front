@@ -1,10 +1,9 @@
 import {Box, HStack, IconButton, Menu, Text, VStack} from "@chakra-ui/react";
 import {CommentDTO} from "../../../../../types/documents/CommentDTO";
 import CusAvatar from "../../../../elements/CusAvatar";
-import React, {useState} from "react";
+import React from "react";
 import moment from "moment";
 import {FiHeart, FiMessageCircle, FiMoreHorizontal} from "react-icons/fi";
-import TipTabEditor from "../../../../elements/CusEditor/TipTapEditor";
 import TipTapViewer from "../../../../elements/CusEditor/TipTapViewer";
 import {FaHeart} from "react-icons/fa";
 
@@ -16,21 +15,24 @@ export interface DocCommentProps {
   onHide?: (commentId: string) => void;
   onLike?: (commentId?: string) => void;
   onLoadReplies?: (commentId: string) => void;
+  onToggleReplies?: (commentId: string, replyCount?: number) => void; // 추가
+  isExpanded?: boolean; // 추가 - 부모에서 expandedComments.has(comment.id) 전달
   currentUserId?: string;
 }
 
 function DocComment({
-  comment,
-  onReply,
-  onEdit,
-  onDelete,
-  onHide,
-  onLike,
-  onLoadReplies,
-  currentUserId
-}: DocCommentProps) {
+                      comment,
+                      onReply,
+                      onEdit,
+                      onDelete,
+                      onHide,
+                      onLike,
+                      onLoadReplies,
+                      onToggleReplies, // 추가
+                      isExpanded = false, // 추가
+                      currentUserId
+                    }: DocCommentProps) {
   const indentLevel = Math.min(comment?.depth ?? 0, 2);
-  const [showReplies, setShowReplies] = useState<boolean>(false);
   
   // 삭제된 댓글 표시
   if (comment?.isDeleted) {
@@ -59,23 +61,19 @@ function DocComment({
     }
   };
   
+  // expandedComments를 통한 토글 - 부모 컴포넌트의 handler 호출
   const handleToggleReplies = () => {
     if (!comment) {
       return;
     }
-    if (!showReplies && comment.replyCount && comment.replyCount > 0) {
-      onLoadReplies?.(comment.id);
-    }
-    setShowReplies(!showReplies);
+    onToggleReplies?.(comment.id, comment.replyCount);
   };
-  
-  console.log("comment", comment)
   
   return (
     <Box ml={{ base: `${indentLevel}rem`, md: `${indentLevel * 2}rem` }}
-      borderBottom="1px solid"
-      borderColor="gray.200"
-      padding={"1rem"}
+         borderBottom="1px solid"
+         borderColor="gray.200"
+         padding={"1rem"}
     >
       <Box
         display={"flex"}
@@ -89,7 +87,7 @@ function DocComment({
           name={comment?.userId || comment?.userName}
         />
         <HStack justify={"space-between"} w={"full"} py={2}>
-          <VStack  align={"flex-start"}>
+          <VStack align={"flex-start"}>
             <Text fontWeight={"600"} fontSize={"sm"}>
               {comment?.userId}
             </Text>
@@ -130,9 +128,10 @@ function DocComment({
           )}
         </HStack>
       </Box>
+      
       {/* 댓글 내용 */}
       <Box fontSize="sm" lineHeight="tall">
-        <TipTapViewer contents={comment?.content || "sdfsdfsdfsdfsdfsdf"} />
+        <TipTapViewer contents={comment?.content} />
       </Box>
       
       <HStack gap={4} pt={1}>
@@ -161,6 +160,7 @@ function DocComment({
             <Text fontSize="xs">답글</Text>
           </HStack>
         )}
+        
         {/* 대댓글 보기 토글 (depth 0, 1만) */}
         {comment && comment.depth < 2 && comment.replyCount && comment.replyCount > 0 && (
           <Text
@@ -170,49 +170,11 @@ function DocComment({
             onClick={handleToggleReplies}
             _hover={{ textDecoration: "underline" }}
           >
-            {showReplies
+            {isExpanded
               ? "답글 숨기기"
               : `답글 ${comment.replyCount}개 보기`
             }
           </Text>
-        )}
-        
-        {/* 대댓글 목록 */}
-        {showReplies && comment?.replies && comment.replies.length > 0 && (
-          <VStack align="stretch" gap={0} mt={2}>
-            {comment.replies.map((reply) => (
-              <DocComment
-                key={reply.id}
-                comment={reply}
-                onReply={onReply}
-                onEdit={onEdit}
-                onDelete={onDelete}
-                onHide={onHide}
-                onLike={onLike}
-                onLoadReplies={onLoadReplies}
-                currentUserId={currentUserId}
-              />
-            ))}
-          </VStack>
-        )}
-        
-        {/* 대댓글 목록 */}
-        {showReplies && comment?.replies && comment.replies.length > 0 && (
-          <VStack align="stretch" gap={0} mt={2}>
-            {comment.replies.map((reply) => (
-              <DocComment
-                key={reply.id}
-                comment={reply}
-                onReply={onReply}
-                onEdit={onEdit}
-                onDelete={onDelete}
-                onHide={onHide}
-                onLike={onLike}
-                onLoadReplies={onLoadReplies}
-                currentUserId={currentUserId}
-              />
-            ))}
-          </VStack>
         )}
       </HStack>
     </Box>

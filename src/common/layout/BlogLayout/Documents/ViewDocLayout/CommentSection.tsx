@@ -78,7 +78,8 @@ function CommentSection({ documentId }: CommentSectionProps) {
           onDelete={() => handleDelete(comment.id, parentId)}
           onHide={() => handleHide(comment.id, parentId)}
           onLike={() => handleLike(comment.id)}
-          onLoadReplies={() => handleToggleReplies(comment.id, comment.replyCount)}
+          isExpanded={expandedComments.has(comment.id)}
+          onToggleReplies={handleToggleReplies}  // 이 줄 추가
         />
         
         {/* 대댓글 펼침 영역 */}

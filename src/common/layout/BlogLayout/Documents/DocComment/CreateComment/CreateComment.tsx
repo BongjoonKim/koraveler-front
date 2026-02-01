@@ -90,12 +90,14 @@ function CreateComment({
               overflow="hidden"
               bg="white"
               minH="80px"
+              display={"flex"}
+              flexDirection={"column"}
+              flex={1}
             >
-              <TipTapEditor
+              <CommentEditor
                 ref={editorRef}
                 placeholder={placeholderText}
                 handleImageUpload={handleImageUpload}
-                handleVideoUpload={handleVideoUpload}
               />
             </Box>
             <HStack justify="flex-end" gap={2}>

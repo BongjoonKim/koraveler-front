@@ -14,6 +14,8 @@ export const openBlogPostingModalAtom = atom<boolean>(false);
 
 
 
+// 댓글 여닫이
+export const expandedCommentsAtom = atom<Set<string>>(new Set<string>())
 
 
 // 검색
