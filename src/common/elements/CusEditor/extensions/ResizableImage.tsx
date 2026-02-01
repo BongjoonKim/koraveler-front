@@ -378,6 +378,7 @@ export const ResizableImage = Node.create({
     };
   },
   
+  // HTML → 노드
   parseHTML() {
     return [
       // figure로 감싸진 이미지 파싱
@@ -410,7 +411,7 @@ export const ResizableImage = Node.create({
     ];
   },
   
-  // 중요: HTML 출력 시 정렬 정보와 스타일 포함
+  // 중요: Node => HTML로 변환하여 보여줌. HTML 출력 시 정렬 정보와 스타일 포함
   renderHTML({ HTMLAttributes }) {
     const { src, alt, title, width, height, align } = HTMLAttributes;
     
@@ -436,6 +437,7 @@ export const ResizableImage = Node.create({
     ];
   },
   
+  // 화면 렌더링의 역할을 가지고 있음. ProseMirror Doc => React Component
   addNodeView() {
     return ReactNodeViewRenderer(ResizableImageComponent);
   },

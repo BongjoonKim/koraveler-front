@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import {forwardRef} from "react";
 import useCreateEditor from "./useCreateEditor";
-import TiptapEditor from "../../../../../elements/CusEditor/TipTabEditor";
+import TiptapEditor from "../../../../../elements/CusEditor/TipTapEditor";
 
 export interface CreateDocumentProps extends DocumentDTO{
 

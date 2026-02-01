@@ -69,7 +69,7 @@ export default function useCreateEditor(props : CreateDocumentProps) {
         // 비디오 파일 확장자 추출
         const extension = blob.type.split('/')[1] || 'mp4';
         const file = new File([blob], `${fileName}.${extension}`, { type: blob.type });
-        const fileKey = `${props?.id || "new"}/videos/${fileName}.${extension}`;
+        const fileKey = `${props?.id || "new"}/${fileName}.${extension}`;
         
         // 진행률 업데이트
         progress(10);

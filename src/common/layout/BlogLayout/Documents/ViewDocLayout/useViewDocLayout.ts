@@ -12,6 +12,7 @@ import {ERROR_MESSAGE} from "../../../../../stores/recoil/recoilConstants";
 import {ErrorMessageProps} from "../../../../../stores/recoil/types";
 import useAuthEP from "../../../../../utils/useAuthEP";
 import {useCurrentUser} from "../../../../../hooks/useCurrentUser";
+import {useGetViews} from "../../../../../hooks/useBlogQueries";
 
 export default function useViewDocLayout(props : ViewDocLayoutProps) {
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
   const [errMsg, setErrMsg] = useRecoilState(recoil.errMsg);
   const authEP = useAuthEP();
   const {data : currentUser} = useCurrentUser();
+  // 조회수 정보
+  const {data : views} = useGetViews(props.id)
   
   // 수정 화면으로 전환
   const handleEdit = useCallback(() => {
@@ -98,6 +101,7 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
     handleDelete,
     changeBookmark,
     currentUser,
+    views,
   }
 
 }
