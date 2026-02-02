@@ -66,24 +66,14 @@ export async function unhideComment(props: FuncProps) {
 
 // 1depth 댓글 조회 (비로그인 허용)
 export async function getRootComments(props: FuncProps) {
-  const config = props.accessToken
-    ? { headers: { Authorization: `Bearer ${props.accessToken}` } }
-    : {};
-  
   return (await request.get(
     `api/v1/comments/ps/document/${props.params.documentId}?page=${props.params?.page || 0}&size=${props.params?.size || 10}&sort=${props.params?.sort || "desc"}`,
-    config
   )) as AxiosResponse<CommentPageDTO>;
 }
 
 // 대댓글 조회 (비로그인 허용)
 export async function getReplies(props: FuncProps) {
-  const config = props.accessToken
-    ? { headers: { Authorization: `Bearer ${props.accessToken}` } }
-    : {};
-  
   return (await request.get(
     `api/v1/comments/ps/${props.params.parentId}/replies`,
-    config
   )) as AxiosResponse<CommentDTO[]>;
 }

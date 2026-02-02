@@ -144,7 +144,6 @@ function DocComment({
           _hover={{ color: "red.400" }}
         >
           {comment?.isLikedByMe ? <FaHeart size={14} /> : <FiHeart size={14} />}
-          <Text fontSize="xs">{comment?.likeCount || 0}</Text>
         </HStack>
         
         {/* 답글 달기 */}
@@ -162,7 +161,7 @@ function DocComment({
         )}
         
         {/* 대댓글 보기 토글 (depth 0, 1만) */}
-        {comment && comment.depth < 2 && comment.replyCount && comment.replyCount > 0 && (
+        {comment && comment.depth < 2 && (comment.replyCount ?? 0) > 0 && (
           <Text
             fontSize="xs"
             color="blue.500"

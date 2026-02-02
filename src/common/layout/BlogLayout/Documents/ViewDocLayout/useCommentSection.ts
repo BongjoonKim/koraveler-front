@@ -72,10 +72,9 @@ export default function useCommentSection({ documentId }: UseCommentSectionProps
   const handleLoadReplies = useCallback(
     async (parentId: string) => {
       try {
-        const res = await authEP({
-          func: getReplies,
+        const res = await getReplies({
           params: { parentId },
-        });
+        })
         setLoadedReplies((prev) => ({
           ...prev,
           [parentId]: res.data,
