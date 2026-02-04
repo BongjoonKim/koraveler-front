@@ -65,88 +65,68 @@ function BlogTitle({ ...props }) {
       </Box>
       
       {/* 카테고리 필터 (Optional) */}
-      {currentUser && (
-        <Stack direction="row" gap={2} flexWrap="wrap">
-          <Link className="box" to={`/blog/home`}>
-            <Badge
-              colorPalette="purple"
-              size="lg"
-              borderRadius="full"
-              px={4}
-              py={2}
-              cursor="pointer"
-              _hover={{ transform: "scale(1.05)" }}
-            >
-              All Posts
-            </Badge>
-          </Link>
-          <Link className="box" to={`/blog/my-blog`}>
-            <Badge
-              colorPalette="purple"
-              size="lg"
-              borderRadius="full"
-              px={4}
-              py={2}
-              cursor="pointer"
-              _hover={{ transform: "scale(1.05)" }}
-            >
-              My Post
-            </Badge>
-          </Link>
-          <Link className="box" to={`/blog/bookmark`}>
-            <Badge
-              colorPalette="blue"
-              variant="outline"
-              size="lg"
-              borderRadius="full"
-              px={4}
-              py={2}
-              cursor="pointer"
-              _hover={{ bg: "blue.50" }}
-            >
-              Bookmark
-            </Badge>
-          </Link>
-          <Link className="box" to={`/blog/draft`}>
-            <Badge
-              colorPalette="blue"
-              variant="outline"
-              size="lg"
-              borderRadius="full"
-              px={4}
-              py={2}
-              cursor="pointer"
-              _hover={{ bg: "blue.50" }}
-            >
-              Draft
-            </Badge>
-          </Link>
-          {/*<Badge*/}
-          {/*  colorPalette="green"*/}
-          {/*  variant="outline"*/}
-          {/*  size="lg"*/}
-          {/*  borderRadius="full"*/}
-          {/*  px={4}*/}
-          {/*  py={2}*/}
-          {/*  cursor="pointer"*/}
-          {/*  _hover={{ bg: "green.50" }}*/}
-          {/*>*/}
-          {/*  Culture*/}
-          {/*</Badge>*/}
-          {/*<Badge*/}
-          {/*  colorPalette="orange"*/}
-          {/*  variant="outline"*/}
-          {/*  size="lg"*/}
-          {/*  borderRadius="full"*/}
-          {/*  px={4}*/}
-          {/*  py={2}*/}
-          {/*  cursor="pointer"*/}
-          {/*  _hover={{ bg: "orange.50" }}*/}
-          {/*>*/}
-          {/*  Food*/}
-          {/*</Badge>*/}
-        </Stack>
+      <Stack direction="row" gap={2} flexWrap="wrap">
+      
+
+        <Link className="box" to={`/blog/home`}>
+          <Badge
+            colorPalette="purple"
+            size="lg"
+            borderRadius="full"
+            px={4}
+            py={2}
+            cursor="pointer"
+            _hover={{ transform: "scale(1.05)" }}
+          >
+            All Posts
+          </Badge>
+        </Link>
+      {currentUser?.id && (
+        <>
+        <Link className="box" to={`/blog/my-blog`}>
+          <Badge
+            colorPalette="purple"
+            size="lg"
+            borderRadius="full"
+            px={4}
+            py={2}
+            cursor="pointer"
+            _hover={{ transform: "scale(1.05)" }}
+          >
+            My Post
+          </Badge>
+        </Link>
+        <Link className="box" to={`/blog/bookmark`}>
+          <Badge
+            colorPalette="blue"
+            variant="outline"
+            size="lg"
+            borderRadius="full"
+            px={4}
+            py={2}
+            cursor="pointer"
+            _hover={{ bg: "blue.50" }}
+          >
+            Bookmark
+          </Badge>
+        </Link>
+        <Link className="box" to={`/blog/draft`}>
+          <Badge
+            colorPalette="blue"
+            variant="outline"
+            size="lg"
+            borderRadius="full"
+            px={4}
+            py={2}
+            cursor="pointer"
+            _hover={{ bg: "blue.50" }}
+          >
+            Draft
+          </Badge>
+        </Link>
+        </>
       )}
+      </Stack>
     </Box>
   );
 }

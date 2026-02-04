@@ -60,10 +60,11 @@ const StyledSearchModal = styled(motion.div)`
     display: flex;
     flex-direction: column;
     background: white;
-    border-radius: 12px;
+    border-radius: 3rem;
     //box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     width: 100%;
-    height: 30rem;
+    min-height: 32rem;
+    max-height: 90vh;
     //overflow: hidden;
     z-index: 20001;
     padding: 1rem;

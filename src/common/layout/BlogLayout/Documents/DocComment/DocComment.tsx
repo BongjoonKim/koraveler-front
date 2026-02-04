@@ -13,7 +13,7 @@ export interface DocCommentProps {
   onEdit?: (commentId: string) => void;
   onDelete?: (commentId: string) => void;
   onHide?: (commentId: string) => void;
-  onLike?: (commentId?: string) => void;
+  onLike?: (commentId: string, parentId?: string) => void;
   onLoadReplies?: (commentId: string) => void;
   onToggleReplies?: (commentId: string, replyCount?: number) => void; // 추가
   isExpanded?: boolean; // 추가 - 부모에서 expandedComments.has(comment.id) 전달
@@ -139,12 +139,14 @@ function DocComment({
         <HStack
           gap={1}
           cursor="pointer"
-          onClick={() => onLike?.(comment?.id)}
+          onClick={() => onLike?.(comment?.id!, comment?.parentId)}
           color={comment?.isLikedByMe ? "red.500" : "gray.500"}
           _hover={{ color: "red.400" }}
         >
           {comment?.isLikedByMe ? <FaHeart size={14} /> : <FiHeart size={14} />}
-          <Text fontSize="xs">{comment?.likeCount || 0}</Text>
+          {(comment?.likeCount ?? 0) > 0 && (
+            <Text fontSize="xs">{comment?.likeCount}</Text>
+          )}
         </HStack>
         
         {/* 답글 달기 */}
@@ -162,7 +164,7 @@ function DocComment({
         )}
         
         {/* 대댓글 보기 토글 (depth 0, 1만) */}
-        {comment && comment.depth < 2 && comment.replyCount && comment.replyCount > 0 && (
+        {comment && comment.depth < 2 && (comment.replyCount ?? 0) > 0 && (
           <Text
             fontSize="xs"
             color="blue.500"

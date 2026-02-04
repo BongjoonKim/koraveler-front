@@ -26,9 +26,8 @@ export const useRootComments = (documentId?: string, size: number=10) => {
   return useInfiniteQuery<CommentPageDTO>({
     queryKey: commentKeys.root(documentId!),
     queryFn: async ({pageParam = 0}) => {
-      const res = await authEP({
-        func: getRootComments,
-        params: {
+      const res = await getRootComments({
+        params : {
           documentId,
           page: pageParam,
           size,
@@ -50,12 +49,13 @@ export const useRootComments = (documentId?: string, size: number=10) => {
 export const useReplies = (parentId ?: string) => {
   const authEP = useAuthEP();
   
-  return useQuery<CommentDTO>({
+  return useQuery<CommentDTO[]>({
     queryKey: commentKeys.replies(parentId!),
     queryFn: async () => {
-      const res = await authEP({
-        func: getReplies,
-        params: {parentId}
+      const res = await getReplies({
+        params : {
+          parentId
+        }
       })
       return res.data
     },

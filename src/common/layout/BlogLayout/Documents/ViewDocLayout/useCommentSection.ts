@@ -17,6 +17,7 @@ import useAuthEP from "../../../../../utils/useAuthEP";
 import { getReplies } from "../../../../../endpoints/comment-endpoints";
 import {useAtom} from "jotai";
 import {expandedCommentsAtom} from "../../../../../stores/jotai/jotai";
+import {useToggleCommentLike} from "../../../../../hooks/useCommentLikeQueries";
 
 export interface UseCommentSectionProps {
   documentId: string;
@@ -66,16 +67,17 @@ export default function useCommentSection({ documentId }: UseCommentSectionProps
   const deleteMutation = useDeleteComment(documentId);
   const hideMutation = useHideComment(documentId);
   const unhideMutation = useUnhideComment(documentId);
+  const likeMutation = useToggleCommentLike(documentId);  // 추가
+  
   
   // ============ 대댓글 로드 ============
   
   const handleLoadReplies = useCallback(
     async (parentId: string) => {
       try {
-        const res = await authEP({
-          func: getReplies,
+        const res = await getReplies({
           params: { parentId },
-        });
+        })
         setLoadedReplies((prev) => ({
           ...prev,
           [parentId]: res.data,
@@ -226,10 +228,18 @@ export default function useCommentSection({ documentId }: UseCommentSectionProps
   
   // ============ 좋아요 (추후 구현) ============
   
-  const handleLike = useCallback((commentId?: string) => {
-    // TODO: 좋아요 API 연결
-    console.log("좋아요:", commentId);
-  }, []);
+  const handleLike = useCallback((commentId: string, parentId?: string) => {
+    likeMutation.mutate(
+      { commentId, parentId },
+      {
+        onSuccess: () => {
+          // 대댓글이면 해당 부모의 replies도 갱신
+          if (parentId) {
+            handleLoadReplies(parentId);
+          }
+        },
+      }
+    );  }, []);
   
   // ============ 더보기 (무한스크롤) ============
   
@@ -283,5 +293,6 @@ export default function useCommentSection({ documentId }: UseCommentSectionProps
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,
+    isLiking: likeMutation.isPending,
   };
 }

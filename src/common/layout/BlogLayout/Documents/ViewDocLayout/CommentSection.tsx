@@ -77,7 +77,7 @@ function CommentSection({ documentId }: CommentSectionProps) {
           onEdit={() => handleStartEdit(comment.id)}
           onDelete={() => handleDelete(comment.id, parentId)}
           onHide={() => handleHide(comment.id, parentId)}
-          onLike={() => handleLike(comment.id)}
+          onLike={() => handleLike(comment.id, comment.parentId)}
           isExpanded={expandedComments.has(comment.id)}
           onToggleReplies={handleToggleReplies}  // 이 줄 추가
         />
