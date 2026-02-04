@@ -13,6 +13,7 @@ import {ErrorMessageProps} from "../../../../../stores/recoil/types";
 import useAuthEP from "../../../../../utils/useAuthEP";
 import {useCurrentUser} from "../../../../../hooks/useCurrentUser";
 import {useGetViews} from "../../../../../hooks/useBlogQueries";
+import {useDocumentLikeStatus, useToggleDocumentLike} from "../../../../../hooks/useDocumentLikeQueries";
 
 export default function useViewDocLayout(props : ViewDocLayoutProps) {
   const navigate = useNavigate();
@@ -23,6 +24,10 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
   const {data : currentUser} = useCurrentUser();
   // 조회수 정보
   const {data : views} = useGetViews(props.id)
+  
+  // 좋아요 정보
+  const { data: likeStatus } = useDocumentLikeStatus(props.id);
+  const toggleLikeMutation = useToggleDocumentLike(props.id!);
   
   // 수정 화면으로 전환
   const handleEdit = useCallback(() => {
@@ -96,12 +101,27 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
     }
   }, [isBookmarked, props]);
   
+  // 좋아요 토글 핸들러
+  const handleToggleLike = useCallback(() => {
+    if (!currentUser?.id) {
+      setErrMsg({
+        status: "warning",
+        msg: "로그인이 필요합니다.",
+      });
+      return;
+    }
+    toggleLikeMutation.mutate();
+  }, [currentUser, toggleLikeMutation]);
+  
   return {
     handleEdit,
     handleDelete,
     changeBookmark,
     currentUser,
     views,
+    likeStatus,
+    handleToggleLike,
+    isLiking: toggleLikeMutation.isPending,
   }
 
 }

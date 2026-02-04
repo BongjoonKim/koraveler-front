@@ -6,7 +6,7 @@ import moment from "moment";
 import CusButton from "../../../../elements/buttons/CusButton";
 import useViewDocLayout from "./useViewDocLayout";
 import { CiBookmark } from "react-icons/ci";
-import {IoBookmarkSharp, IoChatbubbleOutline, IoEyeOutline, IoHeartOutline} from "react-icons/io5";
+import {IoBookmarkSharp, IoChatbubbleOutline, IoEyeOutline, IoHeart, IoHeartOutline} from "react-icons/io5";
 import CusIconButton from "../../../../elements/buttons/CusIconButton";
 import { HStack, VStack, Text, Box } from "@chakra-ui/react";
 import {View} from "lucide-react";
@@ -25,6 +25,9 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
     changeBookmark,
     currentUser,
     views,
+    likeStatus,
+    handleToggleLike,
+    isLiking,
   } = useViewDocLayout(props);
   
   return (
@@ -61,19 +64,22 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
                   >
                     {props?.isBookmarked ? <IoBookmarkSharp/> : <CiBookmark />}
                   </CusIconButton>
-                  <CusIconButton
-                    aria-label="like"
-                    variant="ghost"
-                    colorScheme="red"
-                    size="sm"
-                  >
-                    <HStack gap={1}>
-                      <IoHeartOutline />
-                      <Text fontSize="sm">{0}</Text>
-                    </HStack>
-                  </CusIconButton>
                 </>
               )}
+              {/* 좋아요 버튼 - 로그인한 사용자만 클릭 가능 */}
+              <CusIconButton
+                aria-label="like"
+                variant="ghost"
+                colorScheme={likeStatus?.isLiked ? "red" : "gray"}
+                size="sm"
+                onClick={handleToggleLike}
+                disabled={isLiking}
+              >
+                <HStack gap={1}>
+                  {likeStatus?.isLiked ? <IoHeart /> : <IoHeartOutline />}
+                  <Text fontSize="sm">{likeStatus?.likeCount ?? 0}</Text>
+                </HStack>
+              </CusIconButton>
               {currentUser?.id && (
                 <HStack gap={2}>
                   <CusButton
