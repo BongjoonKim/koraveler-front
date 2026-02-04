@@ -19,7 +19,7 @@ export default function useBlogTitle() {
   const [curPageTitle, setCurPageTitle] = useState<BlogPageTypeType>(upperCase(BLOG_PAGE_TYPE.HOME));
   const [sortOptions, setSortOptions] = useState<BlogListSortsOptionsType[]>(BLOG_LIST_SORTS_OPTIONS);
   const [selectedOption, setSelectedOption] = useAtom(selBlogSortOpt);
-  const currentUser = useCurrentUser();
+  const {data : currentUser} = useCurrentUser();
   
   const findCurPageTitle = () => {
     const curPage = blogTitles.find((bt:string) => bt === match?.params?.type);

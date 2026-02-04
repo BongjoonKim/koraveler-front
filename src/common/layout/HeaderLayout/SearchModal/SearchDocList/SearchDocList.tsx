@@ -33,7 +33,7 @@ function SearchDocList(props: SearchDocListProps) {
 export default SearchDocList;
 
 const StyledSearchDocList = styled.div`
-    max-height: 70vh;
+    max-height: 90vh;
     overflow: auto;
     cursor: pointer;
     height: 100%;

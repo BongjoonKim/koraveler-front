@@ -63,7 +63,8 @@ const StyledSearchModal = styled(motion.div)`
     border-radius: 12px;
     //box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     width: 100%;
-    height: 30rem;
+    min-height: 32rem;
+    max-height: 100vh;
     //overflow: hidden;
     z-index: 20001;
     padding: 1rem;
@@ -135,7 +136,7 @@ const StyledSearchModal = styled(motion.div)`
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 25rem;
+        height: 100%;
         color: #a0aec0;
         font-style: italic;
         text-align: center;
