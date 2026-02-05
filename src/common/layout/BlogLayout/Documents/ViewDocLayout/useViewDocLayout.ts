@@ -1,5 +1,5 @@
 import {ViewDocLayoutProps} from "./ViewDocLayout";
-import {useCallback} from "react";
+import {useCallback, useEffect} from "react";
 import {useRecoilState} from "recoil";
 import recoil from "../../../../../stores/recoil";
 import {deleteDocument} from "../../../../../endpoints/blog-endpoints";
@@ -12,7 +12,7 @@ import {ERROR_MESSAGE} from "../../../../../stores/recoil/recoilConstants";
 import {ErrorMessageProps} from "../../../../../stores/recoil/types";
 import useAuthEP from "../../../../../utils/useAuthEP";
 import {useCurrentUser} from "../../../../../hooks/useCurrentUser";
-import {useGetViews} from "../../../../../hooks/useBlogQueries";
+import {useGetViews, useIncreaseView} from "../../../../../hooks/useBlogQueries";
 import {useDocumentLikeStatus, useToggleDocumentLike} from "../../../../../hooks/useDocumentLikeQueries";
 
 export default function useViewDocLayout(props : ViewDocLayoutProps) {
@@ -24,7 +24,14 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
   const {data : currentUser} = useCurrentUser();
   // 조회수 정보
   const {data : views} = useGetViews(props.id)
-  
+  const increaseViewMutation = useIncreaseView();
+
+  useEffect(() => {
+    if (props.id) {
+      increaseViewMutation.mutate(props.id);
+    }
+  }, [props.id]);
+
   // 좋아요 정보
   const { data: likeStatus } = useDocumentLikeStatus(props.id);
   const toggleLikeMutation = useToggleDocumentLike(props.id!);
