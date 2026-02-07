@@ -3,6 +3,7 @@ import CusInput from "../../../common/elements/textField/CusInput";
 import useLoginPage from "./useLoginPage";
 import CusButton from "../../../common/elements/buttons/CusButton";
 import {ChangeEvent} from "react";
+import {Alert} from "@chakra-ui/react";
 
 interface LoginPageProps {
 
@@ -12,6 +13,7 @@ function LoginPage(props: LoginPageProps) {
   const {
     userInfo,
     userId,
+    errMsg,
     handleChange,
     handleClickTitle,
     handleClickLogin,
@@ -20,6 +22,12 @@ function LoginPage(props: LoginPageProps) {
   } = useLoginPage();
   return (
     <StyledLoginPage>
+      {errMsg?.isShow && (
+        <Alert.Root status={errMsg.status as "error" | "warning" | "success" | "info"}>
+          <Alert.Indicator />
+          <Alert.Title>{errMsg.msg}</Alert.Title>
+        </Alert.Root>
+      )}
       <span
         className="title"
         onClick={handleClickTitle}

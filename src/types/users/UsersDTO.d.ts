@@ -35,3 +35,32 @@ export interface UserSearchResponse {
   currentPage?: number;
   totalPages?: number;
 }
+
+// 프로필 관련 타입
+export interface UserProfileResponse {
+  id: string;
+  userId: string;
+  email: string;
+  name: string;
+  src: string;
+  birthday: string;
+  roles: string[];
+  created: string;
+  updated: string;
+}
+
+export interface UserUpdateRequest {
+  name?: string;
+  email?: string;
+  src?: string;
+  birthday?: string;
+}
+
+export interface PasswordChangeRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
+export interface UserDeleteRequest {
+  password: string;
+}

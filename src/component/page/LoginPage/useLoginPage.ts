@@ -66,7 +66,8 @@ export default function useLoginPage() {
       console.error("Login failed:", e);
       setErrMsg({
         status: "error",
-        msg: e.response?.data?.message || "로그인에 실패했습니다."
+        msg: e.response?.data?.message || "Login failed. Please check your ID and password.",
+        isShow: true
       });
     }
   }, [userInfo, setAccessToken, navigate, setErrMsg, refreshCurrentUserQuery]);
@@ -91,6 +92,7 @@ export default function useLoginPage() {
   return {
     userInfo,
     userId,
+    errMsg,
     handleClickTitle,
     handleChange,
     handleClickLogin,
