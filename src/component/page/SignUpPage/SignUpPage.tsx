@@ -18,7 +18,7 @@ export interface SignUpPageProps {
 
 }
 
-// react-hook-form을 위한 타입 정의
+// Form data types for react-hook-form
 interface SignUpFormData {
   userId: string;
   userPassword: string;
@@ -51,12 +51,12 @@ function SignUpPage(props: SignUpPageProps) {
     }
   });
   
-  // 에러 메시지를 문자열로 변환하는 헬퍼 함수
+  // Extract error message string from FieldError
   const getErrorMessage = (error: FieldError | undefined): string | undefined => {
     return error?.message;
   };
   
-  // 폼 제출 핸들러
+  // Form submission handler
   const onSubmit = (data: SignUpFormData) => {
     handleSignUp();
   };
@@ -79,7 +79,7 @@ function SignUpPage(props: SignUpPageProps) {
           </Box>
           
           <VStack gap={4} align="stretch">
-            {/* ID 생성 */}
+            {/* ID */}
             <CusFormCtrl
               formTitle="ID"
               errMsg={getErrorMessage(errors.userId)}
@@ -87,14 +87,14 @@ function SignUpPage(props: SignUpPageProps) {
             >
               <CusInput
                 {...register("userId", {
-                  required: "아이디를 입력해주세요",
+                  required: "Please enter your ID",
                   onChange: handleChangeId
                 })}
-                placeholder="아이디를 입력하세요"
+                placeholder="Enter your ID"
               />
             </CusFormCtrl>
             
-            {/* 비밀번호 생성 */}
+            {/* Password */}
             <CusFormCtrl
               formTitle="Password"
               errMsg={getErrorMessage(errors.userPassword)}
@@ -102,19 +102,19 @@ function SignUpPage(props: SignUpPageProps) {
             >
               <CusInput
                 {...register("userPassword", {
-                  required: "비밀번호를 입력해주세요",
+                  required: "Please enter your password",
                   minLength: {
                     value: 6,
-                    message: "비밀번호는 최소 6자 이상이어야 합니다"
+                    message: "Password must be at least 6 characters"
                   },
                   onChange: handleChangePwd
                 })}
                 type="password"
-                placeholder="비밀번호를 입력하세요"
+                placeholder="Enter your password"
               />
             </CusFormCtrl>
             
-            {/* 비밀번호 확인 */}
+            {/* Password Confirmation */}
             <CusFormCtrl
               formTitle="Password Check"
               errMsg={getErrorMessage(errors.passwordCheck)}
@@ -122,19 +122,19 @@ function SignUpPage(props: SignUpPageProps) {
             >
               <CusInput
                 {...register("passwordCheck", {
-                  required: "비밀번호 확인을 입력해주세요",
+                  required: "Please confirm your password",
                   validate: (value) =>
-                    value === watch("userPassword") || "비밀번호가 일치하지 않습니다",
+                    value === watch("userPassword") || "Passwords do not match",
                   onChange: handleChangePwdCheck
                 })}
                 type="password"
-                placeholder="비밀번호를 다시 입력하세요"
+                placeholder="Re-enter your password"
               />
             </CusFormCtrl>
             
             <Separator />
             
-            {/* 이름 */}
+            {/* Name */}
             <CusFormCtrl
               formTitle="Name"
               errMsg={getErrorMessage(errors.name)}
@@ -142,14 +142,14 @@ function SignUpPage(props: SignUpPageProps) {
             >
               <CusInput
                 {...register("name", {
-                  required: "이름을 입력해주세요",
+                  required: "Please enter your name",
                   onChange: handleChangeName
                 })}
-                placeholder="이름을 입력하세요"
+                placeholder="Enter your name"
               />
             </CusFormCtrl>
             
-            {/* 이메일 */}
+            {/* Email */}
             <CusFormCtrl
               formTitle="Email"
               errMsg={getErrorMessage(errors.email)}
@@ -157,15 +157,15 @@ function SignUpPage(props: SignUpPageProps) {
             >
               <CusInput
                 {...register("email", {
-                  required: "이메일을 입력해주세요",
+                  required: "Please enter your email",
                   pattern: {
                     value: /^\S+@\S+$/i,
-                    message: "올바른 이메일 형식을 입력해주세요"
+                    message: "Please enter a valid email"
                   },
                   onChange: handleChangeEmail
                 })}
                 type="email"
-                placeholder="이메일을 입력하세요"
+                placeholder="Enter your email"
               />
             </CusFormCtrl>
           </VStack>
@@ -178,7 +178,7 @@ function SignUpPage(props: SignUpPageProps) {
               colorPalette="blue"
               variant="solid"
             >
-              회원가입
+              Sign Up
             </CusButton>
           </Box>
         </VStack>

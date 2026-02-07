@@ -21,6 +21,13 @@ export interface User {
   createdAt?: string;
 }
 
+export interface UpdateUserAccountDTO {
+  id?: string;
+  name?: string;
+  src?: string;
+  birthday?: string;
+}
+
 export interface UserSearchResponse {
   users: User[];
   totalCount: number;

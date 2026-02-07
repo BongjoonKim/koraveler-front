@@ -43,6 +43,16 @@ export const getUserById = async ({ accessToken, params }: FuncProps) => {
   return response;
 };
 
+// Update user account info
+export const updateUserAccount = async ({ accessToken, reqBody }: FuncProps) => {
+  const response = await request.put('/ps/user/account', reqBody, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  });
+  return response;
+};
+
 // 채널에 없는 사용자 검색
 export const searchUsersNotInChannel = async ({ accessToken, params }: FuncProps) => {
   const response = await request.get('/api/v1/users/search/available', {
