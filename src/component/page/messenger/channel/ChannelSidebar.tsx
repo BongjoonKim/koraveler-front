@@ -37,7 +37,7 @@ const ChannelSidebar: React.FC<ChannelSidebarProps> = ({
       <Box p={4} borderBottom="1px" borderColor="gray.200" bg="blue.600" height="4rem">
         <Flex justify="space-between" align="center">
           <Text fontSize="xl" fontWeight="bold" color="white">
-            여행 채팅
+            Chat
           </Text>
           <Button
             size="sm"
@@ -54,7 +54,7 @@ const ChannelSidebar: React.FC<ChannelSidebarProps> = ({
       {/* 검색 */}
       <Box p={4}>
         <CusInput
-          placeholder="채널 검색..."
+          placeholder="Search..."
           value={searchQuery}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => onSearchChange(e.target.value)}
           startElement={<Search size={16} color="gray.400" />}

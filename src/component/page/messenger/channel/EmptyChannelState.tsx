@@ -16,13 +16,13 @@ const EmptyChannelState: React.FC<EmptyChannelStateProps> = ({ onCreateChannel }
         </Avatar.Fallback>
       </Avatar.Root>
       <Text fontSize="xl" fontWeight="semibold" color="gray.700" mb={2}>
-        여행 채팅에 오신 것을 환영합니다!
+        Welcome to Travel Chat!
       </Text>
       <Text color="gray.500" mb={6} textAlign="center">
-        왼쪽에서 채널을 선택하여 대화를 시작하세요
+        Select a channel from the left to start a conversation
       </Text>
       <Button colorScheme="blue" onClick={onCreateChannel}>
-        새 채널 만들기
+        Create New Channel
       </Button>
     </Flex>
   );

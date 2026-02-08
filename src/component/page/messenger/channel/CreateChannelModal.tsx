@@ -45,17 +45,17 @@ const CreateChannelModal: React.FC<CreateChannelModalProps> = ({
         <Dialog.Positioner>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>새 채널 만들기</DialogTitle>
+              <DialogTitle>Create New Channel</DialogTitle>
             </DialogHeader>
             <DialogCloseTrigger />
             <DialogBody>
               <VStack gap={4}>
                 <Box w="full">
                   <Text mb={2} fontSize="sm" fontWeight="medium">
-                    채널 이름
+                    Channel Name
                   </Text>
                   <Input
-                    placeholder="예: 제주도 여행"
+                    placeholder="e.g. Friends room"
                     value={channelData.name}
                     onChange={(e) => onUpdateField('name', e.target.value)}
                   />
@@ -63,7 +63,7 @@ const CreateChannelModal: React.FC<CreateChannelModalProps> = ({
                 
                 <Box w="full">
                   <Text mb={2} fontSize="sm" fontWeight="medium">
-                    채널 타입
+                    Channel Type
                   </Text>
                   <select
                     value={channelData.channelType}
@@ -75,20 +75,20 @@ const CreateChannelModal: React.FC<CreateChannelModalProps> = ({
                       borderRadius: '6px'
                     }}
                   >
-                    <option value="PUBLIC">공개 채널</option>
-                    <option value="PRIVATE">비공개 채널</option>
-                    <option value="GROUP">그룹 채널</option>
-                    <option value="DIRECT_MESSAGE">다이렉트 메시지</option>
-                    <option value="ANNOUNCEMENT">공지 채널</option>
+                    <option value="PUBLIC">Public Channel</option>
+                    <option value="PRIVATE">Private Channel</option>
+                    <option value="GROUP">Group Channel</option>
+                    <option value="DIRECT_MESSAGE">Direct Message</option>
+                    <option value="ANNOUNCEMENT">Announcement Channel</option>
                   </select>
                 </Box>
                 
                 <Box w="full">
                   <Text mb={2} fontSize="sm" fontWeight="medium">
-                    설명 (선택사항)
+                    Description (Optional)
                   </Text>
                   <Textarea
-                    placeholder="채널에 대한 간단한 설명을 입력하세요"
+                    placeholder="Enter a brief description of the channel"
                     value={channelData.description}
                     onChange={(e) => onUpdateField('description', e.target.value)}
                     rows={3}
@@ -98,7 +98,7 @@ const CreateChannelModal: React.FC<CreateChannelModalProps> = ({
             </DialogBody>
             <DialogFooter>
               <Button mr={3} onClick={onClose} variant="outline">
-                취소
+                Cancel
               </Button>
               <Button
                 colorScheme="blue"
@@ -106,7 +106,7 @@ const CreateChannelModal: React.FC<CreateChannelModalProps> = ({
                 loading={isLoading}
                 disabled={!channelData.name.trim()}
               >
-                만들기
+                Create
               </Button>
             </DialogFooter>
           </DialogContent>
