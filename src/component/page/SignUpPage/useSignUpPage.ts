@@ -18,7 +18,7 @@ export default function useSignUpPage(props : SignUpPageProps) {
   const errMsgReset = useResetRecoilState(recoil.errMsg);
   const navigate = useNavigate();
   
-  // 아이디 확인하기
+  // Validate ID input
   const handleChangeId = useCallback((event : ChangeEvent<HTMLInputElement>) => {
     setSignUpForm((prev : any) => {
       return {
@@ -70,12 +70,12 @@ export default function useSignUpPage(props : SignUpPageProps) {
   
   const beforeSignUpCheck = useCallback(() => {
     try {
-      console.log("검사", signUpForm.userId)
+      console.log("validation", signUpForm.userId)
       if (signUpForm.userId) {
         const regex = /^[A-Za-z][A-Za-z0-9]{3,}$/;
-        console.log("검사2", regex.test(signUpForm.userId))
+        console.log("validation", regex.test(signUpForm.userId))
         if (!regex.test(signUpForm.userId)) {
-          throw "영어로 3글자 이상 + 특수문자 없이 사용해주세요"
+          throw "ID must be at least 3 alphanumeric characters, no special characters"
         }
       } else {
         throw "Invalid ID"
@@ -83,33 +83,33 @@ export default function useSignUpPage(props : SignUpPageProps) {
       if (signUpForm.userPassword) {
         const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,32}$/;
         if (!regex.test(signUpForm.userPassword)) {
-          throw "영어로 6글자 이상, 32글자 이하, 특수문자, 숫자, 대문자 1개 이상 포함"
+          throw "Password must be 6-32 characters, including at least one uppercase letter, number, and special character"
         }
       } else {
-        throw "비밀번호를 입력해주세요"
+        throw "Please enter your password"
       }
       if (checkPassword) {
         if (signUpForm.userPassword !== checkPassword) {
-          throw "입력한 비밀번호와 비밀번호 확인이 다릅니다"
+          throw "Passwords do not match"
         }
       } else {
-        throw "비밀번호 체크를 해주세요"
+        throw "Please confirm your password"
       }
       if (signUpForm.name) {
         const regex = /^\p{L}{2,}$/u;
         if (!regex.test(signUpForm.name)) {
-          throw "이름 형식을 맞춰주세요"
+          throw "Please enter a valid name"
         }
       } else {
-        throw "이름을 작성해주세요";
+        throw "Please enter your name";
       }
       if (signUpForm.email) {
         const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
         if (!regex.test(signUpForm.email)) {
-          throw '이메일 형식을 맞춰주세요'
+          throw "Please enter a valid email"
         }
       } else {
-        throw "이메일을 작성해주세요";
+        throw "Please enter your email";
       }
     } catch (e) {
       setUserErrValid(prev => ({
@@ -130,7 +130,7 @@ export default function useSignUpPage(props : SignUpPageProps) {
   const handleSignUp = useCallback(async () => {
     
     try {
-      // valid 확인
+      // Run validation checks
       beforeSignUpCheck();
       const res = await signUp(signUpForm);
       console.log("res.data", res)

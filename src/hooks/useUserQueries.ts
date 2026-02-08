@@ -1,10 +1,18 @@
 // src/hooks/useUserQueries.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import useAuthEP from '../utils/useAuthEP';
-import {getUsers,  searchUsers,
+import {getUsers, searchUsers,
   searchUsersNotInChannel,
-  getUserById,} from "../endpoints/users-endpoints";
-import {User, UserSearchResponse} from "../types/users/UsersDTO";
+  getUserById,
+  getUserProfile,
+  updateUserProfile,
+  changePassword,
+  deleteUserAccount,
+} from "../endpoints/users-endpoints";
+import {
+  User, UserSearchResponse,
+  UserProfileResponse, UserUpdateRequest, PasswordChangeRequest, UserDeleteRequest,
+} from "../types/users/UsersDTO";
 // Types
 
 
@@ -223,6 +231,70 @@ export const useCurrentUserInfo = () => {
     },
     staleTime: 1000 * 60 * 30, // 30분
     retry: 1,
+  });
+};
+
+// 내 프로필 조회 훅
+export const useUserProfile = () => {
+  const authEP = useAuthEP();
+
+  return useQuery<UserProfileResponse>({
+    queryKey: ['userProfile'],
+    queryFn: async () => {
+      const response = await authEP({
+        func: getUserProfile,
+      });
+      return response.data;
+    },
+    staleTime: 0,
+  });
+};
+
+// 프로필 수정 훅
+export const useUpdateUserProfile = () => {
+  const authEP = useAuthEP();
+  const queryClient = useQueryClient();
+
+  return useMutation<UserProfileResponse, Error, UserUpdateRequest>({
+    mutationFn: async (data) => {
+      const response = await authEP({
+        func: updateUserProfile,
+        reqBody: data,
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+      queryClient.invalidateQueries({ queryKey: ['currentUser'], exact: false });
+    },
+  });
+};
+
+// 비밀번호 변경 훅
+export const useChangePassword = () => {
+  const authEP = useAuthEP();
+
+  return useMutation<void, Error, PasswordChangeRequest>({
+    mutationFn: async (data) => {
+      await authEP({
+        func: changePassword,
+        reqBody: data,
+      });
+    },
+  });
+};
+
+// 회원 탈퇴 훅
+export const useDeleteUserAccount = () => {
+  const authEP = useAuthEP();
+
+  return useMutation<void, Error, UserDeleteRequest>({
+    mutationFn: async (data) => {
+      await authEP({
+        func: deleteUserAccount,
+        reqBody: data,
+      });
+    },
   });
 };
 

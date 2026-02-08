@@ -68,7 +68,12 @@ export async function unhideComment(props: FuncProps) {
 export async function getRootComments(props: FuncProps) {
   return (await request.get(
     `api/v1/comments/ps/document/${props.params.documentId}?page=${props.params?.page || 0}&size=${props.params?.size || 10}&sort=${props.params?.sort || "desc"}`,
-  )) as AxiosResponse<CommentPageDTO>;
+    {
+      headers: {
+        Authorization: `Bearer ${props.accessToken}`,
+      },
+    }
+    )) as AxiosResponse<CommentPageDTO>;
 }
 
 // 대댓글 조회 (비로그인 허용)

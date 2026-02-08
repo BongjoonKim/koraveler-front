@@ -26,14 +26,23 @@ export const useRootComments = (documentId?: string, size: number=10) => {
   return useInfiniteQuery<CommentPageDTO>({
     queryKey: commentKeys.root(documentId!),
     queryFn: async ({pageParam = 0}) => {
-      const res = await getRootComments({
+      const res = await authEP({
+        func: getRootComments,
         params : {
           documentId,
           page: pageParam,
           size,
           sort: "desc"
         }
-      })
+      });
+      // const res = await getRootComments({
+      //   params : {
+      //     documentId,
+      //     page: pageParam,
+      //     size,
+      //     sort: "desc"
+      //   }
+      // })
       return res.data;
     },
     initialPageParam: 0,
