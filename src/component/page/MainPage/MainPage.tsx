@@ -1,8 +1,4 @@
 import styled from "styled-components";
-import LeftHeader from "../../../common/layout/HeaderLayout/LeftHeader";
-import RightHeader from "../../../common/layout/HeaderLayout/RightHeader";
-import MainBody from "./MainBody";
-import HeaderLayout from "../../../common/layout/HeaderLayout";
 import MainLayout from "../../../common/layout/MainLayout/MainLayout";
 import HomePage from "../homePage/HomePage";
 

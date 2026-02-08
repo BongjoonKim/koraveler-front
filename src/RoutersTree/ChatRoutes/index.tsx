@@ -1,8 +1,6 @@
 import styled from "styled-components";
 import {Route, Routes} from "react-router-dom";
-import CreateBlogPost from "../../component/page/blog/CreateBlogPost/CreateBlogPost";
 import TravelMessengerPage from "../../component/page/messenger/TravelMessengerPage";
-import BlogLayout from "../../common/layout/BlogLayout";
 import MainLayout from "../../common/layout/MainLayout/MainLayout";
 import ProtectedRoute from "../ProtectedRoute";
 
@@ -15,13 +13,11 @@ function BlogRoutes(props: BlogRoutesProps) {
   return (
     <ProtectedRoute requiredRoles={["user", "admin"]}>
       <StyledBlogRoutes>
-        {/*<BlogLayout>*/}
         <MainLayout showHero={false}>
           <Routes>
             <Route path="/" element={<TravelMessengerPage />} />
           </Routes>
         </MainLayout>
-        {/*</BlogLayout>*/}
       </StyledBlogRoutes>
     </ProtectedRoute>
   )

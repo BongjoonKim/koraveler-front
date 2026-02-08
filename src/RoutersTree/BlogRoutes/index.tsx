@@ -1,14 +1,9 @@
 import styled from "styled-components";
 import {Route, Routes} from "react-router-dom";
-import MenuAdminRoutes from "../AdminRoutes/MenuAdminRoutes";
 import CreateBlogPost from "../../component/page/blog/CreateBlogPost/CreateBlogPost";
 import BlogPage from "../../component/page/blog/BlogPage";
 import ViewBlog from "../../component/page/blog/ViewBlog";
-import MenuHeader from "../../common/layout/MenuHeader";
-import MenuTab from "../../common/layout/TabLayout";
-import BlogLayout from "../../common/layout/BlogLayout/BlogLayout";
 import EditBlogPost from "../../component/page/blog/EditBlogPost";
-import BlogPostSetting from "../../common/widget/BlogPostSetting/BlogPostSetting";
 import MainLayout from "../../common/layout/MainLayout/MainLayout";
 import EmptyLayout from "../../common/layout/MainLayout/EmptyLayout";
 
@@ -20,8 +15,6 @@ function BlogRoutes(props: BlogRoutesProps) {
   // BlogLayout은 Mainlayout을 변경 중
   return (
     <StyledBlogRoutes>
-      {/*<BlogLayout>*/}
-      {/*<MainLayout showHero={false}>*/}
         <Routes>
           {/* MainLayout이 필요한 라우트들 */}
           <Route element={<MainLayout showHero={false} />}>
@@ -36,8 +29,6 @@ function BlogRoutes(props: BlogRoutesProps) {
             <Route path="/edit/:id" element={<EditBlogPost />} />
           </Route>
         </Routes>
-      {/*</MainLayout>*/}
-      {/*</BlogLayout>*/}
     </StyledBlogRoutes>
   )
 };

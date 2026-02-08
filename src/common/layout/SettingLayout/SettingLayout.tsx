@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import HeaderLayout from "../HeaderLayout";
 import {ReactNode} from "react";
 
 export interface SettingLayoutProps {
@@ -10,7 +9,6 @@ function SettingLayout(props: SettingLayoutProps) {
   
   return (
     <StyledSettingLayout>
-      <HeaderLayout notHome={true} />
       <div className="setting-body">
         {props.children}
       </div>
