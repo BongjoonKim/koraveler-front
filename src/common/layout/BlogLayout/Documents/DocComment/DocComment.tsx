@@ -34,6 +34,8 @@ function DocComment({
                     }: DocCommentProps) {
   const indentLevel = Math.min(comment?.depth ?? 0, 2);
   
+  console.log("comment : ", comment);
+  
   // 삭제된 댓글 표시
   if (comment?.isDeleted) {
     return (
