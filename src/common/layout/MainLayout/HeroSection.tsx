@@ -88,7 +88,7 @@ function HeroSection() {
               textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
             }}
           >
-            Welcome to Korea
+            Welcome to Koraveler
           </Text>
           
           <Text

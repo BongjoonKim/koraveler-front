@@ -14,7 +14,8 @@ export interface ViewBlogProps {
 function ViewBlog(props: ViewBlogProps) {
   const {document, isBookmarked} = useViewBlog(props);
   return (
-    <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }}>
+    <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }} py={{ base: 4, sm: 6, lg: 8 }}
+    >
       <Suspense>
         <ViewDocLayout {...document} isBookmarked={isBookmarked}>
           <ViewerDoc

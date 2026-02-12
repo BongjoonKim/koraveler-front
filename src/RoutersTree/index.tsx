@@ -12,6 +12,7 @@ import AdminRoutes from "./AdminRoutes";
 import ForbiddenPage from "../component/page/error/ForbiddenPage";
 import UserRoutes from "./UserRoutes";
 import ProfileRoutes from "./ProfileRoutes";
+import TravelRoutes from "./TravelRoutes";
 
 export default function RoutersTree() {
   return (
@@ -21,9 +22,7 @@ export default function RoutersTree() {
             <Route path="/blog/*" element={<BlogRoutes/>}/>
             <Route path="/chat/*" element={<ChatRoutes/>}/>
             <Route path="/login/*" element={<LoginRoutes/>}/>
-            {/*<Route path="/setting/*" element={*/}
-            {/*    <SettingRoutes/>*/}
-            {/*}/>*/}
+            <Route path="/travel/*" element={<TravelRoutes/>}/>
           <Route path="/profile/*" element={<ProfileRoutes />} />
           <Route path="/admin/*" element={<AdminRoutes />} />
           <Route path="/user/*" element={<UserRoutes />} />
