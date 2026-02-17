@@ -94,6 +94,21 @@ export const deleteUserAccount = async ({ accessToken, reqBody }: FuncProps) => 
   return response;
 };
 
+// 여행 프로젝트에 없는 사용자 검색
+export const searchUsersNotInTravel = async ({ accessToken, params }: FuncProps) => {
+  const response = await request.get('/api/v1/users/search/available-for-travel', {
+    params: {
+      keyword: params.keyword,
+      travelId: params.travelId,
+      size: params.size || 20
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  });
+  return response;
+};
+
 // 채널에 없는 사용자 검색
 export const searchUsersNotInChannel = async ({ accessToken, params }: FuncProps) => {
   const response = await request.get('/api/v1/users/search/available', {

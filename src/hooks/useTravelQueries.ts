@@ -5,6 +5,8 @@ import {
   TravelListResponse,
   TravelCreateRequest,
   TravelUpdateRequest,
+  TravelMemberRequest,
+  TravelRole,
   TravelMedia,
 } from "../types/travel/travelTypes";
 import {
@@ -13,6 +15,9 @@ import {
   getMyTravels,
   updateTravel,
   deleteTravel,
+  addTravelMember,
+  removeTravelMember,
+  updateMemberRole,
   uploadTravelMedia,
   getTravelMedia,
   deleteTravelMedia,
@@ -114,6 +119,73 @@ export const useDeleteTravel = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["myTravels"] });
+    },
+  });
+};
+
+// 멤버 추가
+export const useAddTravelMember = () => {
+  const authEP = useAuthEP();
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    TravelResponse,
+    Error,
+    { travelId: string; reqBody: TravelMemberRequest }
+  >({
+    mutationFn: async ({ travelId, reqBody }) => {
+      const response = await authEP({
+        func: addTravelMember,
+        params: { travelId },
+        reqBody,
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["travel", data.id] });
+    },
+  });
+};
+
+// 멤버 삭제
+export const useRemoveTravelMember = () => {
+  const authEP = useAuthEP();
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, { travelId: string; userId: string }>({
+    mutationFn: async ({ travelId, userId }) => {
+      await authEP({
+        func: removeTravelMember,
+        params: { travelId, userId },
+      });
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["travel", variables.travelId],
+      });
+    },
+  });
+};
+
+// 멤버 역할 변경
+export const useUpdateMemberRole = () => {
+  const authEP = useAuthEP();
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    TravelResponse,
+    Error,
+    { travelId: string; userId: string; role: TravelRole }
+  >({
+    mutationFn: async ({ travelId, userId, role }) => {
+      const response = await authEP({
+        func: updateMemberRole,
+        params: { travelId, userId, role },
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["travel", data.id] });
     },
   });
 };

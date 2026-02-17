@@ -22,7 +22,9 @@ import {
 } from "lucide-react";
 import { useGetTravel } from "../../../../hooks/useTravelQueries";
 import { TravelStatus } from "../../../../types/travel/travelTypes";
+import { useCurrentUser } from "../../../../hooks/useCurrentUser";
 import TravelAlbum from "./TravelAlbum";
+import TravelMembers from "./TravelMembers";
 
 export interface TravelDashboardProps {}
 
@@ -60,7 +62,13 @@ function TravelDashboard(props: TravelDashboardProps) {
   const { travelId } = useParams<{ travelId: string }>();
   const navigate = useNavigate();
   const { data: travel, isLoading, error } = useGetTravel(travelId);
+  const { data: currentUser } = useCurrentUser();
   const [loaded, setLoaded] = useState(false);
+
+  const currentUserId = currentUser?.id;
+  const isAdmin = travel?.members?.some(
+    (m) => m.userId === currentUserId && m.role === "ADMIN"
+  ) ?? false;
 
   useEffect(() => {
     if (travel) setLoaded(true);
@@ -276,35 +284,12 @@ function TravelDashboard(props: TravelDashboardProps) {
 
       {/* Members Section */}
       <div className="dash-section">
-        <div className="section-header">
-          <h3 className="section-title">
-            <Users size={16} />
-            Members
-          </h3>
-          <button className="section-action">
-            <Plus size={16} />
-          </button>
-        </div>
-        <div className="members-list">
-          {travel.members?.map((member) => (
-            <div key={member.userId} className="member-item">
-              <div className="member-avatar">
-                {(member.nickname || member.userId).charAt(0).toUpperCase()}
-              </div>
-              <div className="member-info">
-                <span className="member-name">
-                  {member.nickname || member.userId}
-                </span>
-                <span className={`member-role ${member.role?.toLowerCase()}`}>
-                  {member.role}
-                </span>
-              </div>
-            </div>
-          ))}
-          {(!travel.members || travel.members.length === 0) && (
-            <p className="empty-text">No members yet</p>
-          )}
-        </div>
+        <TravelMembers
+          travelId={travel.id}
+          members={travel.members}
+          currentUserId={currentUserId}
+          isAdmin={isAdmin}
+        />
       </div>
 
       {/* Schedules Section */}
