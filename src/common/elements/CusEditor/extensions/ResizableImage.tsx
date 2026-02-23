@@ -142,18 +142,23 @@ const ResizableImageComponent = (props: any) => {
     return cursors[direction] || "pointer";
   };
   
-  // 현재 크기가 몇 퍼센트인지 계산
+  // 현재 크기가 몇 퍼센트인지 계산 (node.attrs.width 기반)
   const getCurrentPercent = useCallback(() => {
-    if (!containerRef.current?.parentElement || !imageRef.current) return null;
-    
+    if (!containerRef.current?.parentElement) return null;
+
+    const widthAttr = node.attrs.width;
+    if (!widthAttr) return null;
+
+    const pxValue = parseInt(String(widthAttr), 10);
+    if (isNaN(pxValue)) return null;
+
     const parentWidth = containerRef.current.parentElement.offsetWidth - 40;
-    const currentWidth = imageRef.current.offsetWidth;
-    const percent = Math.round((currentWidth / parentWidth) * 100);
-    
+    const percent = Math.round((pxValue / parentWidth) * 100);
+
     // 가장 가까운 프리셋 찾기
     const closest = SIZE_PRESETS.find(p => Math.abs(p.value - percent) <= 5);
     return closest?.value || null;
-  }, []);
+  }, [node.attrs.width]);
   
   return (
     <NodeViewWrapper

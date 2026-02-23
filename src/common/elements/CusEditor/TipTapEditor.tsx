@@ -57,6 +57,7 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
   const [isDragging, setIsDragging] = useState(false);
   const [isTableActive, setIsTableActive] = useState(false);
   const [draggedTable, setDraggedTable] = useState<any>(null);
+  const [currentHeadingLevel, setCurrentHeadingLevel] = useState<string>("0");
   
   const editor = useEditor({
     extensions: [
@@ -413,24 +414,32 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
 
 // 테이블 활성 상태를 추적하기 위한 state 추가
 
-// editor 업데이트 시 테이블 활성 상태 확인
+// editor 업데이트 시 테이블 활성 상태 및 heading level 확인
   useEffect(() => {
     if (!editor) return;
-    
-    const updateTableState = () => {
+
+    const updateToolbarState = () => {
       setIsTableActive(isInTable());
+      // heading level 상태 업데이트
+      for (let level = 1; level <= 6; level++) {
+        if (editor.isActive("heading", { level })) {
+          setCurrentHeadingLevel(String(level));
+          return;
+        }
+      }
+      setCurrentHeadingLevel("0");
     };
-    
+
     // 초기 상태 설정
-    updateTableState();
-    
+    updateToolbarState();
+
     // 에디터 업데이트 시 상태 확인
-    editor.on('selectionUpdate', updateTableState);
-    editor.on('update', updateTableState);
-    
+    editor.on('selectionUpdate', updateToolbarState);
+    editor.on('update', updateToolbarState);
+
     return () => {
-      editor.off('selectionUpdate', updateTableState);
-      editor.off('update', updateTableState);
+      editor.off('selectionUpdate', updateToolbarState);
+      editor.off('update', updateToolbarState);
     };
   }, [editor, isInTable]);
   
@@ -590,24 +599,10 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
               if (level === 0) {
                 editor.chain().focus().setParagraph().run();
               } else {
-                editor.chain().focus().toggleHeading({ level: level as 1 | 2 | 3 | 4 | 5 | 6 }).run();
+                editor.chain().focus().setHeading({ level: level as 1 | 2 | 3 | 4 | 5 | 6 }).run();
               }
             }}
-            value={
-              editor.isActive("heading", { level: 1 })
-                ? "1"
-                : editor.isActive("heading", { level: 2 })
-                  ? "2"
-                  : editor.isActive("heading", { level: 3 })
-                    ? "3"
-                    : editor.isActive("heading", { level: 4 })
-                      ? "4"
-                      : editor.isActive("heading", { level: 5 })
-                        ? "5"
-                        : editor.isActive("heading", { level: 6 })
-                          ? "6"
-                          : "0"
-            }
+            value={currentHeadingLevel}
           >
             <option value="0">Paragraph</option>
             <option value="1">Heading 1</option>
@@ -1041,21 +1036,23 @@ const EditorContainer = styled.div`
         color: #333;
 
         ul {
-            list-style-type: disc;  /* 불릿 스타일 명시 */
-            list-style-position: inside;  /* 리스트 마커를 안쪽에 표시 */
+            list-style-type: disc;
+            list-style-position: outside;
+            padding-left: 1.5em;
         }
 
         ol {
-            list-style-type: decimal;  /* 번호 스타일 명시 */
-            list-style-position: inside;  /* 리스트 마커를 안쪽에 표시 */
+            list-style-type: decimal;
+            list-style-position: outside;
+            padding-left: 1.5em;
         }
 
         li {
-            display: list-item;  /* 리스트 아이템으로 명시적 표시 */
+            display: list-item;
         }
 
         li > p {
-            display: inline-block;
+            margin: 0;
         }
 
         &.ProseMirror-focused {

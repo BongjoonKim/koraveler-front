@@ -134,6 +134,14 @@ const ResizableVideo = Node.create({
   },
 });
 
+// 크기 조절 프리셋
+const SIZE_PRESETS = [
+  { label: "25%", value: 25 },
+  { label: "50%", value: 50 },
+  { label: "75%", value: 75 },
+  { label: "100%", value: 100 },
+];
+
 // Video Component with Resize
 const ResizableVideoComponent: React.FC<NodeViewProps> = ({
                                                             node,
@@ -144,9 +152,37 @@ const ResizableVideoComponent: React.FC<NodeViewProps> = ({
   const [aspectRatio, setAspectRatio] = useState(16 / 9);
   const videoRef = useRef<HTMLVideoElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  
+
   const { src, width, height, controls, autoplay, loop, muted } = node.attrs;
   
+  // 퍼센트 기반 크기 조절
+  const setVideoSizePercent = useCallback(
+    (percent: number) => {
+      if (!wrapperRef.current?.parentElement) return;
+
+      const parentWidth = wrapperRef.current.parentElement.offsetWidth - 40;
+      const newWidth = Math.round((parentWidth * percent) / 100);
+      const newHeight = Math.round(newWidth / aspectRatio);
+
+      updateAttributes({ width: newWidth, height: newHeight });
+    },
+    [updateAttributes, aspectRatio]
+  );
+
+  // 현재 크기가 몇 퍼센트인지 계산 (node.attrs.width 기반)
+  const getCurrentPercent = useCallback(() => {
+    if (!wrapperRef.current?.parentElement) return null;
+
+    const pxValue = typeof width === "number" ? width : parseInt(String(width), 10);
+    if (isNaN(pxValue)) return null;
+
+    const parentWidth = wrapperRef.current.parentElement.offsetWidth - 40;
+    const percent = Math.round((pxValue / parentWidth) * 100);
+
+    const closest = SIZE_PRESETS.find(p => Math.abs(p.value - percent) <= 5);
+    return closest?.value || null;
+  }, [width]);
+
   // 비디오 로드 시 aspect ratio 계산
   const handleLoadedMetadata = useCallback(() => {
     if (videoRef.current) {
@@ -298,6 +334,25 @@ const ResizableVideoComponent: React.FC<NodeViewProps> = ({
           </>
         )}
         
+        {/* 크기 조절 버튼 */}
+        {selected && !isResizing && (
+          <SizeButtonContainer>
+            {SIZE_PRESETS.map((preset) => (
+              <SizeButton
+                key={preset.value}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setVideoSizePercent(preset.value);
+                }}
+                $isActive={getCurrentPercent() === preset.value}
+                title={`비디오 크기 ${preset.label}로 설정`}
+              >
+                {preset.label}
+              </SizeButton>
+            ))}
+          </SizeButtonContainer>
+        )}
+
         {/* 사이즈 표시 */}
         {selected && (
           <SizeIndicator>
@@ -385,6 +440,48 @@ const ResizeHandle = styled.div`
         top: 50%;
         transform: translateY(-50%);
         cursor: w-resize;
+    }
+`;
+
+const SizeButtonContainer = styled.div`
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 4px;
+    background: white;
+    padding: 6px 8px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 20;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: -6px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-bottom: 6px solid white;
+    }
+`;
+
+const SizeButton = styled.button<{ $isActive: boolean }>`
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid ${({ $isActive }) => ($isActive ? '#4a90e2' : '#ddd')};
+    background: ${({ $isActive }) => ($isActive ? '#4a90e2' : 'white')};
+    color: ${({ $isActive }) => ($isActive ? 'white' : '#333')};
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+        border-color: #4a90e2;
+        background: ${({ $isActive }) => ($isActive ? '#4a90e2' : '#f0f7ff')};
     }
 `;
 
