@@ -2,6 +2,7 @@ import styled from "styled-components";
 import CusWeather from "../../../../../common/widget/CusWeather";
 import TravelProjectHero from "../TravelProjectHero";
 import TravelRecentProjects from "../TravelRecentProjects";
+import TravelPluginStore from "../TravelPluginStore";
 import {Container} from "@chakra-ui/react";
 
 export interface TravelHomeMainProps {
@@ -22,6 +23,7 @@ function TravelHomeMain(props: TravelHomeMainProps) {
     >      <div className="wrapper-travel-projects">
         <TravelProjectHero />
         <TravelRecentProjects />
+        <TravelPluginStore />
       </div>
     </Container>
   )

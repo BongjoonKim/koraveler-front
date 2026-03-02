@@ -114,6 +114,9 @@ const StyledTravelProjectHero = styled.div`
     border-radius: 20px;
     overflow: hidden;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover .hero-image {
       transform: scale(1.05);
@@ -146,9 +149,8 @@ const StyledTravelProjectHero = styled.div`
 
   .hero-content {
     position: absolute;
-    bottom: 0;
     left: 0;
-    padding: 32px 36px;
+    padding: 0 36px;
     z-index: 1;
   }
 

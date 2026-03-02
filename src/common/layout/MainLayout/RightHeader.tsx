@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import {Stack, Button, IconButton, Box, Portal, Menu} from "@chakra-ui/react";
-import { Search, User, Menu as MenuIcon } from "lucide-react";
+import { Search, User, Menu as MenuIcon, Globe } from "lucide-react";
 import {
   MenuRoot,
   MenuTrigger,
@@ -13,6 +13,7 @@ import useRightHeader from "./useRightHeader";
 import { useNavigate } from "react-router-dom";
 import CusAvatar from "../../elements/CusAvatar";
 import CusModal from "../../elements/CusModal";
+import LanguageSettingModal from "./LanguageSettingModal";
 
 function RightHeader() {
   const {
@@ -34,6 +35,9 @@ function RightHeader() {
     handleChat,
     handleAdmin,
     handleUser,
+    isLanguageModalOpen,
+    handleOpenLanguageModal,
+    handleCloseLanguageModal,
   } = useRightHeader();
   
   console.log("currentUser", currentUser)
@@ -44,6 +48,10 @@ function RightHeader() {
       <CusModal isOpen={searchModalOpen} onClose={handleOpenModal} size={"xl"} backdropDarkness={0.6}
       >
         <SearchModal onClose={handleOpenModal}/>
+      </CusModal>
+      {/* Language Setting Modal */}
+      <CusModal isOpen={isLanguageModalOpen} onClose={handleCloseLanguageModal} size={"sm"} backdropDarkness={0.5}>
+        <LanguageSettingModal onClose={handleCloseLanguageModal} />
       </CusModal>
       <Stack direction="row" gap={4} h={"full"} alignItems="center">
         {/* Search Button - Desktop */}
@@ -136,6 +144,10 @@ function RightHeader() {
                         <MenuSeparator />
                         <MenuItem value="user/folder" onClick={handleUser}>
                           User
+                        </MenuItem>
+                        <MenuItem value="language" onClick={handleOpenLanguageModal}>
+                          <Globe size={14} style={{ marginRight: 6 }} />
+                          Language
                         </MenuItem>
                         {currentUser.roles?.includes("admin") ? (
                           <MenuItem value="admin/menu" onClick={handleAdmin}>

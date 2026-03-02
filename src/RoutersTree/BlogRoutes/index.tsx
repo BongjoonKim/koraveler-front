@@ -4,6 +4,7 @@ import CreateBlogPost from "../../component/page/blog/CreateBlogPost/CreateBlogP
 import BlogPage from "../../component/page/blog/BlogPage";
 import ViewBlog from "../../component/page/blog/ViewBlog";
 import EditBlogPost from "../../component/page/blog/EditBlogPost";
+import TranslationManage from "../../component/page/blog/TranslationManage";
 import MainLayout from "../../common/layout/MainLayout/MainLayout";
 import EmptyLayout from "../../common/layout/MainLayout/EmptyLayout";
 
@@ -19,10 +20,11 @@ function BlogRoutes(props: BlogRoutesProps) {
           {/* MainLayout이 필요한 라우트들 */}
           <Route element={<MainLayout showHero={false} />}>
             <Route path="/view/:id" element={<ViewBlog />} />
+            <Route path="/translations/:id" element={<TranslationManage />} />
             <Route path="/home" element={<BlogPage />} />
             <Route path="/:type" element={<BlogPage />} />
           </Route>
-          
+
           {/* MainLayout 없이 독립적으로 렌더링되는 라우트들 */}
           <Route element={<EmptyLayout/>}>
             <Route path="/create/:id" element={<CreateBlogPost />} />

@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useState } from "react";
+import { createPortal } from "react-dom";
 import styled from "styled-components";
 import {
   ChevronLeft,
@@ -7,7 +8,6 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import CusModal from "../../../../../../common/elements/CusModal";
 import { TravelMedia } from "../../../../../../types/travel/travelTypes";
 import { useDownloadTravelMedia } from "../../../../../../hooks/useTravelQueries";
 
@@ -54,6 +54,14 @@ function MediaLightbox({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
+  // 모달 열릴 때 body 스크롤 잠금
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = ""; };
+    }
+  }, [isOpen]);
+
   const handleDownload = async () => {
     if (!media) return;
     setIsDownloading(true);
@@ -79,18 +87,11 @@ function MediaLightbox({
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  if (!media) return null;
-  
-  console.log("media",  media)
+  if (!isOpen || !media) return null;
 
-  return (
-    <CusModal
-      isOpen={isOpen}
-      onClose={onClose}
-      size="cover"
-      backdropDarkness={0.85}
-    >
-      <StyledMediaLightbox>
+  return createPortal(
+    <StyledLightboxOverlay onClick={onClose}>
+      <StyledMediaLightbox onClick={(e) => e.stopPropagation()}>
         {/* Top bar */}
         <div className="lightbox-topbar">
           <button className="lightbox-btn close-btn" onClick={onClose}>
@@ -169,17 +170,30 @@ function MediaLightbox({
           </span>
         </div>
       </StyledMediaLightbox>
-    </CusModal>
+    </StyledLightboxOverlay>,
+    document.body
   );
 }
 
 export default MediaLightbox;
 
+const StyledLightboxOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.85);
+`;
+
 const StyledMediaLightbox = styled.div`
   display: flex;
   flex-direction: column;
-  height: 80vh;
-  max-height: 80vh;
+  width: 90vw;
+  max-width: 1200px;
+  height: 90vh;
+  max-height: 90vh;
   user-select: none;
 
   .lightbox-topbar {
@@ -245,14 +259,14 @@ const StyledMediaLightbox = styled.div`
 
   .lightbox-image {
     max-width: 100%;
-    max-height: 70vh;
+    max-height: 100%;
     object-fit: contain;
     border-radius: 8px;
   }
 
   .lightbox-video {
     max-width: 100%;
-    max-height: 70vh;
+    max-height: 100%;
     border-radius: 8px;
     outline: none;
   }
@@ -318,13 +332,9 @@ const StyledMediaLightbox = styled.div`
   }
 
   @media screen and (max-width: 600px) {
-    height: 70vh;
-    max-height: 70vh;
-
-    .lightbox-image,
-    .lightbox-video {
-      max-height: 55vh;
-    }
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
 
     .nav-btn {
       width: 36px;
