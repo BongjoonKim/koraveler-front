@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { Save, RefreshCw, X, Edit3, AlertTriangle } from 'lucide-react';
+import { Editor } from '@tiptap/react';
 import { LocaleCode, LOCALE_META } from '../../../../types/i18n/i18nTypes';
 import useTranslationEditor from './useTranslationEditor';
+import TiptapEditor from '../../../../common/elements/CusEditor/TipTapEditor';
 
 interface TranslationEditorProps {
     postId: string;
@@ -17,6 +19,7 @@ const TranslationEditor: React.FC<TranslationEditorProps> = ({
     originalTitle,
     originalContent,
 }) => {
+    const editorRef = useRef<Editor | null>(null);
     const {
         detail,
         isLoading,
@@ -114,11 +117,14 @@ const TranslationEditor: React.FC<TranslationEditorProps> = ({
                                 onChange={(e) => setEditedTitle(e.target.value)}
                                 placeholder="Translated title..."
                             />
-                            <EditableContent
-                                value={editedContent}
-                                onChange={(e) => setEditedContent(e.target.value)}
-                                placeholder="Translated content (HTML)..."
-                            />
+                            <EditorWrapper>
+                                <TiptapEditor
+                                    ref={editorRef}
+                                    initialValue={editedContent}
+                                    onChange={setEditedContent}
+                                    placeholder="Translated content..."
+                                />
+                            </EditorWrapper>
                         </>
                     ) : (
                         <>
@@ -335,20 +341,16 @@ const EditableTitle = styled.input`
     &:focus { border-color: #c4956a; }
 `;
 
-const EditableContent = styled.textarea`
-    width: 100%;
+const EditorWrapper = styled.div`
     min-height: 300px;
-    font-size: 13px;
-    line-height: 1.6;
-    color: #3d3530;
-    font-family: 'Menlo', 'Monaco', monospace;
-    border: 1px solid rgba(139, 115, 85, 0.3);
-    border-radius: 6px;
-    padding: 12px;
-    resize: vertical;
-    outline: none;
+    display: flex;
+    flex-direction: column;
 
-    &:focus { border-color: #c4956a; }
+    > div {
+        flex: 1;
+        height: auto;
+        min-height: 300px;
+    }
 `;
 
 const LoadingContainer = styled.div`

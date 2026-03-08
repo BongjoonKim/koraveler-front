@@ -1,5 +1,5 @@
 import {ViewBlogProps} from "./ViewBlog";
-import {useParams, useSearchParams} from "react-router-dom";
+import {useParams, useSearchParams, useNavigate} from "react-router-dom";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {getDocument} from "../../../../endpoints/blog-endpoints";
 import {useRecoilState} from "recoil";
@@ -10,7 +10,7 @@ import {getIsBookmarked} from "../../../../endpoints/bookmark-endpoints";
 import useAuthEP from "../../../../utils/useAuthEP";
 import {useTranslatedPost} from "../../../../hooks/useI18nQueries";
 import {currentLocaleAtom, preferredLocaleAtom, resolveLocale} from "../../../../stores/jotai/localeAtom";
-import {LocaleCode, AvailableLocale, TranslatedBy} from "../../../../types/i18n/i18nTypes";
+import {LocaleCode, AvailableLocale, TranslatedBy, SUPPORTED_LOCALES} from "../../../../types/i18n/i18nTypes";
 import {useCurrentUser} from "../../../../hooks/useCurrentUser";
 
 export interface ViewBlogI18nState {
@@ -24,8 +24,9 @@ export interface ViewBlogI18nState {
 }
 
 function useViewBlog(props : ViewBlogProps) {
-  const {id} = useParams();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const {id, locale: pathLocale} = useParams<{id: string; locale?: string}>();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [document, setDocument] = useState<DocumentDTO>({});
   const [isBookmarked, setBookmarked] = useAtom<boolean>(isBookmark);
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
@@ -36,8 +37,23 @@ function useViewBlog(props : ViewBlogProps) {
   const [preferredLocale, setPreferredLocale] = useAtom(preferredLocaleAtom);
   const setCurrentLocale = useSetAtom(currentLocaleAtom);
 
-  // URL의 locale 파라미터
-  const urlLocale = searchParams.get('locale');
+  // 하위 호환: ?locale=en → /blog/view/en/{id} 로 redirect
+  const queryLocale = searchParams.get('locale');
+  useEffect(() => {
+    if (queryLocale && id && SUPPORTED_LOCALES.includes(queryLocale as LocaleCode)) {
+      navigate(`/blog/view/${queryLocale}/${id}`, { replace: true });
+    }
+  }, [queryLocale, id, navigate]);
+
+  // URL에 locale이 없으면 /blog/view/ko/{id}로 redirect
+  useEffect(() => {
+    if (id && !pathLocale && !queryLocale) {
+      navigate(`/blog/view/ko/${id}`, { replace: true });
+    }
+  }, [id, pathLocale, queryLocale, navigate]);
+
+  // URL path의 locale 파라미터 (pathLocale이 유효한 locale이 아니면 무시)
+  const urlLocale = pathLocale && SUPPORTED_LOCALES.includes(pathLocale as LocaleCode) ? pathLocale : null;
 
   // 로그인 여부에 따라 locale 결정
   // - 로그인 유저: URL > 저장된 기본 언어 > ko
@@ -105,23 +121,16 @@ function useViewBlog(props : ViewBlogProps) {
     return document.contents;
   }, [translatedPost, document.contents]);
 
-  // 글별 언어 전환 핸들러 (기본 언어 설정은 변경하지 않고 URL 파라미터만 업데이트)
+  // 글별 언어 전환 핸들러 (URL 경로로 반영)
   const handleLocaleChange = useCallback((locale: LocaleCode) => {
-    // URL에 locale 파라미터로 반영 (글별 선택)
-    const newParams = new URLSearchParams(searchParams);
-    if (locale === (document.originalLocale || 'ko')) {
-      newParams.delete('locale');
-    } else {
-      newParams.set('locale', locale);
-    }
-    setSearchParams(newParams, { replace: true });
-  }, [searchParams, setSearchParams, document.originalLocale]);
+    navigate(`/blog/view/${locale}/${id}`);
+  }, [navigate, id]);
 
   // 원본 보기 핸들러
   const handleViewOriginal = useCallback(() => {
-    const original = (document.originalLocale || 'ko') as LocaleCode;
-    handleLocaleChange(original);
-  }, [handleLocaleChange, document.originalLocale]);
+    const originalLocale = (document.originalLocale || 'ko') as LocaleCode;
+    navigate(`/blog/view/${originalLocale}/${id}`);
+  }, [navigate, id, document.originalLocale]);
 
   // i18n 상태
   const i18nState: ViewBlogI18nState = useMemo(() => ({

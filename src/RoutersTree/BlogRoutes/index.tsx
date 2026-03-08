@@ -19,6 +19,7 @@ function BlogRoutes(props: BlogRoutesProps) {
         <Routes>
           {/* MainLayout이 필요한 라우트들 */}
           <Route element={<MainLayout showHero={false} />}>
+            <Route path="/view/:locale/:id" element={<ViewBlog />} />
             <Route path="/view/:id" element={<ViewBlog />} />
             <Route path="/translations/:id" element={<TranslationManage />} />
             <Route path="/home" element={<BlogPage />} />
@@ -28,6 +29,7 @@ function BlogRoutes(props: BlogRoutesProps) {
           {/* MainLayout 없이 독립적으로 렌더링되는 라우트들 */}
           <Route element={<EmptyLayout/>}>
             <Route path="/create/:id" element={<CreateBlogPost />} />
+            <Route path="/edit/:locale/:id" element={<EditBlogPost />} />
             <Route path="/edit/:id" element={<EditBlogPost />} />
           </Route>
         </Routes>

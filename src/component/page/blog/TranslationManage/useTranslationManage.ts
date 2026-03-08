@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslationStatus, useRetranslateAll } from '../../../../hooks/useI18nQueries';
 import { LocaleCode, SUPPORTED_LOCALES } from '../../../../types/i18n/i18nTypes';
 import { useRecoilState } from 'recoil';
@@ -10,11 +10,15 @@ import { useEffect } from 'react';
 export default function useTranslationManage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
+
+    // query param에서 locale 읽기 (Edit 버튼에서 전달됨)
+    const initialLocale = searchParams.get('locale') as LocaleCode | null;
 
     // 원본 문서 정보
     const [document, setDocument] = useState<DocumentDTO>({});
-    const [selectedLocale, setSelectedLocale] = useState<LocaleCode | null>(null);
+    const [selectedLocale, setSelectedLocale] = useState<LocaleCode | null>(initialLocale);
 
     // 번역 상태
     const { data: statusOverview, isLoading: isStatusLoading } = useTranslationStatus(id);
@@ -54,8 +58,8 @@ export default function useTranslationManage() {
 
     // 뒤로 가기
     const handleBack = useCallback(() => {
-        navigate(`/blog/view/${id}`);
-    }, [navigate, id]);
+        navigate(`/blog/view/${initialLocale || 'ko'}/${id}`);
+    }, [navigate, id, initialLocale]);
 
     return {
         postId: id!,

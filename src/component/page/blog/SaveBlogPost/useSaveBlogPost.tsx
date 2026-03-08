@@ -1,6 +1,6 @@
 import {useRecoilState} from "recoil";
 import recoil from "../../../../stores/recoil";
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState, useMemo} from "react";
 import {useAtom} from "jotai/index";
 import {openBlogPostingModalAtom, uploadedInfo} from "../../../../stores/jotai/jotai";
 import {useNavigate, useParams} from "react-router-dom";
@@ -9,6 +9,8 @@ import {BLOG_SAVE_TYPE} from "../../../../constants/constants";
 import {getDocument, saveDocument} from "../../../../endpoints/blog-endpoints";
 import useAuthEP from "../../../../utils/useAuthEP";
 import { Editor } from "@tiptap/react";
+import {LocaleCode, SUPPORTED_LOCALES} from "../../../../types/i18n/i18nTypes";
+import {getTranslationDetail, updateTranslation} from "../../../../endpoints/i18n-endpoints";
 
 export interface useSaveBlogPostProps {
 
@@ -19,13 +21,19 @@ function useSaveBlogPost(props : useSaveBlogPostProps) {
   const editorRef = useRef<Editor | null>(null);
   const [document, setDocument] = useState<DocumentDTO>()
   const [uploadedList, setUploadedList] = useAtom<any[]>(uploadedInfo);
-  const {id} = useParams();
+  const {id, locale: localeParam} = useParams<{id: string; locale?: string}>();
   const navigate = useNavigate();
   const authEP = useAuthEP();
   const [openBlogPostingModal, setOpenBlogPostingModal] = useAtom<boolean>(openBlogPostingModalAtom)
   const [selectedFolder, setSelectedFolder] = useState<string | undefined>(undefined);
   const [folders, setFolders] = useState<any>({});
   const [disclose, setDisclose] = useState<boolean>(true);
+
+  // 번역 편집 여부 판별
+  const locale = localeParam && SUPPORTED_LOCALES.includes(localeParam as LocaleCode) ? localeParam as LocaleCode : null;
+  const isTranslationEdit = useMemo(() => {
+    return !!locale && locale !== 'ko';
+  }, [locale]);
   
   // 컴포넌트 외부 또는 내부에 추가
   const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.mov', '.avi', '.mkv', '.quicktime'];
@@ -52,51 +60,72 @@ function useSaveBlogPost(props : useSaveBlogPostProps) {
     if (editorRef?.current){
       // Tiptap 에디터 인스턴스
       const editorInstance = editorRef.current;
-      
+
       // Tiptap에서 HTML 콘텐츠 가져오기
       const contents = editorInstance.getHTML();
-      
-      // 정규 표현식을 사용하여 이미지 URL 패턴 찾기
+
+      // 번역 편집인 경우: 번역 API로 저장
+      if (isTranslationEdit && locale) {
+        try {
+          const saveRes = await authEP({
+            func: updateTranslation,
+            params: { postId: id, locale },
+            reqBody: {
+              title: document?.title || '',
+              content: contents,
+            }
+          });
+
+          if (saveRes.status === 200) {
+            navigate(`/blog/view/${locale}/${id}`);
+          } else {
+            throw new Error("저장 실패");
+          }
+        } catch (e) {
+          console.error("번역 저장 에러:", e);
+          setErrMsg({
+            status: "error",
+            msg: "번역 저장에 실패했습니다.",
+          });
+        }
+        return;
+      }
+
+      // 원본 편집인 경우: 기존 로직
       const regex = S3URLFindRegex;
       let settingThumbnailUrl : string = "";
-      
+
       const match = contents.match(regex);
 
-      // 수정된 코드 (generateThumbnailUrl 사용):
       if (match && match[0]) {
-        // 찾은 URL
         const originalUrl = match[0];
-        console.log("원본 URL:", originalUrl);
-        
-        // 이미지/영상에 따라 썸네일 URL 생성
         settingThumbnailUrl = generateThumbnailUrl(originalUrl);
-        console.log("변경된 URL:", settingThumbnailUrl);
       }
-      
+
       let isDraft: boolean = false;
       if (saveOrDraft === BLOG_SAVE_TYPE.SAVE) {
         isDraft = false;
       } else if (saveOrDraft === BLOG_SAVE_TYPE.DRAFT) {
         isDraft = true;
       }
-      
+
       const request: DocumentDTO = {
         ...document,
         contents: contents,
-        thumbnailImgUrl: settingThumbnailUrl || "", // 썸네일 URL이 없는 경우를 대비한 기본값 추가
+        thumbnailImgUrl: settingThumbnailUrl || "",
         draft: isDraft,
         disclose : disclose,
         folderId : selectedFolder
       }
-      
+
       try {
         const saveRes = await authEP({
           func: saveDocument,
           reqBody: request
         })
-        
+
         if (saveRes.status === 200) {
-          navigate(`/blog/view/${id}`)
+          navigate(`/blog/view/${locale || 'ko'}/${id}`)
         } else {
           throw new Error("저장 실패");
         }
@@ -113,7 +142,7 @@ function useSaveBlogPost(props : useSaveBlogPostProps) {
         msg: "에디터가 초기화되지 않았습니다.",
       })
     }
-  }, [document, uploadedList, navigate, setErrMsg, selectedFolder, disclose, id, authEP]);
+  }, [document, uploadedList, navigate, setErrMsg, selectedFolder, disclose, id, authEP, isTranslationEdit, locale]);
   
   const handleSaveModalOpen = () => {
     setOpenBlogPostingModal(true);
@@ -121,14 +150,32 @@ function useSaveBlogPost(props : useSaveBlogPostProps) {
   
   const getDocumentData = useCallback(async () => {
     if (!id) return;
-    
+
     try {
+      // 번역 편집인 경우: 번역 데이터 로드
+      if (isTranslationEdit && locale) {
+        const res = await authEP({
+          func: getTranslationDetail,
+          params: { postId: id, locale },
+        });
+        if (res.data) {
+          // TranslationDetailDTO → DocumentDTO 형태로 매핑
+          setDocument({
+            id: id,
+            title: res.data.title,
+            contents: res.data.content,
+          });
+        }
+        return;
+      }
+
+      // 원본 편집인 경우: 기존 로직
       const res = await getDocument({
         params : {
           id : id
         }
       });
-      
+
       if (res.data) {
         setDocument(res.data)
         setSelectedFolder(res.data.folderId);
@@ -141,7 +188,7 @@ function useSaveBlogPost(props : useSaveBlogPostProps) {
         msg: "문서를 불러오는데 실패했습니다.",
       })
     }
-  }, [id, setErrMsg]);
+  }, [id, setErrMsg, isTranslationEdit, locale, authEP]);
   
   const modalClose = () => {
     setOpenBlogPostingModal(prev => !prev)
@@ -170,6 +217,7 @@ function useSaveBlogPost(props : useSaveBlogPostProps) {
     disclose,
     setDisclose,
     goBack,
+    isTranslationEdit,
   }
 }
 

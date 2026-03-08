@@ -23,7 +23,7 @@ export function detectBrowserLocale(): LocaleCode | null {
 
 /**
  * locale 결정 우선순위:
- * 1. URL 파라미터 (?locale=en) — 글별 수동 선택
+ * 1. URL 경로 파라미터 (/blog/view/en/:id) — 글별 수동 선택
  * 2. 로그인 사용자: 저장된 선호 언어 (유저 메뉴 > Language에서 설정)
  * 3. 비로그인 사용자: 브라우저 Accept-Language 기반 감지
  * 4. fallback: 'ko'
@@ -33,7 +33,7 @@ export function resolveLocale(
     storedPref: LocaleCode | null,
     isLoggedIn?: boolean
 ): LocaleCode {
-    // 1. URL 파라미터 (글별 수동 선택, 최우선)
+    // 1. URL 경로 파라미터 (글별 수동 선택, 최우선)
     if (urlParam && isValidLocale(urlParam)) return urlParam as LocaleCode;
 
     // 2. 로그인 사용자: 저장된 선호 언어
