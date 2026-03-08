@@ -1,4 +1,4 @@
-// 멤버 아이템 컴포넌트
+// Member Item Component
 import React, {useState} from "react";
 import {
   Box,
@@ -90,13 +90,13 @@ export default function MemberItem({
             </HStack>
             {member.mutedUntil && new Date(member.mutedUntil) > new Date() && (
               <Text fontSize="xs" color="red.500">
-                음소거 종료: {new Date(member.mutedUntil).toLocaleString('ko-KR')}
+                Muted until: {new Date(member.mutedUntil).toLocaleString('en-US')}
               </Text>
             )}
           </VStack>
         </HStack>
         
-        {/* 액션 버튼들 */}
+        {/* Action Buttons */}
         {showActions && (
           <Menu.Root positioning={{placement : "left-middle"}}>
             <MenuTrigger asChild>
@@ -104,7 +104,7 @@ export default function MemberItem({
                 size="xs"
                 variant="ghost"
                 onClick={(e) => e.stopPropagation()}
-                aria-label="더보기"
+                aria-label="More"
               >
                 <MoreVertical size={14} />
               </IconButton>
@@ -116,12 +116,12 @@ export default function MemberItem({
                     <>
                       <MenuItem value="message">
                         <MessageCircle size={14} />
-                        <Text ml={2}>메시지 보내기</Text>
+                        <Text ml={2}>Send Message</Text>
                       </MenuItem>
                       {(member.roleId != "OWNER") && (
                         <MenuItem value="remove" onClick={() => onRemove()}>
                           <UserMinus size={14} />
-                          <Text ml={2}>채널에서 제거</Text>
+                          <Text ml={2}>Remove from Channel</Text>
                         </MenuItem>
                       )}
                       {(currentUserRole == "OWNER") && (member?.roleId != "OWNER") && (
@@ -136,11 +136,11 @@ export default function MemberItem({
                     <>
                       <MenuItem value="notifications" onClick={() => onToggleNotifications()}>
                         <Bell size={14} />
-                        <Text ml={2}>알림 설정</Text>
+                        <Text ml={2}>Notification Settings</Text>
                       </MenuItem>
                       <MenuItem value="nickname">
                         <Edit2 size={14} />
-                        <Text ml={2}>닉네임 변경</Text>
+                        <Text ml={2}>Change Nickname</Text>
                       </MenuItem>
                       <MenuItem value="remove" onClick={() => onRemove()}>
                         <UserMinus size={14} />

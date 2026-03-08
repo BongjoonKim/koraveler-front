@@ -1,28 +1,29 @@
-import styled from "styled-components";
-import TravelLayout from "../../common/layout/TravelLayout";
 import {Route, Routes} from "react-router-dom";
-import TravelHome from "../../component/page/travel/TravelHome";
+import MainLayout from "../../common/layout/MainLayout/MainLayout";
+import styled from "styled-components";
+import TravelHomeMain from "../../component/page/travel/TravelHome/TravelHomeMain";
+import TravelCreateProject from "../../component/page/travel/TravelCreateProject";
+import TravelDashboard from "../../component/page/travel/TravelDashboard";
 
-export interface TravelRoutesProps {
-
-};
-
-function TravelRoutes(props: TravelRoutesProps) {
-  
+export default function TravelRoutes() {
   return (
     <StyledTravelRoutes>
-      <TravelLayout>
-        <Routes>
-          <Route path="/home" element={<TravelHome />} />
-        </Routes>
-      </TravelLayout>
+      <Routes>
+        {/* MainLayout이 필요한 라우트들 */}
+        <Route element={<MainLayout showHero={false} />}>
+          <Route path="/home" element={<TravelHomeMain />} />
+          <Route path="/create" element={<TravelCreateProject />} />
+          <Route path="/dashboard/:travelId" element={<TravelDashboard />} />
+        </Route>
+      </Routes>
     </StyledTravelRoutes>
   )
-};
-
-export default TravelRoutes;
+}
 
 const StyledTravelRoutes = styled.div`
-  width: 100%;
-  height: 100%;
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 `;

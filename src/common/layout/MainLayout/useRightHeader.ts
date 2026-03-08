@@ -20,6 +20,7 @@ function useRightHeader() {
   const sliderRef = useRef<HTMLDivElement>(null);
   const cusAvaRef = useRef<HTMLDivElement>(null);
   const [searchModalOpen ,setSearchModalOpen] = useState<boolean>(false);
+  const [isLanguageModalOpen, setLanguageModalOpen] = useState<boolean>(false);
   const authEP = useAuthEP();
   const { clearAuth, refreshCurrentUserQuery } = useAuth(); // AuthContext에서 모든 액션 가져오기
   
@@ -111,6 +112,16 @@ function useRightHeader() {
   const handleUser = () => {
     navigate("/user/folder")
   }
+
+  // 언어 설정 모달
+  const handleOpenLanguageModal = () => {
+    setSliderOpen(false); // 유저 메뉴 닫기
+    setLanguageModalOpen(true);
+  };
+
+  const handleCloseLanguageModal = () => {
+    setLanguageModalOpen(false);
+  };
   
   
   // 컴포넌트 외부 클릭 감지
@@ -151,6 +162,9 @@ function useRightHeader() {
     handleChat,
     handleAdmin,
     handleUser,
+    isLanguageModalOpen,
+    handleOpenLanguageModal,
+    handleCloseLanguageModal,
   }
 }
 

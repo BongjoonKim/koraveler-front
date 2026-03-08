@@ -36,10 +36,12 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
   const { data: likeStatus } = useDocumentLikeStatus(props.id);
   const toggleLikeMutation = useToggleDocumentLike(props.id!);
   
-  // 수정 화면으로 전환
+  // 수정 화면으로 전환 (현재 보고 있는 locale 기반으로 이동)
+  const i18n = props.i18nState;
   const handleEdit = useCallback(() => {
-    navigate(`/blog/edit/${props.id}`)
-  }, [props.id]);
+    const locale = i18n?.currentLocale || 'ko';
+    navigate(`/blog/edit/${locale}/${props.id}`);
+  }, [props.id, i18n, navigate]);
   
   const handleDelete = useCallback(async () => {
     try {

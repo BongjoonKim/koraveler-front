@@ -2,7 +2,7 @@
 
 import { Node } from "@tiptap/core";
 import { NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react";
-import React, { useCallback, useRef, useState, useEffect } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import styled from "styled-components";
 
 // 크기 조절 프리셋
@@ -15,17 +15,11 @@ const SIZE_PRESETS = [
 
 // 리사이즈 가능한 이미지 컴포넌트
 const ResizableImageComponent = (props: any) => {
-  const { node, updateAttributes, selected, editor } = props;
+  const { node, updateAttributes, selected, editor, getPos } = props;
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const [isResizing, setIsResizing] = useState(false);
-  const [showHandles, setShowHandles] = useState(false);
   const [naturalSize, setNaturalSize] = useState({ width: 0, height: 0 });
-  
-  // 이미지 클릭 시 핸들 표시
-  useEffect(() => {
-    setShowHandles(selected);
-  }, [selected]);
   
   // 이미지의 원본 크기 저장
   const handleImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -142,22 +136,39 @@ const ResizableImageComponent = (props: any) => {
     return cursors[direction] || "pointer";
   };
   
-  // 현재 크기가 몇 퍼센트인지 계산
+  // 현재 크기가 몇 퍼센트인지 계산 (node.attrs.width 기반)
   const getCurrentPercent = useCallback(() => {
-    if (!containerRef.current?.parentElement || !imageRef.current) return null;
-    
+    if (!containerRef.current?.parentElement) return null;
+
+    const widthAttr = node.attrs.width;
+    if (!widthAttr) return null;
+
+    const pxValue = parseInt(String(widthAttr), 10);
+    if (isNaN(pxValue)) return null;
+
     const parentWidth = containerRef.current.parentElement.offsetWidth - 40;
-    const currentWidth = imageRef.current.offsetWidth;
-    const percent = Math.round((currentWidth / parentWidth) * 100);
-    
+    const percent = Math.round((pxValue / parentWidth) * 100);
+
     // 가장 가까운 프리셋 찾기
     const closest = SIZE_PRESETS.find(p => Math.abs(p.value - percent) <= 5);
     return closest?.value || null;
-  }, []);
+  }, [node.attrs.width]);
   
   return (
     <NodeViewWrapper
       className="resizable-image-wrapper"
+      onClick={(e: React.MouseEvent) => {
+        // 이미지 컨테이너 밖(빈 공간) 클릭 시 선택 해제
+        const container = containerRef.current;
+        if (container && !container.contains(e.target as any) && editor) {
+          e.preventDefault();
+          // 이미지 노드 다음 위치로 커서 이동
+          const pos = typeof getPos === 'function' ? getPos() : null;
+          if (pos !== null) {
+            editor.chain().focus().setTextSelection(pos + node.nodeSize).run();
+          }
+        }
+      }}
       style={{
         display: "flex",
         justifyContent: node.attrs.align === "center" ? "center" :
@@ -183,18 +194,14 @@ const ResizableImageComponent = (props: any) => {
             display: "block",
             borderRadius: "4px",
             cursor: isResizing ? "default" : "pointer",
-            outline: showHandles ? "2px solid #4a90e2" : "none",
+            outline: selected ? "2px solid #4a90e2" : "none",
             outlineOffset: "2px",
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowHandles(true);
           }}
           draggable={false}
         />
         
         {/* 크기 조절 버튼 - 선택됐을 때만 표시 */}
-        {showHandles && !isResizing && (
+        {selected && !isResizing && (
           <SizeButtonContainer>
             {SIZE_PRESETS.map((preset) => (
               <SizeButton
@@ -213,7 +220,7 @@ const ResizableImageComponent = (props: any) => {
         )}
         
         {/* 리사이즈 핸들들 - 선택됐을 때만 표시 */}
-        {showHandles && !isResizing && (
+        {selected && !isResizing && (
           <>
             {/* 모서리 핸들 */}
             <ResizeHandle

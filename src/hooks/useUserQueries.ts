@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import useAuthEP from '../utils/useAuthEP';
 import {getUsers, searchUsers,
   searchUsersNotInChannel,
+  searchUsersNotInTravel,
   getUserById,
   getUserProfile,
   updateUserProfile,
@@ -82,6 +83,34 @@ export const useSearchUsersNotInChannel = (channelId: string, keyword: string) =
     },
     enabled: !!channelId && keyword.length >= 2,
     staleTime: 1000 * 60 * 5, // 5분
+    retry: 1,
+  });
+};
+
+// 여행 프로젝트에 없는 사용자 검색 훅
+export const useSearchUsersNotInTravel = (travelId: string, keyword: string) => {
+  const authEP = useAuthEP();
+
+  return useQuery<UserSearchResponse>({
+    queryKey: ['users', 'available-for-travel', travelId, keyword],
+    queryFn: async () => {
+      if (!keyword || keyword.length < 2) {
+        return { users: [], totalCount: 0, hasNext: false };
+      }
+
+      try {
+        const response = await authEP({
+          func: searchUsersNotInTravel,
+          params: { travelId, keyword, size: 20 },
+        });
+        return response.data || { users: [], totalCount: 0, hasNext: false };
+      } catch (error) {
+        console.error('User search not in travel error:', error);
+        return { users: [], totalCount: 0, hasNext: false };
+      }
+    },
+    enabled: !!travelId && keyword.length >= 2,
+    staleTime: 1000 * 60 * 5,
     retry: 1,
   });
 };

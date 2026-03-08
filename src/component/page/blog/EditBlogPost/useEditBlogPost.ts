@@ -90,7 +90,7 @@ export default function useEditBlogPost(props : EditBlogPostProps) {
         })
         
         if (saveRes.status === 200) {
-          navigate(`/blog/view/${id}`)
+          navigate(`/blog/view/ko/${id}`)
         } else {
           throw new Error("저장 실패");
         }

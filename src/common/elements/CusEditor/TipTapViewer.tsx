@@ -156,8 +156,6 @@ const StyledTiptapViewer = styled.div`
     
     /* 비디오 스타일 👈 추가 */
     .viewer-video-wrapper {
-        margin: 1em 0;
-
         video {
             display: block;
             border-radius: 4px;
@@ -256,7 +254,7 @@ const StyledTiptapViewer = styled.div`
     }
 
     p {
-      margin: 1em 0;
+      //margin: 1em 0;
     }
 
     blockquote {
@@ -306,21 +304,20 @@ const StyledTiptapViewer = styled.div`
 
     ul {
       list-style-type: disc;
-      list-style-position: inside;
-      padding-left: 2em;
+      list-style-position: outside;
+      padding-left: 1.5em;
     }
 
     ol {
       list-style-type: decimal;
-      list-style-position: inside;
-      padding-left: 2em;
+      list-style-position: outside;
+      padding-left: 1.5em;
     }
 
     li {
       display: list-item;
-      
+
       > p {
-        display: inline-block;
         margin: 0;
       }
     }

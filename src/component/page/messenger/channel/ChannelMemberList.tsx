@@ -47,11 +47,11 @@ interface ChannelMemberListProps {
 }
 
 export default function ChannelMemberList({
-    channelId,
-    isVisible,
-    onClose,
-    currentUserId
-  }: ChannelMemberListProps) {
+                                            channelId,
+                                            isVisible,
+                                            onClose,
+                                            currentUserId
+                                          }: ChannelMemberListProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
   const [editingNickname, setEditingNickname] = useState(false);
@@ -60,7 +60,7 @@ export default function ChannelMemberList({
   const [selectedChannel] = useAtom(selectedChannelAtom);
   const {data : currentUser} = useCurrentUser();
   
-  // 실제 데이터 가져오기
+  // Fetch actual data
   const { data: members = [], isLoading, refetch: refetchMembers } = useChannelMembers(channelId);
   const { data: onlineMembers = [] } = useOnlineMembers(channelId);
   
@@ -70,25 +70,25 @@ export default function ChannelMemberList({
   const updateNotificationMutation = useUpdateNotificationSettings();
   const updateMemberRoleMutation = useUpdateMemberRole();
   
-  // 현재 사용자의 멤버 정보 찾기
+  // Find current user's member info
   const currentUserMember = members.find(m => m.userId === currentUser?.id);
   const currentUserRole = currentUserMember?.roleId || "MEMBER";
   
-  // 초대 모달이 닫힐 때 멤버 목록 새로고침
+  // Refresh member list when invite modal closes
   const handleInviteModalClose = () => {
     setShowInviteModal(false);
-    refetchMembers(); // 멤버 목록 새로고침
+    refetchMembers();
   };
   
-  // 온라인 상태 맵 생성
+  // Create online status map
   const onlineMemberIds = new Set(onlineMembers.map(m => m.userId));
   
-  // 멤버 필터링 및 정렬
+  // Filter and sort members
   const filteredMembers = members.filter(member =>
     (member.nickname || member.userId || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
   
-  // 상태별로 그룹화
+  // Group by status
   const activeMembersOnline = filteredMembers.filter(m =>
     m.status === 'ACTIVE' && onlineMemberIds.has(m.userId)
   );
@@ -112,18 +112,18 @@ export default function ChannelMemberList({
   };
   
   const handleRemoveMember = async (userId: string) => {
-    if (window.confirm('Do you really want to delete this member?')) {
+    if (window.confirm('Do you really want to remove this member?')) {
       try {
         await removeMemberMutation.mutateAsync({ channelId, userId });
         toaster.create({
-          title: 'Deleted Member',
+          title: 'Member Removed',
           status: 'success',
           duration: 2000
         });
         refetchMembers();
       } catch (error) {
         toaster.create({
-          title: '멤버 제거 실패',
+          title: 'Failed to Remove Member',
           status: 'error',
           duration: 2000
         });
@@ -150,14 +150,14 @@ export default function ChannelMemberList({
       })
       
       toaster.create({
-        title : "Owner role transferred successfully",
+        title : "Owner Role Transferred Successfully",
         status  :"success",
         duration : 2000
       })
       await refetchMembers();
     } catch (error) {
       toaster.create({
-        title : "Authority Change Fail",
+        title : "Failed to Transfer Role",
         status : "error",
         duration : 2000
       })
@@ -175,14 +175,14 @@ export default function ChannelMemberList({
       setEditingNickname(false);
       setNewNickname('');
       toaster.create({
-        title: '닉네임이 변경되었습니다',
+        title: 'Nickname Updated',
         status: 'success',
         duration: 2000
       });
       refetchMembers();
     } catch (error) {
       toaster.create({
-        title: '닉네임 변경 실패',
+        title: 'Failed to Update Nickname',
         status: 'error',
         duration: 2000
       });
@@ -201,14 +201,14 @@ export default function ChannelMemberList({
       });
       
       toaster.create({
-        title: '알림 설정이 변경되었습니다',
+        title: 'Notification Settings Updated',
         status: 'success',
         duration: 2000
       });
       refetchMembers();
     } catch (error) {
       toaster.create({
-        title: '알림 설정 변경 실패',
+        title: 'Failed to Update Notification Settings',
         status: 'error',
         duration: 2000
       });
@@ -220,25 +220,25 @@ export default function ChannelMemberList({
       case 'BANNED':
         return (
           <Badge size="xs" colorPalette="red" variant="subtle">
-            차단됨
+            Banned
           </Badge>
         );
       case 'LEFT':
         return (
           <Badge size="xs" colorPalette="gray" variant="subtle">
-            나감
+            Left
           </Badge>
         );
       case 'INACTIVE':
         return (
           <Badge size="xs" colorPalette="yellow" variant="subtle">
-            비활성
+            Inactive
           </Badge>
         );
       case 'PENDING_APPROVAL':
         return (
           <Badge size="xs" colorPalette="blue" variant="subtle">
-            승인 대기
+            Pending
           </Badge>
         );
       default:
@@ -260,7 +260,7 @@ export default function ChannelMemberList({
   };
   
   const formatLastSeen = (dateString: string) => {
-    if (!dateString) return '알 수 없음';
+    if (!dateString) return 'Unknown';
     const date = new Date(dateString);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -268,11 +268,11 @@ export default function ChannelMemberList({
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
     
-    if (minutes < 1) return '방금 전';
-    if (minutes < 60) return `${minutes}분 전`;
-    if (hours < 24) return `${hours}시간 전`;
-    if (days < 7) return `${days}일 전`;
-    return date.toLocaleDateString('ko-KR');
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7) return `${days}d ago`;
+    return date.toLocaleDateString('en-US');
   };
   
   if (!isVisible) return null;
@@ -292,7 +292,7 @@ export default function ChannelMemberList({
         zIndex={1000}
       >
         <Flex direction="column" h="full">
-          {/* 헤더 */}
+          {/* Header */}
           <Flex
             align="center"
             justify="space-between"
@@ -302,7 +302,7 @@ export default function ChannelMemberList({
             bg="gray.50"
             height="4rem"
           >
-            <Heading size="md">채널 멤버</Heading>
+            <Heading size="md">Channel Members</Heading>
             <HStack gap={2}>
               <Button
                 size="sm"
@@ -311,25 +311,25 @@ export default function ChannelMemberList({
                 onClick={handleInviteMember}
               >
                 <UserPlus size={16} />
-                초대
+                Invite
               </Button>
               <IconButton
                 size="sm"
                 variant="ghost"
                 onClick={onClose}
-                aria-label="닫기"
+                aria-label="Close"
               >
                 <X size={20} />
               </IconButton>
             </HStack>
           </Flex>
           
-          {/* 검색 */}
+          {/* Search */}
           <Box p={4}>
             <HStack>
               <Search size={16} color="gray" />
               <Input
-                placeholder="멤버 검색..."
+                placeholder="Search members..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 size="sm"
@@ -337,7 +337,7 @@ export default function ChannelMemberList({
             </HStack>
           </Box>
           
-          {/* 멤버 통계 */}
+          {/* Member Statistics */}
           <HStack px={4} pb={2} gap={4}>
             <Text fontSize="sm" color="gray.600">
               Total {members.length}
@@ -358,19 +358,19 @@ export default function ChannelMemberList({
           
           <Separator />
           
-          {/* 멤버 목록 */}
+          {/* Member List */}
           <Box flex={1} overflowY="auto" px={2}>
             {isLoading ? (
               <Flex justify="center" align="center" py={8}>
-                <Text color="gray.500">멤버 목록을 불러오는 중...</Text>
+                <Text color="gray.500">Loading members...</Text>
               </Flex>
             ) : (
               <VStack align="stretch" gap={1} py={2}>
-                {/* 온라인 멤버 */}
+                {/* Online Members */}
                 {activeMembersOnline.length > 0 && (
                   <>
                     <Text fontSize="xs" fontWeight="semibold" color="gray.500" px={2} pt={2}>
-                      온라인 — {activeMembersOnline.length}
+                      Online — {activeMembersOnline.length}
                     </Text>
                     {activeMembersOnline.map((member) => (
                       <MemberItem
@@ -379,7 +379,7 @@ export default function ChannelMemberList({
                         isOnline={true}
                         isSelected={selectedMember === member.id}
                         isCurrentUser={member.userId === currentUser?.id}
-                        currentUserRole={currentUserRole} // ✅ 추가
+                        currentUserRole={currentUserRole}
                         onClick={() => handleMemberClick(member.id)}
                         onRemove={() => handleRemoveMember(member.userId)}
                         onTransferRoleOwner={() => handleTransferOwnership(member.userId)}
@@ -392,11 +392,11 @@ export default function ChannelMemberList({
                   </>
                 )}
                 
-                {/* 오프라인 멤버 */}
+                {/* Offline Members */}
                 {activeMembersOffline.length > 0 && (
                   <>
                     <Text fontSize="xs" fontWeight="semibold" color="gray.500" px={2} pt={4}>
-                      오프라인 — {activeMembersOffline.length}
+                      Offline — {activeMembersOffline.length}
                     </Text>
                     {activeMembersOffline.map((member) => (
                       <MemberItem
@@ -405,7 +405,7 @@ export default function ChannelMemberList({
                         isOnline={false}
                         isSelected={selectedMember === member.id}
                         isCurrentUser={member.userId === currentUser?.id}
-                        currentUserRole={currentUserRole} // ✅ 추가
+                        currentUserRole={currentUserRole}
                         onClick={() => handleMemberClick(member.id)}
                         onRemove={() => handleRemoveMember(member.userId)}
                         onTransferRoleOwner={() => handleTransferOwnership(member.userId)}
@@ -418,11 +418,11 @@ export default function ChannelMemberList({
                   </>
                 )}
                 
-                {/* 차단된 멤버 */}
+                {/* Banned Members */}
                 {bannedMembers.length > 0 && (
                   <>
                     <Text fontSize="xs" fontWeight="semibold" color="gray.500" px={2} pt={4}>
-                      차단됨 — {bannedMembers.length}
+                      Banned — {bannedMembers.length}
                     </Text>
                     {bannedMembers.map((member) => (
                       <MemberItem
@@ -431,7 +431,7 @@ export default function ChannelMemberList({
                         isOnline={false}
                         isSelected={selectedMember === member.id}
                         isCurrentUser={member.userId === currentUser?.id}
-                        currentUserRole={currentUserRole} // ✅ 추가
+                        currentUserRole={currentUserRole}
                         onClick={() => handleMemberClick(member.id)}
                         onRemove={() => handleRemoveMember(member.userId)}
                         onToggleNotifications={() => handleToggleNotifications(member)}
@@ -443,12 +443,12 @@ export default function ChannelMemberList({
                   </>
                 )}
                 
-                {/* 멤버가 없을 때 */}
+                {/* No Members */}
                 {filteredMembers.length === 0 && (
                   <Flex justify="center" align="center" py={8}>
                     <VStack>
                       <Text color="gray.500" fontSize="sm">
-                        {searchQuery ? '검색 결과가 없습니다' : '채널에 멤버가 없습니다'}
+                        {searchQuery ? 'No search results' : 'No members in this channel'}
                       </Text>
                       {!searchQuery && (
                         <Button
@@ -457,7 +457,7 @@ export default function ChannelMemberList({
                           variant="outline"
                           onClick={handleInviteMember}
                         >
-                          첫 멤버 초대하기
+                          Invite First Member
                         </Button>
                       )}
                     </VStack>
@@ -469,7 +469,7 @@ export default function ChannelMemberList({
         </Flex>
       </Box>
       
-      {/* 사용자 초대 모달 */}
+      {/* Invite User Modal */}
       <InviteUserModal
         isOpen={showInviteModal}
         onClose={handleInviteModalClose}

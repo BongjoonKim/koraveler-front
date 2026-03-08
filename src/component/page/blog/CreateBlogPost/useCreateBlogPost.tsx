@@ -115,7 +115,7 @@ function useCreateBlogPost(props : CreateBlogPostProps) {
           })
         }
         if (res.status === 200) {
-          navigate(`/blog/view/${res.data.id}`);
+          navigate(`/blog/view/ko/${res.data.id}`);
         } else {
           throw res.statusText;
         }

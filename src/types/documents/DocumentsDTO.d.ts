@@ -42,7 +42,10 @@ declare interface DocumentDTO extends CommonDTO {
   color?: string;
   thumbnailImgUrl?: string;
   draft?: boolean;
-  
+
+  // i18n: 원본 언어 코드
+  originalLocale?: string;
+
   // Featured 관련 필드 추가
   featuredReady?: boolean;
   featuredInfo?: FeaturedInfo;

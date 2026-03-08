@@ -35,7 +35,14 @@ function EditBlogPost(props: EditBlogPostProps) {
     disclose,
     setDisclose,
     goBack,
+    isTranslationEdit,
   } = useSaveBlogPost(props)
+
+  // 번역 편집 시: Save 버튼 클릭 → 모달 없이 바로 저장
+  const handleSaveModalOpenOrDirect = isTranslationEdit
+    ? () => handleEdit(BLOG_SAVE_TYPE.SAVE)
+    : handleSaveModalOpen;
+
   return (
     <StyledEditBlogPost className={"StyledEditBlogPost"}>
       <MakeDocLayout
@@ -43,7 +50,7 @@ function EditBlogPost(props: EditBlogPostProps) {
         document={document}
         setDocument={setDocument}
         handleSave={(saveOrDraft : string) => handleEdit(saveOrDraft)}
-        handleSaveModalOpen={handleSaveModalOpen}
+        handleSaveModalOpen={handleSaveModalOpenOrDirect}
         handleCancel={goBack}
       >
         <UpdateEditor
@@ -51,30 +58,32 @@ function EditBlogPost(props: EditBlogPostProps) {
           {...document}
         />
       </MakeDocLayout>
-      <CusModal
-        isOpen={openBlogPostingModal}
-        onClose={modalClose}
-        title={"Saving Blog Post"}
-        footer={
-          <CusModalFooter
-            types={["create", "cancel"]}
-            createText={"save"}
-            cancelText={"cancel"}
-            doCreate={() => handleEdit(BLOG_SAVE_TYPE.SAVE)}
-            doCancel={modalClose}
+      {!isTranslationEdit && (
+        <CusModal
+          isOpen={openBlogPostingModal}
+          onClose={modalClose}
+          title={"Saving Blog Post"}
+          footer={
+            <CusModalFooter
+              types={["create", "cancel"]}
+              createText={"save"}
+              cancelText={"cancel"}
+              doCreate={() => handleEdit(BLOG_SAVE_TYPE.SAVE)}
+              doCancel={modalClose}
+            />
+          }
+        >
+          <BlogPostSetting
+            folders={folders}
+            setFolders={setFolders}
+            selectedFolder={selectedFolder}
+            setSelectedFolder={setSelectedFolder}
+            disclose={disclose}
+            setDisclose={setDisclose}
+            openBlogPostingModal={openBlogPostingModal}
           />
-        }
-      >
-        <BlogPostSetting
-          folders={folders}
-          setFolders={setFolders}
-          selectedFolder={selectedFolder}
-          setSelectedFolder={setSelectedFolder}
-          disclose={disclose}
-          setDisclose={setDisclose}
-          openBlogPostingModal={openBlogPostingModal}
-        />
-      </CusModal>
+        </CusModal>
+      )}
     </StyledEditBlogPost>
   )
 };

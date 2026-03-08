@@ -2,9 +2,7 @@
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import BlogRoutes from "./BlogRoutes";
 import SettingRoutes from "./SettingRoutes";
-import TravelRoutes from "./TravelRoutes";
 import {Alert, AlertContent, AlertDescription, AlertIndicator, AlertRoot, AlertTitle} from "@chakra-ui/react"; // AlertIcon → AlertIndicator
-import TechRoutes from "./TechRoutes";
 import ChatRoutes from "./ChatRoutes";
 import MainPage from "../component/page/MainPage";
 import LoginRoutes from "./LoginRoutes/LoginRoutes";
@@ -14,6 +12,7 @@ import AdminRoutes from "./AdminRoutes";
 import ForbiddenPage from "../component/page/error/ForbiddenPage";
 import UserRoutes from "./UserRoutes";
 import ProfileRoutes from "./ProfileRoutes";
+import TravelRoutes from "./TravelRoutes";
 
 export default function RoutersTree() {
   return (
@@ -21,13 +20,9 @@ export default function RoutersTree() {
         <Routes>
             <Route path="/*" element={<MainPage/>}/>
             <Route path="/blog/*" element={<BlogRoutes/>}/>
-            <Route path="/travel/*" element={<TravelRoutes/>}/>
-            <Route path="/tech/*" element={<TechRoutes/>}/>
             <Route path="/chat/*" element={<ChatRoutes/>}/>
             <Route path="/login/*" element={<LoginRoutes/>}/>
-            {/*<Route path="/setting/*" element={*/}
-            {/*    <SettingRoutes/>*/}
-            {/*}/>*/}
+            <Route path="/travel/*" element={<TravelRoutes/>}/>
           <Route path="/profile/*" element={<ProfileRoutes />} />
           <Route path="/admin/*" element={<AdminRoutes />} />
           <Route path="/user/*" element={<UserRoutes />} />

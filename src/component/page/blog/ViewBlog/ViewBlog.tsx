@@ -12,13 +12,19 @@ export interface ViewBlogProps {
 };
 
 function ViewBlog(props: ViewBlogProps) {
-  const {document, isBookmarked} = useViewBlog(props);
+  const {document, isBookmarked, displayTitle, displayContent, i18nState} = useViewBlog(props);
   return (
-    <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }}>
+    <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }} py={{ base: 4, sm: 6, lg: 8 }}
+    >
       <Suspense>
-        <ViewDocLayout {...document} isBookmarked={isBookmarked}>
+        <ViewDocLayout
+          {...document}
+          title={displayTitle}
+          isBookmarked={isBookmarked}
+          i18nState={i18nState}
+        >
           <ViewerDoc
-            contents={document.contents}
+            contents={displayContent}
           />
         </ViewDocLayout>
       </Suspense>
