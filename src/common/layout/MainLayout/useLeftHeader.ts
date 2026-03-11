@@ -1,41 +1,19 @@
-import {useCallback, useEffect, useState} from "react";
-import {useRecoilState} from "recoil";
-import axios from "axios";
-import posthog from "posthog-js";
 import {useLocation} from "react-router-dom";
+import {useQuery} from "@tanstack/react-query";
 import {getAllMenus} from "../../../endpoints/menus-endpoints";
-import recoil from "../../../stores/recoil";
 
 export default function useLeftHeader() {
-  const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
-  const [menus, setMenus] = useState<MenusDTO[]>([]);
   const location = useLocation();
-  
-  const getMenus = useCallback(async () => {
-    try {
-      
+
+  const {data: menus = [], isLoading, isError} = useQuery<MenusDTO[]>({
+    queryKey: ['menus'],
+    queryFn: async () => {
       const res = await getAllMenus();
-      setMenus(res.data);
-    } catch (e) {
-      setErrorMsg({
-        status: "error",
-        msg: "retrieve failed",
-      })
-    }
-  }, [menus]);
-  
-  useEffect(() => {
-    getMenus();
-  }, []);
-  
-  // 페이지 뷰 추적 (선택사항)
-  useEffect(() => {
-    // posthog.capture('page_view', {
-    //   page: location.pathname,
-    //   is_home: location.pathname === "/home"
-    // });
-  }, [location.pathname]);
-  
+      return res.data;
+    },
+    staleTime: 1000 * 60 * 10, // 메뉴는 자주 변하지 않으므로 5분 캐시
+  });
+
   // 메뉴 호버 추적
   const handleMenuHover = (menuLabel: string) => {
     // posthog.capture('menu_hovered', {
@@ -43,9 +21,11 @@ export default function useLeftHeader() {
     //   current_page: location.pathname
     // });
   };
-  
+
   return {
     menus,
+    isLoading,
+    isError,
     handleMenuHover
   }
 }

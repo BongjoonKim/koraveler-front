@@ -5,6 +5,9 @@ import { ChevronRight, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CusButton from "../../../../../common/elements/buttons/CusButton";
 import styled from "styled-components";
+import { useAtomValue } from "jotai";
+import { preferredLocaleAtom, resolveLocale } from "../../../../../stores/jotai/localeAtom";
+import { useCurrentUser } from "../../../../../hooks/useCurrentUser";
 
 // Swiper 관련 imports
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -74,6 +77,9 @@ const StyledThumbsContainer = styled.div`
 function FeaturedCarouselWithSwiper({ featuredDocs }: FeaturedCarouselProps) {
   const navigate = useNavigate();
   const [thumbsSwiper, setThumbsSwiper] = React.useState<SwiperType | null>(null);
+  const preferredLocale = useAtomValue(preferredLocaleAtom);
+  const { data: currentUser } = useCurrentUser();
+  const activeLocale = resolveLocale(null, preferredLocale, !!currentUser?.id);
   
   return (
     <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }} mt={12}>
@@ -122,7 +128,7 @@ function FeaturedCarouselWithSwiper({ featuredDocs }: FeaturedCarouselProps) {
                     h={{ base: "96", md: "80" }}
                     position="relative"
                     cursor="pointer"
-                    onClick={() => navigate(`/blog/view/${doc.id}`)}
+                    onClick={() => navigate(`/blog/view/${activeLocale}/${doc.id}`)}
                   >
                     {/* 배경 레이어 */}
                     <Box
@@ -219,7 +225,7 @@ function FeaturedCarouselWithSwiper({ featuredDocs }: FeaturedCarouselProps) {
                           }}
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigate(`/blog/view/${doc.id}`);
+                            navigate(`/blog/view/${activeLocale}/${doc.id}`);
                           }}
                         >
                           <HStack gap={1}>

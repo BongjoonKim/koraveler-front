@@ -3,17 +3,19 @@ import {Image} from "@chakra-ui/react";
 import moment from "moment";
 import {useNavigate} from "react-router-dom";
 import {S3URLInDocument} from "../../../../../constants/RegexConstants";
+import {useBlogLocale} from "../../../../../hooks/useBlogLocale";
 
 export interface SimpleViewerProps extends DocumentDTO{
 };
 
 function SimpleDocViewer(props: SimpleViewerProps) {
   const navigate = useNavigate();
+  const { blogViewUrl } = useBlogLocale();
   console.log("props", props)
   return (
     <StyledSimpleViewer
       onClick={() => {
-        navigate(`/blog/view/${props.id}`)
+        navigate(blogViewUrl(props.id!))
       }}
     >
       <div className={"header"}>

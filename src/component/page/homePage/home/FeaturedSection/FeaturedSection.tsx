@@ -6,10 +6,16 @@ import { ChevronRight, MapPin } from "lucide-react";
 import CusButton from "../../../../../common/elements/buttons/CusButton";
 import FeaturedCarousel from "./FeaturedCarousel";
 import FeaturedCarouselWithSwiper from "./FeatureCarouselWithSwipe";
+import { useAtomValue } from "jotai";
+import { preferredLocaleAtom, resolveLocale } from "../../../../../stores/jotai/localeAtom";
+import { useCurrentUser } from "../../../../../hooks/useCurrentUser";
 
 function FeaturedSection() {
   const navigate = useNavigate();
   const { data: featuredDocs, isLoading } = useFeaturedDocuments();
+  const preferredLocale = useAtomValue(preferredLocaleAtom);
+  const { data: currentUser } = useCurrentUser();
+  const activeLocale = resolveLocale(null, preferredLocale, !!currentUser?.id);
   if (isLoading || !featuredDocs?.length) return null;
   
   console.log("featureDocs", featuredDocs)
@@ -40,7 +46,7 @@ function FeaturedSection() {
           boxShadow="lg"
           h={{ base: "sm", md: "md", lg: "80" }}
           cursor="pointer"
-          onClick={() => navigate(`/blog/view/${featured.id}`)}
+          onClick={() => navigate(`/blog/view/${activeLocale}/${featured.id}`)}
           _hover={{ transform: "scale(1.02)", transition: "transform 0.3s" }}
         >
           {/* 배경 레이어 - 그라디언트 또는 이미지 */}
@@ -144,7 +150,7 @@ function FeaturedSection() {
                 }}
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/blog/view/${featured.id}`);
+                  navigate(`/blog/view/${activeLocale}/${featured.id}`);
                 }}
                 rightIcon={<ChevronRight size={20} />}
               >

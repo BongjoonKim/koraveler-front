@@ -45,12 +45,14 @@ function useViewBlog(props : ViewBlogProps) {
     }
   }, [queryLocale, id, navigate]);
 
-  // URL에 locale이 없으면 /blog/view/ko/{id}로 redirect
+  // URL에 locale이 없으면 preferredLocale 기반으로 redirect
+  const isLoggedIn = !!currentUser?.id;
   useEffect(() => {
     if (id && !pathLocale && !queryLocale) {
-      navigate(`/blog/view/ko/${id}`, { replace: true });
+      const fallbackLocale = resolveLocale(null, preferredLocale, isLoggedIn);
+      navigate(`/blog/view/${fallbackLocale}/${id}`, { replace: true });
     }
-  }, [id, pathLocale, queryLocale, navigate]);
+  }, [id, pathLocale, queryLocale, navigate, preferredLocale, isLoggedIn]);
 
   // URL path의 locale 파라미터 (pathLocale이 유효한 locale이 아니면 무시)
   const urlLocale = pathLocale && SUPPORTED_LOCALES.includes(pathLocale as LocaleCode) ? pathLocale : null;
@@ -58,7 +60,6 @@ function useViewBlog(props : ViewBlogProps) {
   // 로그인 여부에 따라 locale 결정
   // - 로그인 유저: URL > 저장된 기본 언어 > ko
   // - 비로그인 유저: URL > 브라우저 환경(Accept-Language) > ko
-  const isLoggedIn = !!currentUser?.id;
   const activeLocale = useMemo(() => {
     return resolveLocale(urlLocale, preferredLocale, isLoggedIn);
   }, [urlLocale, preferredLocale, isLoggedIn]);

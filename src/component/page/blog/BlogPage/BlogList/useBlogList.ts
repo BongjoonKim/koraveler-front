@@ -9,14 +9,18 @@ import {useAtom, useAtomValue} from "jotai/index";
 import {selBlogSortOpt} from "../../../../../stores/jotai/jotai";
 import useAuthEP from "../../../../../utils/useAuthEP";
 import {extractTextAdvanced} from "../../../../../utils/commonUtils";
+import {useBlogLocale} from "../../../../../hooks/useBlogLocale";
 
 function useBlogList(props : BlogHomeProps) {
   const [blogList, setBlogList] = useState<DocumentsInfo | undefined>();
   const [page, setPage] = useState<number>(0);
   const [size, setSize] = useState<number>(24);
-  const match = useMatch("/blog/:type");
+  const matchWithLocale = useMatch("/blog/:type/:locale");
+  const matchLegacy = useMatch("/blog/:type");
+  const match = matchWithLocale || matchLegacy;
   const selectedOption = useAtomValue(selBlogSortOpt);
   const authEP = useAuthEP();
+  const { activeLocale } = useBlogLocale();
   
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
   console.log("match", match)
@@ -45,7 +49,8 @@ function useBlogList(props : BlogHomeProps) {
           params : {
             page: page,
             size: size,
-            dateSort : dateSort
+            dateSort : dateSort,
+            locale : activeLocale
           }
         });
         if (res?.status !== 200) {
@@ -60,7 +65,8 @@ function useBlogList(props : BlogHomeProps) {
             page : page,
             size : size,
             type : BLOG_PAGE_TYPE.MY_BLOG,
-            dateSort : dateSort
+            dateSort : dateSort,
+            locale : activeLocale
           },
         })
         if (res.status !== 200) {
@@ -75,6 +81,7 @@ function useBlogList(props : BlogHomeProps) {
             size : size,
             type : BLOG_PAGE_TYPE.BOOKMARK,
             dateSort : dateSort,
+            locale : activeLocale
           },
         })
         if (res.status !== 200) {
@@ -89,6 +96,7 @@ function useBlogList(props : BlogHomeProps) {
             size : size,
             type : BLOG_PAGE_TYPE.DRAFT,
             dateSort : dateSort,
+            locale : activeLocale
           },
         })
         if (res.status !== 200) {
@@ -113,11 +121,11 @@ function useBlogList(props : BlogHomeProps) {
         msg : e?.toString()
       })
     }
-  }, [page, size, blogList, errorMsg, match, selectedOption]);
-  
+  }, [page, size, blogList, errorMsg, match, selectedOption, activeLocale]);
+
   useEffect(() => {
     getDocuments();
-  }, [match, selectedOption]);
+  }, [match, selectedOption, activeLocale]);
   
   return {
     blogList

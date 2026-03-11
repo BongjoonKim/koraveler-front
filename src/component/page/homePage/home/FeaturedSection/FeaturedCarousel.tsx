@@ -5,6 +5,9 @@ import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CusButton from "../../../../../common/elements/buttons/CusButton";
 import CusIconButton from "../../../../../common/elements/buttons/CusIconButton";
+import { useAtomValue } from "jotai";
+import { preferredLocaleAtom, resolveLocale } from "../../../../../stores/jotai/localeAtom";
+import { useCurrentUser } from "../../../../../hooks/useCurrentUser";
 
 interface FeaturedCarouselProps {
   featuredDocs: DocumentDTO[];
@@ -13,6 +16,9 @@ interface FeaturedCarouselProps {
 function FeaturedCarousel({ featuredDocs }: FeaturedCarouselProps) {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const preferredLocale = useAtomValue(preferredLocaleAtom);
+  const { data: currentUser } = useCurrentUser();
+  const activeLocale = resolveLocale(null, preferredLocale, !!currentUser?.id);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   
   // 자동 슬라이드
@@ -101,7 +107,7 @@ function FeaturedCarousel({ featuredDocs }: FeaturedCarouselProps) {
                   h="full"
                   position="relative"
                   cursor="pointer"
-                  onClick={() => navigate(`/blog/view/${doc.id}`)}
+                  onClick={() => navigate(`/blog/view/${activeLocale}/${doc.id}`)}
                 >
                   {/* 배경 레이어 */}
                   <Box
@@ -207,7 +213,7 @@ function FeaturedCarousel({ featuredDocs }: FeaturedCarouselProps) {
                         }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate(`/blog/view/${doc.id}`);
+                          navigate(`/blog/view/${activeLocale}/${doc.id}`);
                         }}
                         rightIcon={<ChevronRight size={20} />}
                       >

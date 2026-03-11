@@ -4,6 +4,9 @@ import {AnimatePresence, motion} from "framer-motion";
 import {Box, HStack, Spinner, Tag, Text, VStack} from "@chakra-ui/react";
 import {replacingHtmlInText} from "../../../../utils/commonUtils";
 import {Calendar, ChevronRight, Clock, MapPin} from "lucide-react";
+import {useAtomValue} from "jotai";
+import {preferredLocaleAtom, resolveLocale} from "../../../../stores/jotai/localeAtom";
+import {useCurrentUser} from "../../../../hooks/useCurrentUser";
 
 interface SearchDropdownProps {
   documents: DocumentDTO[];
@@ -21,9 +24,12 @@ function SearchDropdown({
                           searchInfoQuery
                         }: SearchDropdownProps) {
   const navigate = useNavigate();
-  
+  const preferredLocale = useAtomValue(preferredLocaleAtom);
+  const { data: currentUser } = useCurrentUser();
+  const activeLocale = resolveLocale(null, preferredLocale, !!currentUser?.id);
+
   const handleDocumentClick = (docId : string) => {
-    navigate(`blog/view/${docId}`);
+    navigate(`/blog/view/${activeLocale}/${docId}`);
     onClose();
   }
   

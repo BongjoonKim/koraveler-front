@@ -7,6 +7,7 @@ import EditBlogPost from "../../component/page/blog/EditBlogPost";
 import TranslationManage from "../../component/page/blog/TranslationManage";
 import MainLayout from "../../common/layout/MainLayout/MainLayout";
 import EmptyLayout from "../../common/layout/MainLayout/EmptyLayout";
+import BlogLocaleRedirect from "./BlogLocaleRedirect";
 
 interface BlogRoutesProps {
 
@@ -22,8 +23,12 @@ function BlogRoutes(props: BlogRoutesProps) {
             <Route path="/view/:locale/:id" element={<ViewBlog />} />
             <Route path="/view/:id" element={<ViewBlog />} />
             <Route path="/translations/:id" element={<TranslationManage />} />
-            <Route path="/home" element={<BlogPage />} />
-            <Route path="/:type" element={<BlogPage />} />
+            {/* locale 포함 블로그 목록 라우트 */}
+            <Route path="/home/:locale" element={<BlogPage />} />
+            <Route path="/:type/:locale" element={<BlogPage />} />
+            {/* locale 없는 URL → redirect */}
+            <Route path="/home" element={<BlogLocaleRedirect type="home" />} />
+            <Route path="/:type" element={<BlogLocaleRedirect />} />
           </Route>
 
           {/* MainLayout 없이 독립적으로 렌더링되는 라우트들 */}

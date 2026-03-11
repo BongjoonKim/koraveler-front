@@ -271,7 +271,6 @@ export const useChannelMessages = (channelId: string | null) => {
   return useInfiniteQuery<MessageListResponse>({
     queryKey: ['messages', channelId],
     queryFn: async ({pageParam}) => {
-      // console.log("변화 인식", channelId)
       const response = await authEP({
         func : getChannelMessages,
         params: {
