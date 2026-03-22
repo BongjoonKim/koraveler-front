@@ -4,6 +4,7 @@ import styled from "styled-components";
 import TravelHomeMain from "../../component/page/travel/TravelHome/TravelHomeMain";
 import TravelCreateProject from "../../component/page/travel/TravelCreateProject";
 import TravelDashboard from "../../component/page/travel/TravelDashboard";
+import TravelChat from "../../component/page/travel/TravelChat";
 
 export default function TravelRoutes() {
   return (
@@ -14,6 +15,7 @@ export default function TravelRoutes() {
           <Route path="/home" element={<TravelHomeMain />} />
           <Route path="/create" element={<TravelCreateProject />} />
           <Route path="/dashboard/:travelId" element={<TravelDashboard />} />
+          <Route path="/chat/:travelId" element={<TravelChat />} />
         </Route>
       </Routes>
     </StyledTravelRoutes>

@@ -67,7 +67,7 @@ export function useNaverMapController(props: NaverMapProps) {
         zoomControl: true,
         zoomControlOptions: {
           style: naverMaps.ZoomControlStyle.SMALL,
-          position: naverMaps.Position.TOP_RIGHT
+          position: naverMaps.Position.RIGHT_CENTER
         },
         mapDataControl: false,
         scaleControl: false,

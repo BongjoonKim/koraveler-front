@@ -1,12 +1,13 @@
 import styled from "styled-components";
 import { Puzzle } from "lucide-react";
 import TravelPluginCard from "./TravelPluginCard";
+import TravelProjectSelectModal from "./TravelProjectSelectModal";
 import { useTravelPluginStore } from "./useTravelPluginStore";
 
 export interface TravelPluginStoreProps {}
 
 function TravelPluginStore(props: TravelPluginStoreProps) {
-  const { plugins, handlePluginSelect } = useTravelPluginStore();
+  const { plugins, handlePluginSelect, projectSelectModal } = useTravelPluginStore();
 
   return (
     <StyledTravelPluginStore>
@@ -30,6 +31,20 @@ function TravelPluginStore(props: TravelPluginStoreProps) {
           />
         ))}
       </div>
+
+      {/* 프로젝트 선택 모달 */}
+      <TravelProjectSelectModal
+        isOpen={projectSelectModal.isOpen}
+        isLoading={projectSelectModal.isLoading}
+        searchQuery={projectSelectModal.searchQuery}
+        selectedProject={projectSelectModal.selectedProject}
+        targetPlugin={projectSelectModal.targetPlugin}
+        filteredTravels={projectSelectModal.filteredTravels}
+        onSearchChange={projectSelectModal.setSearchQuery}
+        onSelectProject={projectSelectModal.setSelectedProject}
+        onApply={projectSelectModal.handleApply}
+        onClose={projectSelectModal.closeModal}
+      />
     </StyledTravelPluginStore>
   );
 }

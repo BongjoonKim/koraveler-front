@@ -67,8 +67,8 @@ export default function useBlogPostSetting(props : BlogPostSettingProps) {
     }
   }
   
-  const handleDiscloseSelect = (item : any) => {
-    setDisclose(prev => !prev);
+  const handleDiscloseSelect = (value: string) => {
+    setDisclose(value === 'true');
   }
   
   useEffect(() => {

@@ -57,7 +57,7 @@ export default function CusRadio(props: CusRadioProps) {
       
       <RadioGroup.Root
         value={value}
-        onValueChange={onChange}
+        onValueChange={(details: { value: string }) => onChange?.(details.value)}
         name={name}
         disabled={isDisabled}
       >
@@ -69,6 +69,7 @@ export default function CusRadio(props: CusRadioProps) {
             
             return (
               <RadioGroup.Item key={`${optionValue}-${index}`} value={optionValue} disabled={optionDisabled}>
+                <RadioGroup.ItemHiddenInput />
                 <RadioGroup.ItemControl />
                 <RadioGroup.ItemText>{optionLabel}</RadioGroup.ItemText>
               </RadioGroup.Item>

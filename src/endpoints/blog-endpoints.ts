@@ -28,7 +28,8 @@ export async function saveDocument(props : FuncProps) {
 }
 
 export async function getAllDocuments(props : FuncProps) {
-  return (await request.get(`blog/ps/documents?page=${props.params?.page}&size=${props.params?.size}&folderId=${props.params?.folderId}&dateSort=${props.params?.dateSort}`
+  const localeParam = props.params?.locale ? `&locale=${props.params.locale}` : '';
+  return (await request.get(`blog/ps/documents?page=${props.params?.page}&size=${props.params?.size}&folderId=${props.params?.folderId}&dateSort=${props.params?.dateSort}${localeParam}`
   )) as AxiosResponse<DocumentsInfo>
 }
 
@@ -38,7 +39,8 @@ export async function searchDocuments(props : FuncProps) {
 }
 
 export async function getDocumentsByAuth(props : FuncProps) {
-  return (await request.get(`blog/documents?page=${props.params?.page}&size=${props.params?.size}&folderId=${props.params?.folderId}&type=${props.params?.type}&dateSort=${props.params?.dateSort}`, {
+  const localeParam = props.params?.locale ? `&locale=${props.params.locale}` : '';
+  return (await request.get(`blog/documents?page=${props.params?.page}&size=${props.params?.size}&folderId=${props.params?.folderId}&type=${props.params?.type}&dateSort=${props.params?.dateSort}${localeParam}`, {
     headers: {
       Authorization : `Bearer ${props.accessToken}`
     }

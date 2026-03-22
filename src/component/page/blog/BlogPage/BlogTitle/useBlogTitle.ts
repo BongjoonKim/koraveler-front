@@ -14,7 +14,9 @@ import {useCurrentUser} from "../../../../../hooks/useCurrentUser";
 
 
 export default function useBlogTitle() {
-  const match = useMatch("/blog/:type");
+  const matchWithLocale = useMatch("/blog/:type/:locale");
+  const matchLegacy = useMatch("/blog/:type");
+  const match = matchWithLocale || matchLegacy;
   const [blogTitles, setBlogTitles] = useState<string[]>(Object.values(BLOG_PAGE_TYPE));
   const [curPageTitle, setCurPageTitle] = useState<BlogPageTypeType>(upperCase(BLOG_PAGE_TYPE.HOME));
   const [sortOptions, setSortOptions] = useState<BlogListSortsOptionsType[]>(BLOG_LIST_SORTS_OPTIONS);

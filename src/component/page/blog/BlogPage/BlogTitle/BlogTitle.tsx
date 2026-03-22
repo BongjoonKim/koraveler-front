@@ -5,6 +5,7 @@ import useBlogTitle from "./useBlogTitle";
 import {BLOG_LIST_SORTS, BlogListSortsOptionsType} from "../../../../../constants/constants";
 import styled from "styled-components";
 import {Link} from "react-router-dom";
+import {useBlogLocale} from "../../../../../hooks/useBlogLocale";
 
 function BlogTitle({ ...props }) {
   const {
@@ -14,6 +15,7 @@ function BlogTitle({ ...props }) {
     selectedOption,
     currentUser,
   } = useBlogTitle();
+  const { blogListUrl } = useBlogLocale();
   
   console.log("currentUser", currentUser)
   
@@ -66,9 +68,7 @@ function BlogTitle({ ...props }) {
       
       {/* 카테고리 필터 (Optional) */}
       <Stack direction="row" gap={2} flexWrap="wrap">
-      
-
-        <Link className="box" to={`/blog/home`}>
+        <Link className="box" to={blogListUrl('home')}>
           <Badge
             colorPalette="purple"
             size="lg"
@@ -83,7 +83,7 @@ function BlogTitle({ ...props }) {
         </Link>
       {currentUser?.id && (
         <>
-        <Link className="box" to={`/blog/my-blog`}>
+        <Link className="box" to={blogListUrl('my-blog')}>
           <Badge
             colorPalette="purple"
             size="lg"
@@ -96,7 +96,7 @@ function BlogTitle({ ...props }) {
             My Post
           </Badge>
         </Link>
-        <Link className="box" to={`/blog/bookmark`}>
+        <Link className="box" to={blogListUrl('bookmark')}>
           <Badge
             colorPalette="blue"
             variant="outline"
@@ -110,7 +110,7 @@ function BlogTitle({ ...props }) {
             Bookmark
           </Badge>
         </Link>
-        <Link className="box" to={`/blog/draft`}>
+        <Link className="box" to={blogListUrl('draft')}>
           <Badge
             colorPalette="blue"
             variant="outline"
@@ -122,6 +122,20 @@ function BlogTitle({ ...props }) {
             _hover={{ bg: "blue.50" }}
           >
             Draft
+          </Badge>
+        </Link>
+        <Link className="box" to={blogListUrl('hidden')}>
+          <Badge
+            colorPalette="blue"
+            variant="outline"
+            size="lg"
+            borderRadius="full"
+            px={4}
+            py={2}
+            cursor="pointer"
+            _hover={{ bg: "blue.50" }}
+          >
+            Hidden
           </Badge>
         </Link>
         </>

@@ -366,6 +366,7 @@ function FindRoute(props: FindRouteProps) {
     >
       <Card.Body
         color="black"
+        p={{ base: 3, md: 5 }}
         css={{
           flex : "direction,"
         }}
@@ -374,7 +375,7 @@ function FindRoute(props: FindRouteProps) {
           <HStack justify="space-between">
             <HStack gap={2}>
               <Box
-                p={2}
+                p={{ base: 2.5, md: 2 }}
                 borderRadius="lg"
                 css={{
                   background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
@@ -383,7 +384,7 @@ function FindRoute(props: FindRouteProps) {
               >
                 <MapIcon size={24} />
               </Box>
-              <Text fontSize="lg" fontWeight="semibold">
+              <Text fontSize={{ base: "md", md: "lg" }} fontWeight="semibold">
                 Route Finder
               </Text>
             </HStack>
@@ -424,6 +425,12 @@ function FindRoute(props: FindRouteProps) {
                         borderRadius: "lg",
                         fontWeight: "500",
                         transition: "all 0.2s",
+                        padding: "8px 16px",
+                        fontSize: "14px",
+                        "@media (max-width: 768px)": {
+                          padding: "10px 20px",
+                          fontSize: "15px",
+                        },
                         "&[data-selected]": {
                           background: "white",
                           color: "#6366f1",
@@ -442,9 +449,9 @@ function FindRoute(props: FindRouteProps) {
                   {isExpanded && (
                     <>
                       <Tabs.Content value="0">
-                        <VStack gap={3} mt={3}>
+                        <VStack gap={{ base: 4, md: 3 }} mt={3}>
                           {/* 이동 수단 선택 */}
-                          <HStack w="full" justify="center" gap={2}>
+                          <HStack w="full" justify="center" gap={{ base: 3, md: 2 }}>
                             <CusButton
                               size="sm"
                               leftIcon={<Train size={16} />}
@@ -639,11 +646,10 @@ function FindRoute(props: FindRouteProps) {
                         <Box mt={3}>
                           <Box
                             w="full"
-                            minH="250px"
-                            aspectRatio={2}
+                            h={{ base: "520px", md: "600px" }}
                             borderRadius="lg"
                             overflow="hidden"
-                            bg="whiteAlpha.200"
+                            bg="gray.100"
                             position="relative"
                           >
                             <MapInfo

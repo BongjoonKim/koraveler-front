@@ -7,6 +7,7 @@ import {
   X,
   Shield,
   ShieldCheck,
+  Eye,
   UserMinus,
   ChevronDown,
   Loader2,
@@ -39,6 +40,7 @@ function TravelMembers({
   const [debouncedKeyword, setDebouncedKeyword] = useState("");
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
+  const [addRole, setAddRole] = useState<"USER" | "VIEWER">("USER");
 
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -90,7 +92,7 @@ function TravelMembers({
     try {
       await addMember.mutateAsync({
         travelId,
-        reqBody: { userId: user.userId, role: "USER" },
+        reqBody: { userId: user.userId, role: addRole },
       });
       // 검색 결과 캐시 무효화 (추가된 사용자 제외를 위해)
       queryClient.invalidateQueries({
@@ -126,6 +128,7 @@ function TravelMembers({
     setIsAddModalOpen(false);
     setSearchKeyword("");
     setDebouncedKeyword("");
+    setAddRole("USER");
   };
 
   return (
@@ -169,6 +172,8 @@ function TravelMembers({
                 >
                   {member.role === "ADMIN" ? (
                     <ShieldCheck size={10} />
+                  ) : member.role === "VIEWER" ? (
+                    <Eye size={10} />
                   ) : (
                     <Shield size={10} />
                   )}
@@ -191,7 +196,7 @@ function TravelMembers({
                   {isMenuOpen && (
                     <div className="dropdown-menu">
                       {/* 역할 변경 */}
-                      {member.role === "USER" ? (
+                      {member.role !== "ADMIN" && (
                         <button
                           className="dropdown-item"
                           onClick={() =>
@@ -202,7 +207,8 @@ function TravelMembers({
                           <ShieldCheck size={14} />
                           Promote to Admin
                         </button>
-                      ) : (
+                      )}
+                      {member.role !== "USER" && (
                         <button
                           className="dropdown-item"
                           onClick={() =>
@@ -211,7 +217,19 @@ function TravelMembers({
                           disabled={updateRole.isPending}
                         >
                           <Shield size={14} />
-                          Demote to User
+                          {member.role === "ADMIN" ? "Demote to User" : "Promote to User"}
+                        </button>
+                      )}
+                      {member.role !== "VIEWER" && (
+                        <button
+                          className="dropdown-item"
+                          onClick={() =>
+                            handleRoleChange(member.userId, "VIEWER")
+                          }
+                          disabled={updateRole.isPending}
+                        >
+                          <Eye size={14} />
+                          Set as Viewer
                         </button>
                       )}
 
@@ -259,6 +277,25 @@ function TravelMembers({
         size="sm"
       >
         <div className="add-member-body">
+          {/* 역할 선택 */}
+          <div className="role-selector">
+            <span className="role-selector-label">Add as:</span>
+            <button
+              className={`role-option ${addRole === "USER" ? "active" : ""}`}
+              onClick={() => setAddRole("USER")}
+            >
+              <Shield size={12} />
+              User
+            </button>
+            <button
+              className={`role-option ${addRole === "VIEWER" ? "active" : ""}`}
+              onClick={() => setAddRole("VIEWER")}
+            >
+              <Eye size={12} />
+              Viewer
+            </button>
+          </div>
+
           {/* 검색 입력 */}
           <div className="search-wrap">
             <Search size={16} className="search-icon" />
@@ -497,6 +534,10 @@ const StyledTravelMembers = styled.div`
       background: rgba(158, 158, 158, 0.12);
       color: #757575;
     }
+    &.viewer {
+      background: rgba(33, 150, 243, 0.12);
+      color: #1976d2;
+    }
   }
 
   /* 멤버 액션 */
@@ -579,6 +620,46 @@ const StyledTravelMembers = styled.div`
   .empty-text {
     font-size: 13px;
     color: #a5b4fc;
+  }
+
+  /* 역할 선택기 */
+  .role-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .role-selector-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #6366f1;
+    margin-right: 4px;
+  }
+
+  .role-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 12px;
+    border: 1.5px solid rgba(99, 102, 241, 0.2);
+    border-radius: 10px;
+    background: transparent;
+    color: #6366f1;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      background: rgba(99, 102, 241, 0.04);
+    }
+
+    &.active {
+      background: rgba(99, 102, 241, 0.12);
+      border-color: #6366f1;
+      font-weight: 600;
+    }
   }
 
   /* 멤버 추가 모달 */
@@ -791,6 +872,10 @@ const StyledTravelMembers = styled.div`
     &.user {
       background: rgba(158, 158, 158, 0.1);
       color: #9e9e9e;
+    }
+    &.viewer {
+      background: rgba(33, 150, 243, 0.1);
+      color: #1976d2;
     }
   }
 
