@@ -4,10 +4,24 @@ import {
   MapPinned,
   Utensils,
   Train,
+  MessageCircle,
 } from "lucide-react";
 import { TravelPluginDefinition } from "../types/travel/travelPluginTypes";
 
 export const TRAVEL_PLUGINS: TravelPluginDefinition[] = [
+  {
+    id: "travel-chat",
+    name: "Travel Chat",
+    description: "Chat with your travel companions to plan and coordinate your trip together",
+    longDescription:
+      "Connect with fellow travelers in your project. Share ideas, discuss itineraries, and coordinate plans in real-time with group chat.",
+    icon: MessageCircle,
+    category: "social",
+    status: "available",
+    color: "#06b6d4",
+    colorEnd: "#0891b2",
+    tags: ["chat", "messenger", "collaborate"],
+  },
   {
     id: "youtube-summarizer",
     name: "YouTube Summarizer",
@@ -16,7 +30,7 @@ export const TRAVEL_PLUGINS: TravelPluginDefinition[] = [
       "Extract key points, timestamps, and travel tips from YouTube travel vlogs and guides. Perfect for researching destinations before your trip.",
     icon: Youtube,
     category: "content",
-    status: "available",
+    status: "coming_soon",
     color: "#ef4444",
     colorEnd: "#dc2626",
     tags: ["video", "summary", "research"],
@@ -29,7 +43,7 @@ export const TRAVEL_PLUGINS: TravelPluginDefinition[] = [
       "Automatically extract and organize important details from travel blog posts — itineraries, restaurant recommendations, tips, and more.",
     icon: FileText,
     category: "content",
-    status: "available",
+    status: "coming_soon",
     color: "#3b82f6",
     colorEnd: "#2563eb",
     tags: ["blog", "article", "organize"],

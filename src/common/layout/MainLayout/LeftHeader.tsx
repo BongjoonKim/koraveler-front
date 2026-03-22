@@ -5,7 +5,7 @@ import posthog from 'posthog-js';
 import {Link, useLocation} from "react-router-dom";
 
 // Option 1: 그라데이션 텍스트 로고
-export function KoravelerLogo1() {
+export function NadelivLogo1() {
   return (
       <Link to="/home">
         <Text
@@ -21,7 +21,7 @@ export function KoravelerLogo1() {
           }}
           transition="transform 0.2s"
         >
-          Koraveler
+          Nadeliv
         </Text>
       </Link>
   );
@@ -43,7 +43,7 @@ function LeftHeader() {
   return (
     <Stack direction="row" gap={8} align="center">
       {/* Logo */}
-      <KoravelerLogo1 />
+      <NadelivLogo1 />
       
       {/* Navigation Menu - Desktop */}
       <Stack direction="row" gap={6} display={{ base: "flex", md: "flex" }}>

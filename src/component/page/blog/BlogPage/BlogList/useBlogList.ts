@@ -103,6 +103,21 @@ function useBlogList(props : BlogHomeProps) {
           throw res.statusText;
         }
         blogPosts = res.data;
+      } else if (match?.params?.type === BLOG_PAGE_TYPE.HIDDEN) {
+        const res = await authEP({
+          func : getDocumentsByAuth,
+          params : {
+            page : page,
+            size : size,
+            type : BLOG_PAGE_TYPE.HIDDEN,
+            dateSort : dateSort,
+            locale : activeLocale
+          },
+        })
+        if (res.status !== 200) {
+          throw res.statusText;
+        }
+        blogPosts = res.data;
       }
       if (!blogPosts?.documents) return;
       const updatedBlogPosts = {

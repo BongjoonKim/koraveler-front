@@ -32,7 +32,7 @@ function LoginPage(props: LoginPageProps) {
         className="title"
         onClick={handleClickTitle}
       >
-        Koraveler
+        Nadeliv
       </span>
       <div className="wrapper-body">
         <CusInput

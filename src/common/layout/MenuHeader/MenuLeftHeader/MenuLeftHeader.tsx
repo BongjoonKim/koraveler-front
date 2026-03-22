@@ -10,7 +10,7 @@ function MenuLeftHeader(props: LeftHeaderProps) {
   return (
     <StyledLeftHeader>
       <a className={"title"} href={`${process.env.REACT_APP_URI}/home`}>
-        Koraveler
+        Nadeliv
       </a>
       <div>
         {menuList.map(menu => {

@@ -1,7 +1,7 @@
 // Travel Enums
 export type TravelVisibility = "PUBLIC" | "PRIVATE";
 export type TravelStatus = "PLANNING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
-export type TravelRole = "ADMIN" | "USER";
+export type TravelRole = "ADMIN" | "USER" | "VIEWER";
 
 // Embedded Models
 export interface SchedulePlace {

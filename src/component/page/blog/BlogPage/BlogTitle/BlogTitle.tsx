@@ -68,8 +68,6 @@ function BlogTitle({ ...props }) {
       
       {/* 카테고리 필터 (Optional) */}
       <Stack direction="row" gap={2} flexWrap="wrap">
-      
-
         <Link className="box" to={blogListUrl('home')}>
           <Badge
             colorPalette="purple"
@@ -124,6 +122,20 @@ function BlogTitle({ ...props }) {
             _hover={{ bg: "blue.50" }}
           >
             Draft
+          </Badge>
+        </Link>
+        <Link className="box" to={blogListUrl('hidden')}>
+          <Badge
+            colorPalette="blue"
+            variant="outline"
+            size="lg"
+            borderRadius="full"
+            px={4}
+            py={2}
+            cursor="pointer"
+            _hover={{ bg: "blue.50" }}
+          >
+            Hidden
           </Badge>
         </Link>
         </>

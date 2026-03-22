@@ -19,6 +19,7 @@ import {
   Circle,
   XCircle,
   Tag,
+  MessageCircle,
 } from "lucide-react";
 import { useGetTravel } from "../../../../hooks/useTravelQueries";
 import { TravelStatus } from "../../../../types/travel/travelTypes";
@@ -71,6 +72,13 @@ function TravelDashboard(props: TravelDashboardProps) {
   const isAdmin = travel?.members?.some(
     (m) => m.userId === currentUserId && m.role === "ADMIN"
   ) ?? false;
+  const isViewer = travel?.members?.some(
+    (m) => m.userId === currentUserId && m.role === "VIEWER"
+  ) ?? false;
+  // ADMIN 또는 USER만 편집 가능
+  const canEdit = !isViewer && (travel?.members?.some(
+    (m) => m.userId === currentUserId
+  ) ?? false)
 
   useEffect(() => {
     if (travel) setLoaded(true);
@@ -309,9 +317,11 @@ function TravelDashboard(props: TravelDashboardProps) {
             <Clock size={16} />
             Schedules
           </h3>
-          <button className="section-action">
-            <Plus size={16} />
-          </button>
+          {canEdit && (
+            <button className="section-action">
+              <Plus size={16} />
+            </button>
+          )}
         </div>
         <div className="schedules-list">
           {travel.schedules
@@ -354,6 +364,40 @@ function TravelDashboard(props: TravelDashboardProps) {
           )}
         </div>
       </div>
+
+      {/* Chat Section */}
+      <div className="dash-section">
+        <div className="section-header">
+          <h3 className="section-title">
+            <MessageCircle size={16} />
+            Chat
+          </h3>
+          <button
+            className="section-action"
+            onClick={() => navigate(`/travel/chat/${travelId}`)}
+          >
+            <ChevronRight size={16} />
+          </button>
+        </div>
+        <div
+          className="chat-entry"
+          onClick={() => navigate(`/travel/chat/${travelId}`)}
+        >
+          <div className="chat-entry-icon">
+            <MessageCircle size={24} />
+          </div>
+          <div className="chat-entry-content">
+            <span className="chat-entry-title">Travel Chat</span>
+            <span className="chat-entry-desc">
+              {travel.channelIds && travel.channelIds.length > 0
+                ? `${travel.channelIds.length} channel${travel.channelIds.length > 1 ? "s" : ""} active`
+                : "Start chatting with your travel companions"}
+            </span>
+          </div>
+          <ChevronRight size={18} className="chat-entry-arrow" />
+        </div>
+      </div>
+
       {/* Settings Modal */}
       <TravelSettings
         travelId={travel.id}
@@ -755,6 +799,10 @@ const StyledTravelDashboard = styled.div`
       background: rgba(158, 158, 158, 0.12);
       color: #757575;
     }
+    &.viewer {
+      background: rgba(33, 150, 243, 0.12);
+      color: #1976d2;
+    }
   }
 
   /* Schedules */
@@ -857,6 +905,58 @@ const StyledTravelDashboard = styled.div`
       font-size: 13px;
       color: #a5b4fc;
     }
+  }
+
+  /* Chat Entry */
+  .chat-entry {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid #e8e8f0;
+
+    &:hover {
+      background: #f8f7ff;
+      border-color: #c7d2fe;
+    }
+  }
+
+  .chat-entry-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #06b6d4, #0891b2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .chat-entry-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .chat-entry-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a2e;
+  }
+
+  .chat-entry-desc {
+    font-size: 12.5px;
+    color: #8888a0;
+  }
+
+  .chat-entry-arrow {
+    color: #c0c0d0;
+    flex-shrink: 0;
   }
 
   @media screen and (max-width: 600px) {

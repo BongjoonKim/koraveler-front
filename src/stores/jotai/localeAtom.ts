@@ -4,7 +4,7 @@ import { LocaleCode, SUPPORTED_LOCALES } from '../../types/i18n/i18nTypes';
 
 // 브라우저 저장소에 유지되는 사용자 선호 언어 (로그인 유저가 설정한 기본 언어)
 export const preferredLocaleAtom = atomWithStorage<LocaleCode | null>(
-    'koraveler_preferred_locale',
+    'nadeliv_preferred_locale',
     null
 );
 

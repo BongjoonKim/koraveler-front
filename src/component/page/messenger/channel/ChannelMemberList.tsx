@@ -33,6 +33,7 @@ import {
 } from '../../../../hooks/useMessengerQueries';
 import MemberItem from "./MemberItems";
 import InviteUserModal from "./InviteUserModal";
+import TravelInviteModal from "./TravelInviteModal";
 import {useCurrentUser} from "../../../../hooks/useCurrentUser";
 
 const toaster = createToaster({
@@ -44,13 +45,17 @@ interface ChannelMemberListProps {
   isVisible: boolean;
   onClose: () => void;
   currentUserId: string;
+  travelId?: string; // Travel 채널인 경우 프로젝트 멤버만 초대 가능
+  travelChannelId?: string; // Travel 채널 브릿지 ID
 }
 
 export default function ChannelMemberList({
                                             channelId,
                                             isVisible,
                                             onClose,
-                                            currentUserId
+                                            currentUserId,
+                                            travelId,
+                                            travelChannelId,
                                           }: ChannelMemberListProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMember, setSelectedMember] = useState<string | null>(null);
@@ -470,12 +475,22 @@ export default function ChannelMemberList({
       </Box>
       
       {/* Invite User Modal */}
-      <InviteUserModal
-        isOpen={showInviteModal}
-        onClose={handleInviteModalClose}
-        channelId={channelId}
-        channelName={selectedChannel?.name || ''}
-      />
+      {travelId && travelChannelId ? (
+        <TravelInviteModal
+          isOpen={showInviteModal}
+          onClose={handleInviteModalClose}
+          travelId={travelId}
+          travelChannelId={travelChannelId}
+          channelName={selectedChannel?.name || ''}
+        />
+      ) : (
+        <InviteUserModal
+          isOpen={showInviteModal}
+          onClose={handleInviteModalClose}
+          channelId={channelId}
+          channelName={selectedChannel?.name || ''}
+        />
+      )}
     </>
   );
 }

@@ -59,31 +59,31 @@ jobs:
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/koraveler.pem
-          chmod 600 ~/.ssh/koraveler.pem
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/nadeliv.pem
+          chmod 600 ~/.ssh/nadeliv.pem
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
       # 7. 기존 파일 제거
       - name: Remove existing deployment
         run: |
-          ssh -i ~/.ssh/koraveler.pem ubuntu@${{ secrets.EC2_HOST }} \
-            "if [ -d /home/ubuntu/koraveler-front/build ]; then \
-               sudo rm -rf /home/ubuntu/koraveler-front/build; \
+          ssh -i ~/.ssh/nadeliv.pem ubuntu@${{ secrets.EC2_HOST }} \
+            "if [ -d /home/ubuntu/nadeliv-front/build ]; then \
+               sudo rm -rf /home/ubuntu/nadeliv-front/build; \
              fi"
 
       # 8. 파일 전송
       - name: Deploy to EC2
         run: |
           # .env.production 파일 전송
-          scp -i ~/.ssh/koraveler.pem .env.production ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/koraveler-front/
+          scp -i ~/.ssh/nadeliv.pem .env.production ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/nadeliv-front/
           
           # build 디렉토리 전송
-          scp -i ~/.ssh/koraveler.pem -r build ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/koraveler-front/
+          scp -i ~/.ssh/nadeliv.pem -r build ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/nadeliv-front/
 
       # 9. Nginx 자동 시작 설정 확인 및 적용
       - name: Enable Nginx auto-start on boot
         run: |
-          ssh -i ~/.ssh/koraveler.pem ubuntu@${{ secrets.EC2_HOST }} \
+          ssh -i ~/.ssh/nadeliv.pem ubuntu@${{ secrets.EC2_HOST }} \
             "sudo systemctl enable nginx && \
              echo 'Nginx auto-start enabled' && \
              sudo systemctl is-enabled nginx"
@@ -91,19 +91,19 @@ jobs:
       # 10. Nginx 재시작
       - name: Restart Nginx
         run: |
-          ssh -i ~/.ssh/koraveler.pem ubuntu@${{ secrets.EC2_HOST }} \
+          ssh -i ~/.ssh/nadeliv.pem ubuntu@${{ secrets.EC2_HOST }} \
             "sudo systemctl restart nginx && \
              sudo systemctl status nginx --no-pager"
 
       # 11. 배포 확인 (옵션)
       - name: Verify deployment
         run: |
-          ssh -i ~/.ssh/koraveler.pem ubuntu@${{ secrets.EC2_HOST }} \
+          ssh -i ~/.ssh/nadeliv.pem ubuntu@${{ secrets.EC2_HOST }} \
             "curl -I localhost || echo 'Health check failed'"
 
       # 12. 정리
       - name: Cleanup
         if: always()
         run: |
-          rm -f ~/.ssh/koraveler.pem
+          rm -f ~/.ssh/nadeliv.pem
           rm -f .env.production
