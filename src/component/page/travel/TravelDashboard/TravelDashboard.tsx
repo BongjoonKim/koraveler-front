@@ -7,7 +7,6 @@ import {
   MapPin,
   Calendar,
   Users,
-  Image as ImageIcon,
   Clock,
   Eye,
   EyeOff,
@@ -19,12 +18,14 @@ import {
   CircleDot,
   Circle,
   XCircle,
+  Tag,
 } from "lucide-react";
 import { useGetTravel } from "../../../../hooks/useTravelQueries";
 import { TravelStatus } from "../../../../types/travel/travelTypes";
 import { useCurrentUser } from "../../../../hooks/useCurrentUser";
 import TravelAlbum from "./TravelAlbum";
 import TravelMembers from "./TravelMembers";
+import TravelSettings from "./TravelSettings";
 
 export interface TravelDashboardProps {}
 
@@ -64,6 +65,7 @@ function TravelDashboard(props: TravelDashboardProps) {
   const { data: travel, isLoading, error } = useGetTravel(travelId);
   const { data: currentUser } = useCurrentUser();
   const [loaded, setLoaded] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const currentUserId = currentUser?.id;
   const isAdmin = travel?.members?.some(
@@ -164,9 +166,11 @@ function TravelDashboard(props: TravelDashboardProps) {
           <ArrowLeft size={20} />
         </button>
         <div className="dash-header-right">
-          <button className="settings-btn">
-            <Settings size={18} />
-          </button>
+          {isAdmin && (
+            <button className="settings-btn" onClick={() => setSettingsOpen(true)}>
+              <Settings size={18} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -270,8 +274,12 @@ function TravelDashboard(props: TravelDashboardProps) {
       )}
 
       {/* Tags */}
-      {travel.tags && travel.tags.length > 0 && (
-        <div className="dash-section">
+      <div className="dash-section">
+        <h3 className="section-title">
+          <Tag size={16} />
+          Tags
+        </h3>
+        {travel.tags && travel.tags.length > 0 ? (
           <div className="tags-wrap">
             {travel.tags.map((tag) => (
               <span key={tag} className="tag-chip">
@@ -279,8 +287,10 @@ function TravelDashboard(props: TravelDashboardProps) {
               </span>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="empty-text">No tags yet</p>
+        )}
+      </div>
 
       {/* Members Section */}
       <div className="dash-section">
@@ -344,6 +354,17 @@ function TravelDashboard(props: TravelDashboardProps) {
           )}
         </div>
       </div>
+      {/* Settings Modal */}
+      <TravelSettings
+        travelId={travel.id}
+        currentTitle={travel.title}
+        currentDescription={travel.description}
+        currentTags={travel.tags}
+        currentVisibility={travel.visibility}
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        onDeleted={() => navigate("/travel/home")}
+      />
     </StyledTravelDashboard>
     </Container>
   );
