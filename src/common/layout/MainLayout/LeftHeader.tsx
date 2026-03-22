@@ -48,7 +48,7 @@ function LeftHeader() {
       {/* Navigation Menu - Desktop */}
       <Stack direction="row" gap={6} display={{ base: "flex", md: "flex" }}>
         {menus.map((menu: MenusDTO, index: number) => (
-          <Link key={menu.id || index} to={`${process.env.REACT_APP_URI}${menu.url}`}>
+          <Link key={menu.id || index} to={menu.url || "#"}>
               <Text
                 color="gray.700"
                 fontWeight="medium"
