@@ -5,6 +5,7 @@ import TravelHomeMain from "../../component/page/travel/TravelHome/TravelHomeMai
 import TravelCreateProject from "../../component/page/travel/TravelCreateProject";
 import TravelDashboard from "../../component/page/travel/TravelDashboard";
 import TravelChat from "../../component/page/travel/TravelChat";
+import ProtectedRoute from "../ProtectedRoute";
 
 export default function TravelRoutes() {
   return (
@@ -12,10 +13,25 @@ export default function TravelRoutes() {
       <Routes>
         {/* MainLayout이 필요한 라우트들 */}
         <Route element={<MainLayout showHero={false} />}>
+          {/* 비로그인 허용 */}
           <Route path="/home" element={<TravelHomeMain />} />
-          <Route path="/create" element={<TravelCreateProject />} />
-          <Route path="/dashboard/:travelId" element={<TravelDashboard />} />
-          <Route path="/chat/:travelId" element={<TravelChat />} />
+
+          {/* 로그인 필요 */}
+          <Route path="/create" element={
+            <ProtectedRoute>
+              <TravelCreateProject />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard/:travelId" element={
+            <ProtectedRoute>
+              <TravelDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/chat/:travelId" element={
+            <ProtectedRoute>
+              <TravelChat />
+            </ProtectedRoute>
+          } />
         </Route>
       </Routes>
     </StyledTravelRoutes>

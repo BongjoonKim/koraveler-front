@@ -30,25 +30,24 @@ export default function ProtectedRoute({
       </Flex>
     )
   }
-  console.log("currentUser", currentUser)
   if (!currentUser) {
     return <Navigate to={'/login'} state={{from: location.pathname}} replace />
   }
-  
+
   if (requiredRoles?.length > 0) {
     const hasRequiredRole = requiredRoles.some(role => {
       return currentUser.roles?.includes(role);
     })
-    
+
     if (!hasRequiredRole) {
       return <Navigate to={"/error/403"} replace />
     }
   }
-  
+
   return (
     <>
       {children}
     </>
   )
-  
+
 }
