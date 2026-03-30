@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import {Stack, Button, IconButton, Box, Portal, Menu} from "@chakra-ui/react";
-import { Search, User, Menu as MenuIcon, Globe } from "lucide-react";
+import { Search, User, Menu as MenuIcon, Globe, UserCircle, FileText, MessageCircle, FolderOpen, Shield, LogOut, LogIn, UserPlus } from "lucide-react";
 import {
   MenuRoot,
   MenuTrigger,
@@ -133,16 +133,20 @@ function RightHeader() {
                     {currentUser ? (
                       <>
                         <MenuItem value="profile" onClick={handleProfile}>
+                          <UserCircle size={14} style={{ marginRight: 6 }} />
                           Profile
                         </MenuItem>
                         <MenuItem value="blogs" onClick={handleMyBlogs}>
+                          <FileText size={14} style={{ marginRight: 6 }} />
                           My Blogs
                         </MenuItem>
                         <MenuItem value="create" onClick={handleChat}>
+                          <MessageCircle size={14} style={{ marginRight: 6 }} />
                           Chat
                         </MenuItem>
                         <MenuSeparator />
                         <MenuItem value="user/folder" onClick={handleUser}>
+                          <FolderOpen size={14} style={{ marginRight: 6 }} />
                           User
                         </MenuItem>
                         <MenuItem value="language" onClick={handleOpenLanguageModal}>
@@ -151,21 +155,25 @@ function RightHeader() {
                         </MenuItem>
                         {currentUser.roles?.includes("admin") ? (
                           <MenuItem value="admin/menu" onClick={handleAdmin}>
+                            <Shield size={14} style={{ marginRight: 6 }} />
                             Admin
                           </MenuItem>
                         ) : (
                           <></>
                         )}
                         <MenuItem value="logout" onClick={handleLogout} color="red.600">
+                          <LogOut size={14} style={{ marginRight: 6 }} />
                           Logout
                         </MenuItem>
                       </>
                     ) : (
                       <>
                         <MenuItem value="login" onClick={handleLogin}>
+                          <LogIn size={14} style={{ marginRight: 6 }} />
                           Login
                         </MenuItem>
                         <MenuItem value="signup" onClick={handleSignup}>
+                          <UserPlus size={14} style={{ marginRight: 6 }} />
                           Sign Up
                         </MenuItem>
                       </>

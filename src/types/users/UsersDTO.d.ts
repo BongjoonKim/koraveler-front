@@ -64,3 +64,13 @@ export interface PasswordChangeRequest {
 export interface UserDeleteRequest {
   password: string;
 }
+
+// 이메일 인증
+export interface EmailVerificationRequest {
+  email: string;
+}
+
+export interface EmailCodeVerifyRequest {
+  email: string;
+  code: string;
+}

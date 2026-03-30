@@ -11,8 +11,13 @@ import {getUsers, searchUsers,
   deleteUserAccount,
 } from "../endpoints/users-endpoints";
 import {
+  sendVerificationCode,
+  verifyEmailCode,
+} from "../endpoints/login-endpoints";
+import {
   User, UserSearchResponse,
   UserProfileResponse, UserUpdateRequest, PasswordChangeRequest, UserDeleteRequest,
+  EmailVerificationRequest, EmailCodeVerifyRequest,
 } from "../types/users/UsersDTO";
 // Types
 
@@ -323,6 +328,26 @@ export const useDeleteUserAccount = () => {
         func: deleteUserAccount,
         reqBody: data,
       });
+    },
+  });
+};
+
+// 이메일 인증 코드 발송 훅
+export const useSendVerificationCode = () => {
+  return useMutation<string, Error, EmailVerificationRequest>({
+    mutationFn: async (data) => {
+      const response = await sendVerificationCode(data);
+      return response.data;
+    },
+  });
+};
+
+// 이메일 인증 코드 검증 훅
+export const useVerifyEmailCode = () => {
+  return useMutation<string, Error, EmailCodeVerifyRequest>({
+    mutationFn: async (data) => {
+      const response = await verifyEmailCode(data);
+      return response.data;
     },
   });
 };
