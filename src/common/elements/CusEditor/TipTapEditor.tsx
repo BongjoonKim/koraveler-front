@@ -19,6 +19,8 @@ import styled from "styled-components";
 import ResizableImage from "./extensions/ResizableImage";
 import {columnResizing, tableEditing, goToNextCell, fixTables, mergeCells, splitCell} from 'prosemirror-tables';
 import ResizableVideo from "./extensions/ResizableVideo";
+import BookmarkCard from "./extensions/BookmarkCard";
+import {getOgMetadata} from "../../../endpoints/common-endpoints";
 
 
 // Type definitions for Tiptap extensions
@@ -68,6 +70,7 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
       }),
       ResizableImage,
       ResizableVideo,
+      BookmarkCard,
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -766,6 +769,41 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
             title="Insert Link"
           >
             🔗 Link
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={async () => {
+              const url = window.prompt("Bookmark URL을 입력하세요:");
+              if (!url) return;
+              // 낙관적 삽입 — 먼저 URL만으로 카드 생성, 이후 메타데이터가 오면 업데이트
+              editor.chain().focus().setBookmarkCard({ url }).run();
+              try {
+                const { data } = await getOgMetadata(url);
+                // 삽입 직후 마지막 bookmarkCard 노드를 찾아 attrs 업데이트
+                const { state, view } = editor;
+                let targetPos: number | null = null;
+                state.doc.descendants((node, pos) => {
+                  if (node.type.name === "bookmarkCard" && node.attrs.url === url) {
+                    targetPos = pos;
+                  }
+                });
+                if (targetPos !== null) {
+                  const tr = view.state.tr.setNodeMarkup(targetPos, undefined, {
+                    url,
+                    title: data.title ?? null,
+                    description: data.description ?? null,
+                    image: data.image ?? null,
+                    favicon: data.favicon ?? null,
+                    siteName: data.siteName ?? null,
+                  });
+                  view.dispatch(tr);
+                }
+              } catch (e) {
+                console.warn("북마크 메타데이터 조회 실패 — URL만 유지:", e);
+              }
+            }}
+            title="북마크 카드로 삽입"
+          >
+            📎 Bookmark
           </ToolbarButton>
         </ToolbarGroup>
         

@@ -46,6 +46,10 @@ declare interface DocumentDTO extends CommonDTO {
   // i18n: 원본 언어 코드
   originalLocale?: string;
 
+  // Soft delete (휴지통). isDeleted=true면 휴지통에 있고 deletedAt+90일에 영구 삭제됨
+  isDeleted?: boolean;
+  deletedAt?: string;
+
   // Featured 관련 필드 추가
   featuredReady?: boolean;
   featuredInfo?: FeaturedInfo;

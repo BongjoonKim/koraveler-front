@@ -55,6 +55,15 @@ export async function deleteDocument(props : FuncProps) {
   return (await request.delete(`blog/ps/document?id=${props.params?.id}`)) as AxiosResponse<any>;
 }
 
+// 휴지통에서 글 복구
+export async function restoreDocument(props : FuncProps) {
+  return (await request.patch(`blog/document/${props.params?.id}/restore`, undefined, {
+    headers: {
+      Authorization: `Bearer ${props.accessToken}`
+    }
+  })) as AxiosResponse<any>;
+}
+
 // Featured 관련 엔드포인트
 export async function getActiveFeaturedDocuments(props: FuncProps) {
   return (await request.get(`blog/ps/featured/active`, {

@@ -3,7 +3,8 @@ export const BLOG_PAGE_TYPE = {
   MY_BLOG : "my-blog",
   BOOKMARK : "bookmark",
   DRAFT: "draft",
-  HIDDEN: "hidden"
+  HIDDEN: "hidden",
+  TRASH: "trash"
 }
 
 export enum BLOG_SAVE_TYPE {

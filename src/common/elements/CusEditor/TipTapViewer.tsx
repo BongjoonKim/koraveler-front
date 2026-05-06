@@ -16,6 +16,7 @@ import TableHeader from "@tiptap/extension-table-header";
 import Image from "@tiptap/extension-image";
 import styled from "styled-components";
 import ViewerVideo from "./extensions/ViewerVideo";
+import BookmarkCard from "./extensions/BookmarkCard";
 
 export interface TiptapViewerProps {
   contents?: string;
@@ -83,6 +84,7 @@ function TiptapViewer({ contents }: TiptapViewerProps) {
         },
       }),
       ViewerVideo,
+      BookmarkCard,
       Link.configure({
         openOnClick: true,
         HTMLAttributes: {
