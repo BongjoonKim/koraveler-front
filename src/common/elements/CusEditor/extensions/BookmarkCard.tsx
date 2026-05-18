@@ -233,62 +233,64 @@ const CardLink = styled.a<{ $selected: boolean; $hasImage: boolean }>`
   gap: 0;
   text-decoration: none;
   color: inherit;
-  border: 1px solid ${({ $selected }) => ($selected ? "#4a90e2" : "rgba(255,255,255,0.15)")};
-  border-radius: 8px;
+  border: 1px solid ${({ $selected }) => ($selected ? "#4a90e2" : "#e5e7eb")};
+  border-radius: 6px;
   overflow: hidden;
   margin: 0.75em 0;
-  background: transparent;
-  transition: border-color 0.15s ease, background 0.15s ease;
-  min-height: ${({ $hasImage }) => ($hasImage ? "120px" : "auto")};
+  background: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  height: ${({ $hasImage }) => ($hasImage ? "118px" : "auto")};
+  min-height: ${({ $hasImage }) => ($hasImage ? "118px" : "auto")};
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 
   &:hover {
-    border-color: #4a90e2;
-    background: rgba(74, 144, 226, 0.04);
+    border-color: #d1d5db;
+    background: #fafafa;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
   }
 `;
 
 const CardText = styled.div<{ $hasImage: boolean }>`
   flex: 1;
   min-width: 0;
-  padding: 14px 16px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
 `;
 
 const CardTitle = styled.div`
-  font-size: 15px;
-  font-weight: 500;
-  color: #e6e6e6;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
   line-height: 1.4;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
-
-  @media (prefers-color-scheme: light) {
-    color: #222;
-  }
+  word-break: break-all;
 `;
 
 const CardDesc = styled.div`
-  font-size: 13px;
-  color: #9aa0a6;
+  font-size: 12px;
+  color: #6b7280;
   line-height: 1.45;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
+  word-break: break-word;
 `;
 
 const CardMeta = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-top: 4px;
+  margin-top: 2px;
+  min-width: 0;
 `;
 
 const FaviconImg = styled.img`
@@ -300,8 +302,8 @@ const FaviconImg = styled.img`
 `;
 
 const CardUrl = styled.span`
-  font-size: 12px;
-  color: #9aa0a6;
+  font-size: 11px;
+  color: #9ca3af;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -309,17 +311,20 @@ const CardUrl = styled.span`
 `;
 
 const CardImageWrap = styled.div`
-  width: 240px;
+  width: 180px;
   flex-shrink: 0;
-  background: #111;
+  position: relative;
+  background: #f3f4f6;
   overflow: hidden;
 
   @media (max-width: 640px) {
-    width: 120px;
+    width: 100px;
   }
 `;
 
 const CardImage = styled.img`
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
