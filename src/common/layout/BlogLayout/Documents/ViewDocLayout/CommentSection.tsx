@@ -115,10 +115,10 @@ function CommentSection({ documentId }: CommentSectionProps) {
   };
   
   return (
-    <Box borderTop="1px solid" borderColor="gray.200" mt={8}>
+    <Box borderTop="1px solid" borderColor="whiteAlpha.100" mt={8}>
       {/* 헤더 */}
       <Box py={4} px={4}>
-        <Text fontSize="lg" fontWeight="600">
+        <Text fontSize="lg" fontWeight="600" style={{ color: "#ffffff" }}>
           댓글 {totalCount > 0 && `${totalCount}개`}
         </Text>
       </Box>
@@ -142,23 +142,24 @@ function CommentSection({ documentId }: CommentSectionProps) {
       <VStack align="stretch" gap={0}>
         {isLoading ? (
           <Box py={8} textAlign="center">
-            <Spinner size="lg" color="blue.500" />
+            <Spinner size="lg" color="#7fb89a" />
           </Box>
         ) : comments.length === 0 ? (
           <Box py={8} textAlign="center">
-            <Text color="gray.500">아직 댓글이 없습니다. 첫 댓글을 작성해보세요!</Text>
+            <Text style={{ color: "#94a3a0" }}>아직 댓글이 없습니다. 첫 댓글을 작성해보세요!</Text>
           </Box>
         ) : (
           comments.map((comment) => renderComment(comment))
         )}
       </VStack>
-      
+
       {/* 더보기 버튼 */}
       {hasNextPage && (
         <Box py={4} textAlign="center">
           <Button
             variant="ghost"
-            colorScheme="blue"
+            color="#b6d4c1"
+            _hover={{ bg: "rgba(46, 87, 62, 0.18)", color: "#d8ead8" }}
             onClick={handleLoadMore}
             loading={isFetchingNextPage}
             disabled={isFetchingNextPage}

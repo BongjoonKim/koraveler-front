@@ -294,7 +294,7 @@ const ModernMessageInput: React.FC = () => {
       )}
       
       {/* 메인 입력 영역 */}
-      <Box bg={"#fafafa"} padding={"0.75rem 1rem 1rem"} borderRight={"1px solid #e7e7e7"} borderLeft={"1px solid #e7e7e7"}>
+      <Box bg={"#0f1414"} padding={"0.75rem 1rem 1rem"} borderRight={"1px solid rgba(255, 255, 255, 0.06)"} borderLeft={"1px solid rgba(255, 255, 255, 0.06)"}>
         <StyledInputWrapper isAIMode={isAIMode}>
           {/* 입력 필드 */}
           <StyledContentEditable
@@ -403,8 +403,9 @@ const StyledInputContainer = styled(Box)<{ isAIMode: boolean }>`
 const StyledEmptyState = styled(Box)`
   padding: 1.5rem;
   text-align: center;
-  background: #f9fafb;
-  border-top: 1px solid #e5e7eb;
+  background: #0f1414;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  color: #94a3a0;
 `;
 
 const StyledAttachmentMenu = styled(Box)`
@@ -414,13 +415,13 @@ const StyledAttachmentMenu = styled(Box)`
   right: 1rem;
   margin-bottom: 0.5rem;
   padding: 1rem;
-  background: white;
+  background: #14191a;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 10;
   animation: slideUp 0.2s ease;
-  
+
   @keyframes slideUp {
     from {
       opacity: 0;
@@ -446,20 +447,20 @@ const StyledMenuButton = styled.button`
   gap: 0.25rem;
   padding: 0.75rem;
   background: transparent;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
-  
+
   &:hover {
-    background: #f3f4f6;
-    border-color: #d1d5db;
+    background: rgba(46, 87, 62, 0.18);
+    border-color: rgba(80, 107, 92, 0.55);
     transform: translateY(-1px);
   }
-  
+
   span {
     font-size: 0.75rem;
-    color: #4b5563;
+    color: #c7d2cc;
   }
 `;
 
@@ -470,9 +471,11 @@ const StyledToolOption = styled(Flex)`
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.2s;
-  
+  color: #c7d2cc;
+
   &:hover {
-    background: #f3f4f6;
+    background: rgba(46, 87, 62, 0.18);
+    color: #ffffff;
   }
 `;
 
@@ -482,10 +485,10 @@ const StyledModelSelector = styled(Box)`
   right: 1rem;
   margin-bottom: 0.5rem;
   padding: 0.5rem;
-  background: white;
+  background: #14191a;
   border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 20;
   min-width: 200px;
 `;
@@ -494,32 +497,33 @@ const StyledModelOption = styled(Box)<{ isSelected: boolean }>`
   padding: 0.5rem;
   border-radius: 6px;
   cursor: pointer;
-  background: ${props => props.isSelected ? '#f3f4f6' : 'transparent'};
+  background: ${props => props.isSelected ? 'rgba(46, 87, 62, 0.28)' : 'transparent'};
+  color: #e8eaeb;
   transition: background 0.2s;
-  
+
   &:hover {
-    background: #e5e7eb;
+    background: rgba(46, 87, 62, 0.18);
   }
 `;
 
 const StyledMainInput = styled(Box)`
   padding: 0.75rem 1rem 1rem;
-  background : '#fafafa' ;
+  background: #0f1414;
 `;
 
 const StyledInputWrapper = styled(Box)<{ isAIMode: boolean }>`
   display: flex;
   flex-direction: column;
-  background: white;
-  border: 1px solid ${props => props.isAIMode ? '#a78bfa' : '#d1d5db'};
+  background: #14191a;
+  border: 1px solid ${props => props.isAIMode ? 'rgba(182, 160, 230, 0.55)' : 'rgba(255, 255, 255, 0.1)'};
   border-radius: 16px;
   transition: all 0.2s;
-  
+
   &:focus-within {
-    border-color: ${props => props.isAIMode ? '#8b5cf6' : '#3b82f6'};
+    border-color: ${props => props.isAIMode ? '#b6a0e6' : 'rgba(80, 107, 92, 0.65)'};
     box-shadow: 0 0 0 3px ${props => props.isAIMode ?
-  'rgba(139, 92, 246, 0.1)' :
-  'rgba(59, 130, 246, 0.1)'};
+  'rgba(182, 160, 230, 0.15)' :
+  'rgba(46, 87, 62, 0.18)'};
   }
 `;
 
@@ -530,30 +534,30 @@ const StyledContentEditable = styled.div`
   padding: 0.75rem 1rem;
   font-size: 0.95rem;
   line-height: 1.5;
-  color: #111827;
+  color: #ffffff;
   outline: none;
-  
+
   &:empty::before {
     content: attr(data-placeholder);
-    color: #9ca3af;
+    color: rgba(255, 255, 255, 0.3);
     pointer-events: none;
   }
-  
+
   &::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   &::-webkit-scrollbar-track {
-    background: #f3f4f6;
+    background: transparent;
     border-radius: 3px;
   }
-  
+
   &::-webkit-scrollbar-thumb {
-    background: #d1d5db;
+    background: rgba(255, 255, 255, 0.15);
     border-radius: 3px;
-    
+
     &:hover {
-      background: #9ca3af;
+      background: rgba(255, 255, 255, 0.25);
     }
   }
 `;
@@ -562,7 +566,7 @@ const StyledBottomControls = styled(Flex)`
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0.75rem;
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 `;
 
 const StyledIconButton = styled.button<{ isActive?: boolean }>`
@@ -572,29 +576,29 @@ const StyledIconButton = styled.button<{ isActive?: boolean }>`
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: ${props => props.isActive ? '#e5e7eb' : 'transparent'};
-  color: ${props => props.isActive ? '#4b5563' : '#9ca3af'};
+  background: ${props => props.isActive ? 'rgba(46, 87, 62, 0.28)' : 'transparent'};
+  color: ${props => props.isActive ? '#7fb89a' : '#94a3a0'};
   border: 1px solid transparent;
   cursor: pointer;
   transition: all 0.2s;
-  
+
   &:hover {
-    background: #f3f4f6;
-    color: #4b5563;
+    background: rgba(46, 87, 62, 0.18);
+    color: #c7d2cc;
   }
 `;
 
 const StyledAIToggle = styled(StyledIconButton)`
   background: ${props => props.isActive ?
-  'linear-gradient(135deg, #667eea, #764ba2)' :
+  'linear-gradient(135deg, #5e4fb8, #6f4a9f)' :
   'transparent'};
-  color: ${props => props.isActive ? 'white' : '#9ca3af'};
-  
+  color: ${props => props.isActive ? 'white' : '#94a3a0'};
+
   &:hover {
     background: ${props => props.isActive ?
-  'linear-gradient(135deg, #667eea, #764ba2)' :
-  '#f3f4f6'};
-    color: ${props => props.isActive ? 'white' : '#4b5563'};
+  'linear-gradient(135deg, #6f5ec8, #7d5aaf)' :
+  'rgba(255, 255, 255, 0.06)'};
+    color: ${props => props.isActive ? 'white' : '#c7d2cc'};
   }
 `;
 
@@ -603,16 +607,18 @@ const StyledModelButton = styled.button`
   align-items: center;
   gap: 0.25rem;
   padding: 0.25rem 0.75rem;
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   font-size: 0.875rem;
-  color: #4b5563;
+  color: #c7d2cc;
   cursor: pointer;
   transition: all 0.2s;
-  
+
   &:hover {
-    background: #e5e7eb;
+    background: rgba(46, 87, 62, 0.18);
+    border-color: rgba(80, 107, 92, 0.45);
+    color: #ffffff;
   }
 `;
 
@@ -624,23 +630,26 @@ const StyledSendButton = styled.button<{ isAIMode: boolean }>`
   height: 32px;
   border-radius: 8px;
   background: ${props => props.isAIMode ?
-  'linear-gradient(135deg, #667eea, #764ba2)' :
-  '#3b82f6'};
+  'linear-gradient(135deg, #5e4fb8, #6f4a9f)' :
+  '#2f5743'};
   color: white;
-  border: none;
+  border: 1px solid ${props => props.isAIMode ? 'rgba(182, 160, 230, 0.45)' : 'rgba(80, 107, 92, 0.55)'};
   cursor: pointer;
   transition: all 0.2s;
-  
+
   &:hover:not(:disabled) {
+    background: ${props => props.isAIMode ?
+  'linear-gradient(135deg, #6f5ec8, #7d5aaf)' :
+  '#386851'};
     transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
-  
+
   &:active:not(:disabled) {
     transform: scale(0.95);
   }

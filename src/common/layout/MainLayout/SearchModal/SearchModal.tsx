@@ -31,7 +31,7 @@ function SearchModal(props: SearchModalProps) {
             value={searchValue}
             onChange={handleSearching}
             placeholder="Search documents..."
-            startElement={<SearchIcon color="gray" size={20} />}
+            startElement={<SearchIcon color="#94a3a0" size={20} />}
           />
           <button className="close-btn" onClick={props.onClose}>
             <XIcon size={24} />
@@ -59,22 +59,23 @@ export default SearchModal;
 const StyledSearchModal = styled(motion.div)`
     display: flex;
     flex-direction: column;
-    background: white;
-    border-radius: 3rem;
-    //box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    background: #14191a;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.25rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
     width: 100%;
     min-height: 32rem;
     max-height: 90vh;
-    //overflow: hidden;
     z-index: 20001;
     padding: 1rem;
     box-sizing: border-box;
+    color: #e8eaeb;
 
     .header {
         padding: 1rem;
-        border-bottom: 1px solid #f0f0f0;
-        width: 100%; /* 너비 제한 */
-        box-sizing: border-box; /* 패딩 포함 */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .search-container {
@@ -82,25 +83,41 @@ const StyledSearchModal = styled(motion.div)`
         align-items: center;
         gap: 1rem;
         position: relative;
-        width: 100%; /* 너비 제한 */
+        width: 100%;
         box-sizing: border-box;
 
-        /* Chakra Input Group 스타일 오버라이드 */
+        /* Chakra Input Group 다크 톤 오버라이드 */
         .chakra-group {
             flex: 1;
-            min-width: 0; /* flex item이 줄어들 수 있도록 */
+            min-width: 0;
             width: 100%;
 
             input {
                 width: 100%;
                 box-sizing: border-box;
+                background: #0f1414 !important;
+                color: #ffffff !important;
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                border-radius: 10px !important;
+                transition: border-color 0.18s ease, box-shadow 0.18s ease;
+
+                &::placeholder {
+                    color: rgba(255, 255, 255, 0.3) !important;
+                }
+
+                &:focus,
+                &:focus-visible {
+                    border-color: rgba(80, 107, 92, 0.55) !important;
+                    box-shadow: 0 0 0 3px rgba(46, 87, 62, 0.18) !important;
+                    outline: none !important;
+                }
             }
         }
 
-        > div:first-child { /* CusInput wrapper */
+        > div:first-child {
             flex: 1;
             min-width: 0;
-            overflow: hidden; /* 넘치는 내용 숨김 */
+            overflow: hidden;
         }
     }
 
@@ -109,26 +126,27 @@ const StyledSearchModal = styled(motion.div)`
         align-items: center;
         justify-content: center;
         background: none;
-        border: none;
-        color: #718096;
+        border: 1px solid transparent;
+        color: #c7d2cc;
         cursor: pointer;
         padding: 0.5rem;
         border-radius: 50%;
-        transition: background-color 0.2s ease, color 0.2s ease;
+        transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         flex-shrink: 0;
 
         &:hover {
-            background-color: #f7fafc;
-            color: #2d3748;
+            background-color: rgba(46, 87, 62, 0.18);
+            border-color: rgba(80, 107, 92, 0.45);
+            color: #ffffff;
         }
     }
 
     .body {
         flex-grow: 1;
         overflow-y: auto;
-        overflow-x: hidden; /* 가로 스크롤 방지 */
+        overflow-x: hidden;
         position: relative;
-        width: 100%; /* 너비 제한 */
+        width: 100%;
         box-sizing: border-box;
     }
 
@@ -137,13 +155,13 @@ const StyledSearchModal = styled(motion.div)`
         justify-content: center;
         align-items: center;
         height: 25rem;
-        color: #a0aec0;
+        color: #94a3a0;
         font-style: italic;
         text-align: center;
         padding: 1rem;
-        width: 100%; /* 너비 제한 */
+        width: 100%;
         box-sizing: border-box;
-        word-break: break-word; /* 긴 텍스트 줄바꿈 */
+        word-break: break-word;
     }
 
     /* 모든 자식 요소에 box-sizing 적용 */

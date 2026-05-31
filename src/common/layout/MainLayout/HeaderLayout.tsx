@@ -12,9 +12,12 @@ const HEADER_TOKENS: Record<HeaderVariant, { bg: string; divider: string }> = {
   dark: { bg: "#0a0c0c", divider: "rgba(255, 255, 255, 0.06)" },
 };
 
-// 라우트별 헤더 톤. 지금은 /blog/* 만 다크.
+// 라우트별 헤더 톤. MainLayout 의 DARK_ROUTE_PREFIXES 와 일치시켜야 함.
+const DARK_ROUTE_PREFIXES = ["/blog", "/travel"];
 function resolveHeaderVariant(pathname: string): HeaderVariant {
-  return pathname.startsWith("/blog") ? "dark" : "light";
+  // 홈("/")도 다크 세이지-그린 에디토리얼 테마
+  if (pathname === "/" || pathname === "/home") return "dark";
+  return DARK_ROUTE_PREFIXES.some((p) => pathname.startsWith(p)) ? "dark" : "light";
 }
 
 function HeaderLayout() {

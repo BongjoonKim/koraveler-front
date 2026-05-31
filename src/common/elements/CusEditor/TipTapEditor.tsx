@@ -994,9 +994,10 @@ const StyledTiptapEditor = styled.div`
     display: flex;
     flex-direction: column;
     position: relative;
-    border: 1px solid #e0e0e0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
     overflow: hidden;
+    background: #14191a;
 
     &.dragging {
         .ProseMirror {
@@ -1011,8 +1012,8 @@ const Toolbar = styled.div`
     overflow-x: auto;
     gap: 2px;
     padding: 6px 8px;
-    background: #fafafa;
-    border-bottom: 1px solid #e0e0e0;
+    background: #1a2021;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     align-items: center;
 
     /* 가로 스크롤바를 얇게 */
@@ -1021,15 +1022,16 @@ const Toolbar = styled.div`
         height: 4px;
     }
     &::-webkit-scrollbar-thumb {
-        background: rgba(0, 0, 0, 0.15);
+        background: rgba(255, 255, 255, 0.15);
         border-radius: 2px;
     }
 
     select {
         padding: 4px 6px;
-        border: 1px solid #ddd;
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 4px;
-        background: white;
+        background: #14191a;
+        color: #e8eaeb;
         font-size: 13px;
         cursor: pointer;
         min-width: 110px;
@@ -1037,7 +1039,12 @@ const Toolbar = styled.div`
 
         &:focus {
             outline: none;
-            border-color: #4a90e2;
+            border-color: rgba(80, 107, 92, 0.55);
+        }
+
+        option {
+            background: #14191a;
+            color: #e8eaeb;
         }
     }
 `;
@@ -1052,9 +1059,9 @@ const ToolbarButton = styled.button<{ disabled?: boolean }>`
     padding: 4px 8px;
     min-width: 30px;
     height: 28px;
-    border: 1px solid #ddd;
-    background: white;
-    color: #333;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #14191a;
+    color: #c7d2cc;
     border-radius: 4px;
     cursor: pointer;
     font-size: 13px;
@@ -1067,19 +1074,19 @@ const ToolbarButton = styled.button<{ disabled?: boolean }>`
     justify-content: center;
 
     &:hover:not(:disabled) {
-        background: #f5f5f5;
-        border-color: #4a90e2;
-        color: #4a90e2;
+        background: rgba(46, 87, 62, 0.18);
+        border-color: rgba(80, 107, 92, 0.55);
+        color: #7fb89a;
     }
 
     &.is-active {
-        background: #4a90e2;
-        color: white;
-        border-color: #4a90e2;
+        background: #2f5743;
+        color: #ffffff;
+        border-color: rgba(80, 107, 92, 0.7);
     }
 
     &:disabled {
-        opacity: 0.5;
+        opacity: 0.45;
         cursor: not-allowed;
     }
 
@@ -1094,7 +1101,7 @@ const ToolbarButton = styled.button<{ disabled?: boolean }>`
 const Separator = styled.div`
     width: 1px;
     height: 20px;
-    background: #ddd;
+    background: rgba(255, 255, 255, 0.1);
     margin: 0 3px;
     flex-shrink: 0;
 `;
@@ -1102,7 +1109,7 @@ const Separator = styled.div`
 const EditorContainer = styled.div`
     flex: 1;
     overflow-y: auto;  /* 여기서 스크롤 */
-    background: white;
+    background: #14191a;
     min-height: 0;
     height: 0;
 
@@ -1127,8 +1134,8 @@ const EditorContainer = styled.div`
         font-family: Arial, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", "Segoe UI", Roboto,
         Helvetica, Arial, sans-serif;
         font-size: 16px;
-        line-height: 1.6;
-        color: #333;
+        line-height: 1.7;
+        color: #d6dad8;
 
         ul {
             list-style-type: disc;
@@ -1157,7 +1164,7 @@ const EditorContainer = styled.div`
         /* 플레이스홀더 */
         &:empty::before {
             content: attr(data-placeholder);
-            color: #aaa;
+            color: rgba(255, 255, 255, 0.3);
             pointer-events: none;
             position: absolute;
         }
@@ -1167,7 +1174,7 @@ const EditorContainer = styled.div`
             font-weight: bold;
             margin: 0.67em 0;
             line-height: 1.2;
-            color: #222;
+            color: #ffffff;
         }
 
         h2 {
@@ -1175,7 +1182,7 @@ const EditorContainer = styled.div`
             font-weight: bold;
             margin: 0.75em 0;
             line-height: 1.3;
-            color: #333;
+            color: #ffffff;
         }
 
         h3 {
@@ -1183,7 +1190,7 @@ const EditorContainer = styled.div`
             font-weight: bold;
             margin: 0.83em 0;
             line-height: 1.4;
-            color: #333;
+            color: #f1f3f2;
         }
 
         h4 {
@@ -1191,7 +1198,7 @@ const EditorContainer = styled.div`
             font-weight: bold;
             margin: 1em 0;
             line-height: 1.4;
-            color: #444;
+            color: #e8eaeb;
         }
 
         h5 {
@@ -1199,7 +1206,7 @@ const EditorContainer = styled.div`
             font-weight: bold;
             margin: 1.2em 0;
             line-height: 1.5;
-            color: #444;
+            color: #e8eaeb;
         }
 
         h6 {
@@ -1207,7 +1214,7 @@ const EditorContainer = styled.div`
             font-weight: bold;
             margin: 1.4em 0;
             line-height: 1.5;
-            color: #555;
+            color: #d6dad8;
         }
 
         p {
@@ -1215,19 +1222,21 @@ const EditorContainer = styled.div`
         }
 
         blockquote {
-            border-left: 4px solid #4a90e2;
-            padding: 0.5em 1em;
+            border-left: 4px solid #386851;
+            padding: 0.6em 1.1em;
             margin: 1.5em 0;
-            background-color: #f8f9fa;
+            background-color: rgba(46, 87, 62, 0.12);
             font-style: italic;
-            color: #555;
+            color: #c7d2cc;
+            border-radius: 0 8px 8px 0;
         }
 
         pre {
-            background-color: #282c34;
-            color: #abb2bf;
+            background-color: #0f1414;
+            color: #d6dad8;
             padding: 1em;
-            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
             overflow-x: auto;
             font-family: "Consolas", "Monaco", "Courier New", monospace;
             margin: 1em 0;
@@ -1241,20 +1250,21 @@ const EditorContainer = styled.div`
         }
 
         code {
-            background-color: #f0f0f0;
+            background-color: rgba(255, 255, 255, 0.06);
             padding: 2px 6px;
-            border-radius: 3px;
+            border-radius: 4px;
             font-family: "Consolas", "Monaco", "Courier New", monospace;
             font-size: 0.9em;
-            color: #c7254e;
+            color: #f7a89f;
         }
 
         a {
-            color: #4a90e2;
+            color: #7fb89a;
             text-decoration: none;
             cursor: pointer;
 
             &:hover {
+                color: #a0d4b3;
                 text-decoration: underline;
             }
         }
@@ -1297,7 +1307,7 @@ const EditorContainer = styled.div`
 
             td,
             th {
-                border: 1px solid #ddd;
+                border: 1px solid rgba(255, 255, 255, 0.1);
                 padding: 8px;
                 position: relative;
                 vertical-align: top;
@@ -1314,13 +1324,14 @@ const EditorContainer = styled.div`
             }
 
             th {
-                background-color: #f8f9fa;
+                background-color: rgba(46, 87, 62, 0.22);
+                color: #ffffff;
                 font-weight: bold;
                 text-align: left;
             }
 
             .selectedCell {
-                background-color: #e3f2fd;
+                background-color: rgba(46, 87, 62, 0.32);
             }
 
             /* 테이블 셀 리사이즈 핸들 스타일 */
@@ -1344,8 +1355,8 @@ const EditorContainer = styled.div`
                 top: 0;
                 width: 20px;
                 height: 30px;
-                background: #f0f0f0;
-                border: 1px solid #ddd;
+                background: #1a2021;
+                border: 1px solid rgba(255, 255, 255, 0.1);
                 border-radius: 4px;
                 display: flex;
                 align-items: center;
@@ -1355,16 +1366,16 @@ const EditorContainer = styled.div`
                 opacity: 0;
                 transition: opacity 0.2s;
                 font-size: 12px;
-                color: #666;
+                color: #94a3a0;
 
                 &:hover {
-                    background: #e0e0e0;
-                    border-color: #4a90e2;
-                    color: #4a90e2;
+                    background: rgba(46, 87, 62, 0.28);
+                    border-color: rgba(80, 107, 92, 0.55);
+                    color: #7fb89a;
                 }
 
                 &:active {
-                    background: #d0d0d0;
+                    background: rgba(46, 87, 62, 0.38);
                 }
             }
 
@@ -1377,7 +1388,7 @@ const EditorContainer = styled.div`
             /* 드롭 존 표시 */
             .drop-indicator {
                 height: 2px;
-                background: #4a90e2;
+                background: #7fb89a;
                 margin: 10px 0;
                 position: relative;
 
@@ -1387,14 +1398,14 @@ const EditorContainer = styled.div`
                     top: -10px;
                     left: 50%;
                     transform: translateX(-50%);
-                    color: #4a90e2;
+                    color: #7fb89a;
                     font-size: 12px;
                 }
             }
 
             /* ProseMirror 테이블 선택 */
             &.ProseMirror-selectednode {
-                outline: 3px solid #4a90e2;
+                outline: 3px solid rgba(127, 184, 154, 0.7);
             }
 
             /* 컬럼 리사이즈 핸들 */
@@ -1404,7 +1415,7 @@ const EditorContainer = styled.div`
                 top: 0;
                 bottom: -2px;
                 width: 4px;
-                background-color: #4a90e2;
+                background-color: #7fb89a;
                 pointer-events: all;
                 cursor: col-resize;
                 opacity: 0;
@@ -1417,12 +1428,12 @@ const EditorContainer = styled.div`
 
             /* 테이블 전체 셀렉션을 위한 스타일 */
             .prosemirror-dropcursor-block {
-                background-color: rgba(74, 144, 226, 0.2);
+                background-color: rgba(127, 184, 154, 0.2);
             }
 
             .prosemirror-dropcursor-inline {
                 height: 1.5em;
-                background-color: #4a90e2;
+                background-color: #7fb89a;
             }
         }
 
@@ -1439,7 +1450,7 @@ const EditorContainer = styled.div`
                 position: absolute;
                 top: -2px;
                 width: 20px;
-                border-top: 1px solid #4a90e2;
+                border-top: 1px solid #7fb89a;
                 animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite;
             }
         }
@@ -1486,7 +1497,7 @@ const EditorContainer = styled.div`
             bottom: 0;
             width: 5px;
             z-index: 20;
-            background-color: #adf;
+            background-color: #7fb89a;
             pointer-events: all;
             cursor: col-resize;
         }
@@ -1504,7 +1515,7 @@ const EditorContainer = styled.div`
             right: 0;
             top: 0;
             bottom: 0;
-            background: rgba(200, 200, 255, 0.4);
+            background: rgba(127, 184, 154, 0.18);
             pointer-events: none;
         }
 

@@ -68,11 +68,15 @@ export default function useHeroSection({
   
   useEffect((() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      };
+      const target = event.target as Node | null;
+      if (!target) return;
+      // 검색바 컨테이너 클릭은 무시
+      if (dropdownRef.current && dropdownRef.current.contains(target)) return;
+      // portal 로 떠 있는 SearchDropdown 내부 클릭도 무시
+      if (target instanceof Element && target.closest("[data-search-dropdown]")) return;
+      setIsDropdownOpen(false);
     };
-    
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);

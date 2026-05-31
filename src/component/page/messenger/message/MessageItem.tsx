@@ -281,20 +281,20 @@ const MessageItem: React.FC<MessageItemProps> = memo(({ message }) => {
           >
             {/* 사용자 이름 - 상대방 메시지일 때만 표시 */}
             {!isMyMessage && (
-              <Text fontSize="sm" fontWeight="semibold" color="gray.700" px={1}>
+              <Text fontSize="sm" fontWeight="semibold" style={{ color: "#c7d2cc" }} px={1}>
                 {message.userNickname || message.userId}
               </Text>
             )}
-            
+
             {/* 메시지 버블 */}
             <Box
-              bg={isMyMessage ? 'blue.500' : 'white'}
-              color={isMyMessage ? 'white' : 'gray.800'}
+              bg={isMyMessage ? '#2f5743' : '#14191a'}
+              color={isMyMessage ? '#ffffff' : '#e8eaeb'}
               px={4}
               py={2}
               borderRadius={isMyMessage ? '18px 18px 4px 18px' : '18px 18px 18px 4px'}
-              border={!isMyMessage ? '1px' : 'none'}
-              borderColor="gray.200"
+              border="1px solid"
+              borderColor={isMyMessage ? 'rgba(80, 107, 92, 0.55)' : 'rgba(255, 255, 255, 0.08)'}
               shadow={isMyMessage ? 'md' : 'sm'}
               position="relative"
               onContextMenu={handleContextMenu}
@@ -346,7 +346,7 @@ const MessageItem: React.FC<MessageItemProps> = memo(({ message }) => {
               {message.isEdited && !isEditing && (
                 <Text
                   fontSize="xs"
-                  color={isMyMessage ? "blue.100" : "gray.400"}
+                  style={{ color: isMyMessage ? "rgba(255,255,255,0.65)" : "#94a3a0" }}
                   mt={1}
                   fontStyle="italic"
                 >
@@ -354,14 +354,14 @@ const MessageItem: React.FC<MessageItemProps> = memo(({ message }) => {
                 </Text>
               )}
             </Box>
-            
+
             {/* 시간 및 읽음 표시 */}
             <HStack gap={1} px={1}>
-              <Text fontSize="xs" color="gray.500">
+              <Text fontSize="xs" style={{ color: "#94a3a0" }}>
                 {formatTime(message.createdAt)}
               </Text>
               {isMyMessage && (
-                <Box color={message.status === 'READ' ? "blue.400" : "gray.400"}>
+                <Box style={{ color: message.status === 'READ' ? "#7fb89a" : "#94a3a0" }}>
                   {message.status === 'READ' ? (
                     <CheckCheck size={14} />
                   ) : (

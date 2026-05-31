@@ -1,48 +1,45 @@
 import styled from "styled-components";
-import CusWeather from "../../../../../common/widget/CusWeather";
+import {Box, Container} from "@chakra-ui/react";
 import TravelProjectHero from "../TravelProjectHero";
 import TravelRecentProjects from "../TravelRecentProjects";
 import TravelPluginStore from "../TravelPluginStore";
-import {Container} from "@chakra-ui/react";
 
-export interface TravelHomeMainProps {
+export interface TravelHomeMainProps {}
 
-};
-
-function TravelHomeMain(props: TravelHomeMainProps) {
-
+function TravelHomeMain(_props: TravelHomeMainProps) {
   return (
-    <Container
-      maxW="7xl"
-      px={{ base: 4, sm: 6, lg: 8 }}
-      py={{ base: 4, sm: 6, lg: 8 }}
-      h={"100%"}
-      flex={"1"}
-      flexDirection={"column"}
-      display={"flex"}
-    >      <div className="wrapper-travel-projects">
+    <StyledShell>
+      <Container maxW="7xl" px={{base: 4, md: 6, lg: 6}}>
         <TravelProjectHero />
-        <TravelRecentProjects />
-        <TravelPluginStore />
-      </div>
-    </Container>
-  )
-};
+
+        <Layout>
+          <Main>
+            <TravelRecentProjects />
+            <TravelPluginStore />
+          </Main>
+        </Layout>
+      </Container>
+    </StyledShell>
+  );
+}
 
 export default TravelHomeMain;
 
-const StyledTravelHomeMain = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: 1rem 2rem;
-  font-family: 'Noto Sans KR', sans-serif;
+// BlogPage 와 동일한 다크 셸 — /blog/home 과 시각 통일.
+const StyledShell = styled(Box)`
+  min-height: calc(100vh - 3rem);
+  padding: 1.5rem 0 3rem;
+  color: white;
+  background: #0a0c0c;
+`;
 
-  .wrapper-table-widget {
-    display: flex;
-  }
+const Layout = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 0.5rem;
+`;
 
-  //.wrapper-travel-projects {
-  //  margin-top: 24px;
-  //  max-width: 960px;
-  //}
+const Main = styled.div`
+  min-width: 0;
 `;

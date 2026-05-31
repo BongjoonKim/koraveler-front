@@ -46,7 +46,7 @@ const TravelChat: React.FC = () => {
       flex="1"
       flexDirection="column"
       display="flex"
-      bg="gray.50"
+      bg="#0a0c0c"
     >
       <Box
         position="relative"
@@ -56,7 +56,7 @@ const TravelChat: React.FC = () => {
         flex="1"
         flexDirection="column"
       >
-        <Flex h="100%" bg="gray.50">
+        <Flex h="100%" bg="#0a0c0c">
           {/* 채널 사이드바 */}
           {shouldShowSidebar && (
             <TravelChannelList
@@ -77,7 +77,7 @@ const TravelChat: React.FC = () => {
               direction="column"
               minW={0}
               w={isMobile && selectedChannel ? "100%" : undefined}
-              bg={selectedChannel ? "white" : "gray.50"}
+              bg={selectedChannel ? "#0a0c0c" : "#0a0c0c"}
             >
               {selectedChannel ? (
                 <>
@@ -89,9 +89,9 @@ const TravelChat: React.FC = () => {
                     flex={1}
                     overflowY="auto"
                     p={4}
-                    bg="gray.50"
-                    borderRight="1px solid #e7e7e7"
-                    borderLeft="1px solid #e7e7e7"
+                    bg="#0a0c0c"
+                    borderRight="1px solid rgba(255, 255, 255, 0.06)"
+                    borderLeft="1px solid rgba(255, 255, 255, 0.06)"
                   >
                     {!hasMoreMessages && (
                       <Flex direction="column" align="center" py={6} mb={4}>
@@ -99,7 +99,8 @@ const TravelChat: React.FC = () => {
                           w={12}
                           h={12}
                           borderRadius="full"
-                          bg="blue.100"
+                          bg="rgba(46, 87, 62, 0.28)"
+                          border="1px solid rgba(80, 107, 92, 0.45)"
                           display="flex"
                           alignItems="center"
                           justifyContent="center"
@@ -107,10 +108,10 @@ const TravelChat: React.FC = () => {
                         >
                           <Text fontSize="xl">💬</Text>
                         </Box>
-                        <Text fontWeight="bold" fontSize="lg" color="gray.800" mb={1}>
+                        <Text fontWeight="bold" fontSize="lg" style={{ color: "#ffffff" }} mb={1}>
                           {selectedChannel?.name}
                         </Text>
-                        <Text fontSize="sm" color="gray.500">
+                        <Text fontSize="sm" style={{ color: "#94a3a0" }}>
                           Conversation started on{" "}
                           {selectedChannel?.createdAt &&
                             new Date(selectedChannel.createdAt).toLocaleDateString("en-US", {
@@ -119,7 +120,7 @@ const TravelChat: React.FC = () => {
                               day: "numeric",
                             })}
                         </Text>
-                        <Box w="60%" h="1px" bg="gray.200" mt={4} />
+                        <Box w="60%" h="1px" bg="rgba(255, 255, 255, 0.08)" mt={4} />
                       </Flex>
                     )}
                     <div ref={loadMoreTriggerRef} style={{ height: "1px" }} />
@@ -198,8 +199,9 @@ const EmptyIcon = styled.div`
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: #f0f0ff;
-  color: #6366f1;
+  background: rgba(46, 87, 62, 0.22);
+  border: 1px solid rgba(80, 107, 92, 0.45);
+  color: #7fb89a;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -209,12 +211,12 @@ const EmptyIcon = styled.div`
 const EmptyTitle = styled.h3`
   font-size: 18px;
   font-weight: 600;
-  color: #1a1a2e;
+  color: #ffffff;
   margin-bottom: 8px;
 `;
 
 const EmptyDesc = styled.p`
   font-size: 14px;
-  color: #8888a0;
+  color: #94a3a0;
   max-width: 280px;
 `;

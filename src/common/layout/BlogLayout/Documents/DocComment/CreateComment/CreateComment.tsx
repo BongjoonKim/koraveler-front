@@ -52,8 +52,8 @@ function CreateComment({
   // 로그인하지 않은 경우
   if (!currentUser?.id) {
     return (
-      <Box p={4} bg="gray.50" borderRadius="md" textAlign="center">
-        <Text color="gray.500" fontSize="sm">
+      <Box p={4} bg="whiteAlpha.50" borderRadius="md" textAlign="center" borderWidth="1px" borderColor="whiteAlpha.100">
+        <Text color="gray.400" fontSize="sm">
           댓글을 작성하려면 로그인이 필요합니다.
         </Text>
       </Box>
@@ -73,8 +73,10 @@ function CreateComment({
         ml={{ base: `${Math.min(depth, 2)}rem`, md: `${Math.min(depth, 2) * 2}rem` }}
         mt={2}
         p={3}
-        bg="gray.50"
+        bg="whiteAlpha.50"
         borderRadius="md"
+        borderWidth="1px"
+        borderColor="whiteAlpha.100"
       >
         <HStack align="flex-start" gap={3}>
           <CusAvatar
@@ -85,10 +87,10 @@ function CreateComment({
           <VStack flex={1} align="stretch" gap={2}>
             <Box
               border="1px solid"
-              borderColor="gray.200"
+              borderColor="whiteAlpha.200"
               borderRadius="md"
               overflow="hidden"
-              bg="white"
+              bg="#14191a"
               minH="80px"
               display={"flex"}
               flexDirection={"column"}
@@ -101,12 +103,14 @@ function CreateComment({
               />
             </Box>
             <HStack justify="flex-end" gap={2}>
-              <Button size="xs" variant="ghost" onClick={handleCancel}>
+              <Button size="xs" variant="ghost" color="gray.300" _hover={{ bg: "whiteAlpha.100", color: "white" }} onClick={handleCancel}>
                 취소
               </Button>
               <Button
                 size="xs"
-                colorScheme="blue"
+                bg="#2f5743"
+                color="white"
+                _hover={{ bg: "#386851" }}
                 onClick={handleSubmit}
                 loading={isSubmitting}
                 disabled={isSubmitting}
@@ -119,10 +123,10 @@ function CreateComment({
       </Box>
     );
   }
-  
+
   // 기본 모드
   return (
-    <Box p={4} borderBottom="1px solid" borderColor="gray.200">
+    <Box p={4} borderBottom="1px solid" borderColor="whiteAlpha.100">
       <HStack align="flex-start" gap={3} height={"20rem"}>
         <CusAvatar
           size="md"
@@ -130,12 +134,12 @@ function CreateComment({
           src={currentUser.profileImg}
         />
         <VStack flex={1} align="stretch" gap={3} height={"100%"}>
-          <Text fontSize="sm" fontWeight="600">
+          <Text fontSize="sm" fontWeight="600" color="gray.100">
             {currentUser.name || currentUser.id}
           </Text>
           <Box
             border="1px solid"
-            borderColor={isFocused ? "blue.400" : "gray.200"}
+            borderColor={isFocused ? "rgba(80, 107, 92, 0.55)" : "whiteAlpha.200"}
             borderRadius="md"
             overflow="hidden"
             transition="border-color 0.2s"
@@ -143,6 +147,7 @@ function CreateComment({
             display={"flex"}
             flexDirection={"column"}
             flex={1}
+            boxShadow={isFocused ? "0 0 0 3px rgba(46, 87, 62, 0.18)" : "none"}
           >
             <CommentEditor
               ref={editorRef}
@@ -151,12 +156,14 @@ function CreateComment({
             />
           </Box>
           <HStack justify="flex-end" gap={2}>
-            <Button size="sm" variant="ghost" onClick={handleCancel}>
+            <Button size="sm" variant="ghost" color="gray.300" _hover={{ bg: "whiteAlpha.100", color: "white" }} onClick={handleCancel}>
               취소
             </Button>
             <Button
               size="sm"
-              colorScheme="blue"
+              bg="#2f5743"
+              color="white"
+              _hover={{ bg: "#386851" }}
               onClick={handleSubmit}
               loading={isSubmitting}
               disabled={isSubmitting}

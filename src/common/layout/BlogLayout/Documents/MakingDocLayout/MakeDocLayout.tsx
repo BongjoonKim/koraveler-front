@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import {ReactNode} from "react";
-import CusButton from "../../../../elements/buttons/CusButton";
 import CusInput from "../../../../elements/textField/CusInput";
 import useMakeDocLayout from "./useMakeDocLayout";
 import {BLOG_SAVE_TYPE} from "../../../../../constants/constants";
@@ -38,21 +37,15 @@ function MakingDocumentLayout(props: MakeDocLayoutProps) {
       </div>
       <div className="blog-footer">
         <div className="buttons">
-          <CusButton
-            onClick={props.handleSaveModalOpen}
-          >
+          <FooterButton type="button" $primary onClick={props.handleSaveModalOpen}>
             Save
-          </CusButton>
-          <CusButton
-            onClick={() => props.handleSave(BLOG_SAVE_TYPE.DRAFT)}
-          >
+          </FooterButton>
+          <FooterButton type="button" onClick={() => props.handleSave(BLOG_SAVE_TYPE.DRAFT)}>
             Draft
-          </CusButton>
-          <CusButton
-            onClick={props.handleCancel}
-          >
+          </FooterButton>
+          <FooterButton type="button" onClick={props.handleCancel}>
             Cancel
-          </CusButton>
+          </FooterButton>
         </div>
       </div>
     </StyledMakeDocLayout>
@@ -68,6 +61,8 @@ const StyledMakeDocLayout = styled.div`
     min-height: 0;     /* 추가 */
     width: 100%;
     overflow: hidden;  /* 추가 */
+    background: #0a0c0c;
+    color: #e8eaeb;
 
     .blog-header {
         padding: 2rem 1rem 1rem 1rem;
@@ -82,11 +77,11 @@ const StyledMakeDocLayout = styled.div`
 
             font-size: 2.5rem;
             font-weight: 700;
-            color: #222;
+            color: #ffffff;
             line-height: 1.3;
 
             &::placeholder {
-                color: #aaa;
+                color: rgba(255, 255, 255, 0.3);
                 font-weight: 400;
             }
 
@@ -127,14 +122,14 @@ const StyledMakeDocLayout = styled.div`
         overflow: hidden;  /* hidden으로 변경 */
         display: flex;     /* 추가 */
         flex-direction: column;  /* 추가 */
-        /* TinyMCE 에디터 테두리 제거 */
+        /* TinyMCE 에디터 테두리 제거 (레거시 — 현재는 TipTap 사용) */
         .tox-tinymce {
             border: none !important;
             box-shadow: none !important;
         }
 
         .tox-editor-header {
-            border-bottom: 1px solid #e0e0e0 !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
             background: transparent !important;
         }
 
@@ -143,19 +138,45 @@ const StyledMakeDocLayout = styled.div`
         }
 
         .tox-statusbar {
-            border-top: 1px solid #e0e0e0 !important;
-            background: #fafafa !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+            background: #14191a !important;
         }
     }
 
     .blog-footer {
         padding: 1rem;
-        border-top: 1px solid #f0f0f0;
-        background: #fafafa;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        background: #0f1414;
         .buttons {
             display: flex;
             gap: 0.5rem;
             justify-content: flex-end;
         }
+    }
+`;
+
+const FooterButton = styled.button<{ $primary?: boolean }>`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: 1px solid ${({ $primary }) => ($primary ? "rgba(80, 107, 92, 0.55)" : "rgba(255, 255, 255, 0.12)")};
+    background: ${({ $primary }) => ($primary ? "#2f5743" : "transparent")};
+    color: ${({ $primary }) => ($primary ? "#ffffff" : "#c7d2cc")};
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s ease;
+
+    &:hover {
+        background: ${({ $primary }) => ($primary ? "#386851" : "rgba(255, 255, 255, 0.04)")};
+        border-color: ${({ $primary }) => ($primary ? "rgba(80, 107, 92, 0.7)" : "rgba(255, 255, 255, 0.18)")};
+        color: #ffffff;
+    }
+
+    &:focus-visible {
+        outline: 2px solid rgba(127, 184, 154, 0.55);
+        outline-offset: 2px;
     }
 `;

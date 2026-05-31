@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
-import { Container } from "@chakra-ui/react";
+import { Box, Container } from "@chakra-ui/react";
 import {
   ArrowLeft,
   MapPin,
@@ -125,38 +125,41 @@ function TravelDashboard(props: TravelDashboardProps) {
     flex: "1",
     flexDirection: "column" as const,
     display: "flex",
-    bg: "gray.50",
   };
 
   if (isLoading) {
     return (
-      <Container {...containerProps}>
-        <StyledTravelDashboard>
-          <div className="loading-state">
-            <div className="loading-spinner" />
-            <span>Loading project...</span>
-          </div>
-        </StyledTravelDashboard>
-      </Container>
+      <StyledShell>
+        <Container {...containerProps}>
+          <StyledTravelDashboard>
+            <div className="loading-state">
+              <div className="loading-spinner" />
+              <span>Loading project...</span>
+            </div>
+          </StyledTravelDashboard>
+        </Container>
+      </StyledShell>
     );
   }
 
   if (error || !travel) {
     return (
-      <Container {...containerProps}>
-        <StyledTravelDashboard>
-          <div className="error-state">
-            <p>Travel project not found</p>
-            <button
-              className="back-btn"
-              onClick={() => navigate("/travel/home")}
-            >
-              <ArrowLeft size={16} />
-              Back to Home
-            </button>
-          </div>
-        </StyledTravelDashboard>
-      </Container>
+      <StyledShell>
+        <Container {...containerProps}>
+          <StyledTravelDashboard>
+            <div className="error-state">
+              <p>Travel project not found</p>
+              <button
+                className="back-btn"
+                onClick={() => navigate("/travel/home")}
+              >
+                <ArrowLeft size={16} />
+                Back to Home
+              </button>
+            </div>
+          </StyledTravelDashboard>
+        </Container>
+      </StyledShell>
     );
   }
 
@@ -166,6 +169,7 @@ function TravelDashboard(props: TravelDashboardProps) {
   const dDay = getDDay();
 
   return (
+    <StyledShell>
     <Container {...containerProps}>
     <StyledTravelDashboard className={loaded ? "loaded" : ""}>
       {/* Header */}
@@ -411,6 +415,7 @@ function TravelDashboard(props: TravelDashboardProps) {
       />
     </StyledTravelDashboard>
     </Container>
+    </StyledShell>
   );
 }
 
@@ -431,11 +436,21 @@ const spin = keyframes`
   to { transform: rotate(360deg); }
 `;
 
+// TravelHome 과 동일한 다크 셸 — /travel/home 과 시각 통일.
+const StyledShell = styled(Box)`
+  width: 100%;
+  min-height: calc(100vh - 3rem);
+  padding: 1.5rem 0 3rem;
+  background: #0a0c0c;
+  color: white;
+`;
+
 const StyledTravelDashboard = styled.div`
   width: 100%;
   min-height: 100%;
   padding: 1rem 2rem 3rem;
   font-family: "Noto Sans KR", sans-serif;
+  color: #e8eaeb;
   opacity: 0;
 
   &.loaded {
@@ -451,15 +466,15 @@ const StyledTravelDashboard = styled.div`
     justify-content: center;
     gap: 16px;
     min-height: 300px;
-    color: #6366f1;
+    color: #b6d4c1;
     font-size: 15px;
   }
 
   .loading-spinner {
     width: 32px;
     height: 32px;
-    border: 3px solid rgba(139, 92, 246, 0.2);
-    border-top-color: #8b5cf6;
+    border: 3px solid rgba(80, 107, 92, 0.2);
+    border-top-color: #7fb89a;
     border-radius: 50%;
     animation: ${spin} 0.7s linear infinite;
   }
@@ -477,30 +492,34 @@ const StyledTravelDashboard = styled.div`
     align-items: center;
     gap: 6px;
     padding: 8px 12px;
-    border: none;
-    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
     border-radius: 12px;
-    color: #4f46e5;
+    color: #c7d2cc;
     font-size: 14px;
     cursor: pointer;
     transition: all 0.25s ease;
 
     &:hover {
-      background: rgba(99, 102, 241, 0.2);
+      background: rgba(46, 87, 62, 0.22);
+      border-color: rgba(80, 107, 92, 0.45);
+      color: #ffffff;
     }
   }
 
   .settings-btn {
     padding: 8px;
-    border: none;
-    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
     border-radius: 10px;
-    color: #4f46e5;
+    color: #c7d2cc;
     cursor: pointer;
     transition: all 0.25s ease;
 
     &:hover {
-      background: rgba(99, 102, 241, 0.2);
+      background: rgba(46, 87, 62, 0.22);
+      border-color: rgba(80, 107, 92, 0.45);
+      color: #ffffff;
     }
   }
 
@@ -525,8 +544,8 @@ const StyledTravelDashboard = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #ede9fe 0%, #c4b5fd 100%);
-    color: #a5b4fc;
+    background: linear-gradient(135deg, #1a2021 0%, #2f5743 100%);
+    color: rgba(127, 184, 154, 0.7);
   }
 
   .dash-hero-overlay {
@@ -617,35 +636,35 @@ const StyledTravelDashboard = styled.div`
     gap: 4px;
     padding: 16px 12px;
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(99, 102, 241, 0.15);
+    background: #14191a;
+    border: 1px solid rgba(255, 255, 255, 0.08);
 
     &.accent {
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.03));
-      border-color: rgba(139, 92, 246, 0.2);
+      background: linear-gradient(135deg, rgba(46, 87, 62, 0.25), rgba(46, 87, 62, 0.08));
+      border-color: rgba(80, 107, 92, 0.45);
     }
   }
 
   .stat-icon {
-    color: #a5b4fc;
+    color: #7fb89a;
   }
 
   .stat-value {
     font-size: 22px;
     font-weight: 700;
-    color: #1e1b4b;
+    color: #ffffff;
 
     small {
       font-size: 12px;
       font-weight: 400;
-      color: #6366f1;
+      color: #94a3a0;
       margin-left: 3px;
     }
   }
 
   .stat-label {
     font-size: 12px;
-    color: #6366f1;
+    color: #94a3a0;
     font-weight: 400;
   }
 
@@ -657,19 +676,19 @@ const StyledTravelDashboard = styled.div`
   }
 
   .section-icon {
-    color: #a5b4fc;
+    color: #7fb89a;
   }
 
   .date-range {
     font-size: 14px;
-    color: #3730a3;
+    color: #d6dad8;
     font-weight: 500;
   }
 
   /* Sections */
   .dash-section {
     padding: 1.25rem 0;
-    border-bottom: 1px solid rgba(99, 102, 241, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 
     &:last-child {
       border-bottom: none;
@@ -689,35 +708,35 @@ const StyledTravelDashboard = styled.div`
     gap: 8px;
     font-size: 16px;
     font-weight: 600;
-    color: #1e1b4b;
+    color: #ffffff;
   }
 
   .section-action {
     padding: 6px;
-    border: 1.5px dashed rgba(99, 102, 241, 0.35);
+    border: 1.5px dashed rgba(80, 107, 92, 0.45);
     border-radius: 10px;
     background: transparent;
-    color: #a5b4fc;
+    color: #b6d4c1;
     cursor: pointer;
     transition: all 0.25s ease;
 
     &:hover {
-      border-color: rgba(139, 92, 246, 0.5);
-      color: #8b5cf6;
-      background: rgba(139, 92, 246, 0.05);
+      border-color: rgba(80, 107, 92, 0.7);
+      color: #7fb89a;
+      background: rgba(46, 87, 62, 0.18);
     }
   }
 
   .section-text {
     font-size: 14px;
-    color: #3730a3;
+    color: #d6dad8;
     line-height: 1.7;
     white-space: pre-wrap;
   }
 
   .empty-text {
     font-size: 13px;
-    color: #a5b4fc;
+    color: #94a3a0;
   }
 
   /* Tags */
@@ -730,8 +749,9 @@ const StyledTravelDashboard = styled.div`
   .tag-chip {
     padding: 4px 12px;
     border-radius: 20px;
-    background: rgba(139, 92, 246, 0.1);
-    color: #4f46e5;
+    background: rgba(46, 87, 62, 0.22);
+    color: #b6d4c1;
+    border: 1px solid rgba(80, 107, 92, 0.35);
     font-size: 13px;
     font-weight: 500;
   }
@@ -749,12 +769,13 @@ const StyledTravelDashboard = styled.div`
     gap: 12px;
     padding: 10px 14px;
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(99, 102, 241, 0.1);
-    transition: background 0.2s;
+    background: #14191a;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: background 0.2s, border-color 0.2s;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.9);
+      background: #1a2021;
+      border-color: rgba(80, 107, 92, 0.35);
     }
   }
 
@@ -762,7 +783,7 @@ const StyledTravelDashboard = styled.div`
     width: 38px;
     height: 38px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    background: linear-gradient(135deg, #2f5743, #386851);
     color: #fff;
     display: flex;
     align-items: center;
@@ -781,7 +802,7 @@ const StyledTravelDashboard = styled.div`
   .member-name {
     font-size: 14px;
     font-weight: 500;
-    color: #1e1b4b;
+    color: #f1f3f2;
   }
 
   .member-role {
@@ -792,16 +813,16 @@ const StyledTravelDashboard = styled.div`
     letter-spacing: 0.04em;
 
     &.admin {
-      background: rgba(139, 92, 246, 0.15);
-      color: #7c3aed;
+      background: rgba(46, 87, 62, 0.32);
+      color: #7fb89a;
     }
     &.user {
-      background: rgba(158, 158, 158, 0.12);
-      color: #757575;
+      background: rgba(255, 255, 255, 0.08);
+      color: #c7d2cc;
     }
     &.viewer {
-      background: rgba(33, 150, 243, 0.12);
-      color: #1976d2;
+      background: rgba(80, 140, 200, 0.18);
+      color: #93c5fd;
     }
   }
 
@@ -818,14 +839,14 @@ const StyledTravelDashboard = styled.div`
     gap: 14px;
     padding: 14px 16px;
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(99, 102, 241, 0.1);
+    background: #14191a;
+    border: 1px solid rgba(255, 255, 255, 0.06);
     cursor: pointer;
     transition: all 0.25s ease;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.9);
-      border-color: rgba(139, 92, 246, 0.2);
+      background: #1a2021;
+      border-color: rgba(80, 107, 92, 0.45);
     }
   }
 
@@ -833,7 +854,7 @@ const StyledTravelDashboard = styled.div`
     min-width: 56px;
     font-size: 12px;
     font-weight: 700;
-    color: #8b5cf6;
+    color: #7fb89a;
     padding-top: 2px;
   }
 
@@ -847,17 +868,17 @@ const StyledTravelDashboard = styled.div`
   .schedule-title {
     font-size: 14px;
     font-weight: 600;
-    color: #1e1b4b;
+    color: #ffffff;
   }
 
   .schedule-date {
     font-size: 12px;
-    color: #6366f1;
+    color: #94a3a0;
   }
 
   .schedule-desc {
     font-size: 13px;
-    color: #4f46e5;
+    color: #d6dad8;
     line-height: 1.5;
   }
 
@@ -873,15 +894,15 @@ const StyledTravelDashboard = styled.div`
     align-items: center;
     gap: 3px;
     padding: 3px 8px;
-    background: rgba(33, 150, 243, 0.06);
-    color: #1976d2;
+    background: rgba(80, 140, 200, 0.14);
+    color: #93c5fd;
     border-radius: 8px;
     font-size: 11px;
     font-weight: 500;
   }
 
   .schedule-arrow {
-    color: #a5b4fc;
+    color: #7fb89a;
     flex-shrink: 0;
     margin-top: 2px;
   }
@@ -892,18 +913,18 @@ const StyledTravelDashboard = styled.div`
     align-items: center;
     gap: 8px;
     padding: 2.5rem 1rem;
-    color: #a5b4fc;
+    color: #94a3a0;
     text-align: center;
 
     p {
       font-size: 15px;
       font-weight: 500;
-      color: #6366f1;
+      color: #c7d2cc;
     }
 
     span {
       font-size: 13px;
-      color: #a5b4fc;
+      color: #94a3a0;
     }
   }
 
@@ -916,11 +937,12 @@ const StyledTravelDashboard = styled.div`
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.15s ease;
-    border: 1px solid #e8e8f0;
+    background: #14191a;
+    border: 1px solid rgba(255, 255, 255, 0.06);
 
     &:hover {
-      background: #f8f7ff;
-      border-color: #c7d2fe;
+      background: #1a2021;
+      border-color: rgba(80, 107, 92, 0.45);
     }
   }
 
@@ -928,7 +950,7 @@ const StyledTravelDashboard = styled.div`
     width: 44px;
     height: 44px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #06b6d4, #0891b2);
+    background: linear-gradient(135deg, #2f5743, #386851);
     color: white;
     display: flex;
     align-items: center;
@@ -946,16 +968,16 @@ const StyledTravelDashboard = styled.div`
   .chat-entry-title {
     font-size: 14px;
     font-weight: 600;
-    color: #1a1a2e;
+    color: #ffffff;
   }
 
   .chat-entry-desc {
     font-size: 12.5px;
-    color: #8888a0;
+    color: #94a3a0;
   }
 
   .chat-entry-arrow {
-    color: #c0c0d0;
+    color: #7fb89a;
     flex-shrink: 0;
   }
 

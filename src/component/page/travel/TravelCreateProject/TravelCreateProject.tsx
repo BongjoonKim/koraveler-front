@@ -296,10 +296,11 @@ const StyledTravelCreateProject = styled.div`
   min-height: 100%;
   padding: 1rem 2rem 3rem;
   font-family: "Noto Sans KR", sans-serif;
+  color: #e8eaeb;
 
   .create-header {
     margin-bottom: 2rem;
-      width: 100%;
+    width: 100%;
   }
 
   .back-btn {
@@ -307,18 +308,19 @@ const StyledTravelCreateProject = styled.div`
     align-items: center;
     gap: 6px;
     padding: 8px 16px;
-    border: none;
-    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
     border-radius: 12px;
-    color: #4f46e5;
+    color: #c7d2cc;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.25s ease;
 
     &:hover {
-      background: rgba(99, 102, 241, 0.2);
-      color: #3730a3;
+      background: rgba(80, 107, 92, 0.18);
+      border-color: rgba(80, 107, 92, 0.35);
+      color: #ffffff;
     }
   }
 
@@ -339,8 +341,9 @@ const StyledTravelCreateProject = styled.div`
     width: 64px;
     height: 64px;
     border-radius: 20px;
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.05));
-    color: #8b5cf6;
+    background: linear-gradient(135deg, rgba(56, 104, 81, 0.35), rgba(46, 87, 62, 0.18));
+    border: 1px solid rgba(80, 107, 92, 0.35);
+    color: #7fb89a;
     margin-bottom: 1rem;
   }
 
@@ -348,13 +351,13 @@ const StyledTravelCreateProject = styled.div`
     font-family: "Playfair Display", serif;
     font-size: 32px;
     font-weight: 700;
-    color: #1e1b4b;
+    color: #ffffff;
     margin-bottom: 6px;
   }
 
   .create-subheading {
     font-size: 15px;
-    color: #6366f1;
+    color: #94a3a0;
     font-weight: 300;
   }
 
@@ -367,7 +370,7 @@ const StyledTravelCreateProject = styled.div`
   .form-group {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     position: relative;
   }
 
@@ -377,51 +380,58 @@ const StyledTravelCreateProject = styled.div`
     gap: 6px;
     font-size: 13px;
     font-weight: 600;
-    color: #3730a3;
+    color: #c7d2cc;
     letter-spacing: 0.02em;
   }
 
   .form-input {
     padding: 12px 16px;
-    border: 1.5px solid rgba(99, 102, 241, 0.25);
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
     border-radius: 14px;
     font-size: 15px;
     font-family: "Noto Sans KR", sans-serif;
-    color: #1e1b4b;
-    background: rgba(255, 255, 255, 0.8);
+    color: #ffffff;
+    background: #14191a;
     transition: all 0.25s ease;
     outline: none;
 
     &:focus {
-      border-color: rgba(139, 92, 246, 0.6);
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.08);
+      border-color: rgba(80, 107, 92, 0.55);
+      box-shadow: 0 0 0 3px rgba(46, 87, 62, 0.18);
+      background: #1a2021;
     }
 
     &::placeholder {
-      color: #a5b4fc;
+      color: rgba(255, 255, 255, 0.28);
+    }
+
+    /* Date 입력 컬러 보정 (다크 배경 대응) */
+    &[type="date"] {
+      color-scheme: dark;
     }
   }
 
   .form-textarea {
     padding: 12px 16px;
-    border: 1.5px solid rgba(99, 102, 241, 0.25);
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
     border-radius: 14px;
     font-size: 15px;
     font-family: "Noto Sans KR", sans-serif;
-    color: #1e1b4b;
-    background: rgba(255, 255, 255, 0.8);
+    color: #ffffff;
+    background: #14191a;
     transition: all 0.25s ease;
     outline: none;
     resize: vertical;
     min-height: 100px;
 
     &:focus {
-      border-color: rgba(139, 92, 246, 0.6);
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.08);
+      border-color: rgba(80, 107, 92, 0.55);
+      box-shadow: 0 0 0 3px rgba(46, 87, 62, 0.18);
+      background: #1a2021;
     }
 
     &::placeholder {
-      color: #a5b4fc;
+      color: rgba(255, 255, 255, 0.28);
     }
   }
 
@@ -430,7 +440,8 @@ const StyledTravelCreateProject = styled.div`
     right: 12px;
     bottom: 10px;
     font-size: 11px;
-    color: #a5b4fc;
+    color: rgba(255, 255, 255, 0.35);
+    pointer-events: none;
   }
 
   .form-row {
@@ -445,16 +456,17 @@ const StyledTravelCreateProject = styled.div`
     flex-wrap: wrap;
     gap: 8px;
     padding: 10px 14px;
-    border: 1.5px solid rgba(99, 102, 241, 0.25);
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.8);
+    background: #14191a;
     min-height: 48px;
     align-items: center;
     transition: all 0.25s ease;
 
     &:focus-within {
-      border-color: rgba(139, 92, 246, 0.6);
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.08);
+      border-color: rgba(80, 107, 92, 0.55);
+      box-shadow: 0 0 0 3px rgba(46, 87, 62, 0.18);
+      background: #1a2021;
     }
   }
 
@@ -463,8 +475,9 @@ const StyledTravelCreateProject = styled.div`
     align-items: center;
     gap: 4px;
     padding: 4px 10px;
-    background: rgba(139, 92, 246, 0.12);
-    color: #4f46e5;
+    background: rgba(80, 107, 92, 0.22);
+    color: #b6d4c1;
+    border: 1px solid rgba(80, 107, 92, 0.35);
     border-radius: 20px;
     font-size: 13px;
     font-weight: 500;
@@ -475,13 +488,13 @@ const StyledTravelCreateProject = styled.div`
     align-items: center;
     border: none;
     background: none;
-    color: #6366f1;
+    color: #b6d4c1;
     cursor: pointer;
     padding: 0;
     margin-left: 2px;
 
     &:hover {
-      color: #c0392b;
+      color: #ff8a7a;
     }
   }
 
@@ -492,11 +505,11 @@ const StyledTravelCreateProject = styled.div`
     outline: none;
     font-size: 14px;
     font-family: "Noto Sans KR", sans-serif;
-    color: #1e1b4b;
+    color: #ffffff;
     background: transparent;
 
     &::placeholder {
-      color: #a5b4fc;
+      color: rgba(255, 255, 255, 0.28);
     }
   }
 
@@ -506,10 +519,10 @@ const StyledTravelCreateProject = styled.div`
     align-items: center;
     gap: 8px;
     padding: 10px 20px;
-    border: 1.5px solid rgba(99, 102, 241, 0.25);
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.8);
-    color: #4f46e5;
+    background: #14191a;
+    color: #c7d2cc;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
@@ -517,13 +530,14 @@ const StyledTravelCreateProject = styled.div`
     width: fit-content;
 
     &.public {
-      border-color: rgba(46, 125, 50, 0.3);
-      background: rgba(46, 125, 50, 0.05);
-      color: #2e7d32;
+      border-color: rgba(80, 107, 92, 0.45);
+      background: rgba(46, 87, 62, 0.22);
+      color: #7fb89a;
     }
 
     &:hover {
-      border-color: rgba(139, 92, 246, 0.5);
+      border-color: rgba(80, 107, 92, 0.55);
+      background: #1a2021;
     }
   }
 
@@ -534,22 +548,23 @@ const StyledTravelCreateProject = styled.div`
     gap: 12px;
     margin-top: 1rem;
     padding-top: 1.5rem;
-    border-top: 1px solid rgba(99, 102, 241, 0.15);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .btn-cancel {
     padding: 12px 24px;
-    border: 1.5px solid rgba(99, 102, 241, 0.25);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
     border-radius: 14px;
     background: transparent;
-    color: #4f46e5;
+    color: #c7d2cc;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.25s ease;
 
     &:hover {
-      background: rgba(99, 102, 241, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: #ffffff;
     }
   }
 
@@ -558,24 +573,25 @@ const StyledTravelCreateProject = styled.div`
     align-items: center;
     gap: 6px;
     padding: 12px 28px;
-    border: none;
+    border: 1px solid rgba(80, 107, 92, 0.4);
     border-radius: 14px;
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-    color: #fff;
+    background: #2f5743;
+    color: #ffffff;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
     min-width: 160px;
     justify-content: center;
 
     &:hover:not(:disabled) {
+      background: #386851;
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.35);
+      box-shadow: 0 6px 20px rgba(46, 87, 62, 0.45);
     }
 
     &:disabled {
-      opacity: 0.5;
+      opacity: 0.45;
       cursor: not-allowed;
     }
   }

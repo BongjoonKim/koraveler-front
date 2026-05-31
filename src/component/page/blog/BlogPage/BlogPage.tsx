@@ -1,6 +1,8 @@
 import React, {useEffect, useMemo, useState} from "react";
 import styled from "styled-components";
 import {Box, Container} from "@chakra-ui/react";
+import {useNavigate} from "react-router-dom";
+import {PenLine} from "lucide-react";
 import BlogList from "./BlogList";
 import BlogHero from "./BlogHero";
 import BlogSidebar from "./BlogSidebar";
@@ -15,9 +17,13 @@ export interface BlogPageProps {}
 const FOLLOWING_SEEN_KEY = "nadeliv:followingSeenAt";
 
 function BlogPage(_props: BlogPageProps) {
+  const navigate = useNavigate();
   const {data: currentUser} = useCurrentUser();
   const isLoggedIn = !!currentUser?.id;
   const {activeLocale} = useBlogLocale();
+
+  // /blog/create-new 가 빈 draft 생성 + ProtectedRoute 우회 흐름을 담당.
+  const handleWrite = () => navigate("/blog/create-new");
 
   // 사이드바 뱃지 기준 시각. 첫 마운트 시 로컬스토리지 → state 로 끌어옴.
   const [followingSince] = useState<string | null>(() => {
@@ -62,12 +68,20 @@ function BlogPage(_props: BlogPageProps) {
 
         <Layout>
           <Main>
-            <BlogFeedToggle
-              mode={feedMode}
-              onChange={setFeedMode}
-              isLoggedIn={isLoggedIn}
-              followingSince={followingSince}
-            />
+            <FeedHeader>
+              <FeedToggleWrap>
+                <BlogFeedToggle
+                  mode={feedMode}
+                  onChange={setFeedMode}
+                  isLoggedIn={isLoggedIn}
+                  followingSince={followingSince}
+                />
+              </FeedToggleWrap>
+              <WriteButton type="button" onClick={handleWrite}>
+                <PenLine size={14} />
+                <span>Write</span>
+              </WriteButton>
+            </FeedHeader>
             <BlogList feedMode={feedMode} />
           </Main>
           <Aside>
@@ -129,5 +143,49 @@ const Aside = styled.div`
     position: sticky;
     top: 1rem;
     align-self: start;
+  }
+`;
+
+const FeedHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.25rem;
+`;
+
+const FeedToggleWrap = styled.div`
+  flex: 1;
+  min-width: 0;
+
+  /* BlogFeedToggle 내부의 margin-bottom 을 FeedHeader 가 흡수. */
+  & > div {
+    margin-bottom: 0;
+  }
+`;
+
+const WriteButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #2f5743;
+  border: 1px solid rgba(80, 107, 92, 0.45);
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: #386851;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(46, 87, 62, 0.4);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(127, 184, 154, 0.7);
+    outline-offset: 2px;
   }
 `;

@@ -13,12 +13,12 @@ function TravelPluginStore(props: TravelPluginStoreProps) {
     <StyledTravelPluginStore>
       <div className="plugin-section-header">
         <div className="plugin-section-title-wrap">
-          <Puzzle size={18} className="plugin-section-icon" />
-          <h3 className="plugin-section-title">Travel Plugins</h3>
+          <Puzzle size={22} strokeWidth={1.5} className="plugin-section-icon" />
+          <h2 className="plugin-section-title">Travel Plugins</h2>
         </div>
-        <span className="plugin-section-subtitle">
+        <p className="plugin-section-subtitle">
           Enhance your travel planning with powerful tools
-        </span>
+        </p>
       </div>
 
       <div className="plugin-grid">
@@ -52,41 +52,44 @@ function TravelPluginStore(props: TravelPluginStoreProps) {
 export default TravelPluginStore;
 
 const StyledTravelPluginStore = styled.div`
-  margin-top: 32px;
+  margin-top: 3rem;
 
   .plugin-section-header {
-    margin-bottom: 20px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .plugin-section-title-wrap {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 4px;
+    gap: 11px;
   }
 
   .plugin-section-icon {
-    color: #8b5cf6;
+    color: #7d9786;
   }
 
   .plugin-section-title {
-    font-family: "Playfair Display", serif;
-    font-size: 22px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 26px;
     font-weight: 700;
-    color: #1e1b4b;
+    color: white;
     margin: 0;
+    letter-spacing: -0.01em;
   }
 
   .plugin-section-subtitle {
-    font-size: 14px;
-    color: #6366f1;
-    font-weight: 300;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.55);
+    margin: 0;
   }
 
   .plugin-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 22px;
   }
 
   @media screen and (max-width: 900px) {
@@ -96,15 +99,15 @@ const StyledTravelPluginStore = styled.div`
   }
 
   @media screen and (max-width: 600px) {
-    margin-top: 24px;
+    margin-top: 2rem;
 
     .plugin-section-title {
-      font-size: 20px;
+      font-size: 22px;
     }
 
     .plugin-grid {
       grid-template-columns: 1fr;
-      gap: 12px;
+      gap: 14px;
     }
   }
 `;

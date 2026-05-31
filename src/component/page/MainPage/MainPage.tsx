@@ -1,26 +1,14 @@
-import styled from "styled-components";
 import MainLayout from "../../../common/layout/MainLayout/MainLayout";
-import HomePage from "../homePage/HomePage";
+import MainBody from "./MainBody";
 
-export interface MainPageProps {
+export interface MainPageProps {}
 
-}
-
-function MainPage(props : MainPageProps) {
+function MainPage(_props: MainPageProps) {
   return (
-    // <StyledMainPage>
-    //   <HeaderLayout />
-    //   <MainBody />
-    // </StyledMainPage>
-    <MainLayout showHero={true}>
-      <HomePage />
+    <MainLayout showHero={false}>
+      <MainBody />
     </MainLayout>
-  )
+  );
 }
 
 export default MainPage;
-
-const StyledMainPage = styled.div`
-  user-select: none;
-  height: 100%;
-`;
