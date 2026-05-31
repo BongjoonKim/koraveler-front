@@ -93,10 +93,20 @@ export default EditBlogPost;
 const StyledEditBlogPost = styled.div`
     flex: 1;
     width: 100%;
+    max-width: 80rem; /* 7xl — Viewer와 동일 폭 */
+    margin: 0 auto;   /* 중앙 정렬 */
     min-height: 0;
     height: calc(100vh - 64px);  /* 헤더 높이만큼 빼기 */
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    padding: 0 16px;
 
+    @media (min-width: 640px) {
+        padding: 0 24px;
+    }
+
+    @media (min-width: 1024px) {
+        padding: 0 32px;
+    }
 `;

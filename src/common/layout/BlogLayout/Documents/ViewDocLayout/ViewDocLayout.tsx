@@ -50,8 +50,14 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
         {/* 중간 정보 섹션 */}
         <VStack align="stretch" gap={2}>
           {/* 첫 줄: 날짜/작성자 + 북마크/좋아요 */}
-          <Box display="flex" justifyContent="space-between" alignItems="center">
-            <HStack gap={2} fontSize="l" fontWeight="500">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            flexWrap="wrap"
+            gap={2}
+          >
+            <HStack gap={2} fontSize="l" fontWeight="500" flexWrap="wrap">
               <Text color="gray.600">
                 {moment(props.updated).format("YYYY.MM.DD")}
               </Text>
@@ -61,7 +67,7 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
               </Text>
             </HStack>
 
-            <HStack gap={2}>
+            <HStack gap={2} flexWrap="wrap">
               {currentUser?.id && (
                 <>
                   <CusIconButton
@@ -114,7 +120,13 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
           </Box>
 
           {/* 둘째 줄: 통계 */}
-          <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            flexWrap="wrap"
+            gap={2}
+          >
             <HStack gap={4} fontSize="sm" color="gray.400">
               <HStack gap={1}>
                 <IoEyeOutline />
@@ -127,7 +139,7 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
             </HStack>
             {/* 셋째 줄: 언어 선택 + 번역 관리 (통계 아래) */}
             {hasI18n && (
-              <Box display="flex" alignItems="center" gap="10px" pt={1}>
+              <Box display="flex" alignItems="center" gap="10px" pt={1} flexWrap="wrap">
                 <LanguageSwitcher
                   availableLocales={i18n.availableLocales}
                   currentLocale={i18n.currentLocale}
@@ -173,6 +185,10 @@ const StyledViewDocLayout = styled.div`
     display: flex;
     flex-direction: column;
     padding: 1rem 2rem;
+
+    @media (max-width: 640px) {
+        padding: 0.75rem 0.25rem;
+    }
 `;
 
 const ManageTranslationsLink = styled.button`

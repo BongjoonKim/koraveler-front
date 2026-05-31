@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import CreateEditor from "../../../../common/layout/BlogLayout/Documents/MakingDocLayout/CreateEditor";
 import MakeDocLayout from "../../../../common/layout/BlogLayout/Documents/MakingDocLayout/MakeDocLayout";
-import useCreateBlogPost from "./useCreateBlogPost";
 import useSaveBlogPost from "../SaveBlogPost/useSaveBlogPost";
 import CusModal from "../../../../common/elements/CusModal";
 import BlogPostSetting from "../../../../common/widget/BlogPostSetting/BlogPostSetting";
@@ -13,12 +12,6 @@ export interface CreateBlogPostProps {
 };
 
 function CreateBlogPost(props: CreateBlogPostProps) {
-  // const {
-  //   editorRef,
-  //   document,
-  //   setDocument,
-  //   handleCreate
-  // } = useCreateBlogPost(props);
   const {
     editorRef,
     document,
@@ -84,8 +77,20 @@ export default CreateBlogPost;
 const StyledCreateBlogPost = styled.div`
   flex:1;
   display: flex;
+  flex-direction: column;
   //height: 100%;
   min-height: 0;
   overflow-y: hidden;
   width: 100%;
+  max-width: 80rem;  /* 7xl — Viewer와 동일 폭 */
+  margin: 0 auto;
+  padding: 0 16px;
+
+  @media (min-width: 640px) {
+    padding: 0 24px;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 0 32px;
+  }
 `;

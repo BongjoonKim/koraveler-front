@@ -19,6 +19,8 @@ import styled from "styled-components";
 import ResizableImage from "./extensions/ResizableImage";
 import {columnResizing, tableEditing, goToNextCell, fixTables, mergeCells, splitCell} from 'prosemirror-tables';
 import ResizableVideo from "./extensions/ResizableVideo";
+import BookmarkCard from "./extensions/BookmarkCard";
+import {getOgMetadata} from "../../../endpoints/common-endpoints";
 
 
 // Type definitions for Tiptap extensions
@@ -52,6 +54,9 @@ export interface TiptapEditorProps {
   placeholder?: string;
 }
 
+// URL 단독 붙여넣기 감지용. 공백/개행 없이 http(s)로 시작하는 단일 URL만 매치.
+const URL_ONLY_REGEX = /^https?:\/\/\S+$/i;
+
 const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) => {
   const { initialValue = "", handleImageUpload, handleVideoUpload, onChange, placeholder = "내용을 입력하세요..." } = props;
   const [isDragging, setIsDragging] = useState(false);
@@ -68,6 +73,7 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
       }),
       ResizableImage,
       ResizableVideo,
+      BookmarkCard,
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -200,6 +206,25 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
             }
           }
         }
+
+        // URL 단독 붙여넣기 → BookmarkCard 자동 변환 (Notion 스타일)
+        // 빈 단락 + 선택 없음일 때만. 텍스트 중간/선택 영역 붙여넣기는 Link 익스텐션 기본 동작에 위임.
+        const text = event.clipboardData?.getData("text/plain")?.trim();
+        if (text && URL_ONLY_REGEX.test(text)) {
+          const { state } = view;
+          const { selection } = state;
+          const { $from, empty } = selection;
+          const parent = $from.parent;
+          const isEmptyParagraph =
+            parent.type.name === "paragraph" && parent.content.size === 0;
+
+          if (empty && isEmptyParagraph) {
+            event.preventDefault();
+            insertBookmarkFromUrl(text);
+            return true;
+          }
+        }
+
         return false;
       },
       handleKeyDown: (view, event) => {
@@ -311,6 +336,45 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
     [handleImageUpload, editor]
   );
   
+  // URL을 받아 BookmarkCard로 삽입.
+  // 즉시 URL만으로 카드 삽입(낙관적) → OG 메타데이터를 비동기로 채워 attrs 업데이트.
+  // 메타데이터 패치는 history에서 제외하여 undo 한 번으로 카드 삽입까지 되돌릴 수 있도록 함.
+  const insertBookmarkFromUrl = useCallback(
+    async (url: string) => {
+      if (!editor) return;
+      editor.chain().focus().setBookmarkCard({ url }).run();
+      try {
+        const { data } = await getOgMetadata(url);
+        const { state, view } = editor;
+        let targetPos: number | null = null;
+        state.doc.descendants((node, pos) => {
+          if (
+            node.type.name === "bookmarkCard" &&
+            node.attrs.url === url &&
+            node.attrs.title == null
+          ) {
+            targetPos = pos;
+          }
+        });
+        if (targetPos !== null) {
+          const tr = view.state.tr.setNodeMarkup(targetPos, undefined, {
+            url,
+            title: data.title ?? null,
+            description: data.description ?? null,
+            image: data.image ?? null,
+            favicon: data.favicon ?? null,
+            siteName: data.siteName ?? null,
+          });
+          tr.setMeta("addToHistory", false);
+          view.dispatch(tr);
+        }
+      } catch (e) {
+        console.warn("북마크 메타데이터 조회 실패 — URL만 유지:", e);
+      }
+    },
+    [editor]
+  );
+
   const handleVideoFile = useCallback(async (file : File) => {
     if (!file.type.match(/^video\//)) {
       console.error("Not a video file");
@@ -684,14 +748,14 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
             className={editor.isActive("bulletList") ? "is-active" : ""}
             title="Bullet List"
           >
-            • List
+            •
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
             className={editor.isActive("orderedList") ? "is-active" : ""}
             title="Numbered List"
           >
-            1. List
+            1.
           </ToolbarButton>
         </ToolbarGroup>
         
@@ -704,14 +768,14 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
             className={editor.isActive("blockquote") ? "is-active" : ""}
             title="Blockquote"
           >
-            ❝ Quote
+            ❝
           </ToolbarButton>
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleCodeBlock().run()}
             className={editor.isActive("codeBlock") ? "is-active" : ""}
             title="Code Block"
           >
-            &lt;/&gt; Code
+            &lt;/&gt;
           </ToolbarButton>
         </ToolbarGroup>
         
@@ -734,9 +798,9 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
             }}
             title="Insert Image"
           >
-            🖼️ Image
+            🖼️
           </ToolbarButton>
-          
+
           {/* Video Button */}
           <ToolbarButton
             onClick={() => {
@@ -744,7 +808,7 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
               input.setAttribute("type", "file");
               input.setAttribute("accept", "video/*");
               input.click();
-              
+
               input.onchange = async () => {
                 if (input.files && input.files[0]) {
                   await handleVideoFile(input.files[0]);
@@ -753,7 +817,7 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
             }}
             title="Insert Video"
           >
-            🎬 Video
+            🎬
           </ToolbarButton>
           <ToolbarButton
             onClick={() => {
@@ -765,7 +829,17 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
             className={editor.isActive("link") ? "is-active" : ""}
             title="Insert Link"
           >
-            🔗 Link
+            🔗
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => {
+              const url = window.prompt("Bookmark URL을 입력하세요:");
+              if (!url) return;
+              insertBookmarkFromUrl(url);
+            }}
+            title="북마크 카드로 삽입 (빈 줄에 URL 붙여넣기로도 가능)"
+          >
+            📎
           </ToolbarButton>
         </ToolbarGroup>
         
@@ -780,7 +854,7 @@ const TiptapEditor = forwardRef<Editor | null, TiptapEditorProps>((props, ref) =
             disabled={isTableActive}
             title="Insert Table"
           >
-            ⊞ Table
+            ⊞
           </ToolbarButton>
           {isTableActive && (
             <>
@@ -933,21 +1007,33 @@ const StyledTiptapEditor = styled.div`
 
 const Toolbar = styled.div`
     display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    padding: 8px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 2px;
+    padding: 6px 8px;
     background: #fafafa;
     border-bottom: 1px solid #e0e0e0;
     align-items: center;
 
+    /* 가로 스크롤바를 얇게 */
+    scrollbar-width: thin;
+    &::-webkit-scrollbar {
+        height: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 2px;
+    }
+
     select {
-        padding: 6px 8px;
+        padding: 4px 6px;
         border: 1px solid #ddd;
         border-radius: 4px;
         background: white;
-        font-size: 14px;
+        font-size: 13px;
         cursor: pointer;
-        min-width: 120px;
+        min-width: 110px;
+        flex-shrink: 0;
 
         &:focus {
             outline: none;
@@ -959,18 +1045,26 @@ const Toolbar = styled.div`
 const ToolbarGroup = styled.div`
     display: flex;
     gap: 2px;
+    flex-shrink: 0;
 `;
 
 const ToolbarButton = styled.button<{ disabled?: boolean }>`
-    padding: 6px 10px;
+    padding: 4px 8px;
+    min-width: 30px;
+    height: 28px;
     border: 1px solid #ddd;
     background: white;
     color: #333;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s;
+    font-size: 13px;
+    line-height: 1;
+    transition: all 0.15s;
     white-space: nowrap;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover:not(:disabled) {
         background: #f5f5f5;
@@ -993,15 +1087,16 @@ const ToolbarButton = styled.button<{ disabled?: boolean }>`
     em,
     u,
     s {
-        font-size: 14px;
+        font-size: 13px;
     }
 `;
 
 const Separator = styled.div`
     width: 1px;
-    height: 24px;
+    height: 20px;
     background: #ddd;
-    margin: 0 4px;
+    margin: 0 3px;
+    flex-shrink: 0;
 `;
 
 const EditorContainer = styled.div`

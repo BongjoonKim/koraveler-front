@@ -3,7 +3,6 @@ import {useCallback, useEffect} from "react";
 import {useRecoilState} from "recoil";
 import recoil from "../../../../../stores/recoil";
 import {deleteDocument} from "../../../../../endpoints/blog-endpoints";
-import {s3Utils} from "../../../../../utils/awsS3Utils";
 import {useNavigate} from "react-router-dom";
 import {useAtom} from "jotai";
 import {isBookmark} from "../../../../../stores/jotai/jotai";
@@ -45,27 +44,14 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
   
   const handleDelete = useCallback(async () => {
     try {
-      // 글 데이터 삭제
-      const res = await authEP({
+      // Soft delete: 백엔드가 휴지통(isDeleted=true)으로 옮기고
+      // 90일 뒤 BlogCleanupScheduler가 본문/이미지/cascade 데이터를 영구 삭제함.
+      // 따라서 프론트에서 더 이상 S3 직접 삭제를 하지 않음 (복구 가능성 보존).
+      await authEP({
         func : deleteDocument,
         params : {id : props?.id}
       })
-      
-      // S3에 있는 이미지, 첨부파일 정보 삭제
-      const listRes = await s3Utils.getFiles({
-        prefix : `${props.id}/`
-      })
-      
-      // 첨부파일이 있을 경우 삭제
-      console.log("listRes", listRes)
-      if (listRes?.length) {
-        const fileKeyList = listRes.map(el => ({Key : el.Key}));
-        s3Utils.deleteFiles({
-          Keys : fileKeyList
-        });
-      }
       navigate(-1)
-      // 이상이 없으면 view 화면으로 이동
     } catch (e) {
       setErrorMsg({
         status: "error",

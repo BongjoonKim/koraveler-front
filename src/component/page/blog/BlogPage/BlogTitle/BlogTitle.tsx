@@ -138,6 +138,20 @@ function BlogTitle({ ...props }) {
             Hidden
           </Badge>
         </Link>
+        <Link className="box" to={blogListUrl('trash')}>
+          <Badge
+            colorPalette="red"
+            variant="outline"
+            size="lg"
+            borderRadius="full"
+            px={4}
+            py={2}
+            cursor="pointer"
+            _hover={{ bg: "red.50" }}
+          >
+            Trash
+          </Badge>
+        </Link>
         </>
       )}
       </Stack>

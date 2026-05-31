@@ -1,7 +1,7 @@
 import {request, securityReq} from "../appConfig/request-response";
 import {AxiosResponse} from "axios";
 import {FuncProps} from "../utils/useAuthEP";
-import {UsersDTO} from "../types/users/UsersDTO";
+import {UsersDTO, EmailVerificationRequest, EmailCodeVerifyRequest} from "../types/users/UsersDTO";
 
 export async function login(props: UsersDTO) {
   try {
@@ -40,4 +40,14 @@ export async function logout() {
 
 export async function signUp(props : UsersDTO) {
   return (await request.post("/login/ps/sign-up", props)) as AxiosResponse<UsersDTO>
+}
+
+// 이메일 인증 코드 발송
+export async function sendVerificationCode(props: EmailVerificationRequest) {
+  return (await request.post("/api/v1/user/ps/send-verification-code", props)) as AxiosResponse<string>
+}
+
+// 이메일 인증 코드 검증
+export async function verifyEmailCode(props: EmailCodeVerifyRequest) {
+  return (await request.post("/api/v1/user/ps/verify-code", props)) as AxiosResponse<string>
 }

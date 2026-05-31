@@ -1,6 +1,6 @@
 // src/hooks/useLoginPage.ts
 
-import {ChangeEvent, useCallback, useState, KeyboardEvent} from "react";
+import {ChangeEvent, useCallback, useEffect, useState, KeyboardEvent} from "react";
 import {InitUsersDTO} from "../../../types/users/initialUsers";
 import {useLocation, useNavigate} from "react-router-dom";
 import {login} from "../../../endpoints/login-endpoints";
@@ -14,10 +14,21 @@ export default function useLoginPage() {
   const [userInfo, setUserInfo] = useState<UsersDTO>(InitUsersDTO);
   const [userId, setUserId] = useState<string>("");
   const [errMsg, setErrMsg] = useRecoilState(recoil.errMsg);
-  
+
   const navigate = useNavigate();
   const location = useLocation();
   const {setAccessToken, refreshCurrentUserQuery} = useAuth();
+
+  // ProtectedRoute에서 리다이렉트된 경우 안내 메시지 표시
+  useEffect(() => {
+    if (location.state?.from) {
+      setErrMsg({
+        status: "warning",
+        msg: "Login is required to access this service. Please log in to continue.",
+        isShow: true
+      });
+    }
+  }, [location.state?.from, setErrMsg]);
   
   const handleChange = useCallback((event:ChangeEvent<HTMLInputElement>, type:string) => {
     if (type === "id") {

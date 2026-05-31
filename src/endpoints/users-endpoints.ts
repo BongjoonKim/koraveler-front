@@ -109,6 +109,19 @@ export const searchUsersNotInTravel = async ({ accessToken, params }: FuncProps)
   return response;
 };
 
+// 내 뱃지 카운트 통합 조회 (사이드바 Following 탭 등)
+export const getMyBadges = async ({ accessToken, params }: FuncProps) => {
+  const response = await request.get('/api/v1/user/me/badges', {
+    params: {
+      followingSince: params?.followingSince,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  });
+  return response;
+};
+
 // 채널에 없는 사용자 검색
 export const searchUsersNotInChannel = async ({ accessToken, params }: FuncProps) => {
   const response = await request.get('/api/v1/users/search/available', {

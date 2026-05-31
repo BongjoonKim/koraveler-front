@@ -9,10 +9,17 @@ import {getUsers, searchUsers,
   updateUserProfile,
   changePassword,
   deleteUserAccount,
+  getMyBadges,
 } from "../endpoints/users-endpoints";
+import { UserBadgesResponse } from "../types/blog/blogTypes";
+import {
+  sendVerificationCode,
+  verifyEmailCode,
+} from "../endpoints/login-endpoints";
 import {
   User, UserSearchResponse,
   UserProfileResponse, UserUpdateRequest, PasswordChangeRequest, UserDeleteRequest,
+  EmailVerificationRequest, EmailCodeVerifyRequest,
 } from "../types/users/UsersDTO";
 // Types
 
@@ -327,6 +334,26 @@ export const useDeleteUserAccount = () => {
   });
 };
 
+// 이메일 인증 코드 발송 훅
+export const useSendVerificationCode = () => {
+  return useMutation<string, Error, EmailVerificationRequest>({
+    mutationFn: async (data) => {
+      const response = await sendVerificationCode(data);
+      return response.data;
+    },
+  });
+};
+
+// 이메일 인증 코드 검증 훅
+export const useVerifyEmailCode = () => {
+  return useMutation<string, Error, EmailCodeVerifyRequest>({
+    mutationFn: async (data) => {
+      const response = await verifyEmailCode(data);
+      return response.data;
+    },
+  });
+};
+
 // 사용자 검색 결과 캐시 무효화
 export const useInvalidateUserQueries = () => {
   const queryClient = useQueryClient();
@@ -345,6 +372,24 @@ export const useInvalidateUserQueries = () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
     }
   };
+};
+
+// 내 뱃지 카운트 (사이드바 Following 탭 등)
+export const useMyBadges = (followingSince?: string | null, enabled: boolean = true) => {
+  const authEP = useAuthEP();
+  return useQuery<UserBadgesResponse>({
+    queryKey: ['user-badges', followingSince ?? null],
+    queryFn: async () => {
+      const res = await authEP({
+        func: getMyBadges,
+        params: { followingSince: followingSince ?? undefined },
+      });
+      return res.data as UserBadgesResponse;
+    },
+    enabled,
+    staleTime: 1000 * 30,
+    refetchOnWindowFocus: true,
+  });
 };
 
 // 사용자 정보 프리페치 훅

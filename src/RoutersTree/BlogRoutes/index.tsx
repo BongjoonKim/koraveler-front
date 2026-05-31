@@ -5,9 +5,11 @@ import BlogPage from "../../component/page/blog/BlogPage";
 import ViewBlog from "../../component/page/blog/ViewBlog";
 import EditBlogPost from "../../component/page/blog/EditBlogPost";
 import TranslationManage from "../../component/page/blog/TranslationManage";
+import MyBlogDashboard from "../../component/page/blog/MyBlogDashboard";
 import MainLayout from "../../common/layout/MainLayout/MainLayout";
 import EmptyLayout from "../../common/layout/MainLayout/EmptyLayout";
 import BlogLocaleRedirect from "./BlogLocaleRedirect";
+import ProtectedRoute from "../ProtectedRoute";
 
 interface BlogRoutesProps {
 
@@ -23,6 +25,12 @@ function BlogRoutes(props: BlogRoutesProps) {
             <Route path="/view/:locale/:id" element={<ViewBlog />} />
             <Route path="/view/:id" element={<ViewBlog />} />
             <Route path="/translations/:id" element={<TranslationManage />} />
+            {/* 내 블로그 관리 대시보드 (로그인 필요) */}
+            <Route path="/my" element={
+              <ProtectedRoute>
+                <MyBlogDashboard />
+              </ProtectedRoute>
+            } />
             {/* locale 포함 블로그 목록 라우트 */}
             <Route path="/home/:locale" element={<BlogPage />} />
             <Route path="/:type/:locale" element={<BlogPage />} />
