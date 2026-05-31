@@ -1,10 +1,14 @@
 import styled from "styled-components";
 import {useEffect, useRef} from "react";
-import SimpleDocViewer from "../../../../../common/layout/BlogLayout/BlogList/SimpleDocViewer/SimpleDocViewer";
+import BlogListItem from "./BlogListItem";
 import useBlogList from "./useBlogList";
 
 export interface BlogHomeProps {
-
+  /**
+   * "following" 일 때 /blog/following 인증 엔드포인트를 사용한다.
+   * 미지정 시 URL match 기반의 기존 분기를 사용 (legacy 호환).
+   */
+  feedMode?: "all" | "following";
 };
 
 function BlogList(props: BlogHomeProps) {
@@ -48,7 +52,7 @@ function BlogList(props: BlogHomeProps) {
       <StyledBlogList>
         {blogList?.documents?.map(blog => {
           return (
-            <SimpleDocViewer
+            <BlogListItem
               key={blog.id}
               {...blog}
               trashMode={isTrashView}
@@ -72,37 +76,13 @@ const StyledBlogListWrapper = styled.div`
 `;
 
 const StyledBlogList = styled.ul`
-  //padding: 2rem;
-  display: grid;
-  grid-template-columns: repeat(1, 100%);
-  grid-auto-rows: fit-content();
-  grid-gap: 2rem;
+  // 시안: 단일 column 가로 카드. 글 한 편을 충분히 호흡감 있게 보여주는 레이아웃.
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-
-  @media screen and (min-width: 720px) {
-    display: grid;
-    grid-template-columns: repeat(2, calc(50% - 1rem));
-    grid-gap: 2rem;
-    //width: 100%;
-  }
-
-  @media screen and (min-width: 1200px) {
-    display: grid;
-    grid-template-columns: repeat(3, calc(33.3% - 2rem * 2 / 3));
-    grid-gap: 2rem;
-    //width: 100%;
-  }
-
-  @media screen and (min-width: 1500px) {
-    display: grid;
-    grid-template-columns: repeat(3, calc(33.3%  - 2rem * 2 / 3));
-    grid-gap: 2rem;
-
-  @media screen and (min-width: 1800px) {
-    display: grid;
-    grid-template-columns: repeat(3, calc(33.3%  - 2rem * 2 / 3));
-    grid-gap: 2rem;
-    max-width: 1800px;
 `;
 
 const StyledSentinel = styled.div`

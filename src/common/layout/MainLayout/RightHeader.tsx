@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import {Stack, Button, IconButton, Box, Portal, Menu} from "@chakra-ui/react";
-import { Search, User, Menu as MenuIcon, Globe, UserCircle, FileText, MessageCircle, FolderOpen, Shield, LogOut, LogIn, UserPlus } from "lucide-react";
+import { Search, User, Menu as MenuIcon, Globe, UserCircle, FileText, MessageCircle, FolderOpen, Shield, LogOut, LogIn, UserPlus, Notebook } from "lucide-react";
 import {
   MenuRoot,
   MenuTrigger,
@@ -14,8 +14,16 @@ import { useNavigate } from "react-router-dom";
 import CusAvatar from "../../elements/CusAvatar";
 import CusModal from "../../elements/CusModal";
 import LanguageSettingModal from "./LanguageSettingModal";
+import type { HeaderVariant } from "./HeaderLayout";
 
-function RightHeader() {
+interface RightHeaderProps {
+  variant?: HeaderVariant;
+}
+
+function RightHeader({ variant = "light" }: RightHeaderProps) {
+  const isDark = variant === "dark";
+  const iconColor = isDark ? "whiteAlpha.900" : undefined;
+  const ghostHoverBg = isDark ? "whiteAlpha.200" : undefined;
   const {
     currentUser,
     handleCreate,
@@ -61,35 +69,51 @@ function RightHeader() {
           size="sm"
           borderRadius="full"
           display={{ base: "none", sm: "flex" }}
+          color={iconColor}
+          _hover={isDark ? { bg: ghostHoverBg, color: "white" } : undefined}
           onClick={handleOpenModal}
         >
           <Search size={16} />
           Search
         </Button>
-        
+
         {/* Search Icon - Mobile */}
         <IconButton
           aria-label="Search"
           variant="ghost"
           borderRadius="full"
           display={{ base: "flex", sm: "none" }}
+          color={iconColor}
+          _hover={isDark ? { bg: ghostHoverBg, color: "white" } : undefined}
           onClick={handleOpenModal}
-          
+
         >
           <Search size={20} />
         </IconButton>
         
-        {/* Create Button - 로그인한 사용자만 표시 */}
+        {/* MY BLOG 버튼 - 로그인한 사용자만 표시. 시안 outlined 스타일. */}
         {currentUser && (
           <Button
-            variant="solid"
-            colorPalette="indigo"
+            variant="outline"
             size="sm"
-            borderRadius="full"
-            onClick={handleCreate}
+            borderRadius="md"
+            borderColor={isDark ? "whiteAlpha.300" : "gray.300"}
+            color={isDark ? "whiteAlpha.900" : "gray.700"}
+            _hover={
+              isDark
+                ? { bg: "whiteAlpha.100", borderColor: "whiteAlpha.500" }
+                : { bg: "gray.50", borderColor: "gray.400" }
+            }
+            textTransform="uppercase"
+            letterSpacing="0.12em"
+            fontSize="xs"
+            fontWeight="600"
+            gap={2}
+            onClick={handleMyBlogs}
             display={{ base: "none", md: "flex" }}
           >
-            Create Post
+            <Notebook size={14} />
+            My Blog
           </Button>
         )}
         
@@ -101,6 +125,8 @@ function RightHeader() {
                 aria-label="User menu"
                 variant="ghost"
                 borderRadius="full"
+                color={iconColor}
+                _hover={isDark ? { bg: ghostHoverBg, color: "white" } : undefined}
                 onClick={handleAvatarClick}
               >
                 {currentUser ? (

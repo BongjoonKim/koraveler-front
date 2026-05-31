@@ -1,7 +1,14 @@
 import useAuthEP from "../utils/useAuthEP";
 import {useMutation, useQueries, useQuery, useQueryClient} from "@tanstack/react-query";
-import {DocumentViewResponse, IncreaseViewRequest, ViewStatsDTO} from "../types/blog/blogTypes";
-import {getDocumentsByAuth, getViews, getViewStats, increaseView} from "../endpoints/blog-endpoints";
+import {DocumentViewResponse, IncreaseViewRequest, PopularPostDTO, ViewStatsDTO} from "../types/blog/blogTypes";
+import {
+  getDocumentsByAuth,
+  getFollowingFeed,
+  getPopularPosts,
+  getViews,
+  getViewStats,
+  increaseView,
+} from "../endpoints/blog-endpoints";
 import {ApiResponse} from "../types/messenger/messengerTypes";
 import {
   DashboardTab,
@@ -152,4 +159,47 @@ export const useMyBlogStats = () => {
   };
 
   return { data, isLoading, isError };
+};
+
+/* -------------------------------------------------------------------------- */
+/*  사이드바 위젯 / Following 피드                                              */
+/* -------------------------------------------------------------------------- */
+
+export const usePopularPosts = (period: 'day' | 'week' | 'month' | 'all' = 'month', limit: number = 3) => {
+  return useQuery<PopularPostDTO[]>({
+    queryKey: ['blog', 'popular', period, limit],
+    queryFn: async () => {
+      const res = await getPopularPosts({ params: { period, limit } });
+      return res.data || [];
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
+interface FollowingFeedParams {
+  page?: number;
+  size?: number;
+  dateSort?: 'ASC' | 'DESC';
+  locale?: string;
+}
+
+export const useFollowingFeed = (params: FollowingFeedParams, enabled: boolean) => {
+  const authEP = useAuthEP();
+  return useQuery<DocumentsInfo>({
+    queryKey: ['following-feed', params.page ?? 0, params.size ?? 24, params.dateSort ?? 'DESC', params.locale ?? null],
+    queryFn: async () => {
+      const res = await authEP({
+        func: getFollowingFeed,
+        params: {
+          page: params.page ?? 0,
+          size: params.size ?? 24,
+          dateSort: params.dateSort ?? 'DESC',
+          locale: params.locale,
+        },
+      });
+      return res.data as DocumentsInfo;
+    },
+    enabled,
+    staleTime: 1000 * 30,
+  });
 };

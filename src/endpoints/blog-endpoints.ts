@@ -1,7 +1,7 @@
 import {request} from "../appConfig/request-response";
 import {AxiosResponse} from "axios";
 import {FuncProps} from "../utils/useAuthEP";
-import {DocumentViewResponse, IncreaseViewRequest, ViewStatsDTO} from "../types/blog/blogTypes";
+import {DocumentViewResponse, IncreaseViewRequest, PopularPostDTO, ViewStatsDTO} from "../types/blog/blogTypes";
 
 export async function createDocument(props : FuncProps) {
   return (await request.post("blog/document", props.reqBody, {
@@ -112,6 +112,30 @@ export async function getFeaturedHistory(props: FuncProps) {
       Authorization: `Bearer ${props.accessToken}`
     }
   })) as AxiosResponse<DocumentsInfo>;
+}
+
+// 인기 글 Top N (사이드바 "Popular this month" 위젯용, 비인증)
+export async function getPopularPosts(props: FuncProps) {
+  return (await request.get(`blog/ps/popular`, {
+    params: {
+      period: props.params?.period || 'month',
+      limit: props.params?.limit || 3,
+    }
+  })) as AxiosResponse<PopularPostDTO[]>;
+}
+
+// 내가 팔로우 중인 사용자들의 발행 글 피드 (인증 필요)
+export async function getFollowingFeed(props: FuncProps) {
+  const localeParam = props.params?.locale ? `&locale=${props.params.locale}` : '';
+  const dateSortParam = props.params?.dateSort ? `&dateSort=${props.params.dateSort}` : '';
+  return (await request.get(
+    `blog/following?page=${props.params?.page || 0}&size=${props.params?.size || 24}${dateSortParam}${localeParam}`,
+    {
+      headers: {
+        Authorization: `Bearer ${props.accessToken}`,
+      },
+    }
+  )) as AxiosResponse<DocumentsInfo>;
 }
 
 /// ViewEndPoints

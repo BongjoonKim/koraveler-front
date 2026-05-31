@@ -23,3 +23,19 @@ export interface ViewStatsDTO {
   weekViews: number;
   dailyStats: DailyViewCount[];
 }
+
+// 사이드바 "Popular this month" 위젯용 경량 응답
+export interface PopularPostDTO {
+  rank: number;
+  id: string;
+  title?: string;
+  thumbnailImgUrl?: string;
+  viewCount: number;
+}
+
+// 사용자 뱃지 통합 응답 (헤더/사이드바)
+export interface UserBadgesResponse {
+  followingUnread: number;
+  since?: string;
+  generatedAt?: string;
+}

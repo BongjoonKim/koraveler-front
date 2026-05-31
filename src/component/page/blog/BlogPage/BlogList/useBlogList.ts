@@ -2,7 +2,12 @@ import {BlogHomeProps} from "./BlogList";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {useRecoilState} from "recoil";
 import recoil from "../../../../../stores/recoil";
-import {getAllDocuments, getDocumentsByAuth, restoreDocument} from "../../../../../endpoints/blog-endpoints";
+import {
+  getAllDocuments,
+  getDocumentsByAuth,
+  getFollowingFeed,
+  restoreDocument,
+} from "../../../../../endpoints/blog-endpoints";
 import {useMatch} from "react-router-dom";
 import {BLOG_LIST_SORTS, BLOG_PAGE_TYPE} from "../../../../../constants/constants";
 import {useAtomValue} from "jotai/index";
@@ -60,7 +65,20 @@ function useBlogList(props : BlogHomeProps) {
       const type = match?.params?.type;
       let blogPosts: DocumentsInfo | undefined;
 
-      if (!type || type === BLOG_PAGE_TYPE.HOME) {
+      if (props.feedMode === "following") {
+        // 팔로우 피드는 항상 인증 필요. 비로그인 시 authEP 가 던지고, 호출자가 미리 막아야 함.
+        const res = await authEP({
+          func: getFollowingFeed,
+          params: {
+            page: pageToFetch,
+            size: PAGE_SIZE,
+            dateSort,
+            locale: activeLocale,
+          },
+        });
+        if (res.status !== 200) throw res.statusText;
+        blogPosts = res.data;
+      } else if (!type || type === BLOG_PAGE_TYPE.HOME) {
         const res = await getAllDocuments({
           params: {
             page: pageToFetch,
@@ -114,7 +132,7 @@ function useBlogList(props : BlogHomeProps) {
       setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [match, selectedOption, activeLocale, authEP]);
+  }, [match, selectedOption, activeLocale, authEP, props.feedMode]);
 
   // 필터 변경 시 처음부터 다시 로드
   useEffect(() => {
@@ -125,7 +143,7 @@ function useBlogList(props : BlogHomeProps) {
     hasMoreRef.current = true;
     fetchPage(0, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [match?.params?.type, selectedOption, activeLocale]);
+  }, [match?.params?.type, selectedOption, activeLocale, props.feedMode]);
 
   const loadMore = useCallback(() => {
     if (isLoadingRef.current || !hasMoreRef.current) return;
