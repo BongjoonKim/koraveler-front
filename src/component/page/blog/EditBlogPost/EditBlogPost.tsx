@@ -101,6 +101,18 @@ const StyledEditBlogPost = styled.div`
     flex-direction: column;
     overflow: hidden;
     padding: 0 16px;
+    background: #0a0c0c;
+    color: #e8eaeb;
+
+    /* EmptyLayout 부모는 흰 배경을 가지므로, 화면 양옆까지 다크로 채우기 위한 형제 보정. */
+    &::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: #0a0c0c;
+      z-index: -1;
+      pointer-events: none;
+    }
 
     @media (min-width: 640px) {
         padding: 0 24px;

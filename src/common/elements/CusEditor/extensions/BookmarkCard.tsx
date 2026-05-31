@@ -233,20 +233,20 @@ const CardLink = styled.a<{ $selected: boolean; $hasImage: boolean }>`
   gap: 0;
   text-decoration: none;
   color: inherit;
-  border: 1px solid ${({ $selected }) => ($selected ? "#4a90e2" : "#e5e7eb")};
-  border-radius: 6px;
+  border: 1px solid ${({ $selected }) => ($selected ? "rgba(127, 184, 154, 0.55)" : "rgba(255, 255, 255, 0.08)")};
+  border-radius: 8px;
   overflow: hidden;
   margin: 0.75em 0;
-  background: #fff;
+  background: #14191a;
   transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
   height: ${({ $hasImage }) => ($hasImage ? "118px" : "auto")};
   min-height: ${({ $hasImage }) => ($hasImage ? "118px" : "auto")};
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 
   &:hover {
-    border-color: #d1d5db;
-    background: #fafafa;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    border-color: rgba(80, 107, 92, 0.55);
+    background: #1a2021;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
   }
 `;
 
@@ -263,7 +263,7 @@ const CardText = styled.div<{ $hasImage: boolean }>`
 const CardTitle = styled.div`
   font-size: 14px;
   font-weight: 600;
-  color: #111827;
+  color: #f1f3f2;
   line-height: 1.4;
   overflow: hidden;
   display: -webkit-box;
@@ -275,7 +275,7 @@ const CardTitle = styled.div`
 
 const CardDesc = styled.div`
   font-size: 12px;
-  color: #6b7280;
+  color: #a8b0ac;
   line-height: 1.45;
   overflow: hidden;
   display: -webkit-box;
@@ -303,7 +303,7 @@ const FaviconImg = styled.img`
 
 const CardUrl = styled.span`
   font-size: 11px;
-  color: #9ca3af;
+  color: #7fb89a;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -314,7 +314,7 @@ const CardImageWrap = styled.div`
   width: 180px;
   flex-shrink: 0;
   position: relative;
-  background: #f3f4f6;
+  background: #0f1414;
   overflow: hidden;
 
   @media (max-width: 640px) {
@@ -340,15 +340,16 @@ const CardActions = styled.div`
 const CardActionButton = styled.button`
   padding: 4px 10px;
   font-size: 12px;
-  border: 1px solid #ddd;
-  background: white;
-  color: #333;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #1a2021;
+  color: #c7d2cc;
   border-radius: 4px;
   cursor: pointer;
 
   &:hover:not(:disabled) {
-    border-color: #4a90e2;
-    color: #4a90e2;
+    border-color: rgba(80, 107, 92, 0.55);
+    color: #7fb89a;
+    background: rgba(46, 87, 62, 0.18);
   }
 
   &:disabled {

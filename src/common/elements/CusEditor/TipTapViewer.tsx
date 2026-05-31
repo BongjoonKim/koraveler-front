@@ -149,9 +149,9 @@ const StyledTiptapViewer = styled.div`
     font-family: Arial, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", "Segoe UI", Roboto,
       Helvetica, Arial, sans-serif;
     font-size: 16px;
-    line-height: 1.6;
-    color: #333;
-    
+    line-height: 1.7;
+    color: #d6dad8;
+
     &:focus {
       outline: none;
     }
@@ -212,7 +212,7 @@ const StyledTiptapViewer = styled.div`
       font-weight: bold;
       margin: 0.67em 0;
       line-height: 1.2;
-      color: #222;
+      color: #ffffff;
     }
 
     h2 {
@@ -220,7 +220,7 @@ const StyledTiptapViewer = styled.div`
       font-weight: bold;
       margin: 0.75em 0;
       line-height: 1.3;
-      color: #333;
+      color: #ffffff;
     }
 
     h3 {
@@ -228,7 +228,7 @@ const StyledTiptapViewer = styled.div`
       font-weight: bold;
       margin: 0.83em 0;
       line-height: 1.4;
-      color: #333;
+      color: #f1f3f2;
     }
 
     h4 {
@@ -236,7 +236,7 @@ const StyledTiptapViewer = styled.div`
       font-weight: bold;
       margin: 1em 0;
       line-height: 1.4;
-      color: #444;
+      color: #e8eaeb;
     }
 
     h5 {
@@ -244,7 +244,7 @@ const StyledTiptapViewer = styled.div`
       font-weight: bold;
       margin: 1.2em 0;
       line-height: 1.5;
-      color: #444;
+      color: #e8eaeb;
     }
 
     h6 {
@@ -252,7 +252,7 @@ const StyledTiptapViewer = styled.div`
       font-weight: bold;
       margin: 1.4em 0;
       line-height: 1.5;
-      color: #555;
+      color: #d6dad8;
     }
 
     p {
@@ -260,19 +260,21 @@ const StyledTiptapViewer = styled.div`
     }
 
     blockquote {
-      border-left: 4px solid #4a90e2;
-      padding: 0.5em 1em;
+      border-left: 4px solid #386851;
+      padding: 0.6em 1.1em;
       margin: 1.5em 0;
-      background-color: #f8f9fa;
+      background-color: rgba(46, 87, 62, 0.12);
       font-style: italic;
-      color: #555;
+      color: #c7d2cc;
+      border-radius: 0 8px 8px 0;
     }
 
     pre {
-      background-color: #282c34;
-      color: #abb2bf;
+      background-color: #14191a;
+      color: #d6dad8;
       padding: 1em;
-      border-radius: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
       overflow-x: auto;
       font-family: "Consolas", "Monaco", "Courier New", monospace;
       margin: 1em 0;
@@ -286,20 +288,21 @@ const StyledTiptapViewer = styled.div`
     }
 
     code {
-      background-color: #f0f0f0;
+      background-color: rgba(255, 255, 255, 0.06);
       padding: 2px 6px;
-      border-radius: 3px;
+      border-radius: 4px;
       font-family: "Consolas", "Monaco", "Courier New", monospace;
       font-size: 0.9em;
-      color: #c7254e;
+      color: #f7a89f;
     }
 
     a {
-      color: #4a90e2;
+      color: #7fb89a;
       text-decoration: none;
       cursor: pointer;
 
       &:hover {
+        color: #a0d4b3;
         text-decoration: underline;
       }
     }
@@ -332,7 +335,7 @@ const StyledTiptapViewer = styled.div`
 
       td,
       th {
-        border: 1px solid #ddd;
+        border: 1px solid rgba(255, 255, 255, 0.1);
         padding: 8px;
         vertical-align: top;
         min-width: 100px;
@@ -343,7 +346,8 @@ const StyledTiptapViewer = styled.div`
       }
 
       th {
-        background-color: #f8f9fa;
+        background-color: rgba(46, 87, 62, 0.18);
+        color: #ffffff;
         font-weight: bold;
         text-align: left;
       }
@@ -352,15 +356,16 @@ const StyledTiptapViewer = styled.div`
     hr {
       border: 0;
       height: 1px;
-      background: #e0e0e0;
+      background: rgba(255, 255, 255, 0.1);
       margin: 2em 0;
     }
-    
+
     /* 강조 스타일 */
     mark {
-      background-color: #fff3cd;
-      padding: 0.1em 0.2em;
-      border-radius: 2px;
+      background-color: rgba(255, 213, 100, 0.25);
+      color: #ffe9a8;
+      padding: 0.1em 0.25em;
+      border-radius: 3px;
     }
     
     /* 취소선 */

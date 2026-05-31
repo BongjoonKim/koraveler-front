@@ -93,8 +93,8 @@ export default TravelChannelList;
 const Wrapper = styled.div`
   width: 280px;
   min-width: 280px;
-  border-right: 1px solid #e8e8f0;
-  background: white;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  background: #0f1414;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -110,28 +110,30 @@ const Header = styled.div`
   align-items: center;
   gap: 8px;
   padding: 14px 14px;
-  border-bottom: 1px solid #f0f0f5;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 `;
 
 const BackButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  color: #6b6b80;
+  color: #c7d2cc;
   padding: 4px;
   border-radius: 6px;
   display: flex;
   align-items: center;
+  transition: background 0.15s, color 0.15s;
 
   &:hover {
-    background: #f5f5fa;
+    background: rgba(255, 255, 255, 0.04);
+    color: #ffffff;
   }
 `;
 
 const HeaderTitle = styled.h3`
   font-size: 15px;
   font-weight: 600;
-  color: #1a1a2e;
+  color: #ffffff;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -139,8 +141,8 @@ const HeaderTitle = styled.h3`
 `;
 
 const CreateButton = styled.button`
-  background: #4f46e5;
-  border: none;
+  background: #2f5743;
+  border: 1px solid rgba(80, 107, 92, 0.45);
   cursor: pointer;
   color: white;
   width: 30px;
@@ -149,10 +151,11 @@ const CreateButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s;
+  transition: background 0.15s, transform 0.15s;
 
   &:hover {
-    background: #4338ca;
+    background: #386851;
+    transform: translateY(-1px);
   }
 `;
 
@@ -169,7 +172,7 @@ const Section = styled.div`
 const SectionLabel = styled.div`
   font-size: 10.5px;
   font-weight: 600;
-  color: #a0a0b0;
+  color: #94a3a0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 8px 14px 4px;
@@ -186,7 +189,7 @@ const EmptyState = styled.div`
   p {
     font-size: 14px;
     font-weight: 500;
-    color: #6b6b80;
+    color: #c7d2cc;
     margin-top: 12px;
   }
 `;
@@ -195,8 +198,9 @@ const IconCircle = styled.div`
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #f0f0ff;
-  color: #6366f1;
+  background: rgba(46, 87, 62, 0.22);
+  border: 1px solid rgba(80, 107, 92, 0.45);
+  color: #7fb89a;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -204,7 +208,7 @@ const IconCircle = styled.div`
 
 const EmptySubtext = styled.span`
   font-size: 12px;
-  color: #a0a0b0;
+  color: #94a3a0;
   margin-top: 4px;
 `;
 
@@ -214,15 +218,16 @@ const CreateFirstButton = styled.button`
   gap: 6px;
   margin-top: 16px;
   padding: 8px 16px;
-  background: #4f46e5;
+  background: #2f5743;
   color: white;
-  border: none;
+  border: 1px solid rgba(80, 107, 92, 0.45);
   border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
+  transition: background 0.15s;
 
   &:hover {
-    background: #4338ca;
+    background: #386851;
   }
 `;

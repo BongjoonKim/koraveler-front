@@ -17,7 +17,7 @@ export default function MessageDateDivider({date} : MessageDateDividerProps) {
     <HStack my={4} align="center" w={"100%"} display={"flex"} justifyContent={"center"}>
       <Text
         fontSize="sm"
-        color="gray.500"
+        style={{ color: "#94a3a0" }}
         whiteSpace="nowrap"
       >
         {formatted}

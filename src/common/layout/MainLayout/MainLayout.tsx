@@ -11,9 +11,11 @@ export interface MainLayoutProps {
 }
 
 // 라우트별 페이지 톤. HeaderLayout 의 resolveHeaderVariant 와 일치시켜야 함.
-const DARK_ROUTE_PREFIXES = ["/blog"];
+const DARK_ROUTE_PREFIXES = ["/blog", "/travel"];
 
 function resolvePageBg(pathname: string): string {
+  // 홈("/")도 다크 세이지-그린 에디토리얼 테마
+  if (pathname === "/" || pathname === "/home") return "#0a0b0a";
   return DARK_ROUTE_PREFIXES.some((p) => pathname.startsWith(p))
     ? "#0a0c0c"
     : "white";

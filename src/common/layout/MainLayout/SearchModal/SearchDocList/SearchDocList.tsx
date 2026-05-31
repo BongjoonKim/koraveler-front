@@ -37,26 +37,25 @@ const StyledSearchDocList = styled.div`
     overflow: auto;
     cursor: pointer;
     height: 100%;
-    background: white;
+    background: transparent;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 
     .doc {
         height: 12rem;
-        border-bottom: 1px solid #e2e8f0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         padding: 1rem;
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
-        background: #ffffff;
+        background: transparent;
         transition: background-color 0.2s ease;
 
         &:hover {
-            background-color: #f7fafc;
+            background-color: rgba(46, 87, 62, 0.12);
         }
 
         &:first-child {
-            border-top: 1px solid #e2e8f0;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
         }
@@ -70,7 +69,7 @@ const StyledSearchDocList = styled.div`
     .title {
         font-weight: bold;
         font-size: 1.125rem;
-        color: #2d3748;
+        color: #ffffff;
     }
 
     .desc {
@@ -80,23 +79,7 @@ const StyledSearchDocList = styled.div`
         overflow: hidden;
         text-overflow: ellipsis;
         line-height: 1.5;
-        color: #4a5568;
+        color: #a8b0ac;
         font-size: 0.875rem;
     }
-`;
-
-const StyledSearchModal = styled.div`
-  background: white;
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-
-  .top {
-    margin-bottom: 1rem;
-  }
-
-  .body {
-    max-height: 70vh;
-    overflow: auto;
-  }
 `;

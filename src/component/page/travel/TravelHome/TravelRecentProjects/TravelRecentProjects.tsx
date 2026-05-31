@@ -1,14 +1,15 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import styled, { keyframes } from "styled-components";
-import { useGetMyTravels } from "../../../../../hooks/useTravelQueries";
-import { TravelResponse } from "../../../../../types/travel/travelTypes";
+import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
+import styled, {keyframes} from "styled-components";
+import {Plus} from "lucide-react";
+import {useGetMyTravels} from "../../../../../hooks/useTravelQueries";
+import {TravelResponse} from "../../../../../types/travel/travelTypes";
 
 export interface TravelRecentProjectsProps {}
 
-function TravelRecentProjects(props: TravelRecentProjectsProps) {
+function TravelRecentProjects(_props: TravelRecentProjectsProps) {
   const navigate = useNavigate();
-  const { data, isLoading } = useGetMyTravels(0, 10);
+  const {data, isLoading} = useGetMyTravels(0, 10);
   const [loaded, setLoaded] = useState(false);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
@@ -40,7 +41,7 @@ function TravelRecentProjects(props: TravelRecentProjectsProps) {
             <div
               key={project.id}
               className={`project-circle-wrap ${loaded ? "loaded" : ""}`}
-              style={{ animationDelay: `${0.3 + i * 0.1}s` }}
+              style={{animationDelay: `${0.3 + i * 0.1}s`}}
               onMouseEnter={() => setHoveredId(project.id)}
               onMouseLeave={() => setHoveredId(null)}
               onClick={() => navigate(`/travel/dashboard/${project.id}`)}
@@ -71,11 +72,11 @@ function TravelRecentProjects(props: TravelRecentProjectsProps) {
 
         <div
           className={`project-circle-wrap ${loaded ? "loaded" : ""}`}
-          style={{ animationDelay: `${0.3 + travels.length * 0.1}s` }}
+          style={{animationDelay: `${0.3 + travels.length * 0.1}s`}}
           onClick={() => navigate("/travel/create")}
         >
           <div className="add-circle">
-            <span className="add-circle-icon">+</span>
+            <Plus size={26} strokeWidth={1.4} className="add-circle-icon" />
           </div>
           <span className="project-circle-title">New Trip</span>
         </div>
@@ -103,10 +104,12 @@ const shimmer = keyframes`
 `;
 
 const StyledTravelRecentProjects = styled.div`
+  margin-top: 2rem;
+
   .recent-row {
     display: flex;
     gap: 28px;
-    padding: 28px 0 8px;
+    padding: 8px 0;
     align-items: flex-start;
     overflow-x: auto;
 
@@ -114,7 +117,7 @@ const StyledTravelRecentProjects = styled.div`
       height: 4px;
     }
     &::-webkit-scrollbar-thumb {
-      background: rgba(99, 102, 241, 0.3);
+      background: rgba(255, 255, 255, 0.15);
       border-radius: 2px;
     }
     &::-webkit-scrollbar-track {
@@ -141,16 +144,23 @@ const StyledTravelRecentProjects = styled.div`
     height: 80px;
     border-radius: 50%;
     overflow: hidden;
-    border: 3px solid rgba(139, 92, 246, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
     transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 
     &.hovered {
-      transform: scale(1.08);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      transform: scale(1.06);
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
     }
 
     &.skeleton {
-      background: linear-gradient(90deg, #ede9fe 25%, #f5f3ff 50%, #ede9fe 75%);
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.04) 25%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.04) 75%
+      );
       background-size: 200px 100%;
       animation: ${shimmer} 1.5s infinite;
       border-color: transparent;
@@ -169,23 +179,28 @@ const StyledTravelRecentProjects = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #c4b5fd, #8b5cf6);
-    color: #fff;
+    background: #1f2728;
+    color: rgba(255, 255, 255, 0.85);
     font-size: 24px;
     font-weight: 700;
-    font-family: "Playfair Display", serif;
+    font-family: Georgia, "Times New Roman", serif;
   }
 
   .project-circle-title {
     font-size: 13px;
     font-weight: 500;
-    color: #1e1b4b;
+    color: rgba(255, 255, 255, 0.92);
 
     &.skeleton-text {
       width: 48px;
       height: 13px;
       border-radius: 4px;
-      background: linear-gradient(90deg, #ede9fe 25%, #f5f3ff 50%, #ede9fe 75%);
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.04) 25%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.04) 75%
+      );
       background-size: 200px 100%;
       animation: ${shimmer} 1.5s infinite;
     }
@@ -193,32 +208,32 @@ const StyledTravelRecentProjects = styled.div`
 
   .project-circle-date {
     font-size: 11px;
-    color: #6366f1;
+    color: rgba(255, 255, 255, 0.45);
     font-weight: 300;
   }
 
   .add-circle {
-    width: 80px;
-    height: 80px;
+    width: 104px;
+    height: 104px;
     border-radius: 50%;
-    border: 2px dashed rgba(99, 102, 241, 0.4);
+    border: 1.5px dashed rgba(255, 255, 255, 0.18);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.5);
+    transition: all 0.25s ease;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.55);
+  }
 
-    &:hover {
-      border-color: rgba(139, 92, 246, 0.6);
-      background: rgba(255, 255, 255, 0.8);
-    }
+  .project-circle-wrap:hover .add-circle {
+    border-color: rgba(125, 151, 134, 0.85);
+    background: rgba(80, 107, 92, 0.12);
+    color: #a9c19f;
   }
 
   .add-circle-icon {
-    font-size: 28px;
-    color: #a5b4fc;
-    font-weight: 300;
+    color: currentColor;
   }
 
   @media screen and (max-width: 600px) {
@@ -232,8 +247,8 @@ const StyledTravelRecentProjects = styled.div`
     }
 
     .add-circle {
-      width: 64px;
-      height: 64px;
+      width: 84px;
+      height: 84px;
     }
   }
 `;

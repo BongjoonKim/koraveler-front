@@ -13,20 +13,15 @@ function TravelPluginCard({ plugin, index, onSelect }: TravelPluginCardProps) {
 
   return (
     <StyledTravelPluginCard
-      className={isComingSoon ? "coming-soon" : ""}
+      className={isComingSoon ? "coming-soon" : "live"}
       style={{ animationDelay: `${0.1 + index * 0.08}s` }}
       onClick={() => !isComingSoon && onSelect?.(plugin)}
     >
-      <div
-        className="plugin-icon-wrap"
-        style={{
-          background: `linear-gradient(135deg, ${plugin.color}18, ${plugin.color}0a)`,
-        }}
-      >
-        <Icon size={22} color={plugin.color} />
+      <div className="plugin-icon-wrap">
+        <Icon size={22} strokeWidth={1.5} />
       </div>
 
-      <h4 className="plugin-name">{plugin.name}</h4>
+      <h3 className="plugin-name">{plugin.name}</h3>
       <p className="plugin-desc">{plugin.description}</p>
 
       <div className="plugin-footer">
@@ -54,23 +49,24 @@ const scaleIn = keyframes`
 `;
 
 const StyledTravelPluginCard = styled.div`
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(99, 102, 241, 0.12);
+  background: #14191a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
-  padding: 24px 20px;
+  padding: 26px 26px 22px;
   cursor: pointer;
   transition: all 0.25s ease;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  min-height: 208px;
 
   opacity: 0;
   animation: ${scaleIn} 0.4s ease forwards;
 
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(99, 102, 241, 0.12);
-    border-color: rgba(139, 92, 246, 0.25);
+  &.live:hover {
+    transform: translateY(-2px);
+    background: #1a2021;
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
   }
 
   &.coming-soon {
@@ -78,45 +74,49 @@ const StyledTravelPluginCard = styled.div`
     animation: ${scaleIn} 0.4s ease forwards;
     cursor: default;
 
-    .plugin-icon-wrap,
+    .plugin-icon-wrap {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.32);
+    }
     .plugin-name,
     .plugin-desc {
-      opacity: 0.45;
+      opacity: 0.62;
     }
 
     &:hover {
       transform: none;
       box-shadow: none;
-      border-color: rgba(99, 102, 241, 0.12);
+      background: #14191a;
+      border-color: rgba(255, 255, 255, 0.08);
     }
   }
 
   .plugin-icon-wrap {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: rgba(46, 87, 62, 0.18);
+    color: #a9c19f;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 20px;
   }
 
   .plugin-name {
-    font-family: "Playfair Display", serif;
-    font-size: 16px;
-    font-weight: 700;
-    color: #1e1b4b;
-    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+    margin: 0 0 10px;
+    letter-spacing: -0.005em;
   }
 
   .plugin-desc {
-    font-size: 13px;
-    color: #64748b;
-    font-weight: 300;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.6;
     margin: 0;
     flex: 1;
   }
@@ -125,35 +125,41 @@ const StyledTravelPluginCard = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: 4px;
+    margin-top: 20px;
   }
 
   .plugin-badge {
     display: inline-block;
-    padding: 3px 10px;
+    padding: 5px 12px;
     font-size: 11px;
     font-weight: 600;
-    border-radius: 20px;
-    letter-spacing: 0.02em;
+    border-radius: 7px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
   }
 
   .available-badge {
-    background: rgba(34, 197, 94, 0.1);
-    color: #16a34a;
+    background: rgba(46, 87, 62, 0.28);
+    color: #a9c19f;
   }
 
   .coming-soon-badge {
-    background: rgba(148, 163, 184, 0.15);
-    color: #94a3b8;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.12);
   }
 
   @media screen and (max-width: 600px) {
-    padding: 20px 16px;
+    padding: 22px 20px 20px;
+    min-height: 188px;
 
     .plugin-icon-wrap {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
+      width: 42px;
+      height: 42px;
+    }
+
+    .plugin-name {
+      font-size: 18px;
     }
   }
 `;

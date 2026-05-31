@@ -3,7 +3,6 @@
 import styled from "styled-components";
 import {ReactNode} from "react";
 import moment from "moment";
-import CusButton from "../../../../elements/buttons/CusButton";
 import useViewDocLayout from "./useViewDocLayout";
 import { CiBookmark } from "react-icons/ci";
 import {IoBookmarkSharp, IoChatbubbleOutline, IoEyeOutline, IoHeart, IoHeartOutline} from "react-icons/io5";
@@ -43,7 +42,7 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
     <StyledViewDocLayout>
       <VStack gap={4} align="stretch">
         {/* 제목 */}
-        <Text fontSize="4xl" fontWeight="600" lineHeight="shorter">
+        <Text fontSize="4xl" fontWeight="600" lineHeight="shorter" color="white">
           {props.title}
         </Text>
 
@@ -58,11 +57,11 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
             gap={2}
           >
             <HStack gap={2} fontSize="l" fontWeight="500" flexWrap="wrap">
-              <Text color="gray.600">
+              <Text color="gray.300">
                 {moment(props.updated).format("YYYY.MM.DD")}
               </Text>
-              <Text color="gray.400">/</Text>
-              <Text color="gray.700">
+              <Text color="gray.500">/</Text>
+              <Text color="gray.200">
                 {props.updatedUser}
               </Text>
             </HStack>
@@ -73,9 +72,9 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
                   <CusIconButton
                     aria-label={props?.isBookmarked ? 'bookmark-checked' : 'bookmark-not-check'}
                     variant="ghost"
-                    colorScheme={props?.isBookmarked ? "yellow" : "gray"}
                     onClick={changeBookmark}
                     size="sm"
+                    style={{ color: props?.isBookmarked ? "#f3c969" : "#c7d2cc" }}
                   >
                     {props?.isBookmarked ? <IoBookmarkSharp/> : <CiBookmark />}
                   </CusIconButton>
@@ -85,34 +84,24 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
               <CusIconButton
                 aria-label="like"
                 variant="ghost"
-                colorScheme={likeStatus?.isLiked ? "red" : "gray"}
                 size="sm"
                 onClick={handleToggleLike}
                 disabled={isLiking}
+                style={{ color: likeStatus?.isLiked ? "#f17a6e" : "#c7d2cc" }}
               >
                 <HStack gap={1}>
                   {likeStatus?.isLiked ? <IoHeart /> : <IoHeartOutline />}
-                  <Text fontSize="sm">{likeStatus?.likeCount ?? 0}</Text>
+                  <Text fontSize="sm" style={{ color: "inherit" }}>{likeStatus?.likeCount ?? 0}</Text>
                 </HStack>
               </CusIconButton>
               {currentUser?.id && (
                 <HStack gap={2}>
-                  <CusButton
-                    variant="outline"
-                    onClick={handleEdit}
-                    size="sm"
-                    colorScheme="blue"
-                  >
+                  <ActionButton type="button" onClick={handleEdit}>
                     Edit
-                  </CusButton>
-                  <CusButton
-                    variant="outline"
-                    onClick={handleDelete}
-                    size="sm"
-                    colorScheme="red"
-                  >
+                  </ActionButton>
+                  <ActionButton type="button" $danger onClick={handleDelete}>
                     Del
-                  </CusButton>
+                  </ActionButton>
                 </HStack>
               )}
             </HStack>
@@ -129,11 +118,11 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
           >
             <HStack gap={4} fontSize="sm" color="gray.400">
               <HStack gap={1}>
-                <IoEyeOutline />
+                <IoEyeOutline color="#94a3a0" />
                 <Text>{views?.totalViews ?? 0}</Text>
               </HStack>
               <HStack gap={1}>
-                <IoChatbubbleOutline />
+                <IoChatbubbleOutline color="#94a3a0" />
                 <Text>{0}</Text>
               </HStack>
             </HStack>
@@ -191,22 +180,44 @@ const StyledViewDocLayout = styled.div`
     }
 `;
 
+const ActionButton = styled.button<{ $danger?: boolean }>`
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 14px;
+    border-radius: 8px;
+    border: 1px solid ${({ $danger }) => ($danger ? "rgba(241, 122, 110, 0.4)" : "rgba(80, 107, 92, 0.45)")};
+    background: transparent;
+    color: ${({ $danger }) => ($danger ? "#f17a6e" : "#b6d4c1")};
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s ease;
+
+    &:hover {
+        background: ${({ $danger }) => ($danger ? "rgba(241, 122, 110, 0.12)" : "rgba(46, 87, 62, 0.18)")};
+        border-color: ${({ $danger }) => ($danger ? "rgba(241, 122, 110, 0.6)" : "rgba(80, 107, 92, 0.65)")};
+        color: ${({ $danger }) => ($danger ? "#ff8a7a" : "#d8ead8")};
+    }
+`;
+
 const ManageTranslationsLink = styled.button`
     display: flex;
     align-items: center;
     gap: 4px;
     padding: 5px 10px;
     border-radius: 8px;
-    border: 1px solid rgba(139, 115, 85, 0.2);
+    border: 1px solid rgba(80, 107, 92, 0.35);
     background: transparent;
-    color: #8b7355;
+    color: #b6d4c1;
     font-size: 12px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-        background: rgba(139, 115, 85, 0.06);
-        border-color: rgba(139, 115, 85, 0.35);
+        background: rgba(46, 87, 62, 0.18);
+        border-color: rgba(80, 107, 92, 0.55);
+        color: #d8ead8;
     }
 `;

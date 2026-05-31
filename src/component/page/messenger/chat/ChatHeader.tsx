@@ -79,12 +79,12 @@ export default function ChatHeader() {
         align="center"
         justify="space-between"
         p={4}
-        border="1px solid #e7e7e7"
-        bg="white"
+        borderBottom="1px solid rgba(255, 255, 255, 0.06)"
+        bg="#0f1414"
         height="4rem"
       >
         <HStack gap={3}>
-          <IconButton variant={"ghost"} onClick={() => setSelectedChannel(null)}>
+          <IconButton variant={"ghost"} onClick={() => setSelectedChannel(null)} style={{ color: "#c7d2cc" }}>
             <ChevronLeft />
           </IconButton>
           <Avatar.Root size="md">
@@ -98,44 +98,38 @@ export default function ChatHeader() {
           </Avatar.Root>
           <VStack align="start" gap={0}>
             <HStack>
-              <Text fontWeight="bold" fontSize="lg">
+              <Text fontWeight="bold" fontSize="lg" style={{ color: "#ffffff" }}>
                 {selectedChannel.channelType === 'DIRECT_MESSAGE' ? '' : '#'}{selectedChannel.name}
               </Text>
               {selectedChannel.channelType === 'PRIVATE' && (
                 <Badge colorPalette="purple" size="sm">비공개</Badge>
               )}
             </HStack>
-            <Text fontSize="sm" color="gray.500">
+            <Text fontSize="sm" style={{ color: "#94a3a0" }}>
               Member {selectedChannel.memberCount}
             </Text>
           </VStack>
         </HStack>
-        
+
         <HStack gap={2}>
-          {/*<IconButton*/}
-          {/*  aria-label="중요 메시지"*/}
-          {/*  size="sm"*/}
-          {/*  variant="ghost"*/}
-          {/*>*/}
-          {/*  <Star size={16} />*/}
-          {/*</IconButton>*/}
-          
           {/* 멤버 목록 보기 버튼 추가 */}
           <IconButton
             aria-label="멤버 목록"
             size="sm"
             variant="ghost"
             onClick={handleShowMembers}
+            style={{ color: "#c7d2cc" }}
           >
             <Users size={16} />
           </IconButton>
-          
+
           <MenuRoot>
             <MenuTrigger asChild>
               <IconButton
                 aria-label="채널 설정"
                 size="sm"
                 variant="ghost"
+                style={{ color: "#c7d2cc" }}
               >
                 <Settings size={16} />
               </IconButton>

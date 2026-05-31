@@ -71,7 +71,7 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                                 <ItemRight>
                                     {isPending && <Spinner />}
                                     {isFailed && <FailedText>Failed</FailedText>}
-                                    {isActive && isAvailable && <Check size={14} color="#c4956a" />}
+                                    {isActive && isAvailable && <Check size={14} color="#7fb89a" />}
                                 </ItemRight>
                             </DropdownItem>
                         );
@@ -97,17 +97,18 @@ const TriggerButton = styled.button<{ $isOpen: boolean }>`
     gap: 6px;
     padding: 5px 12px;
     border-radius: 8px;
-    border: 1px solid ${({ $isOpen }) => ($isOpen ? '#c4956a' : 'rgba(139, 115, 85, 0.25)')};
-    background: ${({ $isOpen }) => ($isOpen ? 'rgba(196, 149, 106, 0.06)' : 'transparent')};
-    color: #5a4a3a;
+    border: 1px solid ${({ $isOpen }) => ($isOpen ? 'rgba(80, 107, 92, 0.65)' : 'rgba(80, 107, 92, 0.35)')};
+    background: ${({ $isOpen }) => ($isOpen ? 'rgba(46, 87, 62, 0.22)' : 'transparent')};
+    color: #b6d4c1;
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-        border-color: #c4956a;
-        background: rgba(196, 149, 106, 0.04);
+        border-color: rgba(80, 107, 92, 0.65);
+        background: rgba(46, 87, 62, 0.18);
+        color: #d8ead8;
     }
 `;
 
@@ -120,10 +121,10 @@ const Dropdown = styled.div`
     top: calc(100% + 6px);
     left: 0;
     min-width: 200px;
-    background: #fff;
-    border: 1px solid rgba(139, 115, 85, 0.15);
+    background: #14191a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;
-    box-shadow: 0 8px 24px rgba(44, 37, 32, 0.12);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
     z-index: 100;
     overflow: hidden;
     padding: 4px;
@@ -137,7 +138,7 @@ const DropdownItem = styled.button<{ $isActive: boolean; $isAvailable: boolean }
     padding: 8px 12px;
     border: none;
     border-radius: 6px;
-    background: ${({ $isActive }) => ($isActive ? 'rgba(196, 149, 106, 0.08)' : 'transparent')};
+    background: ${({ $isActive }) => ($isActive ? 'rgba(46, 87, 62, 0.28)' : 'transparent')};
     cursor: ${({ $isAvailable }) => ($isAvailable ? 'pointer' : 'default')};
     opacity: ${({ $isAvailable }) => ($isAvailable ? 1 : 0.45)};
     transition: background 0.15s ease;
@@ -145,7 +146,7 @@ const DropdownItem = styled.button<{ $isActive: boolean; $isAvailable: boolean }
 
     &:hover:not(:disabled) {
         background: ${({ $isActive }) =>
-            $isActive ? 'rgba(196, 149, 106, 0.12)' : 'rgba(139, 115, 85, 0.05)'};
+            $isActive ? 'rgba(46, 87, 62, 0.38)' : 'rgba(255, 255, 255, 0.05)'};
     }
 `;
 
@@ -156,19 +157,19 @@ const ItemLeft = styled.div`
 `;
 
 const ItemLabel = styled.span`
-    color: #2c2520;
+    color: #e8eaeb;
     font-weight: 500;
 `;
 
 const OriginalTag = styled.span`
     font-size: 10px;
-    color: #8b7355;
+    color: #7fb89a;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.3px;
     padding: 1px 5px;
     border-radius: 4px;
-    background: rgba(139, 115, 85, 0.08);
+    background: rgba(46, 87, 62, 0.22);
 `;
 
 const ItemRight = styled.div`

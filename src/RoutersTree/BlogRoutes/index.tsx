@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import {Route, Routes} from "react-router-dom";
 import CreateBlogPost from "../../component/page/blog/CreateBlogPost/CreateBlogPost";
+import NewBlogRedirect from "../../component/page/blog/CreateBlogPost/NewBlogRedirect";
 import BlogPage from "../../component/page/blog/BlogPage";
 import ViewBlog from "../../component/page/blog/ViewBlog";
 import EditBlogPost from "../../component/page/blog/EditBlogPost";
@@ -37,6 +38,16 @@ function BlogRoutes(props: BlogRoutesProps) {
             {/* locale 없는 URL → redirect */}
             <Route path="/home" element={<BlogLocaleRedirect type="home" />} />
             <Route path="/:type" element={<BlogLocaleRedirect />} />
+          </Route>
+
+          {/* 새 글 진입점 — 빈 draft 생성 후 /blog/create/{id} 로 교체 이동.
+              비로그인 시 ProtectedRoute 가 /login 으로 보내고 로그인 후 이 경로로 자동 복귀. */}
+          <Route element={<MainLayout showHero={false} />}>
+            <Route path="/create-new" element={
+              <ProtectedRoute>
+                <NewBlogRedirect />
+              </ProtectedRoute>
+            } />
           </Route>
 
           {/* MainLayout 없이 독립적으로 렌더링되는 라우트들 */}

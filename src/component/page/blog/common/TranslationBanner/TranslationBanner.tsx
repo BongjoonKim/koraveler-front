@@ -53,11 +53,11 @@ const Banner = styled.div`
     gap: 8px;
     padding: 10px 16px;
     margin-bottom: 16px;
-    background: rgba(196, 149, 106, 0.08);
-    border: 1px solid rgba(196, 149, 106, 0.2);
+    background: rgba(46, 87, 62, 0.18);
+    border: 1px solid rgba(80, 107, 92, 0.35);
     border-radius: 8px;
     font-size: 13px;
-    color: #8b7355;
+    color: #b6d4c1;
 `;
 
 const BannerContent = styled.div`
@@ -68,14 +68,14 @@ const BannerContent = styled.div`
 `;
 
 const BannerText = styled.span`
-    color: #5a4a3a;
+    color: #e8eaeb;
 `;
 
 const ReviewedBadge = styled.span`
     font-size: 11px;
     font-weight: 600;
-    color: #38a169;
-    background: rgba(56, 161, 105, 0.1);
+    color: #7fb89a;
+    background: rgba(46, 87, 62, 0.32);
     padding: 2px 8px;
     border-radius: 10px;
 `;
@@ -85,10 +85,10 @@ const ViewOriginalButton = styled.button`
     align-items: center;
     gap: 4px;
     padding: 4px 12px;
-    border: 1px solid #c4956a;
+    border: 1px solid rgba(80, 107, 92, 0.55);
     border-radius: 6px;
     background: transparent;
-    color: #c4956a;
+    color: #b6d4c1;
     font-size: 12px;
     font-weight: 500;
     cursor: pointer;
@@ -96,6 +96,8 @@ const ViewOriginalButton = styled.button`
     white-space: nowrap;
 
     &:hover {
-        background: rgba(196, 149, 106, 0.1);
+        background: rgba(46, 87, 62, 0.22);
+        color: #d8ead8;
+        border-color: rgba(80, 107, 92, 0.75);
     }
 `;

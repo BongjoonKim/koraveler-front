@@ -40,8 +40,8 @@ function DocComment({
   if (comment?.isDeleted) {
     return (
       <Box ml={{ base: `${indentLevel}rem`, md: `${indentLevel * 2}rem` }}>
-        <Box p={4} bg="gray.50" borderRadius="md">
-          <Text color="gray.500" fontStyle="italic">
+        <Box p={4} bg="whiteAlpha.50" borderRadius="md" borderWidth="1px" borderColor="whiteAlpha.100">
+          <Text color="gray.400" fontStyle="italic">
             삭제된 댓글입니다.
           </Text>
         </Box>
@@ -74,7 +74,7 @@ function DocComment({
   return (
     <Box ml={{ base: `${indentLevel}rem`, md: `${indentLevel * 2}rem` }}
          borderBottom="1px solid"
-         borderColor="gray.200"
+         borderColor="whiteAlpha.100"
          padding={"1rem"}
     >
       <Box
@@ -90,14 +90,14 @@ function DocComment({
         />
         <HStack justify={"space-between"} w={"full"} py={2}>
           <VStack align={"flex-start"}>
-            <Text fontWeight={"600"} fontSize={"sm"}>
+            <Text fontWeight={"600"} fontSize={"sm"} color="gray.100">
               {comment?.userId}
             </Text>
-            <Text color="gray.500" fontSize="xs">
+            <Text color="gray.400" fontSize="xs">
               {moment(comment?.created).format("YYYY.MM.DD")}
             </Text>
             {comment?.isEdited && (
-              <Text color="gray.400" fontSize="xs">
+              <Text color="gray.500" fontSize="xs">
                 (Edited)
               </Text>
             )}
@@ -142,37 +142,37 @@ function DocComment({
           gap={1}
           cursor="pointer"
           onClick={() => onLike?.(comment?.id!, comment?.parentId)}
-          color={comment?.isLikedByMe ? "red.500" : "gray.500"}
-          _hover={{ color: "red.400" }}
+          color={comment?.isLikedByMe ? "red.400" : "gray.400"}
+          _hover={{ color: "red.300" }}
         >
           {comment?.isLikedByMe ? <FaHeart size={14} /> : <FiHeart size={14} />}
           {(comment?.likeCount ?? 0) > 0 && (
             <Text fontSize="xs">{comment?.likeCount}</Text>
           )}
         </HStack>
-        
+
         {/* 답글 달기 */}
         {currentUserId && (
           <HStack
             gap={1}
             cursor="pointer"
             onClick={handleReply}
-            color="gray.500"
-            _hover={{ color: "blue.400" }}
+            color="gray.400"
+            _hover={{ color: "#7fb89a" }}
           >
             <FiMessageCircle size={14} />
             <Text fontSize="xs">답글</Text>
           </HStack>
         )}
-        
+
         {/* 대댓글 보기 토글 (depth 0, 1만) */}
         {comment && comment.depth < 2 && (comment.replyCount ?? 0) > 0 && (
           <Text
             fontSize="xs"
-            color="blue.500"
+            color="#7fb89a"
             cursor="pointer"
             onClick={handleToggleReplies}
-            _hover={{ textDecoration: "underline" }}
+            _hover={{ textDecoration: "underline", color: "#a0d4b3" }}
           >
             {isExpanded
               ? "답글 숨기기"

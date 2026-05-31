@@ -278,9 +278,9 @@ const StyledCommentEditor = styled.div`
     display: flex;
     flex-direction: column;
     position: relative;
-    border-radius: 6px;
+    border-radius: 8px;
     overflow: hidden;
-    background: white;
+    background: #14191a;
     flex: 1;
     &.dragging .ProseMirror {
         opacity: 0.5;
@@ -291,8 +291,8 @@ const Toolbar = styled.div`
     display: flex;
     gap: 2px;
     padding: 6px 8px;
-    background: #f8f9fa;
-    border-bottom: 1px solid #e9ecef;
+    background: #1a2021;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     flex-wrap: wrap;
 `;
 
@@ -300,7 +300,7 @@ const ToolbarButton = styled.button`
     padding: 4px 8px;
     border: none;
     background: transparent;
-    color: #495057;
+    color: #c7d2cc;
     border-radius: 4px;
     cursor: pointer;
     font-size: 13px;
@@ -308,13 +308,13 @@ const ToolbarButton = styled.button`
     transition: all 0.15s;
 
     &:hover {
-        background: #e9ecef;
-        color: #228be6;
+        background: rgba(80, 107, 92, 0.2);
+        color: #7fb89a;
     }
 
     &.is-active {
-        background: #228be6;
-        color: white;
+        background: #2f5743;
+        color: #ffffff;
     }
 
     strong, em, s {
@@ -325,7 +325,7 @@ const ToolbarButton = styled.button`
 const Separator = styled.div`
     width: 1px;
     height: 18px;
-    background: #dee2e6;
+    background: rgba(255, 255, 255, 0.1);
     margin: 0 4px;
     align-self: center;
 `;
@@ -352,8 +352,9 @@ const EditorContainer = styled.div<EditorContainerProps>`
         outline: none;
         font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", sans-serif;
         font-size: 14px;
-        line-height: 1.5;
-        color: #333;
+        line-height: 1.6;
+        color: #e8eaeb;
+        background: #14191a;
         overflow-y: auto;
 
         &:focus {
@@ -364,7 +365,7 @@ const EditorContainer = styled.div<EditorContainerProps>`
         &:empty::before,
         &.is-empty::before {
             content: attr(data-placeholder);
-            color: #adb5bd;
+            color: rgba(255, 255, 255, 0.3);
             pointer-events: none;
             position: absolute;
             height: 0;
@@ -374,7 +375,7 @@ const EditorContainer = styled.div<EditorContainerProps>`
         /* 첫 번째 자식이 빈 p 태그일 때도 처리 */
         > p:only-child:empty::before {
             content: attr(data-placeholder);
-            color: #adb5bd;
+            color: rgba(255, 255, 255, 0.3);
             pointer-events: none;
         }
 
@@ -396,11 +397,12 @@ const EditorContainer = styled.div<EditorContainerProps>`
         }
 
         a {
-            color: #228be6;
+            color: #7fb89a;
             text-decoration: none;
             cursor: pointer;
 
             &:hover {
+                color: #a0d4b3;
                 text-decoration: underline;
             }
         }
@@ -417,7 +419,8 @@ const EditorContainer = styled.div<EditorContainerProps>`
         }
 
         code {
-            background: #f1f3f5;
+            background: rgba(255, 255, 255, 0.06);
+            color: #f7a89f;
             padding: 2px 4px;
             border-radius: 3px;
             font-family: "Consolas", monospace;
@@ -429,8 +432,8 @@ const EditorContainer = styled.div<EditorContainerProps>`
 const DropOverlay = styled.div`
     position: absolute;
     inset: 0;
-    background: rgba(34, 139, 230, 0.1);
-    border: 2px dashed #228be6;
+    background: rgba(46, 87, 62, 0.18);
+    border: 2px dashed #386851;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -438,11 +441,12 @@ const DropOverlay = styled.div`
     z-index: 10;
 
     span {
-        background: white;
+        background: #14191a;
         padding: 12px 20px;
         border-radius: 8px;
         font-size: 14px;
-        color: #228be6;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        color: #7fb89a;
+        border: 1px solid rgba(80, 107, 92, 0.4);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     }
 `;
