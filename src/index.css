@@ -1,6 +1,9 @@
 html {
   scrollbar-gutter: stable;
   background: #0a0c0c;
+  /* Firefox 용 (Chromium 은 ::-webkit-scrollbar 가 우선) */
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+  scrollbar-width: thin;
 }
 
 body {
@@ -16,4 +19,31 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* 브랜드 스크롤바 — 모든 스크롤 영역에 자동 적용. */
+/* 컴포넌트 단위로 다시 정의하지 말고 이걸 기본값으로 쓸 것. */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }
