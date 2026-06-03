@@ -5,13 +5,7 @@ import {useNavigate} from "react-router-dom";
 import {S3URLInDocument} from "../../../../../constants/RegexConstants";
 import {useBlogLocale} from "../../../../../hooks/useBlogLocale";
 
-export interface BlogListItemProps extends DocumentDTO {
-  trashMode?: boolean;
-  onRestore?: (id: string) => void;
-}
-
-// 휴지통 보관 기간(일). BlogCleanupScheduler.RETENTION_DAYS 와 동일.
-const TRASH_RETENTION_DAYS = 90;
+export interface BlogListItemProps extends DocumentDTO {}
 
 // 썸네일 없는 글의 색 스와치 팔레트. 시안의 sage/peach/dusty-blue 톤.
 const SWATCH_PALETTE = [
@@ -44,13 +38,6 @@ function BlogListItem(props: BlogListItemProps) {
   const navigate = useNavigate();
   const {blogViewUrl} = useBlogLocale();
 
-  const daysLeft = props.deletedAt
-    ? Math.max(
-        0,
-        TRASH_RETENTION_DAYS - moment().diff(moment(props.deletedAt), "days")
-      )
-    : null;
-
   const cleanContents = useMemo(
     () => props.contents?.replace(S3URLInDocument, "")?.trim() || "",
     [props.contents]
@@ -60,38 +47,18 @@ function BlogListItem(props: BlogListItemProps) {
   const swatch = useMemo(() => swatchFor(props.id), [props.id]);
 
   const handleClick = () => {
-    if (props.trashMode) return;
     if (props.id) navigate(blogViewUrl(props.id));
   };
 
   return (
     <StyledItem
       onClick={handleClick}
-      $trashMode={props.trashMode}
       role="link"
       tabIndex={0}
       onKeyDown={(e) => {
-        if (!props.trashMode && (e.key === "Enter" || e.key === " ")) handleClick();
+        if (e.key === "Enter" || e.key === " ") handleClick();
       }}
     >
-      {props.trashMode && daysLeft !== null && (
-        <div className="trash-overlay">
-          <span className="countdown">
-            {daysLeft > 0 ? `${daysLeft}일 후 영구삭제` : "오늘 영구삭제 예정"}
-          </span>
-          <button
-            type="button"
-            className="restore-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (props.id) props.onRestore?.(props.id);
-            }}
-          >
-            복구
-          </button>
-        </div>
-      )}
-
       <div className="thumb">
         {props.thumbnailImgUrl ? (
           <img src={props.thumbnailImgUrl} alt="" loading="lazy" />
@@ -105,11 +72,7 @@ function BlogListItem(props: BlogListItemProps) {
         <h3 className="title">{props.title}</h3>
         <p className="desc">{cleanContents}</p>
         <div className="meta">
-          <span>
-            {props.trashMode && props.deletedAt
-              ? `삭제일: ${moment(props.deletedAt).format("MMM D, YYYY")}`
-              : moment(props.updated).format("MMM D, YYYY")}
-          </span>
+          <span>{moment(props.updated).format("MMM D, YYYY")}</span>
           {mins && <span>· {mins} min</span>}
           {props.updatedUser && <span className="author">· {props.updatedUser}</span>}
         </div>
@@ -120,10 +83,9 @@ function BlogListItem(props: BlogListItemProps) {
 
 export default BlogListItem;
 
-const StyledItem = styled.li<{ $trashMode?: boolean }>`
+const StyledItem = styled.li`
   list-style: none;
-  cursor: ${({$trashMode}) => ($trashMode ? "default" : "pointer")};
-  opacity: ${({$trashMode}) => ($trashMode ? 0.85 : 1)};
+  cursor: pointer;
   display: grid;
   grid-template-columns: 160px 1fr;
   gap: 1.5rem;
@@ -228,37 +190,4 @@ const StyledItem = styled.li<{ $trashMode?: boolean }>`
     }
   }
 
-  .trash-overlay {
-    position: absolute;
-    top: 0.75rem;
-    right: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    z-index: 2;
-
-    .countdown {
-      background: rgba(220, 38, 38, 0.92);
-      color: white;
-      padding: 0.25rem 0.625rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-    .restore-btn {
-      background: white;
-      color: #2563eb;
-      border: 1px solid #2563eb;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.15s;
-
-      &:hover {
-        background: #eff6ff;
-      }
-    }
-  }
 `;

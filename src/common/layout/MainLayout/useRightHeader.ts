@@ -86,9 +86,9 @@ function useRightHeader() {
     navigate('/settings');
   };
   
-  // 내 블로그로 이동
+  // 내 블로그 관리 대시보드로 이동 (Drafts/Bookmarks/Trash 포함)
   const handleMyBlogs = () => {
-    navigate('/blog/home');
+    navigate('/blog/my');
   };
   
   // 로그인 페이지로 이동

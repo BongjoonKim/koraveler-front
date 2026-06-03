@@ -27,6 +27,24 @@ export const TAB_TO_STATUS: Record<DashboardTab, BlogPostStatus> = {
   trash: "trash",
 };
 
+/**
+ * 옛 `/blog/{type}` URL 의 type 세그먼트 → 대시보드 탭 키 매핑.
+ * BlogManageRedirect 가 옛 URL 을 `/blog/my?tab=...` 로 보낼 때, 그리고 대시보드가
+ * `?tab=` 을 읽어 초기 탭을 결정할 때 양쪽에서 쓴다.
+ */
+export const LEGACY_TYPE_TO_TAB: Record<string, DashboardTab> = {
+  "my-blog": "my-posts",
+  bookmark: "bookmarks",
+  draft: "drafts",
+  hidden: "hidden",
+  trash: "trash",
+};
+
+/** 유효한 탭 키인지 검사. URL 파람 sanitize 용. */
+export function isDashboardTab(value: string | null | undefined): value is DashboardTab {
+  return value === "my-posts" || value === "drafts" || value === "bookmarks" || value === "hidden" || value === "trash";
+}
+
 /** 정렬 옵션 */
 export type DashboardSort = "latest" | "oldest" | "views" | "likes";
 

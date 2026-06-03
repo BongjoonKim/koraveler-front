@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useQueries } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 import moment from "moment";
 import { useCurrentUser } from "../../../../hooks/useCurrentUser";
 import {
@@ -9,7 +10,11 @@ import {
 import { useMyFolders } from "../../../../hooks/useFolderQueries";
 import { getViews } from "../../../../endpoints/blog-endpoints";
 import { getDocumentLikeStatus } from "../../../../endpoints/document-like-endpoints";
-import type { DashboardTab, DashboardSort } from "../../../../types/blog/myBlogTypes";
+import {
+  isDashboardTab,
+  type DashboardTab,
+  type DashboardSort,
+} from "../../../../types/blog/myBlogTypes";
 
 export type DashboardTabKey = DashboardTab;
 export type PostStatus = "PUBLISHED" | "DRAFT";
@@ -63,8 +68,35 @@ function formatDate(value?: string | Date): string {
 
 export default function useMyBlogDashboard() {
   const { data: currentUser } = useCurrentUser();
-  const [activeTab, setActiveTab] = useState<DashboardTabKey>("my-posts");
+
+  // 옛 `/blog/{type}` URL 에서 BlogManageRedirect 가 보낸 `?tab=` 을 초기 탭으로 사용.
+  // 부정한 값이 오면 기본 탭(my-posts)으로 폴백.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabFromUrl = searchParams.get("tab");
+  const initialTab: DashboardTabKey = isDashboardTab(tabFromUrl) ? tabFromUrl : "my-posts";
+
+  const [activeTab, setActiveTabState] = useState<DashboardTabKey>(initialTab);
   const [sortKey, setSortKey] = useState<DashboardSort>("latest");
+
+  // 탭 변경 시 URL `?tab=` 도 같이 업데이트 → 새로고침/공유 시 같은 탭이 열린다.
+  const setActiveTab = useCallback(
+    (next: DashboardTabKey) => {
+      setActiveTabState(next);
+      setSearchParams(
+        (prev) => {
+          const params = new URLSearchParams(prev);
+          if (next === "my-posts") {
+            params.delete("tab");
+          } else {
+            params.set("tab", next);
+          }
+          return params;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
 
   const stats = useMyBlogStats();
   const folders = useMyFolders();

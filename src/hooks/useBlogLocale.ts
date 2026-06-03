@@ -26,12 +26,8 @@ export function useBlogLocale() {
   // locale 포함 블로그 글 보기 URL
   const blogViewUrl = (id: string) => `/blog/view/${activeLocale}/${id}`;
 
-  // locale 포함 블로그 목록 URL
-  const blogListUrl = (type: string) => `/blog/${type}/${activeLocale}`;
-
   return {
     activeLocale,
     blogViewUrl,
-    blogListUrl,
   };
 }

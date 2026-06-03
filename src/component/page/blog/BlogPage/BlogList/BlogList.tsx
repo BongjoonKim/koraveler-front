@@ -5,8 +5,8 @@ import useBlogList from "./useBlogList";
 
 export interface BlogHomeProps {
   /**
-   * "following" 일 때 /blog/following 인증 엔드포인트를 사용한다.
-   * 미지정 시 URL match 기반의 기존 분기를 사용 (legacy 호환).
+   * "following" 이면 인증 엔드포인트(getFollowingFeed)를 사용,
+   * 그 외("all" 또는 미지정)는 공개 home 피드를 보여준다.
    */
   feedMode?: "all" | "following";
 };
@@ -14,8 +14,6 @@ export interface BlogHomeProps {
 function BlogList(props: BlogHomeProps) {
   const {
     blogList,
-    isTrashView,
-    handleRestore,
     loadMore,
     hasMore,
     isLoading,
@@ -55,8 +53,6 @@ function BlogList(props: BlogHomeProps) {
             <BlogListItem
               key={blog.id}
               {...blog}
-              trashMode={isTrashView}
-              onRestore={handleRestore}
             />
           )
         })}
