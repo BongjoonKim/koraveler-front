@@ -281,7 +281,7 @@ export default function ChannelMemberList({
   };
   
   if (!isVisible) return null;
-  
+
   return (
     <>
       <Box
@@ -290,10 +290,9 @@ export default function ChannelMemberList({
         top={0}
         h="100%"
         w="320px"
-        bg="white"
-        borderLeft="1px solid"
-        borderColor="gray.200"
-        shadow="lg"
+        bg="#0f1414"
+        borderLeft="1px solid rgba(255, 255, 255, 0.06)"
+        boxShadow="-12px 0 32px rgba(0, 0, 0, 0.35)"
         zIndex={1000}
       >
         <Flex direction="column" h="full">
@@ -301,80 +300,153 @@ export default function ChannelMemberList({
           <Flex
             align="center"
             justify="space-between"
-            p={4}
-            borderBottom="1px solid"
-            borderColor="gray.200"
-            bg="gray.50"
+            px={4}
+            borderBottom="1px solid rgba(255, 255, 255, 0.06)"
+            bg="#0f1414"
             height="4rem"
+            flexShrink={0}
           >
-            <Heading size="md">Channel Members</Heading>
-            <HStack gap={2}>
+            <Heading
+              size="sm"
+              fontWeight={600}
+              letterSpacing="-0.01em"
+              style={{ color: "#ffffff" }}
+            >
+              Channel Members
+            </Heading>
+            <HStack gap={1}>
               <Button
-                size="sm"
+                size="xs"
                 variant="ghost"
-                colorPalette="blue"
                 onClick={handleInviteMember}
+                style={{
+                  color: "#7fb89a",
+                  background: "rgba(46, 87, 62, 0.18)",
+                  border: "1px solid rgba(80, 107, 92, 0.45)",
+                  borderRadius: "8px",
+                  padding: "0 10px",
+                  height: "30px",
+                }}
               >
-                <UserPlus size={16} />
-                Invite
+                <UserPlus size={14} />
+                <Text as="span" ml={1} fontSize="xs" fontWeight={500}>
+                  Invite
+                </Text>
               </Button>
               <IconButton
                 size="sm"
                 variant="ghost"
                 onClick={onClose}
                 aria-label="Close"
+                style={{ color: "#c7d2cc" }}
               >
-                <X size={20} />
+                <X size={18} />
               </IconButton>
             </HStack>
           </Flex>
-          
+
           {/* Search */}
-          <Box p={4}>
-            <HStack>
-              <Search size={16} color="gray" />
+          <Box px={4} pt={3} pb={2} flexShrink={0}>
+            <Flex
+              align="center"
+              gap={2}
+              px={3}
+              h="36px"
+              bg="#14191a"
+              border="1px solid rgba(255, 255, 255, 0.08)"
+              borderRadius="10px"
+              transition="border-color 0.15s, box-shadow 0.15s"
+              _focusWithin={{
+                borderColor: "rgba(80, 107, 92, 0.65)",
+                boxShadow: "0 0 0 3px rgba(46, 87, 62, 0.18)",
+              }}
+            >
+              <Search size={14} color="#94a3a0" />
               <Input
                 placeholder="Search members..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                size="sm"
+                variant="outline"
+                border="none"
+                outline="none"
+                p={0}
+                h="auto"
+                fontSize="sm"
+                color="#ffffff"
+                _placeholder={{ color: "#6f7a76" }}
+                _focus={{ boxShadow: "none", outline: "none" }}
               />
-            </HStack>
+            </Flex>
           </Box>
-          
+
           {/* Member Statistics */}
-          <HStack px={4} pb={2} gap={4}>
-            <Text fontSize="sm" color="gray.600">
-              Total {members.length}
+          <HStack px={4} pb={3} gap={4} flexShrink={0}>
+            <Text fontSize="xs" style={{ color: "#94a3a0" }}>
+              Total{" "}
+              <Text as="span" fontWeight={600} style={{ color: "#c7d2cc" }}>
+                {members.length}
+              </Text>
             </Text>
-            <HStack gap={1}>
+            <HStack gap={1.5}>
               <Box
-                w="10px"
-                h="10px"
+                w="8px"
+                h="8px"
                 borderRadius="full"
-                bg={activeMembersOnline?.length ? "green.500" : "gray.300"}
-                border="2px solid white"
+                bg={activeMembersOnline?.length ? "#7fb89a" : "rgba(255,255,255,0.18)"}
+                boxShadow={
+                  activeMembersOnline?.length
+                    ? "0 0 0 2px rgba(127, 184, 154, 0.18)"
+                    : "none"
+                }
               />
-              <Text fontSize="sm" color="gray.600">
-                Online {activeMembersOnline.length}
+              <Text fontSize="xs" style={{ color: "#94a3a0" }}>
+                Online{" "}
+                <Text as="span" fontWeight={600} style={{ color: "#c7d2cc" }}>
+                  {activeMembersOnline.length}
+                </Text>
               </Text>
             </HStack>
           </HStack>
-          
-          <Separator />
-          
+
+          <Box h="1px" bg="rgba(255, 255, 255, 0.06)" flexShrink={0} />
+
           {/* Member List */}
-          <Box flex={1} overflowY="auto" px={2}>
+          <Box
+            flex={1}
+            overflowY="auto"
+            px={2}
+            css={{
+              "&::-webkit-scrollbar": { width: "6px" },
+              "&::-webkit-scrollbar-track": { background: "transparent" },
+              "&::-webkit-scrollbar-thumb": {
+                background: "rgba(255, 255, 255, 0.08)",
+                borderRadius: "3px",
+              },
+              "&::-webkit-scrollbar-thumb:hover": {
+                background: "rgba(255, 255, 255, 0.16)",
+              },
+            }}
+          >
             {isLoading ? (
               <Flex justify="center" align="center" py={8}>
-                <Text color="gray.500">Loading members...</Text>
+                <Text fontSize="sm" style={{ color: "#94a3a0" }}>
+                  Loading members...
+                </Text>
               </Flex>
             ) : (
               <VStack align="stretch" gap={1} py={2}>
                 {/* Online Members */}
                 {activeMembersOnline.length > 0 && (
                   <>
-                    <Text fontSize="xs" fontWeight="semibold" color="gray.500" px={2} pt={2}>
+                    <Text
+                      fontSize="10.5px"
+                      fontWeight={600}
+                      style={{ color: "#6f7a76", letterSpacing: "0.08em" }}
+                      textTransform="uppercase"
+                      px={3}
+                      pt={2}
+                      pb={1}
+                    >
                       Online — {activeMembersOnline.length}
                     </Text>
                     {activeMembersOnline.map((member) => (
@@ -396,11 +468,19 @@ export default function ChannelMemberList({
                     ))}
                   </>
                 )}
-                
+
                 {/* Offline Members */}
                 {activeMembersOffline.length > 0 && (
                   <>
-                    <Text fontSize="xs" fontWeight="semibold" color="gray.500" px={2} pt={4}>
+                    <Text
+                      fontSize="10.5px"
+                      fontWeight={600}
+                      style={{ color: "#6f7a76", letterSpacing: "0.08em" }}
+                      textTransform="uppercase"
+                      px={3}
+                      pt={3}
+                      pb={1}
+                    >
                       Offline — {activeMembersOffline.length}
                     </Text>
                     {activeMembersOffline.map((member) => (
@@ -422,11 +502,19 @@ export default function ChannelMemberList({
                     ))}
                   </>
                 )}
-                
+
                 {/* Banned Members */}
                 {bannedMembers.length > 0 && (
                   <>
-                    <Text fontSize="xs" fontWeight="semibold" color="gray.500" px={2} pt={4}>
+                    <Text
+                      fontSize="10.5px"
+                      fontWeight={600}
+                      style={{ color: "#6f7a76", letterSpacing: "0.08em" }}
+                      textTransform="uppercase"
+                      px={3}
+                      pt={3}
+                      pb={1}
+                    >
                       Banned — {bannedMembers.length}
                     </Text>
                     {bannedMembers.map((member) => (
@@ -447,20 +535,39 @@ export default function ChannelMemberList({
                     ))}
                   </>
                 )}
-                
+
                 {/* No Members */}
                 {filteredMembers.length === 0 && (
-                  <Flex justify="center" align="center" py={8}>
-                    <VStack>
-                      <Text color="gray.500" fontSize="sm">
-                        {searchQuery ? 'No search results' : 'No members in this channel'}
+                  <Flex justify="center" align="center" py={10}>
+                    <VStack gap={3}>
+                      <Box
+                        w="48px"
+                        h="48px"
+                        borderRadius="full"
+                        bg="rgba(46, 87, 62, 0.22)"
+                        border="1px solid rgba(80, 107, 92, 0.45)"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        color="#7fb89a"
+                      >
+                        <UserPlus size={20} />
+                      </Box>
+                      <Text fontSize="sm" style={{ color: "#c7d2cc" }}>
+                        {searchQuery ? "No search results" : "No members in this channel"}
                       </Text>
                       {!searchQuery && (
                         <Button
                           size="sm"
-                          colorPalette="blue"
                           variant="outline"
                           onClick={handleInviteMember}
+                          style={{
+                            color: "#ffffff",
+                            background: "#2f5743",
+                            border: "1px solid rgba(80, 107, 92, 0.55)",
+                            borderRadius: "8px",
+                            padding: "0 14px",
+                          }}
                         >
                           Invite First Member
                         </Button>

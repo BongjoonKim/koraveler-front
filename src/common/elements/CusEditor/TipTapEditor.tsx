@@ -994,10 +994,7 @@ const StyledTiptapEditor = styled.div`
     display: flex;
     flex-direction: column;
     position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
-    overflow: hidden;
-    background: #14191a;
+    background: transparent;
 
     &.dragging {
         .ProseMirror {
@@ -1011,9 +1008,9 @@ const Toolbar = styled.div`
     flex-wrap: nowrap;
     overflow-x: auto;
     gap: 2px;
-    padding: 6px 8px;
-    background: #1a2021;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 6px 0;
+    background: transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     align-items: center;
 
     /* 가로 스크롤바를 얇게 */
@@ -1059,8 +1056,8 @@ const ToolbarButton = styled.button<{ disabled?: boolean }>`
     padding: 4px 8px;
     min-width: 30px;
     height: 28px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: #14191a;
+    border: 1px solid transparent;
+    background: transparent;
     color: #c7d2cc;
     border-radius: 4px;
     cursor: pointer;
@@ -1109,9 +1106,27 @@ const Separator = styled.div`
 const EditorContainer = styled.div`
     flex: 1;
     overflow-y: auto;  /* 여기서 스크롤 */
-    background: #14191a;
+    background: transparent;
     min-height: 0;
     height: 0;
+
+    /* 다크 테마 스크롤바 */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 4px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.25);
+    }
 
     /* EditorContent가 생성하는 wrapper */
     > div {
@@ -1129,7 +1144,7 @@ const EditorContainer = styled.div`
     .ProseMirror {
         min-height: 100%;
         flex: 1;
-        padding: 1rem;
+        padding: 1rem 0;
         outline: none;
         font-family: Arial, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", "Segoe UI", Roboto,
         Helvetica, Arial, sans-serif;

@@ -40,10 +40,11 @@ const TravelChat: React.FC = () => {
 
   return (
     <Container
-      maxW="7xl"
-      px={{ base: 0, lg: 0 }}
+      maxW="full"
+      px={0}
       h="100%"
       flex="1"
+      minH={0}
       flexDirection="column"
       display="flex"
       bg="#0a0c0c"
@@ -56,7 +57,7 @@ const TravelChat: React.FC = () => {
         flex="1"
         flexDirection="column"
       >
-        <Flex h="100%" bg="#0a0c0c">
+        <Flex flex="1" minH={0} bg="#0a0c0c">
           {/* 채널 사이드바 */}
           {shouldShowSidebar && (
             <TravelChannelList
@@ -76,6 +77,7 @@ const TravelChat: React.FC = () => {
               flex={1}
               direction="column"
               minW={0}
+              minH={0}
               w={isMobile && selectedChannel ? "100%" : undefined}
               bg={selectedChannel ? "#0a0c0c" : "#0a0c0c"}
             >
@@ -87,6 +89,7 @@ const TravelChat: React.FC = () => {
                   <Box
                     ref={scrollContainerRef}
                     flex={1}
+                    minH={0}
                     overflowY="auto"
                     p={4}
                     bg="#0a0c0c"

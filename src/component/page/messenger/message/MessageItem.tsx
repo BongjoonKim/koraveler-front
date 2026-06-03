@@ -192,21 +192,21 @@ const MessageItem: React.FC<MessageItemProps> = memo(({ message }) => {
     return (
       <Box
         p={3}
-        bg={isMyMessage ? "blue.50" : "gray.50"}
-        borderRadius="md"
-        border="1px"
-        borderColor={isMyMessage ? "blue.200" : "gray.200"}
+        bg={isMyMessage ? "rgba(46, 87, 62, 0.22)" : "#14191a"}
+        borderRadius="10px"
+        border="1px solid"
+        borderColor={isMyMessage ? "rgba(80, 107, 92, 0.45)" : "rgba(255, 255, 255, 0.08)"}
         maxW="250px"
       >
         <HStack gap={3}>
-          <Box color={isMyMessage ? "blue.500" : "gray.500"}>
+          <Box style={{ color: isMyMessage ? "#7fb89a" : "#94a3a0" }}>
             <File size={24} />
           </Box>
           <VStack align="start" gap={0} flex={1} minW={0}>
-            <Text fontSize="sm" fontWeight="medium" truncate>
+            <Text fontSize="sm" fontWeight="medium" truncate style={{ color: "#ffffff" }}>
               {attachment.fileName}
             </Text>
-            <Text fontSize="xs" color="gray.500">
+            <Text fontSize="xs" style={{ color: "#94a3a0" }}>
               {attachment.fileSize ? (attachment.fileSize / 1024 / 1024).toFixed(2) + ' MB' : ''}
             </Text>
           </VStack>
@@ -215,6 +215,7 @@ const MessageItem: React.FC<MessageItemProps> = memo(({ message }) => {
             size="sm"
             variant="ghost"
             onClick={() => window.open(attachment.fileUrl, '_blank')}
+            style={{ color: "#c7d2cc" }}
           >
             <Download size={16} />
           </IconButton>
@@ -227,7 +228,7 @@ const MessageItem: React.FC<MessageItemProps> = memo(({ message }) => {
     <Box
       py={2}
       px={4}
-      _hover={{ bg: 'gray.50' }}
+      _hover={{ bg: 'rgba(255, 255, 255, 0.025)' }}
       position="relative"
       className="group"
     >
@@ -324,14 +325,31 @@ const MessageItem: React.FC<MessageItemProps> = memo(({ message }) => {
                     onChange={(e) => setEditText(e.target.value)}
                     minH="60px"
                     resize="vertical"
-                    color="gray.900"
-                    bg="white"
+                    bg="#0f1414"
+                    border="1px solid rgba(255, 255, 255, 0.08)"
+                    borderRadius="8px"
+                    style={{ color: "#ffffff" }}
+                    _focus={{ borderColor: "rgba(80, 107, 92, 0.65)", boxShadow: "0 0 0 3px rgba(46, 87, 62, 0.18)" }}
                   />
                   <HStack gap={2}>
-                    <Button size="xs" colorScheme="blue" onClick={handleSaveEdit}>
+                    <Button
+                      size="xs"
+                      onClick={handleSaveEdit}
+                      style={{
+                        background: "#2f5743",
+                        color: "#ffffff",
+                        border: "1px solid rgba(80, 107, 92, 0.55)",
+                        borderRadius: "6px",
+                      }}
+                    >
                       저장
                     </Button>
-                    <Button size="xs" variant="ghost" onClick={handleCancelEdit}>
+                    <Button
+                      size="xs"
+                      variant="ghost"
+                      onClick={handleCancelEdit}
+                      style={{ color: "#c7d2cc" }}
+                    >
                       취소
                     </Button>
                   </HStack>
@@ -408,17 +426,18 @@ const MessageItem: React.FC<MessageItemProps> = memo(({ message }) => {
         
         {/* 호버 시 액션 버튼들 */}
         <HStack
-          gap={1}
+          gap={0.5}
           position="absolute"
-          top={2}
+          top={1}
           right={isMyMessage ? 'auto' : 4}
           left={isMyMessage ? 4 : 'auto'}
           opacity={0}
           _groupHover={{ opacity: 1 }}
           transition="opacity 0.2s"
-          bg="white"
-          shadow="md"
-          borderRadius="md"
+          bg="#14191a"
+          border="1px solid rgba(255, 255, 255, 0.08)"
+          boxShadow="0 4px 16px rgba(0, 0, 0, 0.45)"
+          borderRadius="10px"
           p={1}
           zIndex={5}
         >
@@ -429,20 +448,22 @@ const MessageItem: React.FC<MessageItemProps> = memo(({ message }) => {
             variant="ghost"
             onClick={() => setShowReactions(!showReactions)}
             title="반응 추가"
+            style={{ color: "#c7d2cc" }}
           >
-            <Smile size={16} />
+            <Smile size={14} />
           </IconButton>
-          
+
           {/* 답글 버튼 */}
           <IconButton
             aria-label="답글"
             size="xs"
             variant="ghost"
             title="답글"
+            style={{ color: "#c7d2cc" }}
           >
-            <Reply size={16} />
+            <Reply size={14} />
           </IconButton>
-          
+
           {/* 내 메시지인 경우에만 편집/삭제 버튼 */}
           {isMyMessage && (
             <>
@@ -452,23 +473,24 @@ const MessageItem: React.FC<MessageItemProps> = memo(({ message }) => {
                 variant="ghost"
                 onClick={handleEdit}
                 title="수정"
+                style={{ color: "#c7d2cc" }}
               >
-                <Edit size={16} />
+                <Edit size={14} />
               </IconButton>
-              
+
               <IconButton
                 aria-label="삭제"
                 size="xs"
                 variant="ghost"
-                colorScheme="red"
                 onClick={handleDelete}
                 title="삭제"
+                style={{ color: "#e58a8a" }}
               >
-                <Trash2 size={16} />
+                <Trash2 size={14} />
               </IconButton>
             </>
           )}
-          
+
           {/* 더보기 메뉴 */}
           <Menu.Root>
             <MenuTrigger asChild>
@@ -477,8 +499,9 @@ const MessageItem: React.FC<MessageItemProps> = memo(({ message }) => {
                 size="xs"
                 variant="ghost"
                 title="더보기"
+                style={{ color: "#c7d2cc" }}
               >
-                <MoreVertical size={16} />
+                <MoreVertical size={14} />
               </IconButton>
             </MenuTrigger>
             <Portal>
@@ -517,13 +540,12 @@ const MessageItem: React.FC<MessageItemProps> = memo(({ message }) => {
           left={isMyMessage ? 'auto' : '50%'}
           right={isMyMessage ? '10%' : 'auto'}
           transform={isMyMessage ? 'none' : 'translateX(-50%)'}
-          bg="white"
-          shadow="lg"
+          bg="#14191a"
+          boxShadow="0 8px 24px rgba(0, 0, 0, 0.5)"
           borderRadius="full"
-          p={2}
+          p={1.5}
           zIndex={10}
-          border="1px"
-          borderColor="gray.200"
+          border="1px solid rgba(255, 255, 255, 0.08)"
           mt={2}
         >
           <HStack gap={1}>
@@ -541,7 +563,7 @@ const MessageItem: React.FC<MessageItemProps> = memo(({ message }) => {
                   handleReaction(emoji);
                   setShowReactions(false);
                 }}
-                _hover={{ bg: 'gray.100' }}
+                _hover={{ bg: 'rgba(255, 255, 255, 0.06)' }}
               >
                 {emoji}
               </Button>

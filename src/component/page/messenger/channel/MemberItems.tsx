@@ -42,40 +42,54 @@ export default function MemberItem({
       <Flex
         align="center"
         justify="space-between"
-        p={2}
-        borderRadius="md"
+        px={2.5}
+        py={2}
+        mx={1}
+        borderRadius="10px"
         cursor="pointer"
-        bg={isSelected ? 'gray.100' : 'transparent'}
-        _hover={{ bg: 'gray.50' }}
+        bg={isSelected ? "rgba(46, 87, 62, 0.24)" : "transparent"}
+        border="1px solid"
+        borderColor={isSelected ? "rgba(80, 107, 92, 0.5)" : "transparent"}
+        transition="background 0.15s, border-color 0.15s"
+        _hover={{
+          bg: isSelected ? "rgba(46, 87, 62, 0.3)" : "rgba(255, 255, 255, 0.035)",
+          borderColor: isSelected ? "rgba(80, 107, 92, 0.55)" : "rgba(255, 255, 255, 0.05)",
+        }}
         onClick={onClick}
       >
-        <HStack gap={3} flex={1}>
-          <Box position="relative">
+        <HStack gap={3} flex={1} minW={0}>
+          <Box position="relative" flexShrink={0}>
             <CusAvatar name={member.nickname || member.userId} />
             <Box
               position="absolute"
-              bottom={-1}
-              right={-1}
-              bg="white"
+              bottom="-2px"
+              right="-2px"
+              bg="#0f1414"
               borderRadius="full"
-              p="1px"
+              p="2px"
+              lineHeight={0}
             >
               <Box
-                w="10px"
-                h="10px"
+                w="9px"
+                h="9px"
                 borderRadius="full"
-                bg={isOnline ? "green.500" : "gray.300"}
-                border="2px solid white"
+                bg={isOnline ? "#7fb89a" : "rgba(255, 255, 255, 0.22)"}
+                boxShadow={isOnline ? "0 0 0 2px rgba(127, 184, 154, 0.18)" : "none"}
               />
             </Box>
           </Box>
-          
-          <VStack align="start" gap={0} flex={1} minW={0}>
-            <HStack gap={2}>
-              <Text fontSize="sm" fontWeight="medium" truncate>
+
+          <VStack align="start" gap={0.5} flex={1} minW={0}>
+            <HStack gap={2} w="100%">
+              <Text
+                fontSize="sm"
+                fontWeight={500}
+                truncate
+                style={{ color: "#ffffff" }}
+              >
                 {member.nickname || member.userId}
                 {isCurrentUser && (
-                  <Text as="span" color="gray.500" fontSize="xs" ml={1}>
+                  <Text as="span" fontSize="xs" ml={1} style={{ color: "#94a3a0" }}>
                     (Me)
                   </Text>
                 )}
@@ -83,19 +97,19 @@ export default function MemberItem({
               {getMemberStatusBadge(member.status)}
             </HStack>
             <HStack gap={2}>
-              <Text fontSize="xs" color="gray.500" truncate>
-                {isOnline ? 'Online' : `Last Access: ${formatLastSeen(member.lastSeenAt)}`}
+              <Text fontSize="xs" truncate style={{ color: "#94a3a0" }}>
+                {isOnline ? "Online" : `Last seen ${formatLastSeen(member.lastSeenAt)}`}
               </Text>
               {getNotificationIcon(member.notificationLevel)}
             </HStack>
             {member.mutedUntil && new Date(member.mutedUntil) > new Date() && (
-              <Text fontSize="xs" color="red.500">
-                Muted until: {new Date(member.mutedUntil).toLocaleString('en-US')}
+              <Text fontSize="xs" style={{ color: "#e58a8a" }}>
+                Muted until: {new Date(member.mutedUntil).toLocaleString("en-US")}
               </Text>
             )}
           </VStack>
         </HStack>
-        
+
         {/* Action Buttons */}
         {showActions && (
           <Menu.Root positioning={{placement : "left-middle"}}>
@@ -105,6 +119,7 @@ export default function MemberItem({
                 variant="ghost"
                 onClick={(e) => e.stopPropagation()}
                 aria-label="More"
+                style={{ color: "#c7d2cc" }}
               >
                 <MoreVertical size={14} />
               </IconButton>

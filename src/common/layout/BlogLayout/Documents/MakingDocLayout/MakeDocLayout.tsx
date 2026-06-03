@@ -65,7 +65,7 @@ const StyledMakeDocLayout = styled.div`
     color: #e8eaeb;
 
     .blog-header {
-        padding: 2rem 1rem 1rem 1rem;
+        padding: 2rem 0 1rem 0;
 
         .blog-title-input {
             /* Chakra UI Input 오버라이드 */
@@ -144,9 +144,8 @@ const StyledMakeDocLayout = styled.div`
     }
 
     .blog-footer {
-        padding: 1rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        background: #0f1414;
+        padding: 1rem 0;
+        background: transparent;
         .buttons {
             display: flex;
             gap: 0.5rem;

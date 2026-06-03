@@ -85,29 +85,32 @@ const ItemWrapper = styled.div<{ $isSelected: boolean }>`
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  padding: 12px 14px;
+  padding: 11px 12px;
+  margin: 0 2px 2px;
   border-radius: 10px;
   cursor: pointer;
-  transition: all 0.15s ease;
-  background: ${({ $isSelected }) => ($isSelected ? "rgba(46, 87, 62, 0.22)" : "transparent")};
-  border: 1px solid ${({ $isSelected }) => ($isSelected ? "rgba(80, 107, 92, 0.45)" : "transparent")};
+  transition: background 0.15s ease, border-color 0.15s ease;
+  background: ${({ $isSelected }) => ($isSelected ? "rgba(46, 87, 62, 0.24)" : "transparent")};
+  border: 1px solid ${({ $isSelected }) => ($isSelected ? "rgba(80, 107, 92, 0.5)" : "transparent")};
 
   &:hover {
-    background: ${({ $isSelected }) => ($isSelected ? "rgba(46, 87, 62, 0.28)" : "rgba(255, 255, 255, 0.04)")};
+    background: ${({ $isSelected }) => ($isSelected ? "rgba(46, 87, 62, 0.3)" : "rgba(255, 255, 255, 0.035)")};
+    border-color: ${({ $isSelected }) => ($isSelected ? "rgba(80, 107, 92, 0.55)" : "rgba(255, 255, 255, 0.05)")};
   }
 `;
 
 const IconWrapper = styled.div<{ $color: string }>`
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: ${({ $color }) => `${$color}22`};
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: ${({ $color }) => `${$color}1f`};
+  border: 1px solid ${({ $color }) => `${$color}33`};
   color: ${({ $color }) => $color};
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: 1px;
 `;
 
 const Content = styled.div`
