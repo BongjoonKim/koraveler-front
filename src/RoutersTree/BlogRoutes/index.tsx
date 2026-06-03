@@ -10,6 +10,7 @@ import MyBlogDashboard from "../../component/page/blog/MyBlogDashboard";
 import MainLayout from "../../common/layout/MainLayout/MainLayout";
 import EmptyLayout from "../../common/layout/MainLayout/EmptyLayout";
 import BlogLocaleRedirect from "./BlogLocaleRedirect";
+import BlogManageRedirect from "./BlogManageRedirect";
 import ProtectedRoute from "../ProtectedRoute";
 
 interface BlogRoutesProps {
@@ -32,7 +33,14 @@ function BlogRoutes(props: BlogRoutesProps) {
                 <MyBlogDashboard />
               </ProtectedRoute>
             } />
-            {/* locale 포함 블로그 목록 라우트 */}
+            {/* 옛 관리 URL (my-blog / bookmark / draft / hidden / trash) → 새 대시보드 리다이렉트.
+                구체 경로가 catch-all `/:type/:locale` 보다 우선 매치되도록 위에 둔다. */}
+            <Route path="/my-blog/*" element={<BlogManageRedirect type="my-blog" />} />
+            <Route path="/bookmark/*" element={<BlogManageRedirect type="bookmark" />} />
+            <Route path="/draft/*" element={<BlogManageRedirect type="draft" />} />
+            <Route path="/hidden/*" element={<BlogManageRedirect type="hidden" />} />
+            <Route path="/trash/*" element={<BlogManageRedirect type="trash" />} />
+            {/* locale 포함 블로그 목록 라우트 (home 피드) */}
             <Route path="/home/:locale" element={<BlogPage />} />
             <Route path="/:type/:locale" element={<BlogPage />} />
             {/* locale 없는 URL → redirect */}
