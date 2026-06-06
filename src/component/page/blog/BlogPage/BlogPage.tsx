@@ -10,6 +10,7 @@ import BlogFeedToggle, {FeedMode} from "./BlogFeedToggle";
 import {useCurrentUser} from "../../../../hooks/useCurrentUser";
 import {useBlogLocale} from "../../../../hooks/useBlogLocale";
 import {getAllDocuments} from "../../../../endpoints/blog-endpoints";
+import {useAuth} from "../../../../appConfig/AuthProvider";
 import {useQuery} from "@tanstack/react-query";
 
 export interface BlogPageProps {}
@@ -18,9 +19,16 @@ const FOLLOWING_SEEN_KEY = "nadeliv:followingSeenAt";
 
 function BlogPage(_props: BlogPageProps) {
   const navigate = useNavigate();
-  const {data: currentUser} = useCurrentUser();
+  const {accessToken, isInitialized} = useAuth();
+  const {data: currentUser, isLoading: isUserLoading} = useCurrentUser();
   const isLoggedIn = !!currentUser?.id;
   const {activeLocale} = useBlogLocale();
+
+  // 운영 환경에서는 localStorage 의 refreshToken 으로 자동 로그인하는 사용자에 한해
+  // /refreshToken → /getLoginUser 응답이 도착하는 순간 isLoggedIn 이 false → true 로 점프하면서
+  // BlogHero / BlogList / FeedToggle 이 두 번 그려진다 (개발 환경은 응답이 ~5ms 라 체감 안 됨).
+  // 인증 상태가 확정될 때까지 본문 마운트를 지연시키고 다크 배경만 먼저 노출.
+  const isAuthSettling = !isInitialized || (!!accessToken && isUserLoading);
 
   // /blog/create-new 가 빈 draft 생성 + ProtectedRoute 우회 흐름을 담당.
   const handleWrite = () => navigate("/blog/create-new");
@@ -63,32 +71,34 @@ function BlogPage(_props: BlogPageProps) {
 
   return (
     <StyledShell>
-      <Container maxW="7xl" px={{base: 4, md: 6, lg: 6}}>
-        <BlogHero latestFallback={latestFallback} />
+      {!isAuthSettling && (
+        <Container maxW="7xl" px={{base: 4, md: 6, lg: 6}}>
+          <BlogHero latestFallback={latestFallback} />
 
-        <Layout>
-          <Main>
-            <FeedHeader>
-              <FeedToggleWrap>
-                <BlogFeedToggle
-                  mode={feedMode}
-                  onChange={setFeedMode}
-                  isLoggedIn={isLoggedIn}
-                  followingSince={followingSince}
-                />
-              </FeedToggleWrap>
-              <WriteButton type="button" onClick={handleWrite}>
-                <PenLine size={14} />
-                <span>Write</span>
-              </WriteButton>
-            </FeedHeader>
-            <BlogList feedMode={feedMode} />
-          </Main>
-          <Aside>
-            <BlogSidebar />
-          </Aside>
-        </Layout>
-      </Container>
+          <Layout>
+            <Main>
+              <FeedHeader>
+                <FeedToggleWrap>
+                  <BlogFeedToggle
+                    mode={feedMode}
+                    onChange={setFeedMode}
+                    isLoggedIn={isLoggedIn}
+                    followingSince={followingSince}
+                  />
+                </FeedToggleWrap>
+                <WriteButton type="button" onClick={handleWrite}>
+                  <PenLine size={14} />
+                  <span>Write</span>
+                </WriteButton>
+              </FeedHeader>
+              <BlogList feedMode={feedMode} />
+            </Main>
+            <Aside>
+              <BlogSidebar />
+            </Aside>
+          </Layout>
+        </Container>
+      )}
     </StyledShell>
   );
 }
