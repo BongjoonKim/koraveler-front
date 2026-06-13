@@ -27,8 +27,10 @@ function CreateBlogPost(props: CreateBlogPostProps) {
     disclose,
     setDisclose,
     goBack,
+    autoSaveStatus,
+    lastSavedAt,
   } = useSaveBlogPost(props)
-  
+
   return (
     <StyledCreateBlogPost>
       <MakeDocLayout
@@ -38,6 +40,8 @@ function CreateBlogPost(props: CreateBlogPostProps) {
         handleSave={(saveOrDraft : string) => handleEdit(saveOrDraft)}
         handleSaveModalOpen={handleSaveModalOpen}
         handleCancel={goBack}
+        autoSaveStatus={autoSaveStatus}
+        lastSavedAt={lastSavedAt}
       >
         <CreateEditor
           ref={editorRef}

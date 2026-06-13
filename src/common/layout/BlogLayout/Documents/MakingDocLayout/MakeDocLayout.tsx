@@ -3,6 +3,7 @@ import {ReactNode} from "react";
 import CusInput from "../../../../elements/textField/CusInput";
 import useMakeDocLayout from "./useMakeDocLayout";
 import {BLOG_SAVE_TYPE} from "../../../../../constants/constants";
+import {AutoSaveStatus} from "../../../../../component/page/blog/SaveBlogPost/useSaveBlogPost";
 
 export interface MakeDocLayoutProps {
   type : ActType;
@@ -12,6 +13,39 @@ export interface MakeDocLayoutProps {
   handleSave : (saveOrDraft : string) => void;
   handleSaveModalOpen : () => void;
   handleCancel?: () => void;
+  autoSaveStatus?: AutoSaveStatus;
+  lastSavedAt?: Date | null;
+};
+
+const formatSavedTime = (date: Date): string => {
+  const hh = String(date.getHours()).padStart(2, "0");
+  const mm = String(date.getMinutes()).padStart(2, "0");
+  return `${hh}:${mm}`;
+};
+
+const AutoSaveIndicator = ({status, lastSavedAt}: {status: AutoSaveStatus; lastSavedAt: Date | null}) => {
+  let text = "";
+  let tone: "muted" | "active" | "error" = "muted";
+  switch (status) {
+    case "saving":
+      text = "Auto-saving...";
+      tone = "active";
+      break;
+    case "saved":
+      text = lastSavedAt ? `Auto-saved · ${formatSavedTime(lastSavedAt)}` : "Auto-saved";
+      tone = "muted";
+      break;
+    case "error":
+      text = "Auto-save failed";
+      tone = "error";
+      break;
+    case "idle":
+    default:
+      text = "Auto-save on · every 3 min";
+      tone = "muted";
+      break;
+  }
+  return <StyledAutoSave $tone={tone}>{text}</StyledAutoSave>;
 };
 
 function MakingDocumentLayout(props: MakeDocLayoutProps) {
@@ -36,6 +70,12 @@ function MakingDocumentLayout(props: MakeDocLayoutProps) {
         {props.children}
       </div>
       <div className="blog-footer">
+        {props.autoSaveStatus !== undefined && (
+          <AutoSaveIndicator
+            status={props.autoSaveStatus}
+            lastSavedAt={props.lastSavedAt ?? null}
+          />
+        )}
         <div className="buttons">
           <FooterButton type="button" $primary onClick={props.handleSaveModalOpen}>
             Save
@@ -146,12 +186,30 @@ const StyledMakeDocLayout = styled.div`
     .blog-footer {
         padding: 1rem 0;
         background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        flex-wrap: wrap;
         .buttons {
             display: flex;
             gap: 0.5rem;
             justify-content: flex-end;
+            margin-left: auto;
         }
     }
+`;
+
+const StyledAutoSave = styled.span<{$tone: "muted" | "active" | "error"}>`
+    font-size: 12px;
+    line-height: 1;
+    user-select: none;
+    color: ${({$tone}) =>
+        $tone === "error"
+            ? "#e07a7a"
+            : $tone === "active"
+                ? "#7fb89a"
+                : "rgba(255, 255, 255, 0.45)"};
 `;
 
 const FooterButton = styled.button<{ $primary?: boolean }>`

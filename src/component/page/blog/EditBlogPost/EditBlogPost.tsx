@@ -36,6 +36,8 @@ function EditBlogPost(props: EditBlogPostProps) {
     setDisclose,
     goBack,
     isTranslationEdit,
+    autoSaveStatus,
+    lastSavedAt,
   } = useSaveBlogPost(props)
 
   // 번역 편집 시: Save 버튼 클릭 → 모달 없이 바로 저장
@@ -52,6 +54,8 @@ function EditBlogPost(props: EditBlogPostProps) {
         handleSave={(saveOrDraft : string) => handleEdit(saveOrDraft)}
         handleSaveModalOpen={handleSaveModalOpenOrDirect}
         handleCancel={goBack}
+        autoSaveStatus={isTranslationEdit ? undefined : autoSaveStatus}
+        lastSavedAt={isTranslationEdit ? undefined : lastSavedAt}
       >
         <UpdateEditor
           ref={editorRef}

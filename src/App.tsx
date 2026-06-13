@@ -9,6 +9,7 @@ import posthog from 'posthog-js'
 import { PostHogProvider} from 'posthog-js/react'
 import {AuthProvider} from "./appConfig/AuthProvider";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import {Toaster} from "./common/elements/toaster";
 
 // if (typeof window !== 'undefined') {
 //   posthog.init(process.env.REACT_APP_PUBLIC_POSTHOG_KEY!, {
@@ -40,6 +41,7 @@ function App() {
             <StyledApp className={"app"}>
               <RoutersTree/>
             </StyledApp>
+            <Toaster/>
           </ChakraProvider>
         </AuthProvider>
       </QueryClientProvider>
