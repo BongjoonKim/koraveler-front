@@ -13,6 +13,8 @@ interface CusModalFooterProps {
   doEdit ?: (props : any) => void;
   doCancel ?: () => void;
   doDelete ?: () => void;
+  /** primary(create) 버튼 색상 — 미지정 시 기존 기본(gray) 유지 */
+  createColorPalette ?: "gray" | "red" | "orange" | "yellow" | "green" | "teal" | "blue" | "cyan" | "purple" | "pink";
 }
 
 export default function CusModalFooter(props : CusModalFooterProps) {
@@ -22,6 +24,7 @@ export default function CusModalFooter(props : CusModalFooterProps) {
         if (type === "create") {
           return (
             <CusButton
+              colorPalette={props.createColorPalette}
               onClick={props.doCreate}
             >
               {props.createText}

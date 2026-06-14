@@ -108,10 +108,12 @@ export interface FolderTreeProps {
   handleFolderSelect?: (items: TreeItemIndex[]) => void;
   folders?: any;
   selectedFolderId?: string | null;
+  /** nadeliv 다크 브랜드 톤으로 렌더 (기본은 라이트) */
+  dark?: boolean;
 }
 
 export default function FolderTree(props: FolderTreeProps) {
-  const { folders, handleFolderSelect, selectedFolderId } = props;
+  const { folders, handleFolderSelect, selectedFolderId, dark = false } = props;
   
   // 트리 상태 관리
   const [expandedItems, setExpandedItems] = useState<TreeItemIndex[]>(() => {
@@ -123,19 +125,19 @@ export default function FolderTree(props: FolderTreeProps) {
   });
   const [selectedItems, setSelectedItems] = useState<TreeItemIndex[]>([]);
   
-  // 색상 정의 (하드코딩으로 변경)
-  const bg = 'white';
-  const borderColor = 'gray.200';
+  // 색상 정의 (하드코딩 + dark 변형)
+  const bg = dark ? '#14191a' : 'white';
+  const borderColor = dark ? 'rgba(255, 255, 255, 0.08)' : 'gray.200';
   const headerBg = 'linear-gradient(to right, #3182ce, #805ad5)';
-  const hoverBg = 'gray.50';
-  const selectedBg = 'blue.50';
-  const selectedBorderColor = 'blue.200';
-  const textColor = 'gray.700';
-  const iconColor = 'gray.500';
+  const hoverBg = dark ? 'whiteAlpha.100' : 'gray.50';
+  const selectedBg = dark ? 'whiteAlpha.100' : 'blue.50';
+  const selectedBorderColor = dark ? 'whiteAlpha.300' : 'blue.200';
+  const textColor = dark ? '#e8eaeb' : 'gray.700';
+  const iconColor = dark ? '#7d9786' : 'gray.500';
   const folderColor = 'orange.500';
-  const scrollTrackBg = '#f7fafc';
-  const scrollThumbBg = '#cbd5e0';
-  const scrollThumbHoverBg = '#a0aec0';
+  const scrollTrackBg = dark ? '#14191a' : '#f7fafc';
+  const scrollThumbBg = dark ? '#2f3a36' : '#cbd5e0';
+  const scrollThumbHoverBg = dark ? '#3d4a45' : '#a0aec0';
   
   // selectedFolderId가 변경될 때 selectedItems 업데이트
   useEffect(() => {
@@ -257,7 +259,7 @@ export default function FolderTree(props: FolderTreeProps) {
             cursor="pointer"
             p={1}
             borderRadius="md"
-            _hover={{ bg: 'gray.200' }}
+            _hover={{ bg: dark ? 'whiteAlpha.200' : 'gray.200' }}
             transition="all 0.2s"
             flexShrink={0}
             display="flex"
@@ -273,7 +275,7 @@ export default function FolderTree(props: FolderTreeProps) {
         )}
       </Flex>
     );
-  }, [expandedItems, handleToggleExpand, selectedBg, hoverBg, folderColor, textColor]);
+  }, [expandedItems, handleToggleExpand, selectedBg, hoverBg, folderColor, textColor, dark]);
   
   
   // 로딩 상태 처리
