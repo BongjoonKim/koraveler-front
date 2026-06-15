@@ -1,5 +1,6 @@
 import {ViewDocLayoutProps} from "./ViewDocLayout";
 import {useCallback, useEffect} from "react";
+import {useQueryClient} from "@tanstack/react-query";
 import {useRecoilState} from "recoil";
 import recoil from "../../../../../stores/recoil";
 import {deleteDocument} from "../../../../../endpoints/blog-endpoints";
@@ -20,6 +21,7 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
   const [isBookmarked, setBookmarked] = useAtom(isBookmark);
   const [errMsg, setErrMsg] = useRecoilState(recoil.errMsg);
   const authEP = useAuthEP();
+  const queryClient = useQueryClient();
   const {data : currentUser} = useCurrentUser();
   // 조회수 정보
   const {data : views} = useGetViews(props.id)
@@ -43,6 +45,8 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
   }, [props.id, i18n, navigate]);
   
   const handleDelete = useCallback(async () => {
+    const ok = window.confirm("이 글을 휴지통으로 옮길까요?");
+    if (!ok) return;
     try {
       // Soft delete: 백엔드가 휴지통(isDeleted=true)으로 옮기고
       // 90일 뒤 BlogCleanupScheduler가 본문/이미지/cascade 데이터를 영구 삭제함.
@@ -51,15 +55,18 @@ export default function useViewDocLayout(props : ViewDocLayoutProps) {
         func : deleteDocument,
         params : {id : props?.id}
       })
+      // 대시보드 목록/카운트 캐시 무효화 — 삭제한 글이 목록(draft)에 남아 보이는 문제 방지
+      queryClient.invalidateQueries({ queryKey: ["my-blog"] });
+      queryClient.invalidateQueries({ queryKey: ["my-blog-stats"] });
       navigate(-1)
     } catch (e) {
       setErrorMsg({
         status: "error",
-        msg: "delete failed",
+        msg: "삭제에 실패했습니다.",
       })
     }
 
-  }, [props]);
+  }, [props, queryClient, navigate, authEP, setErrorMsg]);
   
   const changeBookmark = useCallback(async () => {
     try {
