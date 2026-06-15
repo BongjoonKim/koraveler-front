@@ -146,7 +146,7 @@ function PostActionMenu({ postId }: PostActionMenuProps) {
                   {likeStatus?.likeCount ?? 0}
                 </Box>
               </MenuItem>
-              <MenuItem value="edit" onClick={handleEdit} css={menuItemCss()}>
+              d<MenuItem value="edit" onClick={handleEdit} css={menuItemCss()}>
                 <Pencil size={14} style={{ marginRight: 8 }} />
                 Edit
               </MenuItem>

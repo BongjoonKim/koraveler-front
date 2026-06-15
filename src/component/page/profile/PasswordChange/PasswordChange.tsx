@@ -1,9 +1,18 @@
 import React from "react";
-import { Box, VStack, Text, Button, Spinner } from "@chakra-ui/react";
 import { Lock } from "lucide-react";
-import CusFormCtrl from "../../../../common/elements/CusFormCtrl";
-import CusInput from "../../../../common/elements/textField/CusInput";
 import usePasswordChange from "./usePasswordChange";
+import {
+  Card,
+  CardHead,
+  SectionTitle,
+  Field,
+  Label,
+  PasswordInput,
+  PrimaryButton,
+  Actions,
+  Alert,
+  Spinner,
+} from "../profileUi";
 
 export default function PasswordChange() {
   const {
@@ -20,70 +29,66 @@ export default function PasswordChange() {
     setErrorMsg,
   } = usePasswordChange();
 
+  const lock = <Lock size={16} />;
+
   return (
-    <VStack gap={6} align="stretch" p={6} borderWidth="1px" borderRadius="xl" borderColor="gray.200">
-      <Text fontSize="lg" fontWeight="semibold">Change Password</Text>
+    <Card>
+      <CardHead>
+        <SectionTitle>Change Password</SectionTitle>
+      </CardHead>
 
-      {successMsg && (
-        <Box p={3} bg="green.50" borderRadius="md" borderWidth="1px" borderColor="green.200">
-          <Text color="green.700" fontSize="sm">{successMsg}</Text>
-        </Box>
-      )}
-      {errorMsg && (
-        <Box p={3} bg="red.50" borderRadius="md" borderWidth="1px" borderColor="red.200">
-          <Text color="red.700" fontSize="sm">{errorMsg}</Text>
-        </Box>
-      )}
+      {successMsg && <Alert tone="success">{successMsg}</Alert>}
+      {errorMsg && <Alert tone="error">{errorMsg}</Alert>}
 
-      <CusFormCtrl formTitle="Current Password">
-        <CusInput
-          type="password"
-          value={currentPassword}
-          onChange={(e) => {
-            setCurrentPassword(e.target.value);
-            setErrorMsg("");
-          }}
-          placeholder="Enter current password"
-          startElement={<Lock size={16} />}
-        />
-      </CusFormCtrl>
+      <div style={{ marginTop: successMsg || errorMsg ? 16 : 0 }}>
+        <Field>
+          <Label>Current Password</Label>
+          <PasswordInput
+            value={currentPassword}
+            onChange={(v) => {
+              setCurrentPassword(v);
+              setErrorMsg("");
+            }}
+            placeholder="Enter current password"
+            leftIcon={lock}
+            autoComplete="current-password"
+          />
+        </Field>
 
-      <CusFormCtrl formTitle="New Password">
-        <CusInput
-          type="password"
-          value={newPassword}
-          onChange={(e) => {
-            setNewPassword(e.target.value);
-            setErrorMsg("");
-          }}
-          placeholder="Enter new password"
-          startElement={<Lock size={16} />}
-        />
-      </CusFormCtrl>
+        <Field>
+          <Label>New Password</Label>
+          <PasswordInput
+            value={newPassword}
+            onChange={(v) => {
+              setNewPassword(v);
+              setErrorMsg("");
+            }}
+            placeholder="Enter new password"
+            leftIcon={lock}
+            autoComplete="new-password"
+          />
+        </Field>
 
-      <CusFormCtrl formTitle="Confirm New Password">
-        <CusInput
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => {
-            setConfirmPassword(e.target.value);
-            setErrorMsg("");
-          }}
-          placeholder="Confirm new password"
-          startElement={<Lock size={16} />}
-        />
-      </CusFormCtrl>
+        <Field>
+          <Label>Confirm New Password</Label>
+          <PasswordInput
+            value={confirmPassword}
+            onChange={(v) => {
+              setConfirmPassword(v);
+              setErrorMsg("");
+            }}
+            placeholder="Confirm new password"
+            leftIcon={lock}
+            autoComplete="new-password"
+          />
+        </Field>
+      </div>
 
-      <Box pt={2}>
-        <Button
-          colorPalette="blue"
-          size="sm"
-          onClick={handleSubmit}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? <Spinner size="sm" /> : "Change Password"}
-        </Button>
-      </Box>
-    </VStack>
+      <Actions>
+        <PrimaryButton onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? <Spinner /> : "Change Password"}
+        </PrimaryButton>
+      </Actions>
+    </Card>
   );
 }

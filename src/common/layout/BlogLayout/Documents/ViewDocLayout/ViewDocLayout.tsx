@@ -38,6 +38,12 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
   const i18n = props.i18nState;
   const hasI18n = i18n && i18n.availableLocales.length > 0;
 
+  // 작성자 본인만 수정/삭제 노출 (createdUser = userId). 백엔드에서도 강제하지만 UI에서도 숨김.
+  const isOwner =
+    !!currentUser?.id &&
+    !!props.createdUser &&
+    (props.createdUser === currentUser.id || props.createdUser === currentUser.username);
+
   return (
     <StyledViewDocLayout>
       <VStack gap={4} align="stretch">
@@ -94,7 +100,7 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
                   <Text fontSize="sm" style={{ color: "inherit" }}>{likeStatus?.likeCount ?? 0}</Text>
                 </HStack>
               </CusIconButton>
-              {currentUser?.id && (
+              {isOwner && (
                 <HStack gap={2}>
                   <ActionButton type="button" onClick={handleEdit}>
                     Edit

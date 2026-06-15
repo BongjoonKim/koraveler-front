@@ -217,13 +217,13 @@ const StyledMediaLightbox = styled.div`
     height: 36px;
     border: none;
     border-radius: 10px;
-    background: rgba(99, 102, 241, 0.1);
-    color: #4f46e5;
+    background: rgba(127, 184, 154, 0.12);
+    color: #7fb89a;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-      background: rgba(99, 102, 241, 0.2);
+      background: rgba(255, 255, 255, 0.1);
     }
 
     &:disabled {
@@ -279,15 +279,15 @@ const StyledMediaLightbox = styled.div`
     height: 44px;
     border: none;
     border-radius: 50%;
-    background: rgba(99, 102, 241, 0.1);
-    color: #6366f1;
+    background: rgba(127, 184, 154, 0.12);
+    color: #7fb89a;
     cursor: pointer;
     transition: all 0.2s ease;
     flex-shrink: 0;
 
     &:hover {
-      background: rgba(139, 92, 246, 0.2);
-      color: #8b5cf6;
+      background: rgba(255, 255, 255, 0.1);
+      color: #9fcbae;
     }
   }
 
@@ -303,7 +303,7 @@ const StyledMediaLightbox = styled.div`
   .info-name {
     font-size: 13px;
     font-weight: 500;
-    color: #3730a3;
+    color: #f1f3f2;
     max-width: 200px;
     white-space: nowrap;
     overflow: hidden;
@@ -311,22 +311,22 @@ const StyledMediaLightbox = styled.div`
   }
 
   .info-separator {
-    color: #a5b4fc;
+    color: #94a3a0;
     font-size: 12px;
   }
 
   .info-dim,
   .info-size {
     font-size: 12px;
-    color: #6366f1;
+    color: #94a3a0;
   }
 
   .info-counter {
     margin-left: auto;
     font-size: 12px;
     font-weight: 600;
-    color: #8b5cf6;
-    background: rgba(139, 92, 246, 0.1);
+    color: #9fcbae;
+    background: rgba(127, 184, 154, 0.12);
     padding: 2px 10px;
     border-radius: 10px;
   }

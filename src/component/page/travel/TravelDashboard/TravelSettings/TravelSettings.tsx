@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import styled, { keyframes } from "styled-components";
 import {
   X,
@@ -17,6 +18,8 @@ import {
   useUpdateTravel,
   useDeleteTravel,
 } from "../../../../../hooks/useTravelQueries";
+import { homeTokens } from "../../../MainPage/MainBody/homeTokens";
+import { profileTokens } from "../../../profile/profileUi";
 
 export interface TravelSettingsProps {
   travelId: string;
@@ -167,7 +170,6 @@ function TravelSettings({
 
   const handleSaveTags = async () => {
     try {
-      console.log(tags);
       await saveField({ tags });
       setIsEditingTags(false);
     } catch {
@@ -218,7 +220,9 @@ function TravelSettings({
 
   const canDelete = deleteInput === currentTitle;
 
-  return (
+  // 대시보드 상위에 transform 을 가진 래퍼가 있어 position:fixed 가
+  // 뷰포트가 아닌 그 래퍼 기준으로 잡힌다. body 로 portal 해서 분리한다.
+  return createPortal(
     <Overlay onClick={onClose}>
       <StyledTravelSettings onClick={(e) => e.stopPropagation()}>
         {/* Header */}
@@ -506,11 +510,15 @@ function TravelSettings({
           </div>
         </div>
       </StyledTravelSettings>
-    </Overlay>
+    </Overlay>,
+    document.body
   );
 }
 
 export default TravelSettings;
+
+const t = homeTokens;
+const c = profileTokens;
 
 const fadeIn = keyframes`
   from { opacity: 0; }
@@ -532,64 +540,94 @@ const Overlay = styled.div`
   position: fixed;
   inset: 0;
   z-index: 1000;
-  background: rgba(15, 10, 30, 0.5);
-  backdrop-filter: blur(4px);
+  background: rgba(5, 6, 5, 0.66);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  /* 화면이 모달보다 짧아도 스크롤로 전체에 닿을 수 있게 */
+  overflow-y: auto;
+  padding: 24px 16px;
   animation: ${fadeIn} 0.2s ease;
 `;
 
 const StyledTravelSettings = styled.div`
   width: 100%;
-  max-width: 500px;
-  max-height: 85vh;
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  max-width: 520px;
+  /* viewport 안에서 헤더는 고정, 본문만 스크롤되도록 */
+  max-height: min(88vh, 760px);
+  margin: auto;
+  background: ${t.color.surface};
+  border: 0.5px solid ${t.color.border};
+  border-radius: ${t.radius.lg};
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
   animation: ${slideUp} 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  color: ${t.color.text};
+  font-family: ${t.font.sans};
+  -webkit-font-smoothing: antialiased;
 
   .settings-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px 24px;
-    border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+    border-bottom: 0.5px solid ${t.color.border};
     flex-shrink: 0;
 
     h2 {
-      font-size: 18px;
-      font-weight: 700;
-      color: #1e1b4b;
+      font-family: ${t.font.serif};
+      font-size: 20px;
+      font-weight: 500;
+      color: ${t.color.text};
       margin: 0;
     }
   }
 
+  /* min-height:0 이 빠지면 flex 자식이 콘텐츠 높이로 고정되어
+     모달 밖으로 넘쳐 잘리고 스크롤이 안 된다. (스크롤 버그 핵심) */
   .settings-body {
-    overflow-y: auto;
     flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
   }
 
   .close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 6px;
-    border: none;
-    background: rgba(99, 102, 241, 0.08);
-    border-radius: 10px;
-    color: #6366f1;
+    border: 0.5px solid transparent;
+    background: ${c.hover};
+    border-radius: ${t.radius.md};
+    color: ${t.color.textMuted};
     cursor: pointer;
     transition: all 0.2s;
 
     &:hover {
-      background: rgba(99, 102, 241, 0.15);
+      background: ${t.color.surface3};
+      color: ${t.color.text};
     }
   }
 
   .settings-section {
     padding: 20px 24px;
-    border-bottom: 1px solid rgba(99, 102, 241, 0.08);
+    border-bottom: 0.5px solid ${t.color.border};
 
     &:last-child {
       border-bottom: none;
@@ -600,15 +638,23 @@ const StyledTravelSettings = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
-    color: #4f46e5;
+    color: ${t.color.textMuted};
     margin-bottom: 12px;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.08em;
+
+    svg {
+      color: ${t.color.textFaint};
+    }
 
     &.danger {
-      color: #ef4444;
+      color: ${c.danger};
+
+      svg {
+        color: ${c.danger};
+      }
     }
   }
 
@@ -617,16 +663,17 @@ const StyledTravelSettings = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px;
-    border-radius: 12px;
-    border: 1px solid rgba(99, 102, 241, 0.15);
+    padding: 12px 14px;
+    border-radius: ${t.radius.md};
+    border: 0.5px solid ${c.inputBorder};
+    background: ${c.inputBg};
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.18s ease;
     gap: 12px;
 
     &:hover {
-      border-color: rgba(99, 102, 241, 0.3);
-      background: rgba(99, 102, 241, 0.03);
+      border-color: ${t.color.border2};
+      background: ${c.hover};
 
       .edit-icon {
         opacity: 1;
@@ -636,21 +683,20 @@ const StyledTravelSettings = styled.div`
 
   .field-text {
     font-size: 14px;
-    font-weight: 500;
-    color: #1e1b4b;
+    font-weight: 400;
+    color: ${t.color.text};
     flex: 1;
     white-space: pre-wrap;
     word-break: break-word;
     line-height: 1.5;
 
     &.placeholder {
-      color: #a5b4fc;
-      font-weight: 400;
+      color: ${t.color.textFaint};
     }
   }
 
   .edit-icon {
-    color: #a5b4fc;
+    color: ${t.color.textFaint};
     opacity: 0;
     transition: opacity 0.2s;
     flex-shrink: 0;
@@ -665,48 +711,61 @@ const StyledTravelSettings = styled.div`
 
   .field-input {
     width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #8b5cf6;
-    border-radius: 12px;
+    padding: 12px 14px;
+    border: 0.5px solid ${c.inputBorder};
+    border-radius: ${t.radius.md};
     font-size: 14px;
-    font-weight: 500;
-    color: #1e1b4b;
+    font-weight: 400;
+    font-family: ${t.font.sans};
+    color: ${t.color.text};
     outline: none;
-    background: rgba(139, 92, 246, 0.03);
-    transition: border-color 0.2s;
+    background: ${c.inputBg};
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
     box-sizing: border-box;
+    color-scheme: dark;
+
+    &::placeholder {
+      color: ${t.color.textFaint};
+    }
 
     &:focus {
-      border-color: #6366f1;
+      border-color: ${t.color.accent};
+      box-shadow: 0 0 0 3px rgba(143, 191, 148, 0.14);
     }
   }
 
   .field-textarea {
     width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #8b5cf6;
-    border-radius: 12px;
+    padding: 12px 14px;
+    border: 0.5px solid ${c.inputBorder};
+    border-radius: ${t.radius.md};
     font-size: 14px;
     font-weight: 400;
-    color: #1e1b4b;
+    color: ${t.color.text};
     outline: none;
-    background: rgba(139, 92, 246, 0.03);
-    transition: border-color 0.2s;
+    background: ${c.inputBg};
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
     box-sizing: border-box;
     resize: vertical;
-    min-height: 80px;
-    font-family: inherit;
+    min-height: 88px;
+    font-family: ${t.font.sans};
     line-height: 1.6;
+    color-scheme: dark;
+
+    &::placeholder {
+      color: ${t.color.textFaint};
+    }
 
     &:focus {
-      border-color: #6366f1;
+      border-color: ${t.color.accent};
+      box-shadow: 0 0 0 3px rgba(143, 191, 148, 0.14);
     }
   }
 
   .char-count {
     text-align: right;
     font-size: 11px;
-    color: #a5b4fc;
+    color: ${t.color.textFaint};
   }
 
   .edit-actions {
@@ -717,37 +776,40 @@ const StyledTravelSettings = styled.div`
 
   .btn-cancel {
     padding: 8px 16px;
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    border: 0.5px solid ${t.color.border2};
     background: transparent;
-    border-radius: 10px;
+    border-radius: ${t.radius.md};
     font-size: 13px;
     font-weight: 500;
-    color: #6366f1;
+    font-family: ${t.font.sans};
+    color: ${t.color.textSoft};
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s ease;
 
     &:hover {
-      background: rgba(99, 102, 241, 0.05);
+      background: ${c.hover};
+      border-color: rgba(255, 255, 255, 0.3);
     }
   }
 
   .btn-save {
     padding: 8px 20px;
     border: none;
-    background: #6366f1;
-    border-radius: 10px;
+    background: ${t.color.accentStrong};
+    border-radius: ${t.radius.md};
     font-size: 13px;
     font-weight: 600;
-    color: #fff;
+    font-family: ${t.font.sans};
+    color: #eef7ef;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: filter 0.15s ease, opacity 0.15s ease;
 
     &:hover:not(:disabled) {
-      background: #4f46e5;
+      filter: brightness(1.1);
     }
 
     &:disabled {
-      opacity: 0.5;
+      opacity: 0.45;
       cursor: not-allowed;
     }
   }
@@ -765,9 +827,9 @@ const StyledTravelSettings = styled.div`
     align-items: center;
     gap: 4px;
     padding: 4px 12px;
-    border-radius: 20px;
-    background: rgba(139, 92, 246, 0.1);
-    color: #4f46e5;
+    border-radius: ${t.radius.pill};
+    background: ${t.color.badgeBg};
+    color: ${t.color.badgeText};
     font-size: 13px;
     font-weight: 500;
 
@@ -783,16 +845,16 @@ const StyledTravelSettings = styled.div`
     width: 18px;
     height: 18px;
     border: none;
-    background: rgba(99, 102, 241, 0.15);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
-    color: #4f46e5;
+    color: ${t.color.badgeText};
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.15s ease;
     padding: 0;
 
     &:hover {
-      background: rgba(239, 68, 68, 0.2);
-      color: #ef4444;
+      background: ${c.dangerSurface};
+      color: ${c.danger};
     }
   }
 
@@ -800,12 +862,18 @@ const StyledTravelSettings = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    padding: 10px 14px;
-    border: 2px solid #8b5cf6;
-    border-radius: 12px;
-    background: rgba(139, 92, 246, 0.03);
+    padding: 10px 12px;
+    border: 0.5px solid ${c.inputBorder};
+    border-radius: ${t.radius.md};
+    background: ${c.inputBg};
     min-height: 44px;
     align-items: center;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:focus-within {
+      border-color: ${t.color.accent};
+      box-shadow: 0 0 0 3px rgba(143, 191, 148, 0.14);
+    }
   }
 
   .tag-input {
@@ -813,18 +881,19 @@ const StyledTravelSettings = styled.div`
     outline: none;
     background: transparent;
     font-size: 14px;
-    color: #1e1b4b;
+    font-family: ${t.font.sans};
+    color: ${t.color.text};
     min-width: 80px;
     flex: 1;
 
     &::placeholder {
-      color: #a5b4fc;
+      color: ${t.color.textFaint};
     }
   }
 
   .tag-hint {
     font-size: 11px;
-    color: #a5b4fc;
+    color: ${t.color.textFaint};
   }
 
   /* Visibility */
@@ -839,22 +908,22 @@ const StyledTravelSettings = styled.div`
     align-items: center;
     gap: 14px;
     padding: 14px 16px;
-    border: 1.5px solid rgba(99, 102, 241, 0.12);
-    border-radius: 14px;
+    border: 0.5px solid ${c.inputBorder};
+    border-radius: ${t.radius.md};
     background: transparent;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.18s ease;
     text-align: left;
     width: 100%;
 
     &:hover {
-      border-color: rgba(99, 102, 241, 0.25);
-      background: rgba(99, 102, 241, 0.03);
+      border-color: ${t.color.border2};
+      background: ${c.hover};
     }
 
     &.active {
-      border-color: #8b5cf6;
-      background: rgba(139, 92, 246, 0.06);
+      border-color: ${t.color.accent};
+      background: ${c.successSurface};
     }
 
     &:disabled {
@@ -866,20 +935,20 @@ const StyledTravelSettings = styled.div`
   .vis-icon-wrap {
     width: 36px;
     height: 36px;
-    border-radius: 10px;
+    border-radius: ${t.radius.md};
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 
     &.public {
-      background: rgba(76, 175, 80, 0.1);
-      color: #4caf50;
+      background: ${c.successSurface};
+      color: ${t.color.accent};
     }
 
     &.private {
-      background: rgba(158, 158, 158, 0.12);
-      color: #757575;
+      background: rgba(255, 255, 255, 0.06);
+      color: ${t.color.textMuted};
     }
   }
 
@@ -892,18 +961,17 @@ const StyledTravelSettings = styled.div`
   .vis-title {
     font-size: 14px;
     font-weight: 600;
-    color: #1e1b4b;
+    color: ${t.color.text};
   }
 
   .vis-desc {
     font-size: 12px;
-    color: #6366f1;
+    color: ${t.color.textMuted};
   }
 
   /* Danger zone */
   .danger-zone {
-    background: rgba(239, 68, 68, 0.02);
-    border-radius: 0 0 20px 20px;
+    background: ${c.dangerSurface};
   }
 
   .btn-delete-trigger {
@@ -911,18 +979,19 @@ const StyledTravelSettings = styled.div`
     align-items: center;
     gap: 8px;
     padding: 10px 18px;
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    border-radius: 12px;
+    border: 0.5px solid ${c.dangerBorder};
+    border-radius: ${t.radius.md};
     background: transparent;
-    color: #ef4444;
+    color: ${c.danger};
     font-size: 14px;
     font-weight: 500;
+    font-family: ${t.font.sans};
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.18s ease;
 
     &:hover {
-      background: rgba(239, 68, 68, 0.08);
-      border-color: rgba(239, 68, 68, 0.5);
+      background: ${c.dangerSurface};
+      border-color: ${c.danger};
     }
   }
 
@@ -937,11 +1006,17 @@ const StyledTravelSettings = styled.div`
     align-items: flex-start;
     gap: 10px;
     padding: 12px 14px;
-    background: rgba(239, 68, 68, 0.06);
-    border-radius: 12px;
-    color: #dc2626;
+    background: ${c.dangerSurface};
+    border: 0.5px solid ${c.dangerBorder};
+    border-radius: ${t.radius.md};
+    color: ${c.danger};
     font-size: 13px;
     line-height: 1.5;
+
+    strong {
+      color: ${c.danger};
+      font-weight: 700;
+    }
 
     svg {
       flex-shrink: 0;
@@ -951,11 +1026,11 @@ const StyledTravelSettings = styled.div`
 
   .delete-instruction {
     font-size: 13px;
-    color: #374151;
+    color: ${t.color.textMuted};
     margin: 0;
 
     strong {
-      color: #1e1b4b;
+      color: ${t.color.text};
       font-weight: 600;
     }
   }
@@ -963,16 +1038,24 @@ const StyledTravelSettings = styled.div`
   .delete-input {
     width: 100%;
     padding: 10px 14px;
-    border: 1.5px solid rgba(239, 68, 68, 0.3);
-    border-radius: 10px;
+    border: 0.5px solid ${c.dangerBorder};
+    border-radius: ${t.radius.md};
     font-size: 14px;
-    color: #1e1b4b;
+    font-family: ${t.font.sans};
+    color: ${t.color.text};
+    background: ${c.inputBg};
     outline: none;
     box-sizing: border-box;
-    transition: border-color 0.2s;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    color-scheme: dark;
+
+    &::placeholder {
+      color: ${t.color.textFaint};
+    }
 
     &:focus {
-      border-color: #ef4444;
+      border-color: ${c.danger};
+      box-shadow: 0 0 0 3px rgba(220, 90, 80, 0.14);
     }
   }
 
@@ -985,16 +1068,17 @@ const StyledTravelSettings = styled.div`
   .btn-delete-confirm {
     padding: 8px 20px;
     border: none;
-    background: #ef4444;
-    border-radius: 10px;
+    background: ${c.dangerStrong};
+    border-radius: ${t.radius.md};
     font-size: 13px;
     font-weight: 600;
-    color: #fff;
+    font-family: ${t.font.sans};
+    color: #fdeceb;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: filter 0.15s ease, opacity 0.15s ease;
 
     &:hover:not(:disabled) {
-      background: #dc2626;
+      filter: brightness(1.12);
     }
 
     &:disabled {

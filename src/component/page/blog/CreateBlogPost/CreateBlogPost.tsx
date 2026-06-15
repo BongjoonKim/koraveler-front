@@ -52,11 +52,13 @@ function CreateBlogPost(props: CreateBlogPostProps) {
         isOpen={openBlogPostingModal}
         onClose={modalClose}
         title={"Saving Blog Post"}
+        variant={"dark"}
         footer={
           <CusModalFooter
             types={["create", "cancel"]}
             createText={"save"}
             cancelText={"cancel"}
+            createColorPalette={"green"}
             doCreate={() => handleEdit(BLOG_SAVE_TYPE.SAVE)}
             doCancel={modalClose}
           />

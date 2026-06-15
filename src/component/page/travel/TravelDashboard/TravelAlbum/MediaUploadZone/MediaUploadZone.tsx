@@ -224,7 +224,7 @@ const StyledMediaUploadZone = styled.div`
   margin-bottom: 16px;
 
   .dropzone {
-    border: 2px dashed rgba(99, 102, 241, 0.4);
+    border: 2px dashed rgba(127, 184, 154, 0.45);
     border-radius: 16px;
     padding: 2rem;
     display: flex;
@@ -233,13 +233,13 @@ const StyledMediaUploadZone = styled.div`
     gap: 8px;
     cursor: pointer;
     transition: all 0.25s ease;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.05);
 
     &:hover,
     &.drag-over {
-      border-color: #8b5cf6;
+      border-color: #7fb89a;
       border-style: solid;
-      background: rgba(139, 92, 246, 0.05);
+      background: rgba(127, 184, 154, 0.12);
     }
   }
 
@@ -248,18 +248,18 @@ const StyledMediaUploadZone = styled.div`
   }
 
   .dropzone-icon {
-    color: #a5b4fc;
+    color: #7fb89a;
   }
 
   .dropzone-text {
     font-size: 15px;
     font-weight: 500;
-    color: #4f46e5;
+    color: #f1f3f2;
   }
 
   .dropzone-sub {
     font-size: 13px;
-    color: #a5b4fc;
+    color: #94a3a0;
   }
 
   .upload-queue {
@@ -275,8 +275,8 @@ const StyledMediaUploadZone = styled.div`
     gap: 12px;
     padding: 8px 12px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(99, 102, 241, 0.1);
+    background: #1a2021;
+    border: 1px solid rgba(255, 255, 255, 0.08);
 
     &.done {
       opacity: 0.7;
@@ -306,7 +306,7 @@ const StyledMediaUploadZone = styled.div`
   .queue-name {
     font-size: 13px;
     font-weight: 500;
-    color: #1e1b4b;
+    color: #f1f3f2;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -314,7 +314,7 @@ const StyledMediaUploadZone = styled.div`
 
   .queue-size {
     font-size: 11px;
-    color: #a5b4fc;
+    color: #94a3a0;
   }
 
   .queue-status {
@@ -327,8 +327,8 @@ const StyledMediaUploadZone = styled.div`
   .upload-spinner {
     width: 16px;
     height: 16px;
-    border: 2px solid rgba(139, 92, 246, 0.2);
-    border-top-color: #8b5cf6;
+    border: 2px solid rgba(127, 184, 154, 0.12);
+    border-top-color: #7fb89a;
     border-radius: 50%;
     animation: ${spin} 0.6s linear infinite;
   }
@@ -346,7 +346,7 @@ const StyledMediaUploadZone = styled.div`
     align-items: center;
     border: none;
     background: none;
-    color: #a5b4fc;
+    color: #94a3a0;
     cursor: pointer;
     padding: 2px;
 
@@ -360,7 +360,7 @@ const StyledMediaUploadZone = styled.div`
     padding: 8px 20px;
     border: none;
     border-radius: 10px;
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    background: linear-gradient(135deg, #386851, #2f5743);
     color: #fff;
     font-size: 13px;
     font-weight: 600;
@@ -370,7 +370,7 @@ const StyledMediaUploadZone = styled.div`
 
     &:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+      box-shadow: 0 4px 12px rgba(127, 184, 154, 0.3);
     }
   }
 

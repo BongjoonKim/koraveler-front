@@ -10,7 +10,6 @@ export const uploadedInfo = atom<any[]>([]);
 export const isBookmark = atom<boolean>(false);
 
 export const selBlogSortOpt = atom<BLOG_LIST_SORTS>(BLOG_LIST_SORTS.LATEST);
-export const openBlogPostingModalAtom = atom<boolean>(false);
 
 
 

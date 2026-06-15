@@ -257,7 +257,7 @@ const spin = keyframes`
 const StyledTravelAlbum = styled.div`
   .dash-section {
     padding: 1.25rem 0;
-    border-bottom: 1px solid rgba(99, 102, 241, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .section-header {
@@ -273,14 +273,14 @@ const StyledTravelAlbum = styled.div`
     gap: 8px;
     font-size: 16px;
     font-weight: 600;
-    color: #1e1b4b;
+    color: #f1f3f2;
   }
 
   .media-count {
     font-size: 12px;
     font-weight: 600;
-    color: #8b5cf6;
-    background: rgba(139, 92, 246, 0.1);
+    color: #7fb89a;
+    background: rgba(127, 184, 154, 0.12);
     padding: 1px 8px;
     border-radius: 10px;
   }
@@ -296,17 +296,17 @@ const StyledTravelAlbum = styled.div`
     align-items: center;
     gap: 4px;
     padding: 6px 10px;
-    border: 1px solid rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.8);
-    color: #4f46e5;
+    background: rgba(255, 255, 255, 0.05);
+    color: #7fb89a;
     font-size: 12px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-      background: rgba(99, 102, 241, 0.1);
+      background: rgba(127, 184, 154, 0.12);
     }
 
     &:disabled {
@@ -316,12 +316,12 @@ const StyledTravelAlbum = styled.div`
   }
 
   .download-btn {
-    background: rgba(139, 92, 246, 0.08);
-    border-color: rgba(139, 92, 246, 0.25);
-    color: #7c3aed;
+    background: rgba(127, 184, 154, 0.1);
+    border-color: rgba(127, 184, 154, 0.3);
+    color: #9fcbae;
 
     &:hover {
-      background: rgba(139, 92, 246, 0.15);
+      background: rgba(127, 184, 154, 0.18);
     }
   }
 
@@ -337,10 +337,10 @@ const StyledTravelAlbum = styled.div`
   .close-select {
     border: none;
     background: transparent;
-    color: #a5b4fc;
+    color: #94a3a0;
 
     &:hover {
-      color: #6366f1;
+      color: #7fb89a;
     }
   }
 
@@ -351,17 +351,17 @@ const StyledTravelAlbum = styled.div`
 
   .section-action {
     padding: 6px;
-    border: 1.5px dashed rgba(99, 102, 241, 0.35);
+    border: 1.5px dashed rgba(127, 184, 154, 0.35);
     border-radius: 10px;
     background: transparent;
-    color: #a5b4fc;
+    color: #94a3a0;
     cursor: pointer;
     transition: all 0.25s ease;
 
     &:hover {
-      border-color: rgba(139, 92, 246, 0.5);
-      color: #8b5cf6;
-      background: rgba(139, 92, 246, 0.05);
+      border-color: rgba(127, 184, 154, 0.5);
+      color: #7fb89a;
+      background: rgba(127, 184, 154, 0.12);
     }
   }
 
@@ -372,15 +372,15 @@ const StyledTravelAlbum = styled.div`
     justify-content: center;
     gap: 12px;
     padding: 2rem 1rem;
-    color: #6366f1;
+    color: #7fb89a;
     font-size: 14px;
   }
 
   .loading-spinner {
     width: 28px;
     height: 28px;
-    border: 3px solid rgba(139, 92, 246, 0.2);
-    border-top-color: #8b5cf6;
+    border: 3px solid rgba(127, 184, 154, 0.12);
+    border-top-color: #7fb89a;
     border-radius: 50%;
     animation: ${spin} 0.7s linear infinite;
   }
@@ -391,18 +391,18 @@ const StyledTravelAlbum = styled.div`
     align-items: center;
     gap: 8px;
     padding: 2.5rem 1rem;
-    color: #a5b4fc;
+    color: #94a3a0;
     text-align: center;
 
     p {
       font-size: 15px;
       font-weight: 500;
-      color: #6366f1;
+      color: #c7d2cc;
     }
 
     span {
       font-size: 13px;
-      color: #a5b4fc;
+      color: #94a3a0;
     }
   }
 `;

@@ -37,26 +37,26 @@ const STATUS_CONFIG: Record<
   PLANNING: {
     label: "Planning",
     icon: Circle,
-    color: "#2196f3",
-    bg: "rgba(33,150,243,0.08)",
+    color: "#7fb89a",
+    bg: "rgba(127,184,154,0.12)",
   },
   IN_PROGRESS: {
     label: "In Progress",
     icon: CircleDot,
-    color: "#ff9800",
-    bg: "rgba(255,152,0,0.08)",
+    color: "#d8b46a",
+    bg: "rgba(216,180,106,0.12)",
   },
   COMPLETED: {
     label: "Completed",
     icon: CheckCircle2,
-    color: "#4caf50",
-    bg: "rgba(76,175,80,0.08)",
+    color: "#86c9a4",
+    bg: "rgba(134,201,164,0.12)",
   },
   CANCELLED: {
     label: "Cancelled",
     icon: XCircle,
-    color: "#9e9e9e",
-    bg: "rgba(158,158,158,0.08)",
+    color: "#94a3a0",
+    bg: "rgba(148,163,160,0.12)",
   },
 };
 
@@ -599,8 +599,8 @@ const StyledTravelDashboard = styled.div`
       color: rgba(255, 255, 255, 0.8);
     }
     &.public {
-      background: rgba(76, 175, 80, 0.15);
-      color: rgba(76, 175, 80, 0.9);
+      background: rgba(127, 184, 154, 0.18);
+      color: rgba(127, 184, 154, 0.95);
     }
   }
 
@@ -821,8 +821,8 @@ const StyledTravelDashboard = styled.div`
       color: #c7d2cc;
     }
     &.viewer {
-      background: rgba(80, 140, 200, 0.18);
-      color: #93c5fd;
+      background: rgba(148, 163, 160, 0.16);
+      color: #94a3a0;
     }
   }
 
@@ -894,8 +894,8 @@ const StyledTravelDashboard = styled.div`
     align-items: center;
     gap: 3px;
     padding: 3px 8px;
-    background: rgba(80, 140, 200, 0.14);
-    color: #93c5fd;
+    background: rgba(127, 184, 154, 0.14);
+    color: #7fb89a;
     border-radius: 8px;
     font-size: 11px;
     font-weight: 500;

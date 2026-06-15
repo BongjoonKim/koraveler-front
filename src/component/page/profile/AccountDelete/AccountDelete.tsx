@@ -1,10 +1,21 @@
 import React from "react";
-import { Box, VStack, Text, Button, Spinner } from "@chakra-ui/react";
 import { AlertTriangle, Lock } from "lucide-react";
-import CusFormCtrl from "../../../../common/elements/CusFormCtrl";
-import CusInput from "../../../../common/elements/textField/CusInput";
 import CusModal from "../../../../common/elements/CusModal";
 import useAccountDelete from "./useAccountDelete";
+import {
+  DangerCard,
+  DangerTitle,
+  DangerText,
+  Field,
+  Label,
+  PasswordInput,
+  DangerButton,
+  OutlineButton,
+  Actions,
+  Alert,
+  Spinner,
+  profileTokens as c,
+} from "../profileUi";
 
 export default function AccountDelete() {
   const {
@@ -21,73 +32,73 @@ export default function AccountDelete() {
 
   return (
     <>
-      <VStack gap={6} align="stretch" p={6} borderWidth="1px" borderRadius="xl" borderColor="red.200" bg="red.50">
-        <VStack gap={2} align="flex-start">
-          <Text fontSize="lg" fontWeight="semibold" color="red.600">
-            Delete Account
-          </Text>
-          <Text fontSize="sm" color="gray.600">
-            Once you delete your account, there is no going back. All your data including
-            blog posts, comments, and bookmarks will be permanently removed.
-          </Text>
-        </VStack>
+      <DangerCard>
+        <DangerTitle>Delete Account</DangerTitle>
+        <DangerText>
+          Once you delete your account, there is no going back. All your data
+          including blog posts, comments, and bookmarks will be permanently
+          removed.
+        </DangerText>
 
-        {errorMsg && (
-          <Box p={3} bg="red.100" borderRadius="md" borderWidth="1px" borderColor="red.300">
-            <Text color="red.700" fontSize="sm">{errorMsg}</Text>
-          </Box>
-        )}
+        <div style={{ marginTop: 18 }}>
+          {errorMsg && <Alert tone="error">{errorMsg}</Alert>}
 
-        <CusFormCtrl formTitle="Confirm your password">
-          <CusInput
-            type="password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setErrorMsg("");
-            }}
-            placeholder="Enter your password"
-            startElement={<Lock size={16} />}
-          />
-        </CusFormCtrl>
+          <Field style={{ marginTop: errorMsg ? 16 : 0 }}>
+            <Label>Confirm your password</Label>
+            <PasswordInput
+              value={password}
+              onChange={(v) => {
+                setPassword(v);
+                setErrorMsg("");
+              }}
+              placeholder="Enter your password"
+              leftIcon={<Lock size={16} />}
+              autoComplete="current-password"
+            />
+          </Field>
 
-        <Box>
-          <Button
-            colorPalette="red"
-            size="sm"
-            onClick={handleOpenModal}
-          >
-            Delete My Account
-          </Button>
-        </Box>
-      </VStack>
+          <div style={{ marginTop: 20 }}>
+            <DangerButton onClick={handleOpenModal}>
+              Delete My Account
+            </DangerButton>
+          </div>
+        </div>
+      </DangerCard>
 
-      {/* 확인 모달 */}
+      {/* 확인 모달 — nadeliv 다크 브랜드 톤 */}
       <CusModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         title="Confirm Account Deletion"
         size="sm"
+        variant="dark"
         footer={
-          <Box display="flex" gap={3} justifyContent="flex-end" w="100%">
-            <Button variant="outline" size="sm" onClick={handleCloseModal} disabled={isDeleting}>
+          <div style={{ display: "flex", gap: 12, justifyContent: "flex-end", width: "100%" }}>
+            <OutlineButton onClick={handleCloseModal} disabled={isDeleting}>
               Cancel
-            </Button>
-            <Button colorPalette="red" size="sm" onClick={handleDelete} disabled={isDeleting}>
-              {isDeleting ? <Spinner size="sm" /> : "Delete"}
-            </Button>
-          </Box>
+            </OutlineButton>
+            <DangerButton onClick={handleDelete} disabled={isDeleting}>
+              {isDeleting ? <Spinner /> : "Delete"}
+            </DangerButton>
+          </div>
         }
       >
-        <VStack gap={4} align="center" py={4}>
-          <Box color="red.500">
-            <AlertTriangle size={48} />
-          </Box>
-          <Text textAlign="center" fontSize="sm" color="gray.600">
-            Are you sure you want to delete your account?
-            This action cannot be undone.
-          </Text>
-        </VStack>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 16,
+            padding: "12px 4px 8px",
+            textAlign: "center",
+          }}
+        >
+          <AlertTriangle size={44} color={c.danger} strokeWidth={1.5} />
+          <p style={{ fontSize: 14, lineHeight: 1.55, color: "rgba(255,255,255,0.7)", margin: 0 }}>
+            Are you sure you want to delete your account? This action cannot be
+            undone.
+          </p>
+        </div>
       </CusModal>
     </>
   );

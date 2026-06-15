@@ -1,6 +1,4 @@
 import {Dispatch, SetStateAction, useCallback, useEffect, useState} from "react";
-import {useAtom} from "jotai/index";
-import {openBlogPostingModalAtom} from "../../../stores/jotai/jotai";
 import useAuthEP from "../../../utils/useAuthEP";
 import {getAllLoginUserFolders} from "../../../endpoints/folders-endpoints";
 import {useRecoilState} from "recoil";
