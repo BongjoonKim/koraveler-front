@@ -6,6 +6,7 @@ import useTranslationManage from './useTranslationManage';
 import TranslationEditor from '../TranslationEditor';
 import TranslationStatusBadges from '../common/TranslationStatusBadges';
 import { LOCALE_META, LocaleCode } from '../../../../types/i18n/i18nTypes';
+import { homeTokens as t } from '../../MainPage/MainBody/homeTokens';
 
 function TranslationManage() {
     const {
@@ -51,7 +52,7 @@ function TranslationManage() {
 
                 {/* 글 정보 */}
                 <PostInfo>
-                    <Globe size={18} color="#8b7355" />
+                    <Globe size={18} color={t.color.accent} />
                     <PostInfoText>
                         <PostTitle>{document.title || 'Untitled'}</PostTitle>
                         <PostSubtitle>Manage translations for this post</PostSubtitle>
@@ -109,7 +110,7 @@ function TranslationManage() {
                 {/* 미선택 시 안내 */}
                 {!selectedLocale && (
                     <EmptyState>
-                        <Globe size={40} color="#d4c5b5" />
+                        <Globe size={40} color={t.color.textFaint} />
                         <EmptyText>Select a language above to view or edit the translation</EmptyText>
                     </EmptyState>
                 )}
@@ -135,17 +136,18 @@ const BackButton = styled.button`
     align-items: center;
     gap: 6px;
     padding: 6px 12px;
-    border-radius: 8px;
+    border-radius: ${t.radius.md};
     border: none;
     background: transparent;
-    color: #8b7355;
+    color: ${t.color.textSoft};
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-        background: rgba(139, 115, 85, 0.08);
+        background: ${t.color.surface3};
+        color: ${t.color.text};
     }
 `;
 
@@ -159,17 +161,18 @@ const RetranslateAllButton = styled.button`
     align-items: center;
     gap: 6px;
     padding: 8px 16px;
-    border-radius: 8px;
-    border: 1px solid #c4956a;
+    border-radius: ${t.radius.md};
+    border: 1px solid rgba(143, 191, 148, 0.4);
     background: transparent;
-    color: #c4956a;
+    color: ${t.color.accent};
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover:not(:disabled) {
-        background: rgba(196, 149, 106, 0.08);
+        background: rgba(143, 191, 148, 0.12);
+        border-color: ${t.color.accent};
     }
 
     &:disabled {
@@ -183,9 +186,9 @@ const PostInfo = styled.div`
     align-items: flex-start;
     gap: 12px;
     padding: 16px 20px;
-    background: rgba(196, 149, 106, 0.04);
-    border: 1px solid rgba(196, 149, 106, 0.12);
-    border-radius: 12px;
+    background: ${t.color.surface2};
+    border: 1px solid ${t.color.border};
+    border-radius: ${t.radius.lg};
 `;
 
 const PostInfoText = styled.div`
@@ -197,13 +200,13 @@ const PostInfoText = styled.div`
 const PostTitle = styled.div`
     font-size: 18px;
     font-weight: 600;
-    color: #2c2520;
-    font-family: 'Playfair Display', serif;
+    color: ${t.color.text};
+    font-family: ${t.font.serif};
 `;
 
 const PostSubtitle = styled.div`
     font-size: 13px;
-    color: #8b7355;
+    color: ${t.color.textMuted};
 `;
 
 const StatusSection = styled.div`
@@ -215,7 +218,7 @@ const StatusSection = styled.div`
 const SectionLabel = styled.div`
     font-size: 12px;
     font-weight: 600;
-    color: #8b7355;
+    color: ${t.color.textMuted};
     text-transform: uppercase;
     letter-spacing: 0.5px;
 `;
@@ -231,22 +234,22 @@ const LocaleTab = styled.button<{ $isActive: boolean }>`
     align-items: center;
     gap: 8px;
     padding: 10px 18px;
-    border-radius: 10px;
-    border: 1.5px solid ${({ $isActive }) => ($isActive ? '#c4956a' : 'rgba(139, 115, 85, 0.2)')};
-    background: ${({ $isActive }) => ($isActive ? 'rgba(196, 149, 106, 0.08)' : 'transparent')};
+    border-radius: ${t.radius.md};
+    border: 1.5px solid ${({ $isActive }) => ($isActive ? t.color.accent : t.color.border2)};
+    background: ${({ $isActive }) => ($isActive ? 'rgba(143, 191, 148, 0.14)' : t.color.surface2)};
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 14px;
 
     &:hover {
-        border-color: #c4956a;
-        background: rgba(196, 149, 106, 0.04);
+        border-color: ${t.color.accent};
+        background: ${t.color.surface3};
     }
 `;
 
 const TabLabel = styled.span`
     font-weight: 500;
-    color: #2c2520;
+    color: ${t.color.text};
 `;
 
 const TabStatus = styled.span<{ $status: string }>`
@@ -260,18 +263,18 @@ const EmptyState = styled.div`
     justify-content: center;
     gap: 12px;
     padding: 60px 20px;
-    border: 1px dashed rgba(139, 115, 85, 0.2);
-    border-radius: 12px;
+    border: 1px dashed ${t.color.border2};
+    border-radius: ${t.radius.lg};
 `;
 
 const EmptyText = styled.div`
     font-size: 14px;
-    color: #a09080;
+    color: ${t.color.textMuted};
 `;
 
 const LoadingText = styled.div`
     text-align: center;
     padding: 40px;
-    color: #8b7355;
+    color: ${t.color.textMuted};
     font-size: 14px;
 `;

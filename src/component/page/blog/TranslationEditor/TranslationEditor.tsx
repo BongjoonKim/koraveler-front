@@ -5,6 +5,7 @@ import { Editor } from '@tiptap/react';
 import { LocaleCode, LOCALE_META } from '../../../../types/i18n/i18nTypes';
 import useTranslationEditor from './useTranslationEditor';
 import TiptapEditor from '../../../../common/elements/CusEditor/TipTapEditor';
+import { homeTokens as t } from '../../MainPage/MainBody/homeTokens';
 
 interface TranslationEditorProps {
     postId: string;
@@ -145,10 +146,10 @@ export default TranslationEditor;
 // Styled Components
 
 const Container = styled.div`
-    border: 1px solid rgba(139, 115, 85, 0.2);
-    border-radius: 12px;
+    border: 1px solid ${t.color.border};
+    border-radius: ${t.radius.lg};
     overflow: hidden;
-    background: #fff;
+    background: ${t.color.surface};
 `;
 
 const Header = styled.div`
@@ -158,8 +159,8 @@ const Header = styled.div`
     flex-wrap: wrap;
     gap: 12px;
     padding: 12px 20px;
-    background: rgba(196, 149, 106, 0.06);
-    border-bottom: 1px solid rgba(139, 115, 85, 0.1);
+    background: ${t.color.surface2};
+    border-bottom: 1px solid ${t.color.border};
 `;
 
 const HeaderTitle = styled.div`
@@ -168,32 +169,33 @@ const HeaderTitle = styled.div`
     gap: 8px;
     font-size: 15px;
     font-weight: 600;
-    color: #2c2520;
+    color: ${t.color.text};
+    font-family: ${t.font.serif};
 `;
 
 const StatusChip = styled.span<{ $status: string }>`
     font-size: 11px;
     font-weight: 500;
     padding: 2px 8px;
-    border-radius: 10px;
+    border-radius: ${t.radius.pill};
     background: ${({ $status }) => {
         switch ($status) {
-            case 'completed': return 'rgba(56, 161, 105, 0.12)';
-            case 'manually_edited': return 'rgba(49, 130, 206, 0.12)';
+            case 'completed': return 'rgba(127, 214, 164, 0.16)';
+            case 'manually_edited': return 'rgba(143, 192, 240, 0.16)';
             case 'pending':
-            case 'translating': return 'rgba(214, 158, 46, 0.12)';
-            case 'failed': return 'rgba(229, 62, 62, 0.12)';
-            default: return 'rgba(160, 174, 192, 0.12)';
+            case 'translating': return 'rgba(230, 192, 104, 0.16)';
+            case 'failed': return 'rgba(240, 128, 128, 0.16)';
+            default: return 'rgba(154, 163, 153, 0.16)';
         }
     }};
     color: ${({ $status }) => {
         switch ($status) {
-            case 'completed': return '#38a169';
-            case 'manually_edited': return '#3182ce';
+            case 'completed': return '#7fd6a4';
+            case 'manually_edited': return '#8fc0f0';
             case 'pending':
-            case 'translating': return '#d69e2e';
-            case 'failed': return '#e53e3e';
-            default: return '#a0aec0';
+            case 'translating': return '#e6c068';
+            case 'failed': return '#f08080';
+            default: return '#9aa399';
         }
     }};
 `;
@@ -214,36 +216,37 @@ const ActionButton = styled.button<{ $variant?: 'primary' | 'secondary' | 'dange
     cursor: pointer;
     transition: all 0.2s ease;
     border: 1px solid;
+    font-family: ${t.font.sans};
 
     ${({ $variant }) => {
         switch ($variant) {
             case 'primary':
                 return `
-                    background: #c4956a;
-                    color: #fff;
-                    border-color: #c4956a;
-                    &:hover:not(:disabled) { background: #b08058; }
+                    background: ${t.color.accentStrong};
+                    color: #ffffff;
+                    border-color: ${t.color.accentStrong};
+                    &:hover:not(:disabled) { background: ${t.color.accent}; border-color: ${t.color.accent}; color: ${t.color.bg}; }
                 `;
             case 'danger':
                 return `
                     background: transparent;
-                    color: #e53e3e;
-                    border-color: #e53e3e;
-                    &:hover:not(:disabled) { background: rgba(229, 62, 62, 0.06); }
+                    color: #f08080;
+                    border-color: rgba(240, 128, 128, 0.5);
+                    &:hover:not(:disabled) { background: rgba(240, 128, 128, 0.12); }
                 `;
             case 'secondary':
                 return `
                     background: transparent;
-                    color: #8b7355;
-                    border-color: #8b7355;
-                    &:hover:not(:disabled) { background: rgba(139, 115, 85, 0.06); }
+                    color: ${t.color.accent};
+                    border-color: rgba(143, 191, 148, 0.4);
+                    &:hover:not(:disabled) { background: rgba(143, 191, 148, 0.12); }
                 `;
             default:
                 return `
                     background: transparent;
-                    color: #2c2520;
-                    border-color: rgba(139, 115, 85, 0.3);
-                    &:hover:not(:disabled) { background: rgba(139, 115, 85, 0.06); }
+                    color: ${t.color.textSoft};
+                    border-color: ${t.color.border2};
+                    &:hover:not(:disabled) { background: ${t.color.surface3}; color: ${t.color.text}; }
                 `;
         }
     }}
@@ -260,9 +263,9 @@ const WarningBanner = styled.div`
     gap: 10px;
     flex-wrap: wrap;
     padding: 12px 20px;
-    background: rgba(229, 62, 62, 0.06);
-    border-bottom: 1px solid rgba(229, 62, 62, 0.15);
-    color: #c53030;
+    background: rgba(240, 128, 128, 0.1);
+    border-bottom: 1px solid rgba(240, 128, 128, 0.25);
+    color: #f0a0a0;
     font-size: 13px;
 `;
 
@@ -290,7 +293,7 @@ const Panel = styled.div`
 
 const Divider = styled.div`
     width: 1px;
-    background: rgba(139, 115, 85, 0.15);
+    background: ${t.color.border};
 
     @media (max-width: 768px) {
         width: 100%;
@@ -301,7 +304,7 @@ const Divider = styled.div`
 const PanelLabel = styled.div`
     font-size: 11px;
     font-weight: 600;
-    color: #8b7355;
+    color: ${t.color.textMuted};
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 12px;
@@ -310,41 +313,48 @@ const PanelLabel = styled.div`
 const PanelTitle = styled.h2`
     font-size: 20px;
     font-weight: 600;
-    color: #2c2520;
+    color: ${t.color.text};
     margin-bottom: 16px;
-    font-family: 'Playfair Display', serif;
+    font-family: ${t.font.serif};
 `;
 
 const PanelContent = styled.div`
     font-size: 15px;
     line-height: 1.7;
-    color: #3d3530;
+    color: ${t.color.textSoft};
 
     img { max-width: 100%; height: auto; border-radius: 8px; }
     p { margin-bottom: 12px; }
-    h2, h3 { margin: 20px 0 10px; color: #2c2520; }
-    a { color: #c4956a; }
+    h2, h3 { margin: 20px 0 10px; color: ${t.color.text}; }
+    a { color: ${t.color.accent}; }
 `;
 
 const EditableTitle = styled.input`
     width: 100%;
     font-size: 20px;
     font-weight: 600;
-    color: #2c2520;
-    font-family: 'Playfair Display', serif;
-    border: 1px solid rgba(139, 115, 85, 0.3);
-    border-radius: 6px;
+    color: ${t.color.text};
+    background: ${t.color.surface2};
+    font-family: ${t.font.serif};
+    border: 1px solid ${t.color.border2};
+    border-radius: ${t.radius.md};
     padding: 8px 12px;
     margin-bottom: 12px;
     outline: none;
 
-    &:focus { border-color: #c4956a; }
+    &::placeholder { color: ${t.color.textFaint}; }
+    &:focus { border-color: ${t.color.accent}; }
 `;
 
 const EditorWrapper = styled.div`
     min-height: 300px;
     display: flex;
     flex-direction: column;
+    background: ${t.color.surface2};
+    border: 1px solid ${t.color.border2};
+    border-radius: ${t.radius.md};
+    overflow: hidden;
+    padding: 0 12px;
 
     > div {
         flex: 1;
@@ -356,5 +366,5 @@ const EditorWrapper = styled.div`
 const LoadingContainer = styled.div`
     padding: 40px;
     text-align: center;
-    color: #8b7355;
+    color: ${t.color.textMuted};
 `;
