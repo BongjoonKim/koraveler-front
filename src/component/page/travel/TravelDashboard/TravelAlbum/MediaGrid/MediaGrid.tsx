@@ -89,11 +89,11 @@ const StyledMediaGrid = styled.div`
 
     &:hover {
       transform: scale(1.02);
-      box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15);
+      box-shadow: 0 4px 16px rgba(127, 184, 154, 0.15);
     }
 
     &.selected {
-      border-color: #8b5cf6;
+      border-color: #7fb89a;
     }
 
     img {
@@ -118,7 +118,7 @@ const StyledMediaGrid = styled.div`
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: rgba(139, 92, 246, 0.85);
+    background: rgba(127, 184, 154, 0.85);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -141,8 +141,8 @@ const StyledMediaGrid = styled.div`
     z-index: 2;
 
     &.checked {
-      background: #8b5cf6;
-      border-color: #8b5cf6;
+      background: #7fb89a;
+      border-color: #7fb89a;
     }
   }
 

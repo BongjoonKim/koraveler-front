@@ -425,31 +425,31 @@ const StyledTravelMembers = styled.div`
     gap: 8px;
     font-size: 16px;
     font-weight: 600;
-    color: #1e1b4b;
+    color: #f1f3f2;
   }
 
   .member-count {
     font-size: 12px;
     font-weight: 500;
-    color: #6366f1;
-    background: rgba(99, 102, 241, 0.1);
+    color: #7fb89a;
+    background: rgba(127, 184, 154, 0.12);
     padding: 1px 8px;
     border-radius: 10px;
   }
 
   .section-action {
     padding: 6px;
-    border: 1.5px dashed rgba(99, 102, 241, 0.35);
+    border: 1.5px dashed rgba(127, 184, 154, 0.45);
     border-radius: 10px;
     background: transparent;
-    color: #a5b4fc;
+    color: #94a3a0;
     cursor: pointer;
     transition: all 0.25s ease;
 
     &:hover {
-      border-color: rgba(139, 92, 246, 0.5);
-      color: #8b5cf6;
-      background: rgba(139, 92, 246, 0.05);
+      border-color: rgba(127, 184, 154, 0.45);
+      color: #9fcbae;
+      background: rgba(127, 184, 154, 0.12);
     }
   }
 
@@ -466,12 +466,12 @@ const StyledTravelMembers = styled.div`
     gap: 12px;
     padding: 10px 14px;
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(99, 102, 241, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     transition: background 0.2s;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.06);
     }
   }
 
@@ -479,7 +479,7 @@ const StyledTravelMembers = styled.div`
     width: 38px;
     height: 38px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    background: linear-gradient(135deg, #386851, #2f5743);
     color: #fff;
     display: flex;
     align-items: center;
@@ -500,7 +500,7 @@ const StyledTravelMembers = styled.div`
   .member-name {
     font-size: 14px;
     font-weight: 500;
-    color: #1e1b4b;
+    color: #f1f3f2;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -509,8 +509,8 @@ const StyledTravelMembers = styled.div`
   .me-badge {
     font-size: 10px;
     font-weight: 600;
-    color: #6366f1;
-    background: rgba(99, 102, 241, 0.1);
+    color: #7fb89a;
+    background: rgba(127, 184, 154, 0.12);
     padding: 1px 6px;
     border-radius: 6px;
   }
@@ -527,16 +527,16 @@ const StyledTravelMembers = styled.div`
     flex-shrink: 0;
 
     &.admin {
-      background: rgba(139, 92, 246, 0.15);
-      color: #7c3aed;
+      background: rgba(127, 184, 154, 0.12);
+      color: #9fcbae;
     }
     &.user {
-      background: rgba(158, 158, 158, 0.12);
-      color: #757575;
+      background: rgba(255, 255, 255, 0.06);
+      color: #94a3a0;
     }
     &.viewer {
-      background: rgba(33, 150, 243, 0.12);
-      color: #1976d2;
+      background: rgba(127, 184, 154, 0.12);
+      color: #7fb89a;
     }
   }
 
@@ -550,14 +550,14 @@ const StyledTravelMembers = styled.div`
     padding: 4px;
     border: none;
     background: transparent;
-    color: #a5b4fc;
+    color: #94a3a0;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-      background: rgba(99, 102, 241, 0.1);
-      color: #6366f1;
+      background: rgba(255, 255, 255, 0.06);
+      color: #7fb89a;
     }
   }
 
@@ -566,8 +566,8 @@ const StyledTravelMembers = styled.div`
     top: calc(100% + 4px);
     right: 0;
     min-width: 180px;
-    background: #fff;
-    border: 1px solid rgba(99, 102, 241, 0.15);
+    background: #1a2021;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     padding: 4px;
@@ -586,12 +586,12 @@ const StyledTravelMembers = styled.div`
     border-radius: 8px;
     font-size: 13px;
     font-weight: 500;
-    color: #3730a3;
+    color: #f1f3f2;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-      background: rgba(99, 102, 241, 0.08);
+      background: rgba(255, 255, 255, 0.06);
     }
 
     &:disabled {
@@ -619,7 +619,7 @@ const StyledTravelMembers = styled.div`
 
   .empty-text {
     font-size: 13px;
-    color: #a5b4fc;
+    color: #94a3a0;
   }
 
   /* 역할 선택기 */
@@ -632,7 +632,7 @@ const StyledTravelMembers = styled.div`
   .role-selector-label {
     font-size: 13px;
     font-weight: 500;
-    color: #6366f1;
+    color: #7fb89a;
     margin-right: 4px;
   }
 
@@ -641,23 +641,23 @@ const StyledTravelMembers = styled.div`
     align-items: center;
     gap: 4px;
     padding: 5px 12px;
-    border: 1.5px solid rgba(99, 102, 241, 0.2);
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
     border-radius: 10px;
     background: transparent;
-    color: #6366f1;
+    color: #7fb89a;
     font-size: 12px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-      border-color: rgba(99, 102, 241, 0.4);
-      background: rgba(99, 102, 241, 0.04);
+      border-color: rgba(127, 184, 154, 0.45);
+      background: rgba(255, 255, 255, 0.06);
     }
 
     &.active {
-      background: rgba(99, 102, 241, 0.12);
-      border-color: #6366f1;
+      background: rgba(127, 184, 154, 0.12);
+      border-color: #7fb89a;
       font-weight: 600;
     }
   }
@@ -679,26 +679,26 @@ const StyledTravelMembers = styled.div`
   .search-icon {
     position: absolute;
     left: 12px;
-    color: #a5b4fc;
+    color: #94a3a0;
     pointer-events: none;
   }
 
   .search-input {
     width: 100%;
     padding: 10px 36px 10px 38px;
-    border: 1.5px solid rgba(99, 102, 241, 0.25);
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     font-size: 14px;
-    color: #1e1b4b;
+    color: #f1f3f2;
     outline: none;
     transition: border-color 0.2s;
 
     &::placeholder {
-      color: #a5b4fc;
+      color: #94a3a0;
     }
 
     &:focus {
-      border-color: #8b5cf6;
+      border-color: #7fb89a;
     }
   }
 
@@ -708,12 +708,12 @@ const StyledTravelMembers = styled.div`
     padding: 4px;
     border: none;
     background: transparent;
-    color: #a5b4fc;
+    color: #94a3a0;
     cursor: pointer;
     border-radius: 6px;
 
     &:hover {
-      color: #6366f1;
+      color: #7fb89a;
     }
   }
 
@@ -735,7 +735,7 @@ const StyledTravelMembers = styled.div`
     justify-content: center;
     gap: 6px;
     padding: 24px;
-    color: #a5b4fc;
+    color: #94a3a0;
     font-size: 13px;
   }
 
@@ -746,7 +746,7 @@ const StyledTravelMembers = styled.div`
 
   .search-empty-hint {
     font-size: 11px;
-    color: #c4b5fd;
+    color: #94a3a0;
   }
 
   .search-user-item {
@@ -758,7 +758,7 @@ const StyledTravelMembers = styled.div`
     transition: background 0.2s;
 
     &:hover {
-      background: rgba(99, 102, 241, 0.06);
+      background: rgba(255, 255, 255, 0.06);
     }
   }
 
@@ -766,7 +766,7 @@ const StyledTravelMembers = styled.div`
     width: 34px;
     height: 34px;
     border-radius: 10px;
-    background: linear-gradient(135deg, #a5b4fc, #8b5cf6);
+    background: linear-gradient(135deg, #386851, #2f5743);
     color: #fff;
     display: flex;
     align-items: center;
@@ -786,7 +786,7 @@ const StyledTravelMembers = styled.div`
   .search-user-name {
     font-size: 13px;
     font-weight: 500;
-    color: #1e1b4b;
+    color: #f1f3f2;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -794,7 +794,7 @@ const StyledTravelMembers = styled.div`
 
   .search-user-email {
     font-size: 11px;
-    color: #6366f1;
+    color: #c7d2cc;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -805,10 +805,10 @@ const StyledTravelMembers = styled.div`
     align-items: center;
     gap: 4px;
     padding: 5px 12px;
-    border: 1.5px solid rgba(99, 102, 241, 0.3);
+    border: 1.5px solid rgba(127, 184, 154, 0.45);
     border-radius: 10px;
     background: transparent;
-    color: #6366f1;
+    color: #7fb89a;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -816,9 +816,9 @@ const StyledTravelMembers = styled.div`
     flex-shrink: 0;
 
     &:hover:not(:disabled) {
-      background: #6366f1;
-      color: #fff;
-      border-color: #6366f1;
+      background: #2e7d52;
+      color: #eef7ef;
+      border-color: #2e7d52;
     }
 
     &:disabled {
@@ -829,14 +829,14 @@ const StyledTravelMembers = styled.div`
 
   /* 현재 멤버 목록 (모달 하단) */
   .current-members {
-    border-top: 1px solid rgba(99, 102, 241, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     padding-top: 12px;
   }
 
   .current-members-label {
     font-size: 12px;
     font-weight: 600;
-    color: #6366f1;
+    color: #7fb89a;
     margin-bottom: 8px;
     display: block;
   }
@@ -853,9 +853,9 @@ const StyledTravelMembers = styled.div`
     gap: 6px;
     padding: 4px 10px;
     border-radius: 10px;
-    background: rgba(99, 102, 241, 0.08);
+    background: rgba(255, 255, 255, 0.06);
     font-size: 12px;
-    color: #3730a3;
+    color: #f1f3f2;
     font-weight: 500;
   }
 
@@ -866,16 +866,16 @@ const StyledTravelMembers = styled.div`
     border-radius: 4px;
 
     &.admin {
-      background: rgba(139, 92, 246, 0.15);
-      color: #7c3aed;
+      background: rgba(127, 184, 154, 0.12);
+      color: #9fcbae;
     }
     &.user {
-      background: rgba(158, 158, 158, 0.1);
-      color: #9e9e9e;
+      background: rgba(255, 255, 255, 0.06);
+      color: #94a3a0;
     }
     &.viewer {
-      background: rgba(33, 150, 243, 0.1);
-      color: #1976d2;
+      background: rgba(127, 184, 154, 0.12);
+      color: #7fb89a;
     }
   }
 
