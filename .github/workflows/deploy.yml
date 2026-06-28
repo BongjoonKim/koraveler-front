@@ -1,10 +1,21 @@
-name: Deploy to EC2
+name: Deploy to S3 + CloudFront
 
 on:
   push:
     branches:
       - production
   workflow_dispatch:
+
+# OIDC 로 IAM 역할을 assume 하기 위해 id-token 쓰기 권한 필요 (정적 키 미사용)
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-northeast-2
+  S3_BUCKET: nadeliv-frontend-web
+  CLOUDFRONT_DISTRIBUTION_ID: EA6GCMUI8JJGQ
+  DEPLOY_ROLE_ARN: arn:aws:iam::611288736262:role/nadeliv-frontend-deploy
 
 jobs:
   build-and-deploy:
@@ -13,20 +24,20 @@ jobs:
     steps:
       # 1. 코드 체크아웃
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # 2. Node.js 설정
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.19.1'  # EC2와 동일한 버전
+          node-version: '18.19.1'
           cache: 'yarn'
 
       # 3. 의존성 설치
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      # 4. 환경 변수 파일 생성
+      # 4. 환경 변수 파일 생성 (빌드 타임 주입 — AWS 키는 더 이상 주입하지 않음)
       - name: Create .env.production file
         run: |
           cat > .env.production << EOF
@@ -35,8 +46,6 @@ jobs:
           REACT_APP_URI=${{ secrets.REACT_APP_URI }}
           REACT_APP_AWS_S3_URI=${{ secrets.REACT_APP_AWS_S3_URI }}
           REACT_APP_AWS_S3_THUMBNAIL_URI=${{ secrets.REACT_APP_AWS_S3_THUMBNAIL_URI }}
-          REACT_APP_AWS_ACCESS_KEY=${{ secrets.REACT_APP_AWS_ACCESS_KEY }}
-          REACT_APP_AWS_SECRET_KEY=${{ secrets.REACT_APP_AWS_SECRET_KEY }}
           REACT_APP_AWS_FILE_REGION=${{ secrets.REACT_APP_AWS_FILE_REGION }}
           REACT_APP_BACKEND_URI=${{ secrets.REACT_APP_BACKEND_URI }}
           REACT_APP_WEATHERSTACK_URL=${{ secrets.REACT_APP_WEATHERSTACK_URL }}
@@ -56,55 +65,42 @@ jobs:
           CI: false
         run: yarn build
 
-      # 6. SSH 키 설정
-      - name: Setup SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/nadeliv.pem
-          chmod 600 ~/.ssh/nadeliv.pem
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+      # 6. AWS 자격증명 (OIDC 역할 assume — 정적 키 없음)
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
 
-      # 7. 기존 파일 제거
-      - name: Remove existing deployment
+      # 7. S3 업로드 (2-pass)
+      #   pass 1: 해시 에셋 — 장기 불변 캐시, index.html 류 제외, --delete 로 구버전 정리
+      #   pass 2: 진입점 파일 — no-cache 로 즉시 갱신
+      - name: Sync hashed assets to S3 (immutable cache)
         run: |
-          ssh -i ~/.ssh/nadeliv.pem ubuntu@${{ secrets.EC2_HOST }} \
-            "if [ -d /home/ubuntu/nadeliv-front/build ]; then \
-               sudo rm -rf /home/ubuntu/nadeliv-front/build; \
-             fi"
+          aws s3 sync build/ "s3://${S3_BUCKET}/" --delete \
+            --cache-control "public,max-age=31536000,immutable" \
+            --exclude "index.html" \
+            --exclude "asset-manifest.json" \
+            --exclude "service-worker.js" \
+            --exclude ".DS_Store"
 
-      # 8. 파일 전송
-      - name: Deploy to EC2
+      - name: Upload entry files to S3 (no-cache)
         run: |
-          # .env.production 파일 전송
-          scp -i ~/.ssh/nadeliv.pem .env.production ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/nadeliv-front/
-          
-          # build 디렉토리 전송
-          scp -i ~/.ssh/nadeliv.pem -r build ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/nadeliv-front/
+          aws s3 cp build/index.html "s3://${S3_BUCKET}/index.html" \
+            --cache-control "no-cache,no-store,must-revalidate" \
+            --content-type "text/html"
+          if [ -f build/asset-manifest.json ]; then
+            aws s3 cp build/asset-manifest.json "s3://${S3_BUCKET}/asset-manifest.json" \
+              --cache-control "no-cache" --content-type "application/json"
+          fi
+          if [ -f build/service-worker.js ]; then
+            aws s3 cp build/service-worker.js "s3://${S3_BUCKET}/service-worker.js" \
+              --cache-control "no-cache" --content-type "application/javascript"
+          fi
 
-      # 9. Nginx 자동 시작 설정 확인 및 적용
-      - name: Enable Nginx auto-start on boot
+      # 8. CloudFront 무효화 (엣지 캐시 갱신)
+      - name: Invalidate CloudFront
         run: |
-          ssh -i ~/.ssh/nadeliv.pem ubuntu@${{ secrets.EC2_HOST }} \
-            "sudo systemctl enable nginx && \
-             echo 'Nginx auto-start enabled' && \
-             sudo systemctl is-enabled nginx"
-
-      # 10. Nginx 재시작
-      - name: Restart Nginx
-        run: |
-          ssh -i ~/.ssh/nadeliv.pem ubuntu@${{ secrets.EC2_HOST }} \
-            "sudo systemctl restart nginx && \
-             sudo systemctl status nginx --no-pager"
-
-      # 11. 배포 확인 (옵션)
-      - name: Verify deployment
-        run: |
-          ssh -i ~/.ssh/nadeliv.pem ubuntu@${{ secrets.EC2_HOST }} \
-            "curl -I localhost || echo 'Health check failed'"
-
-      # 12. 정리
-      - name: Cleanup
-        if: always()
-        run: |
-          rm -f ~/.ssh/nadeliv.pem
-          rm -f .env.production
+          aws cloudfront create-invalidation \
+            --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID}" \
+            --paths "/*"
