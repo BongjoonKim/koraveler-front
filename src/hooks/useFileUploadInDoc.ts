@@ -6,7 +6,7 @@ import { useRecoilState } from "recoil";
 import recoil from "../stores/recoil";
 import {uploadedInfo} from "../stores/jotai/jotai";
 import {uuid} from "../utils/commonUtils";
-import {s3Utils} from "../utils/awsS3Utils";
+import useFileUpload from "./useFileUpload";
 
 export interface UseFileUploadProps {
   // S3 경로 prefix (예: documentId, "comments/documentId" 등)
@@ -22,6 +22,7 @@ export interface UploadedFile {
 export default function useFileUploadInDoc({ pathPrefix }: UseFileUploadProps) {
   const [uploadedList, setUploadedList] = useAtom<UploadedFile[]>(uploadedInfo);
   const [, setErrorMsg] = useRecoilState(recoil.errMsg);
+  const {upload} = useFileUpload();
   
   // 이미지 업로드
   const handleImageUpload = useCallback(
@@ -35,7 +36,7 @@ export default function useFileUploadInDoc({ pathPrefix }: UseFileUploadProps) {
           
           progress(10);
           
-          const res = await s3Utils.uploadFile({ fileKey, file });
+          const res = await upload(fileKey, file);
           
           progress(90);
           
@@ -59,7 +60,7 @@ export default function useFileUploadInDoc({ pathPrefix }: UseFileUploadProps) {
         }
       });
     },
-    [pathPrefix, setUploadedList, setErrorMsg]
+    [pathPrefix, setUploadedList, setErrorMsg, upload]
   );
   
   // 비디오 업로드
@@ -79,7 +80,7 @@ export default function useFileUploadInDoc({ pathPrefix }: UseFileUploadProps) {
           
           progress(10);
           
-          const res = await s3Utils.uploadFile({ fileKey, file });
+          const res = await upload(fileKey, file);
           
           progress(90);
           
@@ -103,7 +104,7 @@ export default function useFileUploadInDoc({ pathPrefix }: UseFileUploadProps) {
         }
       });
     },
-    [pathPrefix, setUploadedList, setErrorMsg]
+    [pathPrefix, setUploadedList, setErrorMsg, upload]
   );
   
   // 업로드된 파일 목록 초기화
