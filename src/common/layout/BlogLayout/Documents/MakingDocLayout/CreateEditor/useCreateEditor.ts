@@ -3,14 +3,15 @@ import {uploadedInfo} from "../../../../../../stores/jotai/jotai";
 import {useAtom} from "jotai";
 import {useCallback} from "react";
 import {uuid} from "../../../../../../utils/commonUtils";
-import {s3Utils} from "../../../../../../utils/awsS3Utils";
+import useFileUpload from "../../../../../../hooks/useFileUpload";
 import {useRecoilState} from "recoil";
 import recoil from "../../../../../../stores/recoil";
 
 export default function useCreateEditor(props : CreateDocumentProps) {
   const [uploadedList, setUploadedList] = useAtom<any[]>(uploadedInfo);
   const [errorMsg, setErrorMsg] = useRecoilState(recoil.errMsg);
-  
+  const {upload} = useFileUpload();
+
   console.log("id", props.id)
   
   // Tiptap용 이미지 업로더
@@ -26,8 +27,8 @@ export default function useCreateEditor(props : CreateDocumentProps) {
         // 진행률 업데이트
         progress(10);
         
-        // S3에 파일 업로드
-        const res = await s3Utils.uploadFile({ fileKey, file });
+        // 백엔드 경유 업로드
+        const res = await upload(fileKey, file);
         
         // 진행률 업데이트
         progress(90);
@@ -56,7 +57,7 @@ export default function useCreateEditor(props : CreateDocumentProps) {
         reject(e);
       }
     });
-  }, [uploadedList, setUploadedList, setErrorMsg, props]);
+  }, [uploadedList, setUploadedList, setErrorMsg, props, upload]);
   
   // Tiptap용 비디오 업로더
   const handleVideoUpload = useCallback((blobInfo: any, progress: (percent: number) => void) => {
@@ -74,8 +75,8 @@ export default function useCreateEditor(props : CreateDocumentProps) {
         // 진행률 업데이트
         progress(10);
         
-        // S3에 파일 업로드
-        const res = await s3Utils.uploadFile({ fileKey, file });
+        // 백엔드 경유 업로드
+        const res = await upload(fileKey, file);
         
         // 진행률 업데이트
         progress(90);
@@ -105,7 +106,7 @@ export default function useCreateEditor(props : CreateDocumentProps) {
         reject(e);
       }
     });
-  }, [uploadedList, setUploadedList, setErrorMsg, props]);
+  }, [uploadedList, setUploadedList, setErrorMsg, props, upload]);
   
   
   // 콘텐츠 변경 핸들러 (Tiptap용)
