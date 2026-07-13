@@ -37,7 +37,7 @@ function useTabLayout(props : AdminMenuTabProps | UserMenuTabProps) {
   
   const [userTabList, setUserTabList] = useState<TabItem[]>([
     {
-      label: "folder",
+      label: "Folders",
       value: "folder",
     },
   ])
