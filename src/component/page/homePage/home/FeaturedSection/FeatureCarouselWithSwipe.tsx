@@ -8,6 +8,7 @@ import styled from "styled-components";
 import { useAtomValue } from "jotai";
 import { preferredLocaleAtom, resolveLocale } from "../../../../../stores/jotai/localeAtom";
 import { useCurrentUser } from "../../../../../hooks/useCurrentUser";
+import { trackBlogPostClick } from "../../../../../utils/analytics";
 
 // Swiper 관련 imports
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -80,7 +81,17 @@ function FeaturedCarouselWithSwiper({ featuredDocs }: FeaturedCarouselProps) {
   const preferredLocale = useAtomValue(preferredLocaleAtom);
   const { data: currentUser } = useCurrentUser();
   const activeLocale = resolveLocale(null, preferredLocale, !!currentUser?.id);
-  
+
+  const goToPost = (doc: DocumentDTO) => {
+    trackBlogPostClick({
+      postId: doc.id,
+      postTitle: doc.title,
+      source: "home_featured_carousel",
+      locale: activeLocale,
+    });
+    navigate(`/blog/view/${activeLocale}/${doc.id}`);
+  };
+
   return (
     <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }} mt={12}>
       <Text fontSize="2xl" fontWeight="bold" mb={6} color="gray.900">
@@ -128,7 +139,7 @@ function FeaturedCarouselWithSwiper({ featuredDocs }: FeaturedCarouselProps) {
                     h={{ base: "96", md: "80" }}
                     position="relative"
                     cursor="pointer"
-                    onClick={() => navigate(`/blog/view/${activeLocale}/${doc.id}`)}
+                    onClick={() => goToPost(doc)}
                   >
                     {/* 배경 레이어 */}
                     <Box
@@ -225,7 +236,7 @@ function FeaturedCarouselWithSwiper({ featuredDocs }: FeaturedCarouselProps) {
                           }}
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigate(`/blog/view/${activeLocale}/${doc.id}`);
+                            goToPost(doc);
                           }}
                         >
                           <HStack gap={1}>

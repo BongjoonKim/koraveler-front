@@ -9,6 +9,22 @@ interface LoginPageProps {
 
 };
 
+// 다크 카드 위 입력 필드 — 흰 글자/은은한 보더로 가독성 확보 (body 배경은 항상 다크)
+const darkInputProps = {
+  bg: "rgba(255, 255, 255, 0.04)",
+  borderColor: "rgba(255, 255, 255, 0.16)",
+  color: "rgba(255, 255, 255, 0.95)",
+  _placeholder: { color: "rgba(255, 255, 255, 0.35)" },
+  _focus: {
+    borderColor: "rgba(143, 191, 148, 0.6)",
+    boxShadow: "0 0 0 3px rgba(143, 191, 148, 0.14)",
+  },
+  css: {
+    colorScheme: "dark" as const,
+    caretColor: "rgba(255, 255, 255, 0.95)",
+  },
+};
+
 function LoginPage(props: LoginPageProps) {
   const {
     userInfo,
@@ -44,6 +60,7 @@ function LoginPage(props: LoginPageProps) {
             size="lg"
             onKeyUp={pressEnter}
             onChange={(event: ChangeEvent<HTMLInputElement>) => handleChange(event, "id")}
+            {...darkInputProps}
           />
           <CusInput
             placeholder="PASSWORD"
@@ -54,6 +71,11 @@ function LoginPage(props: LoginPageProps) {
             size="lg"
             onKeyUp={pressEnter}
             onChange={(event: ChangeEvent<HTMLInputElement>) => handleChange(event, "password")}
+            {...darkInputProps}
+            toggleProps={{
+              color: "rgba(255, 255, 255, 0.65)",
+              _hover: { color: "rgba(255, 255, 255, 0.9)", bg: "rgba(255, 255, 255, 0.08)" },
+            }}
           />
         </Form>
 
@@ -119,12 +141,6 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-
-  @media (prefers-color-scheme: light) {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: rgba(0, 0, 0, 0.08);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-  }
 `;
 
 const Header = styled.div`
@@ -144,10 +160,6 @@ const Title = styled.span`
   cursor: pointer;
   color: rgba(255, 255, 255, 0.95);
   width: fit-content;
-
-  @media (prefers-color-scheme: light) {
-    color: rgba(15, 15, 20, 0.95);
-  }
 `;
 
 const Form = styled.div`

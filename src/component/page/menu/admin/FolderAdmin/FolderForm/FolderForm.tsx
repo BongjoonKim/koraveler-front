@@ -1,8 +1,17 @@
 import {FormEvent, useEffect, useState} from "react";
-import {createFolder, deleteFolder, updateFolder} from "../../../../../../endpoints/folders-endpoints";
 import styled from "styled-components";
-import useAuthEP from "../../../../../../utils/useAuthEP";
 import {useCreateFolder, useDeleteFolder, useUpdateFolder} from "../../../../../../hooks/useFolderQueries";
+import {homeTokens} from "../../../../MainPage/MainBody/homeTokens";
+import {
+  Alert,
+  DangerButton,
+  Label,
+  OutlineButton,
+  PrimaryButton,
+  SectionTitle,
+} from "../../../../profile/profileUi";
+
+const t = homeTokens;
 
 interface FolderFormProps {
   userId?: string;
@@ -23,7 +32,7 @@ export default function FolderForm( {
   const createFolderMutation = useCreateFolder();
   const updateFolderMutation = useUpdateFolder();
   const deleteFolderMutation = useDeleteFolder();
-  
+
   // 폼 상태 관리
   const [formData, setFormData] = useState<FoldersDTO & { parentName?: string }>({
     name: '',
@@ -34,11 +43,10 @@ export default function FolderForm( {
     isPublic: false,
     description: ''
   });
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const authEP = useAuthEP();
-  
+
   // 초기 데이터 설정
   useEffect(() => {
     if (folder) {
@@ -60,36 +68,34 @@ export default function FolderForm( {
       }));
     }
   }, [folder, parentFolder]);
-  
+
   // 입력 변경 핸들러
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
-    
+
     setFormData(prev => {
       const newData = {
         ...prev,
         [name]: type === 'checkbox' ? checked : value
       };
-      
+
       // 이름이 변경되면 경로도 자동으로 업데이트
       if (name === 'name' && parentFolder) {
         newData.path = parentFolder.path + '/' + value;
       }
-      
+
       return newData;
     });
   };
-  
+
   // 폼 제출 핸들러
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
-    
+
     try {
-      console.log("폴더 수정 or 삭제", isEditMode)
-      console.log("form정보 보기", formData)
       if (isEditMode) {
         // 폴더 업데이트
         await updateFolderMutation.mutateAsync(formData);
@@ -97,52 +103,51 @@ export default function FolderForm( {
         // 새 폴더 생성
         await createFolderMutation.mutateAsync(formData);
       }
-      
+
       if (onSuccess) {
         onSuccess();
       }
     } catch (err) {
-      setError('폴더 저장 중 오류가 발생했습니다.');
+      setError('Something went wrong while saving the folder.');
       console.error(err);
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
   const handleDelete = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
-    
+
     if (!folder?.id) {
-      setError("There is no delete folder");
+      setError("There is no folder to delete.");
       return;
     }
-    
+
     try {
       await deleteFolderMutation.mutateAsync(folder.id);
       if (onSuccess) {
         onSuccess();
       }
     } catch (error) {
-      setError("there is error while you delete folder")
+      setError("Something went wrong while deleting the folder.")
     } finally {
       setIsSubmitting(false)
     }
   }
-  
-  console.log("parentFolder", parentFolder)
-  
+
   return (
     <StyledFolderForm>
     <form onSubmit={handleSubmit} className="folder-form">
-      <h2>{isEditMode ? '폴더 수정' : '새 폴더 생성'}</h2>
-      
-      {error && <div className="error-message">{error}</div>}
-      
-      <div className="form-group">
-        <label htmlFor="name">폴더 이름 *</label>
+      <SectionTitle>{isEditMode ? 'Edit folder' : 'New folder'}</SectionTitle>
+
+      {error && <Alert tone="error">{error}</Alert>}
+
+      <div className="field">
+        <Label htmlFor="name">Folder name *</Label>
         <input
+          className="text-input"
           type="text"
           id="name"
           name="name"
@@ -151,24 +156,25 @@ export default function FolderForm( {
           required
         />
       </div>
-      
-      <div className="form-group">
-        <label htmlFor="path">상위 폴더 *</label>
+
+      <div className="field">
+        <Label htmlFor="parentName">Parent folder</Label>
         <input
+          className="text-input"
           type="text"
           id="parentName"
           name="parentName"
-          value={parentFolder?.name}
+          value={parentFolder?.name || ''}
           onChange={handleChange}
-          required
           disabled={!parentFolder}
         />
-        <small>부모 폴더가 있는 경우 자동으로 설정됩니다.</small>
+        <small className="hint">Set automatically when a parent folder is selected.</small>
       </div>
-      
-      <div className="form-group">
-        <label htmlFor="description">설명</label>
+
+      <div className="field">
+        <Label htmlFor="description">Description</Label>
         <textarea
+          className="text-input"
           id="description"
           name="description"
           value={formData.description || ''}
@@ -176,43 +182,41 @@ export default function FolderForm( {
           rows={3}
         />
       </div>
-      
-      <div className="form-group checkbox">
+
+      <label className="checkbox-row" htmlFor="isPublic">
         <input
           type="checkbox"
-          id="is_public"
-          name="is_public"
+          id="isPublic"
+          name="isPublic"
           checked={formData.isPublic}
           onChange={handleChange}
         />
-        <label htmlFor="is_public">공개 폴더</label>
-      </div>
-      
+        <span>Public folder</span>
+      </label>
+
       <div className="form-actions">
         {isEditMode && (
-          <button
+          <DangerButton
             type="button"
             disabled={isSubmitting}
             onClick={handleDelete}
-            style={{ background: '#d32f2f', color: 'white' }}  // 삭제 버튼 스타일
-          
           >
             Delete
-          </button>
+          </DangerButton>
         )}
-        <button
+        <OutlineButton
           type="button"
           onClick={onCancel}
           disabled={isSubmitting}
         >
-        취소
-        </button>
-        <button
+          Cancel
+        </OutlineButton>
+        <PrimaryButton
           type="submit"
           disabled={isSubmitting}
         >
-          {isSubmitting ? '저장 중...' : isEditMode ? '저장' : '생성'}
-        </button>
+          {isSubmitting ? 'Saving…' : isEditMode ? 'Save' : 'Create'}
+        </PrimaryButton>
       </div>
     </form>
     </StyledFolderForm>
@@ -220,160 +224,89 @@ export default function FolderForm( {
 };
 
 const StyledFolderForm = styled.div`
-    .folder-tree-container {
+    height: 100%;
+    color: ${t.color.text};
+    font-family: ${t.font.sans};
+
+    .folder-form {
+        background: ${t.color.surface};
+        border: 0.5px solid ${t.color.border};
+        border-radius: ${t.radius.lg};
+        padding: 26px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+
+        @media (max-width: 640px) {
+            padding: 20px 18px;
+        }
+    }
+
+    /* profileUi 의 TextInput 과 동일한 톤의 네이티브 인풋 */
+    .text-input {
         width: 100%;
-        height: 100%;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  overflow: auto;
-}
+        background: rgba(255, 255, 255, 0.04);
+        border: 0.5px solid rgba(255, 255, 255, 0.12);
+        border-radius: ${t.radius.md};
+        padding: 12px;
+        color: ${t.color.text};
+        font-family: ${t.font.sans};
+        font-size: 15px;
+        outline: none;
+        color-scheme: dark;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
 
-.folder-name {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
+        &::placeholder {
+            color: ${t.color.textFaint};
+        }
 
-.public-indicator {
-  color: #0088cc;
-  font-size: 12px;
-}
+        &:focus {
+            border-color: ${t.color.accent};
+            box-shadow: 0 0 0 3px rgba(143, 191, 148, 0.14);
+        }
 
-.folder-open-icon,
-.folder-closed-icon {
-  margin-right: 5px;
-}
+        &:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+    }
 
-.error {
-  color: #d32f2f;
-  padding: 10px;
-}
+    textarea.text-input {
+        resize: vertical;
+        min-height: 76px;
+    }
 
-.folder-form {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+    .field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
 
-.form-group {
-  margin-bottom: 15px;
-}
+    .hint {
+        font-size: 12px;
+        color: ${t.color.textFaint};
+    }
 
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 500;
-}
+    .checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        cursor: pointer;
+        font-size: 14px;
+        color: ${t.color.textSoft};
 
-.form-group input[type="text"],
-.form-group textarea {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: ${t.color.accentStrong};
+            cursor: pointer;
+        }
+    }
 
-.form-group.checkbox {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.form-group.checkbox label {
-  margin-bottom: 0;
-}
-
-.form-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-}
-
-.form-actions button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.form-actions button[type="submit"] {
-  background: #4caf50;
-  color: white;
-}
-
-.form-actions button[type="button"] {
-  background: #f5f5f5;
-  border: 1px solid #ddd;
-}
-
-.folder-management {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  gap: 20px;
-}
-
-.folder-management-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.folder-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.folder-actions button {
-  padding: 8px 16px;
-  background: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.folder-management-content {
-  display: flex;
-  gap: 20px;
-  height: calc(100% - 60px);
-}
-
-.folder-tree-section,
-.folder-details-section {
-  flex: 1;
-  padding: 15px;
-  background: #fff;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  height: 100%;
-  overflow: auto;
-}
-
-.folder-details h2 {
-  margin-top: 0;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-}
-
-.folder-info p {
-  margin: 8px 0;
-}
-
-.folder-empty-state {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  color: #757575;
-}
-
-.error-message {
-  color: #d32f2f;
-  background: #ffebee;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 15px;
-}
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 4px;
+    }
 `;

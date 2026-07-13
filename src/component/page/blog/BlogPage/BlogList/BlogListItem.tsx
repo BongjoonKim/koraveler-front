@@ -4,6 +4,7 @@ import moment from "moment";
 import {useNavigate} from "react-router-dom";
 import {S3URLInDocument} from "../../../../../constants/RegexConstants";
 import {useBlogLocale} from "../../../../../hooks/useBlogLocale";
+import {trackBlogPostClick} from "../../../../../utils/analytics";
 
 export interface BlogListItemProps extends DocumentDTO {}
 
@@ -36,7 +37,7 @@ function readMinutes(text?: string): number | null {
 
 function BlogListItem(props: BlogListItemProps) {
   const navigate = useNavigate();
-  const {blogViewUrl} = useBlogLocale();
+  const {activeLocale, blogViewUrl} = useBlogLocale();
 
   const cleanContents = useMemo(
     () => props.contents?.replace(S3URLInDocument, "")?.trim() || "",
@@ -47,7 +48,15 @@ function BlogListItem(props: BlogListItemProps) {
   const swatch = useMemo(() => swatchFor(props.id), [props.id]);
 
   const handleClick = () => {
-    if (props.id) navigate(blogViewUrl(props.id));
+    if (!props.id) return;
+    trackBlogPostClick({
+      postId: props.id,
+      postTitle: props.title,
+      source: "blog_list",
+      locale: activeLocale,
+      category,
+    });
+    navigate(blogViewUrl(props.id));
   };
 
   return (

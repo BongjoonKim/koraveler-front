@@ -1,13 +1,14 @@
 import React from "react";
 import { HStack, Text, Box, Stack } from "@chakra-ui/react";
 import useLeftHeader from "./useLeftHeader";
-import posthog from 'posthog-js';
 import {Link, useLocation} from "react-router-dom";
 import type { HeaderVariant } from "./HeaderLayout";
+import {trackMenuClick} from "../../../utils/analytics";
 
 // 시안: 소문자 serif 로고. 다크에선 단색 화이트, 라이트에선 기존 그라데이션 유지.
 export function NadelivLogo1({ variant = "light" }: { variant?: HeaderVariant }) {
   const isDark = variant === "dark";
+  const location = useLocation();
   const sharedStyle: React.CSSProperties = isDark
     ? { color: "rgba(255,255,255,0.95)" }
     : {
@@ -18,7 +19,12 @@ export function NadelivLogo1({ variant = "light" }: { variant?: HeaderVariant })
       };
 
   return (
-    <Link to="/home">
+    <Link
+      to="/home"
+      onClick={() =>
+        trackMenuClick({menuLabel: "logo", menuUrl: "/home", currentPath: location.pathname})
+      }
+    >
       <Text
         as="span"
         fontSize="28px"
@@ -48,11 +54,10 @@ function LeftHeader({ variant = "light" }: LeftHeaderProps) {
   const menuHoverColor = variant === "dark" ? "indigo.300" : "indigo.600";
 
   const handleMenuClick = (menu: MenusDTO) => {
-    posthog.capture('menu_clicked', {
-      menu_label: menu.label,
-      menu_url: menu.url,
-      current_page: location.pathname,
-      timestamp: new Date().toISOString()
+    trackMenuClick({
+      menuLabel: menu.label,
+      menuUrl: menu.url,
+      currentPath: location.pathname,
     });
   };
 
@@ -64,7 +69,7 @@ function LeftHeader({ variant = "light" }: LeftHeaderProps) {
       {/* Navigation Menu - Desktop. 시안: 대문자 + tracking. 데이터는 그대로 두고 표시만 변형. */}
       <Stack direction="row" gap={8} display={{ base: "flex", md: "flex" }}>
         {menus.map((menu: MenusDTO, index: number) => (
-          <Link key={menu.id || index} to={menu.url || "#"}>
+          <Link key={menu.id || index} to={menu.url || "#"} onClick={() => handleMenuClick(menu)}>
               <Text
                 color={menuColor}
                 fontWeight="500"

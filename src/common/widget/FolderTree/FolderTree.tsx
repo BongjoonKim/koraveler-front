@@ -8,6 +8,7 @@ import {
   Heading,
   IconProps,
   BoxProps,
+  Portal,
 } from '@chakra-ui/react';
 import {ChevronDown, ChevronRight, Folder, FolderOpen} from 'lucide-react';
 import {
@@ -19,11 +20,11 @@ import {
 } from 'react-complex-tree';
 import useFolderTree from './useFolderTree';
 import 'react-complex-tree/lib/style-modern.css';
+import {homeTokens} from '../../../component/page/MainPage/MainBody/homeTokens';
+
+const t = homeTokens;
 
 // Tooltip 컴포넌트 정의 (Chakra UI v3 방식)
-import { Portal } from '@chakra-ui/react';
-
-// Tooltip 컴포넌트
 interface TooltipProps {
   children: React.ReactNode;
   label: string;
@@ -125,19 +126,12 @@ export default function FolderTree(props: FolderTreeProps) {
   });
   const [selectedItems, setSelectedItems] = useState<TreeItemIndex[]>([]);
   
-  // 색상 정의 (하드코딩 + dark 변형)
-  const bg = dark ? '#14191a' : 'white';
-  const borderColor = dark ? 'rgba(255, 255, 255, 0.08)' : 'gray.200';
-  const headerBg = 'linear-gradient(to right, #3182ce, #805ad5)';
-  const hoverBg = dark ? 'whiteAlpha.100' : 'gray.50';
-  const selectedBg = dark ? 'whiteAlpha.100' : 'blue.50';
-  const selectedBorderColor = dark ? 'whiteAlpha.300' : 'blue.200';
-  const textColor = dark ? '#e8eaeb' : 'gray.700';
-  const iconColor = dark ? '#7d9786' : 'gray.500';
-  const folderColor = 'orange.500';
-  const scrollTrackBg = dark ? '#14191a' : '#f7fafc';
-  const scrollThumbBg = dark ? '#2f3a36' : '#cbd5e0';
-  const scrollThumbHoverBg = dark ? '#3d4a45' : '#a0aec0';
+  // 색상 정의 — dark 는 브랜드 토큰(homeTokens), light 는 기존 값 유지
+  const bg = dark ? t.color.surface : 'white';
+  const borderColor = dark ? t.color.border : 'gray.200';
+  const textColor = dark ? t.color.text : 'gray.700';
+  const folderIconColor = dark ? t.color.accent : '#90c7ec';
+  const chevronColor = dark ? t.color.textMuted : '#718096';
   
   // selectedFolderId가 변경될 때 selectedItems 업데이트
   useEffect(() => {
@@ -216,9 +210,9 @@ export default function FolderTree(props: FolderTreeProps) {
         {/* ✅ lucide 폴더 아이콘 - 열림/닫힘 상태에 따라 다른 아이콘 */}
         <Box mr={2} flexShrink={0}>
           {isExpanded ? (
-            <FolderOpen size={20} color="#90c7ec" />
+            <FolderOpen size={20} color={folderIconColor} />
           ) : (
-            <Folder size={20} color="#90c7ec" />
+            <Folder size={20} color={folderIconColor} />
           )}
         </Box>
         
@@ -236,19 +230,21 @@ export default function FolderTree(props: FolderTreeProps) {
         {/* 공개 배지 */}
         {item.data?.public && (
           <Badge
-            colorScheme="green"
-            variant="solid"
+            bg={dark ? t.color.badgeBg : 'green.100'}
+            color={dark ? t.color.badgeText : 'green.700'}
             borderRadius="full"
             px={2}
             py={0.5}
             fontSize="10px"
+            letterSpacing="0.06em"
+            textTransform="uppercase"
             display="flex"
             alignItems="center"
             gap={1}
             mr={2}
           >
             <GlobeIcon boxSize={2.5} />
-            공개
+            Public
           </Badge>
         )}
         
@@ -267,15 +263,15 @@ export default function FolderTree(props: FolderTreeProps) {
             justifyContent="center"
           >
             {isExpanded ? (
-              <ChevronDown size={18} color="#718096" />
+              <ChevronDown size={18} color={chevronColor} />
             ) : (
-              <ChevronRight size={18} color="#718096" />
+              <ChevronRight size={18} color={chevronColor} />
             )}
           </Box>
         )}
       </Flex>
     );
-  }, [expandedItems, handleToggleExpand, selectedBg, hoverBg, folderColor, textColor, dark]);
+  }, [expandedItems, handleToggleExpand, folderIconColor, chevronColor, textColor, dark]);
   
   
   // 로딩 상태 처리
@@ -291,7 +287,7 @@ export default function FolderTree(props: FolderTreeProps) {
         textAlign="center"
       >
         <Text color={textColor} fontSize="sm">
-          폴더를 불러오는 중... 또는 폴더가 없습니다.
+          Loading folders… or you have no folders yet.
         </Text>
       </Box>
     );
@@ -329,7 +325,7 @@ export default function FolderTree(props: FolderTreeProps) {
         <Tree
           treeId="tree-1"
           rootItem="root"
-          treeLabel="폴더 구조"
+          treeLabel="Folder tree"
         />
       </ControlledTreeEnvironment>
     </Box>

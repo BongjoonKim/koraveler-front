@@ -13,6 +13,7 @@ import {currentLocaleAtom, preferredLocaleAtom, resolveLocale} from "../../../..
 import {LocaleCode, AvailableLocale, TranslatedBy, SUPPORTED_LOCALES} from "../../../../types/i18n/i18nTypes";
 import {useCurrentUser} from "../../../../hooks/useCurrentUser";
 import usePageMeta from "../../../../hooks/usePageMeta";
+import {trackBlogPostView} from "../../../../utils/analytics";
 
 export interface ViewBlogI18nState {
   currentLocale: LocaleCode;
@@ -107,6 +108,19 @@ function useViewBlog(props : ViewBlogProps) {
   useEffect(() => {
     getDocumentData();
   }, [id]);
+
+  // 분석: 글 로드 완료 시 조회 이벤트 (퍼널 종착점). 글 단위로 1회만 캡처.
+  useEffect(() => {
+    if (document.id) {
+      trackBlogPostView({
+        postId: document.id,
+        postTitle: document.title,
+        locale: activeLocale,
+        isTranslated: translatedPost?.isTranslated ?? false,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [document.id]);
 
   // 번역 적용된 title/content 결정
   const displayTitle = useMemo(() => {

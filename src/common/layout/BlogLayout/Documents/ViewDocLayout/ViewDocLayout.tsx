@@ -10,6 +10,7 @@ import CusIconButton from "../../../../elements/buttons/CusIconButton";
 import { HStack, VStack, Text, Box } from "@chakra-ui/react";
 import DocComment from "../DocComment/DocComment";
 import CommentSection from "./CommentSection";
+import { InArticleAd } from "../../../../widget/AdSense";
 import LanguageSwitcher from "../../../../../component/page/blog/common/LanguageSwitcher";
 import TranslationBanner from "../../../../../component/page/blog/common/TranslationBanner";
 import {ViewBlogI18nState} from "../../../../../component/page/blog/ViewBlog/useViewBlog";
@@ -169,6 +170,10 @@ function ViewDocLayout(props: ViewDocLayoutProps) {
           {props.children}
         </Box>
       </VStack>
+
+      {/* 본문 끝 ~ 댓글 사이 인아티클 광고 (AdSense) */}
+      <InArticleAd />
+
       <CommentSection documentId={props.id!} />
     </StyledViewDocLayout>
   )

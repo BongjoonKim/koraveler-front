@@ -10,17 +10,11 @@ import { PostHogProvider} from 'posthog-js/react'
 import {AuthProvider} from "./appConfig/AuthProvider";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {Toaster} from "./common/elements/toaster";
+import {initAnalytics} from "./utils/analytics";
 
-// if (typeof window !== 'undefined') {
-//   posthog.init(process.env.REACT_APP_PUBLIC_POSTHOG_KEY!, {
-//     api_host: process.env.REACT_APP_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
-//     person_profiles: 'identified_only',
-//     loaded: (posthog) => {
-//       if (process.env.NODE_ENV === 'development') posthog.debug()
-//     }
-//   })
-// }
-//
+// PostHog 초기화 — 키가 없으면 no-op (utils/analytics.ts 참조)
+initAnalytics();
+
 // QueryClient를 컴포넌트 밖에서 생성
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,7 +28,7 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    // <PostHogProvider client={posthog}>
+    <PostHogProvider client={posthog}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <ChakraProvider value={defaultSystem}>
@@ -45,7 +39,7 @@ function App() {
           </ChakraProvider>
         </AuthProvider>
       </QueryClientProvider>
-    // </PostHogProvider>
+    </PostHogProvider>
   );
 }
 
