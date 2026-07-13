@@ -1,3 +1,22 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+# 로그인/개인 영역은 크롤링 제외
+Disallow: /admin
+Disallow: /profile
+Disallow: /chat
+Disallow: /login
+Disallow: /user
+Disallow: /travel
+Disallow: /error
+Disallow: /blog/create
+Disallow: /blog/create-new
+Disallow: /blog/edit
+Disallow: /blog/my
+Disallow: /blog/draft
+Disallow: /blog/hidden
+Disallow: /blog/trash
+Disallow: /blog/bookmark
+Disallow: /blog/translations
+
+Sitemap: https://api.nadeliv.com/sitemap.xml

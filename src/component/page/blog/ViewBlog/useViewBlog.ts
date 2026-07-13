@@ -12,6 +12,7 @@ import {useTranslatedPost} from "../../../../hooks/useI18nQueries";
 import {currentLocaleAtom, preferredLocaleAtom, resolveLocale} from "../../../../stores/jotai/localeAtom";
 import {LocaleCode, AvailableLocale, TranslatedBy, SUPPORTED_LOCALES} from "../../../../types/i18n/i18nTypes";
 import {useCurrentUser} from "../../../../hooks/useCurrentUser";
+import usePageMeta from "../../../../hooks/usePageMeta";
 
 export interface ViewBlogI18nState {
   currentLocale: LocaleCode;
@@ -121,6 +122,9 @@ function useViewBlog(props : ViewBlogProps) {
     }
     return document.contents;
   }, [translatedPost, document.contents]);
+
+  // SEO: 글별 브라우저 타이틀/설명 설정
+  usePageMeta(displayTitle, displayContent);
 
   // 글별 언어 전환 핸들러 (URL 경로로 반영)
   const handleLocaleChange = useCallback((locale: LocaleCode) => {
