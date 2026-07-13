@@ -9,6 +9,7 @@ import FeaturedCarouselWithSwiper from "./FeatureCarouselWithSwipe";
 import { useAtomValue } from "jotai";
 import { preferredLocaleAtom, resolveLocale } from "../../../../../stores/jotai/localeAtom";
 import { useCurrentUser } from "../../../../../hooks/useCurrentUser";
+import { trackBlogPostClick } from "../../../../../utils/analytics";
 
 function FeaturedSection() {
   const navigate = useNavigate();
@@ -32,7 +33,18 @@ function FeaturedSection() {
     // 그라디언트 색상 설정
     const gradientFrom = featuredInfo?.featuredGradientFrom || '#6366F1'; // indigo.500
     const gradientTo = featuredInfo?.featuredGradientTo || '#9333EA'; // purple.600
-    
+
+    const goToPost = () => {
+      trackBlogPostClick({
+        postId: featured.id,
+        postTitle: featured.title,
+        source: "home_featured",
+        locale: activeLocale,
+      });
+      navigate(`/blog/view/${activeLocale}/${featured.id}`);
+    };
+
+
     return (
       <Container maxW="7xl" px={{ base: 4, sm: 6, lg: 8 }} mt={12}>
         <Text fontSize="2xl" fontWeight="bold" mb={6} color="gray.900">
@@ -46,7 +58,7 @@ function FeaturedSection() {
           boxShadow="lg"
           h={{ base: "sm", md: "md", lg: "80" }}
           cursor="pointer"
-          onClick={() => navigate(`/blog/view/${activeLocale}/${featured.id}`)}
+          onClick={goToPost}
           _hover={{ transform: "scale(1.02)", transition: "transform 0.3s" }}
         >
           {/* 배경 레이어 - 그라디언트 또는 이미지 */}
@@ -150,7 +162,7 @@ function FeaturedSection() {
                 }}
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/blog/view/${activeLocale}/${featured.id}`);
+                  goToPost();
                 }}
                 rightIcon={<ChevronRight size={20} />}
               >

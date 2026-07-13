@@ -13,10 +13,18 @@ import ForbiddenPage from "../component/page/error/ForbiddenPage";
 import UserRoutes from "./UserRoutes";
 import ProfileRoutes from "./ProfileRoutes";
 import TravelRoutes from "./TravelRoutes";
+import usePageViewTracking from "../hooks/usePageViewTracking";
+
+// 라우트 전환마다 $pageview 캡처 (useLocation은 Router 내부에서만 동작)
+function PageViewTracker() {
+  usePageViewTracking();
+  return null;
+}
 
 export default function RoutersTree() {
   return (
     <Router>
+        <PageViewTracker/>
         <Routes>
             <Route path="/*" element={<MainPage/>}/>
             <Route path="/blog/*" element={<BlogRoutes/>}/>
