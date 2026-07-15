@@ -55,6 +55,16 @@ export default function useLoginPage() {
   
   // 로그인 버튼 클릭
   const handleClickLogin = useCallback(async () => {
+    // 빈 값이면 백엔드로 요청 보내기 전에 막는다 (빈 요청 → 서버 401 "invalid username or password" 방지)
+    if (!userInfo.userId?.trim() || !userInfo.userPassword?.trim()) {
+      setErrMsg({
+        status: "warning",
+        msg: "Please enter your ID and password.",
+        isShow: true
+      });
+      return;
+    }
+
     try {
       const resToken = await login(userInfo);
       

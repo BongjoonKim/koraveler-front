@@ -1,6 +1,6 @@
 // src/common/elements/CusFormCtrl/CusFormCtrl.tsx
 
-import {ReactNode} from "react";
+import React, {ReactNode} from "react";
 import {
   Field
 } from "@chakra-ui/react";
@@ -10,15 +10,17 @@ export interface CusFormCtrlProps  {
   children : ReactNode;
   helpMsg ?: string;
   errMsg ?: string;
-  isInValid ?: boolean
+  isInValid ?: boolean;
+  /** 다크 카드 등에서 라벨 색/스타일 조정용 */
+  labelProps ?: React.ComponentProps<typeof Field.Label>;
 }
 
 function CusFormCtrl(props: CusFormCtrlProps) {
-  
+
   return (
     <Field.Root invalid={props.isInValid}>
       {props.formTitle && (
-        <Field.Label>{props.formTitle}</Field.Label>
+        <Field.Label {...props.labelProps}>{props.formTitle}</Field.Label>
       )}
       {props.children}
       {props.helpMsg && (
