@@ -6,6 +6,7 @@ import {
   TravelCreateRequest,
   TravelUpdateRequest,
   TravelMemberRequest,
+  TravelRegionsRequest,
   TravelRole,
   TravelMedia,
 } from "../types/travel/travelTypes";
@@ -14,6 +15,7 @@ import {
   getTravel,
   getMyTravels,
   updateTravel,
+  updateTravelRegions,
   deleteTravel,
   addTravelMember,
   removeTravelMember,
@@ -93,6 +95,31 @@ export const useUpdateTravel = () => {
     mutationFn: async ({ travelId, reqBody }) => {
       const response = await authEP({
         func: updateTravel,
+        params: { travelId },
+        reqBody,
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["travel", data.id] });
+      queryClient.invalidateQueries({ queryKey: ["myTravels"] });
+    },
+  });
+};
+
+// 방문 지역(시/군) 갱신 — Korea Map 플러그인
+export const useUpdateTravelRegions = () => {
+  const authEP = useAuthEP();
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    TravelResponse,
+    Error,
+    { travelId: string; reqBody: TravelRegionsRequest }
+  >({
+    mutationFn: async ({ travelId, reqBody }) => {
+      const response = await authEP({
+        func: updateTravelRegions,
         params: { travelId },
         reqBody,
       });

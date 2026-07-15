@@ -47,6 +47,7 @@ export function useTravelProjectSelectModal() {
     // 플러그인별 라우트 매핑
     const routeMap: Record<string, string> = {
       "travel-chat": `/travel/chat/${selectedProject.id}`,
+      "korea-map": `/travel/map/${selectedProject.id}`,
     };
 
     const route = routeMap[targetPlugin.id];

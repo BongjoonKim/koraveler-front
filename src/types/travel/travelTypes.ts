@@ -44,6 +44,7 @@ export interface TravelResponse {
   tags?: string[];
   schedules?: TravelSchedule[];
   channelIds?: string[];
+  visitedRegionCodes?: string[];
   members?: TravelMemberResponse[];
   memberCount?: number;
   createdUser?: string;
@@ -90,6 +91,11 @@ export interface TravelMemberRequest {
   userId: string;
   role?: TravelRole;
   nickname?: string;
+}
+
+// 방문 지역(시/군) 갱신 요청 — Korea Map 플러그인
+export interface TravelRegionsRequest {
+  regionCodes: string[];
 }
 
 export interface TravelScheduleRequest {

@@ -1,6 +1,6 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
-import { X, Search, MapPin, Calendar, Users, MessageCircle } from "lucide-react";
+import { X, Search, MapPin, Calendar, Users } from "lucide-react";
 import { TravelResponse } from "../../../../../../types/travel/travelTypes";
 import { TravelPluginDefinition } from "../../../../../../types/travel/travelPluginTypes";
 
@@ -158,8 +158,8 @@ const TravelProjectSelectModal: React.FC<TravelProjectSelectModalProps> = ({
             onClick={onApply}
             disabled={!selectedProject}
           >
-            <MessageCircle size={14} />
-            Open Chat
+            <PluginIcon size={14} />
+            Open {targetPlugin.name}
           </ApplyButton>
         </ModalFooter>
       </Modal>

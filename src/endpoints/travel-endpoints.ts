@@ -62,6 +62,19 @@ export async function getPublicTravels(props: FuncProps) {
   )) as AxiosResponse<TravelListResponse>;
 }
 
+// Visited Regions (Korea Map)
+export async function updateTravelRegions(props: FuncProps) {
+  return (await request.put(
+    `api/v1/travels/${props.params.travelId}/regions`,
+    props.reqBody,
+    {
+      headers: {
+        Authorization: `Bearer ${props.accessToken}`,
+      },
+    }
+  )) as AxiosResponse<TravelResponse>;
+}
+
 // Member Management
 export async function addTravelMember(props: FuncProps) {
   return (await request.post(
