@@ -19,8 +19,9 @@ import {
   Circle,
   XCircle,
   Tag,
-  MessageCircle,
+  Puzzle,
 } from "lucide-react";
+import { TRAVEL_PLUGINS } from "../../../../constants/travelPlugins";
 import { useGetTravel } from "../../../../hooks/useTravelQueries";
 import { TravelStatus } from "../../../../types/travel/travelTypes";
 import { useCurrentUser } from "../../../../hooks/useCurrentUser";
@@ -369,36 +370,48 @@ function TravelDashboard(props: TravelDashboardProps) {
         </div>
       </div>
 
-      {/* Chat Section */}
+      {/* Plugins Section — travelPlugins.ts 레지스트리에 등록된 플러그인 자동 노출 */}
       <div className="dash-section">
         <div className="section-header">
           <h3 className="section-title">
-            <MessageCircle size={16} />
-            Chat
+            <Puzzle size={16} />
+            Plugins
           </h3>
-          <button
-            className="section-action"
-            onClick={() => navigate(`/travel/chat/${travelId}`)}
-          >
-            <ChevronRight size={16} />
-          </button>
         </div>
-        <div
-          className="chat-entry"
-          onClick={() => navigate(`/travel/chat/${travelId}`)}
-        >
-          <div className="chat-entry-icon">
-            <MessageCircle size={24} />
-          </div>
-          <div className="chat-entry-content">
-            <span className="chat-entry-title">Travel Chat</span>
-            <span className="chat-entry-desc">
-              {travel.channelIds && travel.channelIds.length > 0
+        <div className="plugins-grid">
+          {TRAVEL_PLUGINS.map((plugin) => {
+            const PluginIcon = plugin.icon;
+            const desc =
+              plugin.key === "chat" &&
+              travel.channelIds &&
+              travel.channelIds.length > 0
                 ? `${travel.channelIds.length} channel${travel.channelIds.length > 1 ? "s" : ""} active`
-                : "Start chatting with your travel companions"}
-            </span>
-          </div>
-          <ChevronRight size={18} className="chat-entry-arrow" />
+                : plugin.key === "korea-map" &&
+                    travel.visitedRegionCodes &&
+                    travel.visitedRegionCodes.length > 0
+                  ? `${travel.visitedRegionCodes.length} region${travel.visitedRegionCodes.length > 1 ? "s" : ""} visited`
+                  : plugin.key === "course" &&
+                      travel.visitedPlaces &&
+                      travel.visitedPlaces.length > 0
+                    ? `${travel.visitedPlaces.length} place${travel.visitedPlaces.length > 1 ? "s" : ""} on the course`
+                    : plugin.description;
+            return (
+              <div
+                key={plugin.key}
+                className="chat-entry"
+                onClick={() => navigate(plugin.path(travel.id))}
+              >
+                <div className="chat-entry-icon">
+                  <PluginIcon size={24} />
+                </div>
+                <div className="chat-entry-content">
+                  <span className="chat-entry-title">{plugin.name}</span>
+                  <span className="chat-entry-desc">{desc}</span>
+                </div>
+                <ChevronRight size={18} className="chat-entry-arrow" />
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -928,7 +941,14 @@ const StyledTravelDashboard = styled.div`
     }
   }
 
-  /* Chat Entry */
+  /* Plugins */
+  .plugins-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+  }
+
+  /* Chat Entry (플러그인 카드 공용) */
   .chat-entry {
     display: flex;
     align-items: center;

@@ -32,6 +32,8 @@ export interface MapInfoProps {
   width?: string;
   height?: string;
   onMapLoad?: (controller: MapController) => void;
+  /** 내장 장소 검색 UI(검색바·바텀시트) 표시 여부 (기본 true) */
+  showSearch?: boolean;
 }
 
 export interface MapController {

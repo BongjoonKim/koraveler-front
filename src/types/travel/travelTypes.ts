@@ -22,6 +22,39 @@ export interface TravelSchedule {
   sortOrder?: number;
 }
 
+// 다녀온 장소 (Korea Map 플러그인 — 순서·시간 미기록)
+export interface VisitedPlace {
+  /** 검색 제공자(카카오) 장소 ID — 중복 방지 키 */
+  id?: string;
+  name: string;
+  nameEn?: string;
+  category?: string;
+  categoryEn?: string;
+  address?: string;
+  lat?: number;
+  lng?: number;
+  /** 이 장소가 속한 시/군 행정코드 (좌표→지역 매칭 결과) */
+  regionCode?: string;
+  /** 이전 장소 → 이 장소 이동 수단 (코스 타임라인, 수동 입력) */
+  transportMode?: TransportMode;
+  /** 이전 장소 → 이 장소 소요 시간(분) */
+  durationMinutes?: number;
+}
+
+// 구글 타임라인의 다양한 활동 유형을 커버하는 이동 수단 목록.
+// TRANSIT 은 초기 구현의 레거시 값 (기존 저장 데이터 호환용 — UI 신규 선택지에는 미노출)
+export type TransportMode =
+  | "WALK"
+  | "BICYCLE"
+  | "CAR"
+  | "BUS"
+  | "SUBWAY"
+  | "TRAIN"
+  | "TRAM"
+  | "FERRY"
+  | "FLIGHT"
+  | "TRANSIT";
+
 // Member Response (nested in TravelResponse)
 export interface TravelMemberResponse {
   userId: string;
@@ -45,6 +78,7 @@ export interface TravelResponse {
   schedules?: TravelSchedule[];
   channelIds?: string[];
   visitedRegionCodes?: string[];
+  visitedPlaces?: VisitedPlace[];
   members?: TravelMemberResponse[];
   memberCount?: number;
   createdUser?: string;
@@ -96,6 +130,11 @@ export interface TravelMemberRequest {
 // 방문 지역(시/군) 갱신 요청 — Korea Map 플러그인
 export interface TravelRegionsRequest {
   regionCodes: string[];
+}
+
+// 다녀온 장소 갱신 요청 (전체 교체 방식)
+export interface TravelPlacesRequest {
+  places: VisitedPlace[];
 }
 
 export interface TravelScheduleRequest {

@@ -16,6 +16,18 @@ export interface KoreaMapRegion {
 export const KOREA_MAP_VIEWBOX = "0 0 824 770";
 export const KOREA_MAP_REGION_COUNT = 162;
 
+/**
+ * UTM-K(EPSG:5179) → viewBox 좌표 변환 상수.
+ * viewBoxX = pad + (utmX - minX) * scale, viewBoxY = pad + (maxY - utmY) * scale
+ * (위경도 → 지역 매칭 등 역변환 계산에 사용)
+ */
+export const KOREA_MAP_PROJECTION = {
+  minX: 746255,
+  maxY: 2068441,
+  scale: 0.001240498556369805,
+  pad: 12,
+};
+
 /** 독도 라벨 앵커 (울릉군 소속, 지도에 항상 표시 — 독도 왼쪽에 text-anchor: end 로 배치) */
 export const KOREA_MAP_DOKDO_LABEL = { x: 801, y: 190 };
 

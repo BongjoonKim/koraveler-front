@@ -10,6 +10,8 @@ import ProtectedRoute from "../ProtectedRoute";
 
 // 지도 경계 데이터(~120KB)가 초기 번들에 포함되지 않도록 lazy 로드
 const TravelMap = React.lazy(() => import("../../component/page/travel/TravelMap"));
+// 네이버 지도 위젯 포함 — lazy 로드
+const TravelCourse = React.lazy(() => import("../../component/page/travel/TravelCourse"));
 
 export default function TravelRoutes() {
   return (
@@ -40,6 +42,13 @@ export default function TravelRoutes() {
             <ProtectedRoute>
               <Suspense fallback={null}>
                 <TravelMap />
+              </Suspense>
+            </ProtectedRoute>
+          } />
+          <Route path="/course/:travelId" element={
+            <ProtectedRoute>
+              <Suspense fallback={null}>
+                <TravelCourse />
               </Suspense>
             </ProtectedRoute>
           } />

@@ -7,6 +7,7 @@ import {
   TravelUpdateRequest,
   TravelMemberRequest,
   TravelRegionsRequest,
+  TravelPlacesRequest,
   TravelRole,
   TravelMedia,
 } from "../types/travel/travelTypes";
@@ -16,6 +17,7 @@ import {
   getMyTravels,
   updateTravel,
   updateTravelRegions,
+  updateTravelPlaces,
   deleteTravel,
   addTravelMember,
   removeTravelMember,
@@ -120,6 +122,31 @@ export const useUpdateTravelRegions = () => {
     mutationFn: async ({ travelId, reqBody }) => {
       const response = await authEP({
         func: updateTravelRegions,
+        params: { travelId },
+        reqBody,
+      });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["travel", data.id] });
+      queryClient.invalidateQueries({ queryKey: ["myTravels"] });
+    },
+  });
+};
+
+// 다녀온 장소 목록 갱신 (Korea Map 플러그인)
+export const useUpdateTravelPlaces = () => {
+  const authEP = useAuthEP();
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    TravelResponse,
+    Error,
+    { travelId: string; reqBody: TravelPlacesRequest }
+  >({
+    mutationFn: async ({ travelId, reqBody }) => {
+      const response = await authEP({
+        func: updateTravelPlaces,
         params: { travelId },
         reqBody,
       });
