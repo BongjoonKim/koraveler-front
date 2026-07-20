@@ -90,20 +90,20 @@ export function useNaverMapController(props: NaverMapProps) {
         }
       }, 100);
       
+      // idle 이벤트는 환경에 따라 최초 로드시 발화하지 않을 수 있어
+      // 인스턴스 생성 직후 콜백을 보장한다 (resize 트리거 이후 시점).
+      if (onMapLoad) {
+        setTimeout(() => {
+          onMapLoad(mapInstance);
+        }, 150);
+      }
+
       let isFirstIdle = true;
       naverMaps.Event.addListener(mapInstance, 'idle', () => {
         if (isFirstIdle) {
           isFirstIdle = false;
-          console.log('NaverMap: Map idle event fired');
-          
           const naverEvent = naverMaps.Event;
           naverEvent.trigger(mapInstance, 'resize');
-          
-          if (onMapLoad) {
-            setTimeout(() => {
-              onMapLoad(mapInstance);
-            }, 100);
-          }
         }
       });
       

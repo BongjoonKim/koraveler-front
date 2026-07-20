@@ -26,7 +26,8 @@ function MapInfo(props: MapInfoProps) {
     zoom,
     width,
     height ,
-    onMapLoad
+    onMapLoad,
+    showSearch = true
   } = props;
 
   const [kakaoRawMap, setKakaoRawMap] = useState<kakao.maps.Map | null>(null);
@@ -49,11 +50,9 @@ function MapInfo(props: MapInfoProps) {
   const naverController = useNaverMapController({
     center: center,
     zoom: zoom,
-    onMapLoad: (map) => {
+    onMapLoad: () => {
+      // 소비자에게는 원시 map 이 아니라 아래 effect 에서 MapController 를 전달한다
       setIsMapReady(true);
-      if (onMapLoad) {
-        onMapLoad(map);
-      }
     },
     provider: provider
   })
@@ -83,12 +82,13 @@ function MapInfo(props: MapInfoProps) {
     }
   }, [kakaoRawMap]);
 
-  // controller가 준비되면 한 번만 onMapLoad 호출
+  // 지도가 준비되면 한 번만 onMapLoad 로 MapController 전달
   useEffect(() => {
-    if (mapController && onMapLoad && !hasLoadedRef.current) {
+    if (isMapReady && mapController && onMapLoad && !hasLoadedRef.current) {
       hasLoadedRef.current = true;
+      onMapLoad(mapController);
     }
-  }, [mapController, provider]);
+  }, [isMapReady, mapController, onMapLoad]);
 
   // provider 변경 시 초기화
   useEffect(() => {
@@ -336,6 +336,7 @@ function MapInfo(props: MapInfoProps) {
       </Box>
 
       {/* 레이어 2: 상단 검색바 오버레이 */}
+      {showSearch && (
       <Box
         position="absolute"
         top={0}
@@ -404,8 +405,10 @@ function MapInfo(props: MapInfoProps) {
           </CusButton>
         </HStack>
       </Box>
+      )}
 
       {/* 현재 위치 플로팅 버튼 (검색바 아래, 지도 오른쪽) */}
+      {showSearch && (
       <IconButton
         aria-label="Current location"
         onClick={getCurrentLocation}
@@ -425,9 +428,10 @@ function MapInfo(props: MapInfoProps) {
       >
         <Navigation size={16} />
       </IconButton>
+      )}
 
       {/* 레이어 3: 바텀 시트 */}
-      {containerHeight > 0 && (
+      {showSearch && containerHeight > 0 && (
         <motion.div
           drag="y"
           dragControls={dragControls}

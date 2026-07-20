@@ -7,7 +7,7 @@ import {
 import { useTravelProjectSelectModal } from "./TravelProjectSelectModal";
 
 // 프로젝트 선택이 필요한 플러그인 ID 목록
-const PLUGINS_REQUIRING_PROJECT = ["travel-chat"];
+const PLUGINS_REQUIRING_PROJECT = ["travel-chat", "korea-map"];
 
 export function useTravelPluginStore() {
   const [selectedCategory, setSelectedCategory] = useState<

@@ -1,3 +1,4 @@
+import React, {Suspense} from "react";
 import {Route, Routes} from "react-router-dom";
 import MainLayout from "../../common/layout/MainLayout/MainLayout";
 import styled from "styled-components";
@@ -6,6 +7,11 @@ import TravelCreateProject from "../../component/page/travel/TravelCreateProject
 import TravelDashboard from "../../component/page/travel/TravelDashboard";
 import TravelChat from "../../component/page/travel/TravelChat";
 import ProtectedRoute from "../ProtectedRoute";
+
+// 지도 경계 데이터(~120KB)가 초기 번들에 포함되지 않도록 lazy 로드
+const TravelMap = React.lazy(() => import("../../component/page/travel/TravelMap"));
+// 네이버 지도 위젯 포함 — lazy 로드
+const TravelCourse = React.lazy(() => import("../../component/page/travel/TravelCourse"));
 
 export default function TravelRoutes() {
   return (
@@ -30,6 +36,20 @@ export default function TravelRoutes() {
           <Route path="/chat/:travelId" element={
             <ProtectedRoute>
               <TravelChat />
+            </ProtectedRoute>
+          } />
+          <Route path="/map/:travelId" element={
+            <ProtectedRoute>
+              <Suspense fallback={null}>
+                <TravelMap />
+              </Suspense>
+            </ProtectedRoute>
+          } />
+          <Route path="/course/:travelId" element={
+            <ProtectedRoute>
+              <Suspense fallback={null}>
+                <TravelCourse />
+              </Suspense>
             </ProtectedRoute>
           } />
         </Route>

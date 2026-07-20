@@ -1,6 +1,7 @@
 import {
   Youtube,
   FileText,
+  Map,
   MapPinned,
   Utensils,
   Train,
@@ -21,6 +22,19 @@ export const TRAVEL_PLUGINS: TravelPluginDefinition[] = [
     color: "#06b6d4",
     colorEnd: "#0891b2",
     tags: ["chat", "messenger", "collaborate"],
+  },
+  {
+    id: "korea-map",
+    name: "Korea Travel Map",
+    description: "Color in the Korean cities and counties you visited on this trip",
+    longDescription:
+      "Track your journey across Korea on an interactive map. Mark the cities and counties you visited, watch your coverage grow, and discover regions you haven't explored yet.",
+    icon: Map,
+    category: "maps",
+    status: "available",
+    color: "#3a9d6e",
+    colorEnd: "#2e7d52",
+    tags: ["map", "regions", "tracker"],
   },
   {
     id: "youtube-summarizer",
