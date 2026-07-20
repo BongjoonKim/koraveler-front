@@ -19,4 +19,4 @@ Disallow: /blog/trash
 Disallow: /blog/bookmark
 Disallow: /blog/translations
 
-Sitemap: https://api.nadeliv.com/sitemap.xml
+Sitemap: https://www.nadeliv.com/sitemap.xml
