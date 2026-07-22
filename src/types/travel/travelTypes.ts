@@ -63,6 +63,15 @@ export interface TravelMemberResponse {
   joinedAt?: string;
 }
 
+// 대시보드 표시 항목 (배열 순서 = 표시 순서)
+export type DashboardDisplay = "stat" | "row";
+
+export interface TravelDashboardItem {
+  key: string; // travelDashboardItems.ts 위젯 레지스트리의 키
+  display: DashboardDisplay; // stat = 작은 박스, row = 전체 행 섹션
+  visible: boolean;
+}
+
 // Main Travel Response
 export interface TravelResponse {
   id: string;
@@ -79,6 +88,7 @@ export interface TravelResponse {
   channelIds?: string[];
   visitedRegionCodes?: string[];
   visitedPlaces?: VisitedPlace[];
+  dashboardItems?: TravelDashboardItem[];
   members?: TravelMemberResponse[];
   memberCount?: number;
   createdUser?: string;
@@ -107,6 +117,7 @@ export interface TravelCreateRequest {
   endDate?: string;
   destination?: string;
   tags?: string[];
+  dashboardItems?: TravelDashboardItem[];
 }
 
 export interface TravelUpdateRequest {
@@ -119,6 +130,7 @@ export interface TravelUpdateRequest {
   endDate?: string;
   destination?: string;
   tags?: string[];
+  dashboardItems?: TravelDashboardItem[];
 }
 
 export interface TravelMemberRequest {
