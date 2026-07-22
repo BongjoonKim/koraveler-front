@@ -13,9 +13,17 @@ interface UploadItem {
 export interface MediaUploadZoneProps {
   travelId: string;
   onUploadComplete: () => void;
+  /** 부모(Album 섹션)에서 드래그 드롭으로 전달된 파일 */
+  externalFiles?: File[] | null;
+  onExternalFilesConsumed?: () => void;
 }
 
-function MediaUploadZone({ travelId, onUploadComplete }: MediaUploadZoneProps) {
+function MediaUploadZone({
+  travelId,
+  onUploadComplete,
+  externalFiles,
+  onExternalFilesConsumed,
+}: MediaUploadZoneProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadQueue, setUploadQueue] = useState<UploadItem[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -70,6 +78,14 @@ function MediaUploadZone({ travelId, onUploadComplete }: MediaUploadZoneProps) {
     },
     [addFilesToQueue]
   );
+
+  // 부모 섹션에 드롭된 파일을 큐에 반영
+  useEffect(() => {
+    if (externalFiles && externalFiles.length > 0) {
+      addFilesToQueue(externalFiles);
+      onExternalFilesConsumed?.();
+    }
+  }, [externalFiles, addFilesToQueue, onExternalFilesConsumed]);
 
   const removeFromQueue = useCallback((id: string) => {
     setUploadQueue((prev) => {
