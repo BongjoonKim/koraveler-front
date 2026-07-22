@@ -12,6 +12,8 @@ import ProtectedRoute from "../ProtectedRoute";
 const TravelMap = React.lazy(() => import("../../component/page/travel/TravelMap"));
 // 네이버 지도 위젯 포함 — lazy 로드
 const TravelCourse = React.lazy(() => import("../../component/page/travel/TravelCourse"));
+// 유튜브 수집·요약 플러그인 — lazy 로드
+const TravelDiscovery = React.lazy(() => import("../../component/page/travel/TravelDiscovery"));
 
 export default function TravelRoutes() {
   return (
@@ -21,6 +23,12 @@ export default function TravelRoutes() {
         <Route element={<MainLayout showHero={false} />}>
           {/* 비로그인 허용 */}
           <Route path="/home" element={<TravelHomeMain />} />
+          {/* 비로그인 허용 — 캐시된 다이제스트는 누구나 조회, 수집 트리거만 로그인 필요 */}
+          <Route path="/discovery" element={
+            <Suspense fallback={null}>
+              <TravelDiscovery />
+            </Suspense>
+          } />
 
           {/* 로그인 필요 */}
           <Route path="/create" element={
