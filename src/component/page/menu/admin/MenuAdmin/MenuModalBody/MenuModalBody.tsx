@@ -1,75 +1,41 @@
 import styled from "styled-components";
-import React, {Dispatch, MutableRefObject, SetStateAction} from "react";
-import Paragraphs from "../../../../../../common/layout/Paras";
-import Paras from "../../../../../../common/layout/Paras";
+import React, {Dispatch, SetStateAction} from "react";
 import useMenuModalBody from "./useMenuModalBody";
+import {Field, Label, TextInput} from "../../../../admin/adminUi";
 
 export interface MenuModalBodyProps {
   data ?: MenusDTO;
   setData ?: Dispatch<SetStateAction<any>>
 }
-type menuType = keyof MenusDTO;
 
-type ArrayOfKeys<T> = (keyof T)[];
+// 메뉴 편집 폼 필드 정의 (라벨 / MenusDTO 필드 / placeholder)
+const FIELDS: { label: string; field: keyof MenusDTO; placeholder: string }[] = [
+  { label: "Label", field: "label", placeholder: "메뉴에 표시될 이름" },
+  { label: "Value", field: "value", placeholder: "내부 식별 값" },
+  { label: "Sequence", field: "sequence", placeholder: "노출 순서 (숫자)" },
+  { label: "URL", field: "url", placeholder: "/blog, /travel …" },
+];
+
 function MenuModalBody(props : MenuModalBodyProps) {
   const {
     handleChange
   } = useMenuModalBody(props);
-  
+
   return (
     <StyledMenuModalBody>
-      <Paras
-      >
-        <Paras.Pharagraph>
-          <Paras.Section>
-            <Paras.Part
-              key={"label"}
-              partTitle={"label"}
-              inputType={"textField"}
-              fieldType={typeof props.data?.label}
-              field={"label"}
-              value={props.data?.label}
-              onChange={(event : any, field?: any, value?: any) => handleChange(event, field, value)}
-            />
-            <Paras.Part
-              key={"value"}
-              partTitle={"value"}
-              inputType={"textField"}
-              fieldType={typeof props.data?.value}
-              field={"value"}
-              value={props.data?.value}
-              onChange={(event : any, field?: any, value?: any) => handleChange(event, field, value)}
-            />
-            <Paras.Part
-              key={"sequence"}
-              partTitle={"sequence"}
-              inputType={"textField"}
-              fieldType={typeof props.data?.sequence}
-              field={"sequence"}
-              value={props.data?.sequence}
-              onChange={(event : any, field?: any, value?: any) => handleChange(event, field, value)}
-            />
-            <Paras.Part
-              key={"url"}
-              partTitle={"url"}
-              inputType={"textField"}
-              fieldType={typeof props.data?.url}
-              field={"url"}
-              value={props.data?.url}
-              onChange={(event : any, field?: any, value?: any) => handleChange(event, field, value)}
-            />
-            {/*<Paras.Part*/}
-            {/*  key={"types"}*/}
-            {/*  partTitle={"types"}*/}
-            {/*  inputType={"selectBoxSingle"}*/}
-            {/*  fieldType={typeof props.data?.types}*/}
-            {/*  field={"types"}*/}
-            {/*  value={props.data?.types}*/}
-            {/*  onChange={(event : any, field?: any, value?: any) => handleChange(event, field, value)}*/}
-            {/*/>*/}
-          </Paras.Section>
-        </Paras.Pharagraph>
-      </Paras>
+      {FIELDS.map(({ label, field, placeholder }) => (
+        <Field key={field as string}>
+          <Label htmlFor={`menu-${field as string}`}>{label}</Label>
+          <TextInput
+            id={`menu-${field as string}`}
+            value={(props.data?.[field] as string | number | undefined) ?? ""}
+            placeholder={placeholder}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              handleChange(event, field, event.target.value)
+            }
+          />
+        </Field>
+      ))}
     </StyledMenuModalBody>
   )
 }
@@ -77,4 +43,8 @@ function MenuModalBody(props : MenuModalBodyProps) {
 export default MenuModalBody;
 
 const StyledMenuModalBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 4px 0;
 `;

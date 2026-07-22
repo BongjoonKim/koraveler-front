@@ -1,11 +1,9 @@
 import {Route, Routes} from "react-router-dom";
 import styled from "styled-components";
-import MenuAdminRoutes from "./MenuAdminRoutes";
-import MenuTab from "../../common/layout/TabLayout";
-import MenuHeader from "../../common/layout/MenuHeader";
 import MenuAdmin from "../../component/page/menu/admin/MenuAdmin";
 import FolderManagement from "../../component/page/menu/admin/FolderAdmin/FolderManagement";
 import FeatureAdminDashboard from "../../component/page/admin/Feature/FeaturedAdminDashboard";
+import UsersAdmin from "../../component/page/admin/Users/UsersAdmin";
 import ProtectedRoute from "../ProtectedRoute";
 import MainLayout from "../../common/layout/MainLayout/MainLayout";
 import AdminTabLayout from "../../common/layout/TabLayout";
@@ -18,6 +16,7 @@ export default function AdminRoutes() {
           <AdminTabLayout>
             <Routes>
               <Route path="/menu" element={<MenuAdmin />} />
+              <Route path="/users" element={<UsersAdmin />} />
               <Route path="/folder" element={<FolderManagement />} />
               <Route path="/feature" element={<FeatureAdminDashboard />} />
             </Routes>
