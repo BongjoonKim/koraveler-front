@@ -137,8 +137,36 @@ function useViewBlog(props : ViewBlogProps) {
     return document.contents;
   }, [translatedPost, document.contents]);
 
-  // SEO: 글별 브라우저 타이틀/설명 설정
-  usePageMeta(displayTitle, displayContent);
+  // SEO: 글별 브라우저 타이틀/설명 + canonical/hreflang/lang 설정
+  const originalLocale = (translatedPost?.originalLocale || document.originalLocale || 'ko') as LocaleCode;
+  const isTranslated = translatedPost?.isTranslated ?? false;
+
+  // 실제 표시 중인 언어: 번역이 있으면 activeLocale, 없으면 원본 fallback
+  const displayedLocale = isTranslated ? activeLocale : originalLocale;
+
+  const seoOptions = useMemo(() => {
+    if (!id) return undefined;
+    const origin = window.location.origin;
+    const urlOf = (locale: string) => `${origin}/blog/view/${locale}/${id}`;
+
+    // canonical: 번역 없이 원본을 fallback 표시 중이면 원본 URL 로 지정 (중복 색인 방지)
+    const canonicalUrl = urlOf(displayedLocale);
+
+    // hreflang: 원본 + 번역 완료된 언어만 (자기 자신 포함), x-default = 원본
+    const readyLocales = (translatedPost?.availableLocales ?? [])
+      .filter((l) => l.status === 'original' || l.status === 'completed' || l.status === 'manually_edited')
+      .map((l) => l.code);
+    const alternates = readyLocales.length > 0
+      ? [
+          ...readyLocales.map((code) => ({ hrefLang: code, href: urlOf(code) })),
+          { hrefLang: 'x-default', href: urlOf(originalLocale) },
+        ]
+      : undefined;
+
+    return { lang: displayedLocale, canonicalUrl, alternates };
+  }, [id, displayedLocale, originalLocale, translatedPost?.availableLocales]);
+
+  usePageMeta(displayTitle, displayContent, seoOptions);
 
   // 글별 언어 전환 핸들러 (URL 경로로 반영)
   const handleLocaleChange = useCallback((locale: LocaleCode) => {
@@ -154,8 +182,8 @@ function useViewBlog(props : ViewBlogProps) {
   // i18n 상태
   const i18nState: ViewBlogI18nState = useMemo(() => ({
     currentLocale: activeLocale,
-    originalLocale: (translatedPost?.originalLocale || document.originalLocale || 'ko') as LocaleCode,
-    isTranslated: translatedPost?.isTranslated ?? false,
+    originalLocale,
+    isTranslated,
     translatedBy: translatedPost?.translatedBy ?? null,
     availableLocales: translatedPost?.availableLocales ?? [],
     onLocaleChange: handleLocaleChange,
