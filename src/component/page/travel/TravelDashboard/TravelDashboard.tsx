@@ -20,14 +20,28 @@ import {
   XCircle,
   Tag,
   Puzzle,
+  LayoutGrid,
+  FileText,
+  Image as ImageIcon,
 } from "lucide-react";
 import { TRAVEL_PLUGINS } from "../../../../constants/travelPlugins";
-import { useGetTravel } from "../../../../hooks/useTravelQueries";
-import { TravelStatus } from "../../../../types/travel/travelTypes";
+import {
+  PLUGIN_KEY_PREFIX,
+  resolveDashboardItems,
+} from "../../../../constants/travelDashboardItems";
+import {
+  useGetTravel,
+  useGetTravelMedia,
+} from "../../../../hooks/useTravelQueries";
+import {
+  TravelDashboardItem,
+  TravelStatus,
+} from "../../../../types/travel/travelTypes";
 import { useCurrentUser } from "../../../../hooks/useCurrentUser";
 import TravelAlbum from "./TravelAlbum";
 import TravelMembers from "./TravelMembers";
 import TravelSettings from "./TravelSettings";
+import DashboardCustomize from "./DashboardCustomize";
 
 export interface TravelDashboardProps {}
 
@@ -66,8 +80,11 @@ function TravelDashboard(props: TravelDashboardProps) {
   const navigate = useNavigate();
   const { data: travel, isLoading, error } = useGetTravel(travelId);
   const { data: currentUser } = useCurrentUser();
+  // Album 을 박스로 표시할 때 사진 개수용 (TravelAlbum 과 동일 쿼리키 → 캐시 공유)
+  const { data: travelMedia } = useGetTravelMedia(travelId);
   const [loaded, setLoaded] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [customizeOpen, setCustomizeOpen] = useState(false);
 
   const currentUserId = currentUser?.id;
   const isAdmin = travel?.members?.some(
@@ -93,6 +110,13 @@ function TravelDashboard(props: TravelDashboardProps) {
       month: "short",
       day: "numeric",
     });
+  };
+
+  // 박스(stat) 표시용 축약 날짜 (예: 8.26)
+  const formatShortDate = (dateStr?: string) => {
+    if (!dateStr) return "?";
+    const d = new Date(dateStr);
+    return `${d.getMonth() + 1}.${d.getDate()}`;
   };
 
   const getDaysCount = () => {
@@ -169,6 +193,324 @@ function TravelDashboard(props: TravelDashboardProps) {
   const daysCount = getDaysCount();
   const dDay = getDDay();
 
+  // 대시보드 구성 — 프로젝트별 저장값 + 레지스트리 동기화 (없으면 기본 구성)
+  const dashboardItems = resolveDashboardItems(travel.dashboardItems);
+  const statItems = dashboardItems.filter(
+    (item) => item.visible && item.display === "stat"
+  );
+  const rowItems = dashboardItems.filter(
+    (item) => item.visible && item.display === "row"
+  );
+
+  const pluginStatValue = (pluginKey: string): number | null => {
+    switch (pluginKey) {
+      case "chat":
+        return travel.channelIds?.length ?? 0;
+      case "korea-map":
+        return travel.visitedRegionCodes?.length ?? 0;
+      case "course":
+        return travel.visitedPlaces?.length ?? 0;
+      default:
+        return null;
+    }
+  };
+
+  const renderStatCard = (item: TravelDashboardItem) => {
+    switch (item.key) {
+      case "dday":
+        return dDay ? (
+          <div key={item.key} className="stat-card accent">
+            <span className="stat-value">{dDay}</span>
+            <span className="stat-label">D-Day</span>
+          </div>
+        ) : null;
+      case "duration":
+        return daysCount ? (
+          <div key={item.key} className="stat-card">
+            <Calendar size={18} className="stat-icon" />
+            <span className="stat-value">
+              {daysCount}
+              <small>days</small>
+            </span>
+            <span className="stat-label">Duration</span>
+          </div>
+        ) : null;
+      case "members-count":
+        return (
+          <div key={item.key} className="stat-card">
+            <Users size={18} className="stat-icon" />
+            <span className="stat-value">
+              {travel.memberCount ?? travel.members?.length ?? 0}
+            </span>
+            <span className="stat-label">Members</span>
+          </div>
+        );
+      case "schedules-count":
+      case "schedules":
+        return (
+          <div key={item.key} className="stat-card">
+            <Clock size={18} className="stat-icon" />
+            <span className="stat-value">{travel.schedules?.length ?? 0}</span>
+            <span className="stat-label">Schedules</span>
+          </div>
+        );
+      // 섹션을 박스로 표시할 때의 축약형
+      case "album":
+        return (
+          <div key={item.key} className="stat-card">
+            <ImageIcon size={18} className="stat-icon" />
+            <span className="stat-value">{travelMedia?.length ?? 0}</span>
+            <span className="stat-label">Album</span>
+          </div>
+        );
+      case "dates":
+        return (
+          <div key={item.key} className="stat-card">
+            <Calendar size={18} className="stat-icon" />
+            <span className="stat-value stat-value--text">
+              {travel.startDate || travel.endDate
+                ? `${formatShortDate(travel.startDate)} ~ ${formatShortDate(travel.endDate)}`
+                : "—"}
+            </span>
+            <span className="stat-label">Dates</span>
+          </div>
+        );
+      case "about":
+        return (
+          <div key={item.key} className="stat-card">
+            <FileText size={18} className="stat-icon" />
+            <span className="stat-value stat-value--text stat-value--clamp">
+              {travel.description ? travel.description : "—"}
+            </span>
+            <span className="stat-label">About</span>
+          </div>
+        );
+      case "tags":
+        return (
+          <div key={item.key} className="stat-card">
+            <Tag size={18} className="stat-icon" />
+            <span className="stat-value">{travel.tags?.length ?? 0}</span>
+            <span className="stat-label">Tags</span>
+          </div>
+        );
+      case "members":
+        return (
+          <div key={item.key} className="stat-card">
+            <Users size={18} className="stat-icon" />
+            <span className="stat-value">
+              {travel.memberCount ?? travel.members?.length ?? 0}
+            </span>
+            <span className="stat-label">Members</span>
+          </div>
+        );
+      default: {
+        // 플러그인 스탯 박스 — 클릭 시 플러그인으로 이동
+        if (!item.key.startsWith(PLUGIN_KEY_PREFIX)) return null;
+        const pluginKey = item.key.slice(PLUGIN_KEY_PREFIX.length);
+        const plugin = TRAVEL_PLUGINS.find((p) => p.key === pluginKey);
+        if (!plugin) return null;
+        const PluginIcon = plugin.icon;
+        const value = pluginStatValue(pluginKey);
+        return (
+          <div
+            key={item.key}
+            className="stat-card clickable"
+            onClick={() => navigate(plugin.path(travel.id))}
+          >
+            <PluginIcon size={18} className="stat-icon" />
+            <span className="stat-value">{value ?? "Open"}</span>
+            <span className="stat-label">{plugin.name}</span>
+          </div>
+        );
+      }
+    }
+  };
+
+  // 플러그인 row 카드 (chat-entry 스타일)
+  const renderPluginCard = (item: TravelDashboardItem) => {
+    const pluginKey = item.key.slice(PLUGIN_KEY_PREFIX.length);
+    const plugin = TRAVEL_PLUGINS.find((p) => p.key === pluginKey);
+    if (!plugin) return null;
+    const PluginIcon = plugin.icon;
+    const desc =
+      plugin.key === "chat" && travel.channelIds && travel.channelIds.length > 0
+        ? `${travel.channelIds.length} channel${travel.channelIds.length > 1 ? "s" : ""} active`
+        : plugin.key === "korea-map" &&
+            travel.visitedRegionCodes &&
+            travel.visitedRegionCodes.length > 0
+          ? `${travel.visitedRegionCodes.length} region${travel.visitedRegionCodes.length > 1 ? "s" : ""} visited`
+          : plugin.key === "course" &&
+              travel.visitedPlaces &&
+              travel.visitedPlaces.length > 0
+            ? `${travel.visitedPlaces.length} place${travel.visitedPlaces.length > 1 ? "s" : ""} on the course`
+            : plugin.description;
+    return (
+      <div
+        key={item.key}
+        className="chat-entry"
+        onClick={() => navigate(plugin.path(travel.id))}
+      >
+        <div className="chat-entry-icon">
+          <PluginIcon size={24} />
+        </div>
+        <div className="chat-entry-content">
+          <span className="chat-entry-title">{plugin.name}</span>
+          <span className="chat-entry-desc">{desc}</span>
+        </div>
+        <ChevronRight size={18} className="chat-entry-arrow" />
+      </div>
+    );
+  };
+
+  // row 섹션 렌더러 — 구성 배열 순서대로 호출됨
+  const renderRowSection = (item: TravelDashboardItem) => {
+    switch (item.key) {
+      case "album":
+        return <TravelAlbum key={item.key} travelId={travel.id} />;
+      case "dates":
+        return travel.startDate || travel.endDate ? (
+          <div key={item.key} className="dash-section date-section">
+            <Calendar size={16} className="section-icon" />
+            <span className="date-range">
+              {formatDate(travel.startDate)} ~ {formatDate(travel.endDate)}
+            </span>
+          </div>
+        ) : null;
+      case "about":
+        return travel.description ? (
+          <div key={item.key} className="dash-section">
+            <h3 className="section-title">About</h3>
+            <p className="section-text">{travel.description}</p>
+          </div>
+        ) : null;
+      case "tags":
+        return (
+          <div key={item.key} className="dash-section">
+            <h3 className="section-title">
+              <Tag size={16} />
+              Tags
+            </h3>
+            {travel.tags && travel.tags.length > 0 ? (
+              <div className="tags-wrap">
+                {travel.tags.map((tag) => (
+                  <span key={tag} className="tag-chip">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="empty-text">No tags yet</p>
+            )}
+          </div>
+        );
+      case "members":
+        return (
+          <div key={item.key} className="dash-section">
+            <TravelMembers
+              travelId={travel.id}
+              members={travel.members}
+              currentUserId={currentUserId}
+              isAdmin={isAdmin}
+            />
+          </div>
+        );
+      case "schedules":
+        return (
+          <div key={item.key} className="dash-section">
+            <div className="section-header">
+              <h3 className="section-title">
+                <Clock size={16} />
+                Schedules
+              </h3>
+              {canEdit && (
+                <button className="section-action">
+                  <Plus size={16} />
+                </button>
+              )}
+            </div>
+            <div className="schedules-list">
+              {travel.schedules
+                ?.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+                .map((schedule) => (
+                  <div key={schedule.id} className="schedule-item">
+                    <div className="schedule-day">
+                      {schedule.dayNumber ? `Day ${schedule.dayNumber}` : ""}
+                    </div>
+                    <div className="schedule-content">
+                      <span className="schedule-title">{schedule.title}</span>
+                      {schedule.date && (
+                        <span className="schedule-date">
+                          {formatDate(schedule.date)}
+                        </span>
+                      )}
+                      {schedule.description && (
+                        <p className="schedule-desc">{schedule.description}</p>
+                      )}
+                      {schedule.places && schedule.places.length > 0 && (
+                        <div className="schedule-places">
+                          {schedule.places.map((place, i) => (
+                            <span key={i} className="place-chip">
+                              <MapPin size={11} />
+                              {place.name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <ChevronRight size={16} className="schedule-arrow" />
+                  </div>
+                ))}
+              {(!travel.schedules || travel.schedules.length === 0) && (
+                <div className="empty-schedules">
+                  <Clock size={32} />
+                  <p>No schedules yet</p>
+                  <span>Add your first schedule to start planning</span>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  // row 항목을 구성 순서대로 블록화 — 연속된 플러그인은 하나의 Plugins 섹션으로 묶음
+  const rowBlocks: JSX.Element[] = [];
+  {
+    let pluginBuffer: TravelDashboardItem[] = [];
+    const flushPlugins = () => {
+      if (pluginBuffer.length === 0) return;
+      rowBlocks.push(
+        <div
+          key={`plugins-${pluginBuffer[0].key}`}
+          className="dash-section"
+        >
+          <div className="section-header">
+            <h3 className="section-title">
+              <Puzzle size={16} />
+              Plugins
+            </h3>
+          </div>
+          <div className="plugins-grid">
+            {pluginBuffer.map(renderPluginCard)}
+          </div>
+        </div>
+      );
+      pluginBuffer = [];
+    };
+    rowItems.forEach((item) => {
+      if (item.key.startsWith(PLUGIN_KEY_PREFIX)) {
+        pluginBuffer.push(item);
+      } else {
+        flushPlugins();
+        const section = renderRowSection(item);
+        if (section) rowBlocks.push(section);
+      }
+    });
+    flushPlugins();
+  }
+
   return (
     <StyledShell>
     <Container {...containerProps}>
@@ -179,6 +521,15 @@ function TravelDashboard(props: TravelDashboardProps) {
           <ArrowLeft size={20} />
         </button>
         <div className="dash-header-right">
+          {canEdit && (
+            <button
+              className="settings-btn"
+              onClick={() => setCustomizeOpen(true)}
+              title="Customize dashboard"
+            >
+              <LayoutGrid size={18} />
+            </button>
+          )}
           {isAdmin && (
             <button className="settings-btn" onClick={() => setSettingsOpen(true)}>
               <Settings size={18} />
@@ -235,185 +586,21 @@ function TravelDashboard(props: TravelDashboardProps) {
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="dash-stats">
-        {dDay && (
-          <div className="stat-card accent" >
-            <span className="stat-value">{dDay}</span>
-            <span className="stat-label">D-Day</span>
-          </div>
-        )}
-        {daysCount && (
-          <div className="stat-card">
-            <Calendar size={18} className="stat-icon" />
-            <span className="stat-value">
-              {daysCount}
-              <small>days</small>
-            </span>
-            <span className="stat-label">Duration</span>
-          </div>
-        )}
-        <div className="stat-card">
-          <Users size={18} className="stat-icon" />
-          <span className="stat-value">{travel.memberCount ?? travel.members?.length ?? 0}</span>
-          <span className="stat-label">Members</span>
-        </div>
-        <div className="stat-card">
-          <Clock size={18} className="stat-icon" />
-          <span className="stat-value">{travel.schedules?.length ?? 0}</span>
-          <span className="stat-label">Schedules</span>
-        </div>
-      </div>
-
-      {/* Album */}
-      <TravelAlbum travelId={travel.id} />
-
-      {/* Date Info */}
-      {(travel.startDate || travel.endDate) && (
-        <div className="dash-section date-section">
-          <Calendar size={16} className="section-icon" />
-          <span className="date-range">
-            {formatDate(travel.startDate)} ~ {formatDate(travel.endDate)}
-          </span>
-        </div>
+      {/* Stats Cards — 대시보드 구성(stat 표시 항목) 기반 */}
+      {statItems.length > 0 && (
+        <div className="dash-stats">{statItems.map(renderStatCard)}</div>
       )}
 
-      {/* Description */}
-      {travel.description && (
-        <div className="dash-section">
-          <h3 className="section-title">About</h3>
-          <p className="section-text">{travel.description}</p>
-        </div>
-      )}
+      {/* Row 섹션 — 구성 순서대로 (연속 플러그인은 Plugins 섹션으로 묶임) */}
+      {rowBlocks}
 
-      {/* Tags */}
-      <div className="dash-section">
-        <h3 className="section-title">
-          <Tag size={16} />
-          Tags
-        </h3>
-        {travel.tags && travel.tags.length > 0 ? (
-          <div className="tags-wrap">
-            {travel.tags.map((tag) => (
-              <span key={tag} className="tag-chip">
-                #{tag}
-              </span>
-            ))}
-          </div>
-        ) : (
-          <p className="empty-text">No tags yet</p>
-        )}
-      </div>
-
-      {/* Members Section */}
-      <div className="dash-section">
-        <TravelMembers
-          travelId={travel.id}
-          members={travel.members}
-          currentUserId={currentUserId}
-          isAdmin={isAdmin}
-        />
-      </div>
-
-      {/* Schedules Section */}
-      <div className="dash-section">
-        <div className="section-header">
-          <h3 className="section-title">
-            <Clock size={16} />
-            Schedules
-          </h3>
-          {canEdit && (
-            <button className="section-action">
-              <Plus size={16} />
-            </button>
-          )}
-        </div>
-        <div className="schedules-list">
-          {travel.schedules
-            ?.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
-            .map((schedule) => (
-              <div key={schedule.id} className="schedule-item">
-                <div className="schedule-day">
-                  {schedule.dayNumber ? `Day ${schedule.dayNumber}` : ""}
-                </div>
-                <div className="schedule-content">
-                  <span className="schedule-title">{schedule.title}</span>
-                  {schedule.date && (
-                    <span className="schedule-date">
-                      {formatDate(schedule.date)}
-                    </span>
-                  )}
-                  {schedule.description && (
-                    <p className="schedule-desc">{schedule.description}</p>
-                  )}
-                  {schedule.places && schedule.places.length > 0 && (
-                    <div className="schedule-places">
-                      {schedule.places.map((place, i) => (
-                        <span key={i} className="place-chip">
-                          <MapPin size={11} />
-                          {place.name}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <ChevronRight size={16} className="schedule-arrow" />
-              </div>
-            ))}
-          {(!travel.schedules || travel.schedules.length === 0) && (
-            <div className="empty-schedules">
-              <Clock size={32} />
-              <p>No schedules yet</p>
-              <span>Add your first schedule to start planning</span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Plugins Section — travelPlugins.ts 레지스트리에 등록된 플러그인 자동 노출 */}
-      <div className="dash-section">
-        <div className="section-header">
-          <h3 className="section-title">
-            <Puzzle size={16} />
-            Plugins
-          </h3>
-        </div>
-        <div className="plugins-grid">
-          {TRAVEL_PLUGINS.map((plugin) => {
-            const PluginIcon = plugin.icon;
-            const desc =
-              plugin.key === "chat" &&
-              travel.channelIds &&
-              travel.channelIds.length > 0
-                ? `${travel.channelIds.length} channel${travel.channelIds.length > 1 ? "s" : ""} active`
-                : plugin.key === "korea-map" &&
-                    travel.visitedRegionCodes &&
-                    travel.visitedRegionCodes.length > 0
-                  ? `${travel.visitedRegionCodes.length} region${travel.visitedRegionCodes.length > 1 ? "s" : ""} visited`
-                  : plugin.key === "course" &&
-                      travel.visitedPlaces &&
-                      travel.visitedPlaces.length > 0
-                    ? `${travel.visitedPlaces.length} place${travel.visitedPlaces.length > 1 ? "s" : ""} on the course`
-                    : plugin.description;
-            return (
-              <div
-                key={plugin.key}
-                className="chat-entry"
-                onClick={() => navigate(plugin.path(travel.id))}
-              >
-                <div className="chat-entry-icon">
-                  <PluginIcon size={24} />
-                </div>
-                <div className="chat-entry-content">
-                  <span className="chat-entry-title">{plugin.name}</span>
-                  <span className="chat-entry-desc">{desc}</span>
-                </div>
-                <ChevronRight size={18} className="chat-entry-arrow" />
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      {/* Dashboard Customize Modal */}
+      <DashboardCustomize
+        travelId={travel.id}
+        currentItems={dashboardItems}
+        isOpen={customizeOpen}
+        onClose={() => setCustomizeOpen(false)}
+      />
 
       {/* Settings Modal */}
       <TravelSettings
@@ -633,10 +820,10 @@ const StyledTravelDashboard = styled.div`
     color: rgba(255, 255, 255, 0.7);
   }
 
-  /* Stats */
+  /* Stats — 한 줄 최대 4개, 넘치면 다음 줄로 */
   .dash-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
     margin-bottom: 1.5rem;
   }
@@ -656,6 +843,17 @@ const StyledTravelDashboard = styled.div`
       background: linear-gradient(135deg, rgba(46, 87, 62, 0.25), rgba(46, 87, 62, 0.08));
       border-color: rgba(80, 107, 92, 0.45);
     }
+
+    /* 플러그인 스탯 박스 — 클릭 시 해당 플러그인으로 이동 */
+    &.clickable {
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #1a2021;
+        border-color: rgba(80, 107, 92, 0.45);
+      }
+    }
   }
 
   .stat-icon {
@@ -672,6 +870,25 @@ const StyledTravelDashboard = styled.div`
       font-weight: 400;
       color: #94a3a0;
       margin-left: 3px;
+    }
+
+    /* 텍스트형 값 (Dates 범위, About 스니펫 등) */
+    &.stat-value--text {
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    &.stat-value--clamp {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      max-width: 100%;
+      padding: 0 4px;
+      font-weight: 400;
+      color: #d6dad8;
     }
   }
 

@@ -38,13 +38,13 @@ export const TRAVEL_PLUGINS: TravelPluginDefinition[] = [
   },
   {
     id: "youtube-summarizer",
-    name: "YouTube Summarizer",
-    description: "Paste a YouTube link and get an organized summary of the video content",
+    name: "Destination Discovery",
+    description: "Search a destination and get AI-curated YouTube travel videos with a digest",
     longDescription:
-      "Extract key points, timestamps, and travel tips from YouTube travel vlogs and guides. Perfect for researching destinations before your trip.",
+      "Type a destination like Sydney and get travel vlogs and guides collected from YouTube, summarized and tagged by AI — popular spots, food, itineraries, and practical tips at a glance.",
     icon: Youtube,
     category: "content",
-    status: "coming_soon",
+    status: "available",
     color: "#ef4444",
     colorEnd: "#dc2626",
     tags: ["video", "summary", "research"],

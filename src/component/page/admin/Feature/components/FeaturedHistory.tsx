@@ -1,14 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import {
   Box,
-  Card,
   HStack,
   VStack,
   Text,
   Badge,
   Spinner,
-  Alert,
-  EmptyState,
   Pagination,
   Table,
   IconButton
@@ -23,6 +20,37 @@ import {
   XCircle
 } from 'lucide-react';
 import { useFeaturedHistory } from '../../../../../hooks/useFeaturedQueries';
+import { homeTokens } from '../../adminUi';
+
+const t = homeTokens;
+
+// 페이지네이션 트리거 다크 톤 공통 스타일
+const pageBtnStyle = {
+  px: 3,
+  py: 2,
+  borderWidth: "1px",
+  borderColor: t.color.border,
+  borderRadius: t.radius.md,
+  color: t.color.textSoft,
+  bg: "transparent",
+  _hover: { bg: t.color.surface3 },
+} as const;
+
+const headerCellStyle = {
+  px: 4,
+  py: 3,
+  fontWeight: "semibold",
+  color: t.color.textSoft,
+  borderColor: t.color.border,
+  bg: t.color.surface2,
+} as const;
+
+const bodyCellStyle = {
+  px: 4,
+  py: 3,
+  borderColor: t.color.border,
+  color: t.color.text,
+} as const;
 
 // 타입 정의 추가
 interface FeaturedInfo {
@@ -46,30 +74,30 @@ interface FeaturedDocument {
 
 const FeaturedHistory: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1); // 1-based로 변경
-  
+
   const { data, isLoading, error } = useFeaturedHistory({
     page: currentPage - 1, // API는 0-based
     size: 20
   });
-  
+
   // 상태별 카운트 계산 (메모이제이션)
   const statusCounts = useMemo(() => {
     if (!data?.documents) return { active: 0, scheduled: 0, ended: 0 };
-    
+
     const now = new Date();
     let active = 0;
     let scheduled = 0;
     let ended = 0;
-    
+
     data.documents.forEach((doc) => {
       const typedDoc = doc as FeaturedDocument;
       if (!typedDoc.featuredSchedule?.startDate || !typedDoc.featuredSchedule?.endDate) {
         return;
       }
-      
+
       const start = new Date(typedDoc.featuredSchedule.startDate);
       const end = new Date(typedDoc.featuredSchedule.endDate);
-      
+
       if (now < start) {
         scheduled++;
       } else if (now >= start && now <= end) {
@@ -78,10 +106,10 @@ const FeaturedHistory: React.FC = () => {
         ended++;
       }
     });
-    
+
     return { active, scheduled, ended };
   }, [data?.documents]);
-  
+
   const formatDate = (date?: string) => {
     if (!date) return '-';
     return new Date(date).toLocaleDateString('ko-KR', {
@@ -92,198 +120,244 @@ const FeaturedHistory: React.FC = () => {
       minute: '2-digit'
     });
   };
-  
+
   const getStatusBadge = (doc: FeaturedDocument) => {
     if (!doc.featuredSchedule?.startDate || !doc.featuredSchedule?.endDate) {
-      return <Badge colorScheme="gray">미설정</Badge>;
+      return (
+        <Badge bg="whiteAlpha.100" color={t.color.textMuted} borderRadius={t.radius.pill} px={2.5}>
+          미설정
+        </Badge>
+      );
     }
-    
+
     const now = new Date();
     const start = new Date(doc.featuredSchedule.startDate);
     const end = new Date(doc.featuredSchedule.endDate);
-    
+
     if (now < start) {
-      return <Badge colorScheme="blue">예약됨</Badge>;
+      return (
+        <Badge
+          bg="transparent"
+          borderWidth="1px"
+          borderColor={t.color.accent}
+          color={t.color.accent}
+          borderRadius={t.radius.pill}
+          px={2.5}
+        >
+          예약됨
+        </Badge>
+      );
     } else if (now >= start && now <= end) {
-      return <Badge colorScheme="green">활성</Badge>;
+      return (
+        <Badge bg={t.color.badgeBg} color={t.color.badgeText} borderRadius={t.radius.pill} px={2.5}>
+          활성
+        </Badge>
+      );
     } else {
-      return <Badge colorScheme="gray">종료</Badge>;
+      return (
+        <Badge bg="whiteAlpha.100" color={t.color.textMuted} borderRadius={t.radius.pill} px={2.5}>
+          종료
+        </Badge>
+      );
     }
   };
-  
+
   const getDuration = (start?: string, end?: string) => {
     if (!start || !end) return '-';
-    
+
     const startDate = new Date(start);
     const endDate = new Date(end);
     const diff = endDate.getTime() - startDate.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    
+
     if (days === 0) return '당일';
     return `${days}일`;
   };
-  
+
   if (isLoading) {
     return (
-      <Box className="flex justify-center items-center h-64">
-        <Spinner size="xl" color="purple.500" />
-      </Box>
+      <HStack justify="center" align="center" h="64" w="full">
+        <Spinner size="xl" color={t.color.accent} />
+      </HStack>
     );
   }
-  
+
   if (error) {
     return (
-      <Alert.Root status="error" className="rounded-lg">
-        <AlertCircle className="mr-2" />
+      <HStack
+        bg="rgba(180, 60, 60, 0.12)"
+        borderWidth="1px"
+        borderColor="rgba(221, 153, 153, 0.35)"
+        borderRadius={t.radius.md}
+        color="#eaa"
+        p={4}
+        gap={2}
+      >
+        <AlertCircle size={18} />
         <Text>히스토리를 불러오는데 실패했습니다.</Text>
-      </Alert.Root>
+      </HStack>
     );
   }
-  
+
   if (!data?.documents || data.documents.length === 0) {
     return (
-      <EmptyState.Root className="py-12">
-        <EmptyState.Title>
+      <VStack
+        py={12}
+        gap={2}
+        borderWidth="1px"
+        borderStyle="dashed"
+        borderColor={t.color.border2}
+        borderRadius={t.radius.lg}
+      >
+        <Text fontFamily={t.font.serif} fontSize="lg" color={t.color.textSoft}>
           Featured 히스토리가 없습니다
-        </EmptyState.Title>
-        <EmptyState.Description>
+        </Text>
+        <Text fontSize="sm" color={t.color.textMuted}>
           아직 Featured로 설정된 콘텐츠가 없습니다
-        </EmptyState.Description>
-      </EmptyState.Root>
+        </Text>
+      </VStack>
     );
   }
-  
+
   return (
-    <VStack className="gap-4 w-full">
+    <VStack gap={4} w="full">
       {/* Summary Card */}
-      <Card.Root className="w-full mb-4">
-        <Card.Body>
-          <HStack className="justify-between">
-            <Text className="font-semibold text-gray-700">
-              총 {data.totalDocsCnt}개의 Featured 히스토리
-            </Text>
-            <HStack className="gap-4">
-              <HStack>
-                <CheckCircle size={16} className="text-green-500" />
-                <Text className="text-sm">활성: {statusCounts.active}</Text>
-              </HStack>
-              <HStack>
-                <Clock size={16} className="text-blue-500" />
-                <Text className="text-sm">예약: {statusCounts.scheduled}</Text>
-              </HStack>
-              <HStack>
-                <XCircle size={16} className="text-gray-500" />
-                <Text className="text-sm">종료: {statusCounts.ended}</Text>
-              </HStack>
+      <Box
+        w="full"
+        bg={t.color.surface}
+        borderWidth="1px"
+        borderColor={t.color.border}
+        borderRadius={t.radius.lg}
+        p={5}
+      >
+        <HStack justify="space-between" flexWrap="wrap" gap={3}>
+          <Text fontWeight="semibold" color={t.color.textSoft}>
+            총 {data.totalDocsCnt}개의 Featured 히스토리
+          </Text>
+          <HStack gap={4}>
+            <HStack gap={1.5}>
+              <Box color={t.color.accent}><CheckCircle size={16} /></Box>
+              <Text fontSize="sm" color={t.color.textMuted}>활성: {statusCounts.active}</Text>
+            </HStack>
+            <HStack gap={1.5}>
+              <Box color={t.color.textSoft}><Clock size={16} /></Box>
+              <Text fontSize="sm" color={t.color.textMuted}>예약: {statusCounts.scheduled}</Text>
+            </HStack>
+            <HStack gap={1.5}>
+              <Box color={t.color.textFaint}><XCircle size={16} /></Box>
+              <Text fontSize="sm" color={t.color.textMuted}>종료: {statusCounts.ended}</Text>
             </HStack>
           </HStack>
-        </Card.Body>
-      </Card.Root>
-      
+        </HStack>
+      </Box>
+
       {/* History Table */}
-      <Card.Root className="w-full overflow-hidden">
-        <Table.Root size="sm">
+      <Box
+        w="full"
+        overflowX="auto"
+        bg={t.color.surface}
+        borderWidth="1px"
+        borderColor={t.color.border}
+        borderRadius={t.radius.lg}
+      >
+        <Table.Root size="sm" bg="transparent">
           <Table.Header>
-            <Table.Row className="bg-gray-50">
-              <Table.ColumnHeader className="px-4 py-3 font-semibold">
-                상태
-              </Table.ColumnHeader>
-              <Table.ColumnHeader className="px-4 py-3 font-semibold">
-                제목
-              </Table.ColumnHeader>
-              <Table.ColumnHeader className="px-4 py-3 font-semibold">
-                Featured 제목
-              </Table.ColumnHeader>
-              <Table.ColumnHeader className="px-4 py-3 font-semibold">
-                시작일
-              </Table.ColumnHeader>
-              <Table.ColumnHeader className="px-4 py-3 font-semibold">
-                종료일
-              </Table.ColumnHeader>
-              <Table.ColumnHeader className="px-4 py-3 font-semibold">
-                기간
-              </Table.ColumnHeader>
-              <Table.ColumnHeader className="px-4 py-3 font-semibold">
-                승인자
-              </Table.ColumnHeader>
-              <Table.ColumnHeader className="px-4 py-3 font-semibold">
-                액션
-              </Table.ColumnHeader>
+            <Table.Row bg="transparent">
+              <Table.ColumnHeader {...headerCellStyle}>상태</Table.ColumnHeader>
+              <Table.ColumnHeader {...headerCellStyle}>제목</Table.ColumnHeader>
+              <Table.ColumnHeader {...headerCellStyle}>Featured 제목</Table.ColumnHeader>
+              <Table.ColumnHeader {...headerCellStyle}>시작일</Table.ColumnHeader>
+              <Table.ColumnHeader {...headerCellStyle}>종료일</Table.ColumnHeader>
+              <Table.ColumnHeader {...headerCellStyle}>기간</Table.ColumnHeader>
+              <Table.ColumnHeader {...headerCellStyle}>승인자</Table.ColumnHeader>
+              <Table.ColumnHeader {...headerCellStyle}>액션</Table.ColumnHeader>
             </Table.Row>
           </Table.Header>
-          
+
           <Table.Body>
             {data.documents.map((doc) => {
               const typedDoc = doc as FeaturedDocument;
               return (
                 <Table.Row
                   key={typedDoc.id}
-                  className="hover:bg-gray-50 transition-colors"
+                  bg="transparent"
+                  _hover={{ bg: "rgba(143, 191, 148, 0.06)" }}
+                  transition="background 0.15s ease"
                 >
-                  <Table.Cell className="px-4 py-3">
+                  <Table.Cell {...bodyCellStyle}>
                     {getStatusBadge(typedDoc)}
                   </Table.Cell>
-                  
-                  <Table.Cell className="px-4 py-3">
-                    <Text className="font-medium line-clamp-1">
+
+                  <Table.Cell {...bodyCellStyle}>
+                    <Text fontWeight="medium" lineClamp={1}>
                       {typedDoc.title}
                     </Text>
                   </Table.Cell>
-                  
-                  <Table.Cell className="px-4 py-3">
-                    <VStack className="items-start gap-0">
-                      <Text className="line-clamp-1">
+
+                  <Table.Cell {...bodyCellStyle}>
+                    <VStack align="start" gap={0}>
+                      <Text lineClamp={1}>
                         {typedDoc.featuredInfo?.featuredTitle || '-'}
                       </Text>
                       {typedDoc.featuredInfo?.location && (
-                        <Text className="text-xs text-gray-500">
+                        <Text fontSize="xs" color={t.color.textFaint}>
                           📍 {typedDoc.featuredInfo.location}
                         </Text>
                       )}
                     </VStack>
                   </Table.Cell>
-                  
-                  <Table.Cell className="px-4 py-3">
-                    <HStack className="gap-1">
-                      <Calendar size={14} className="text-gray-400" />
-                      <Text className="text-sm">
+
+                  <Table.Cell {...bodyCellStyle}>
+                    <HStack gap={1}>
+                      <Box color={t.color.textFaint}><Calendar size={14} /></Box>
+                      <Text fontSize="sm">
                         {formatDate(typedDoc.featuredSchedule?.startDate)}
                       </Text>
                     </HStack>
                   </Table.Cell>
-                  
-                  <Table.Cell className="px-4 py-3">
-                    <HStack className="gap-1">
-                      <Calendar size={14} className="text-gray-400" />
-                      <Text className="text-sm">
+
+                  <Table.Cell {...bodyCellStyle}>
+                    <HStack gap={1}>
+                      <Box color={t.color.textFaint}><Calendar size={14} /></Box>
+                      <Text fontSize="sm">
                         {formatDate(typedDoc.featuredSchedule?.endDate)}
                       </Text>
                     </HStack>
                   </Table.Cell>
-                  
-                  <Table.Cell className="px-4 py-3">
-                    <Badge variant="subtle" size="sm">
+
+                  <Table.Cell {...bodyCellStyle}>
+                    <Badge
+                      bg="transparent"
+                      borderWidth="1px"
+                      borderColor={t.color.border2}
+                      color={t.color.textSoft}
+                      borderRadius={t.radius.pill}
+                      px={2.5}
+                      size="sm"
+                    >
                       {getDuration(
                         typedDoc.featuredSchedule?.startDate,
                         typedDoc.featuredSchedule?.endDate
                       )}
                     </Badge>
                   </Table.Cell>
-                  
-                  <Table.Cell className="px-4 py-3">
-                    <HStack className="gap-1">
-                      <User size={14} className="text-gray-400" />
-                      <Text className="text-sm">
+
+                  <Table.Cell {...bodyCellStyle}>
+                    <HStack gap={1}>
+                      <Box color={t.color.textFaint}><User size={14} /></Box>
+                      <Text fontSize="sm">
                         {typedDoc.featuredSchedule?.approvedBy || '-'}
                       </Text>
                     </HStack>
                   </Table.Cell>
-                  
-                  <Table.Cell className="px-4 py-3">
+
+                  <Table.Cell {...bodyCellStyle}>
                     <IconButton
                       aria-label="View"
                       size="xs"
                       variant="ghost"
+                      color={t.color.textMuted}
+                      _hover={{ color: t.color.text, bg: "whiteAlpha.100" }}
                       onClick={() => window.open(`/blog/view/${typedDoc.id}`, '_blank')}
                     >
                       <Eye size={14} />
@@ -294,47 +368,50 @@ const FeaturedHistory: React.FC = () => {
             })}
           </Table.Body>
         </Table.Root>
-      </Card.Root>
-      
+      </Box>
+
       {/* Pagination */}
       {data.totalPagesCnt && data.totalPagesCnt > 1 && (
-        <Box className="flex justify-center mt-4">
+        <HStack justify="center" mt={4}>
           <Pagination.Root
             count={data.totalDocsCnt || 0}
             pageSize={20}
             page={currentPage}
             onPageChange={(details : any) => setCurrentPage(details.page)}
           >
-            <HStack className="gap-2">
-              <Pagination.PrevTrigger className="px-3 py-2 border rounded hover:bg-gray-50">
+            <HStack gap={2}>
+              <Pagination.PrevTrigger {...pageBtnStyle}>
                 이전
               </Pagination.PrevTrigger>
-              
+
               <Pagination.Items
-                className="flex gap-1"
                 render={(page) => (
                   page.type === 'page' ? (
                     <Pagination.Item
                       {...page}
-                      className="px-3 py-2 border rounded hover:bg-purple-50
-                         data-[selected]:bg-purple-500 data-[selected]:text-white"
+                      {...pageBtnStyle}
+                      _selected={{
+                        bg: t.color.accentStrong,
+                        color: t.color.text,
+                        borderColor: "transparent",
+                      }}
                     >
                       {page.value}
                     </Pagination.Item>
                   ) : (
                     <Pagination.Ellipsis {...page}>
-                      <Text className="px-2">...</Text>
+                      <Text px={2} color={t.color.textFaint}>...</Text>
                     </Pagination.Ellipsis>
                   )
                 )}
               />
-              
-              <Pagination.NextTrigger className="px-3 py-2 border rounded hover:bg-gray-50">
+
+              <Pagination.NextTrigger {...pageBtnStyle}>
                 다음
               </Pagination.NextTrigger>
             </HStack>
           </Pagination.Root>
-        </Box>
+        </HStack>
       )}
     </VStack>
   );

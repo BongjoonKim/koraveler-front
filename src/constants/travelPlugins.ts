@@ -1,4 +1,4 @@
-import { LucideIcon, Map, MessageCircle, Route } from "lucide-react";
+import { LucideIcon, Map, MessageCircle, Route, Youtube } from "lucide-react";
 
 /**
  * Travel 프로젝트에 연결되는 플러그인 레지스트리.
@@ -33,5 +33,13 @@ export const TRAVEL_PLUGINS: TravelPlugin[] = [
     description: "Chat with your travel companions",
     icon: MessageCircle,
     path: (id) => `/travel/chat/${id}`,
+  },
+  {
+    key: "discovery",
+    name: "Destination Discovery",
+    description: "AI-curated YouTube travel videos for your destination",
+    icon: Youtube,
+    // 프로젝트에 종속되지 않는 플러그인 — travelId 미사용
+    path: () => `/travel/discovery`,
   },
 ];

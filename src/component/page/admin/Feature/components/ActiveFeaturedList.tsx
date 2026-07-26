@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Card,
   HStack,
   VStack,
   Text,
-  Button,
   Badge,
   Image,
   IconButton,
-  Spinner,
-  Alert,
-  EmptyState
+  Spinner
 } from '@chakra-ui/react';
 import {
   Calendar,
@@ -19,7 +15,6 @@ import {
   Edit,
   Trash2,
   Eye,
-  GripVertical,
   AlertCircle
 } from 'lucide-react';
 import {
@@ -27,54 +22,78 @@ import {
   useRemoveFromFeatured
 } from '../../../../../hooks/useFeaturedQueries';
 import FeaturedEditModal from './FeaturedEditModal';
+import { homeTokens } from '../../adminUi';
+
+const t = homeTokens;
+
+// 아이콘 버튼 다크 톤 공통 스타일
+const ghostIconStyle = {
+  color: t.color.textMuted,
+  _hover: { color: t.color.text, bg: "whiteAlpha.100" },
+} as const;
 
 const ActiveFeaturedList: React.FC = () => {
   const { data: featuredDocs, isLoading, error } = useFeaturedDocuments(10);
   const { mutate: removeFeatured, isPending: isRemoving } = useRemoveFromFeatured();
   const [selectedDoc, setSelectedDoc] = useState<FeaturedDocument | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  
+
   if (isLoading) {
     return (
-      <Box className="flex justify-center items-center h-64">
-        <Spinner size="xl" color="purple.500" />
-      </Box>
+      <HStack justify="center" align="center" h="64" w="full">
+        <Spinner size="xl" color={t.color.accent} />
+      </HStack>
     );
   }
-  
+
   if (error) {
     return (
-      <Alert.Root status="error" className="rounded-lg">
-        <AlertCircle className="mr-2" />
+      <HStack
+        bg="rgba(180, 60, 60, 0.12)"
+        borderWidth="1px"
+        borderColor="rgba(221, 153, 153, 0.35)"
+        borderRadius={t.radius.md}
+        color="#eaa"
+        p={4}
+        gap={2}
+      >
+        <AlertCircle size={18} />
         <Text>Featured 콘텐츠를 불러오는데 실패했습니다.</Text>
-      </Alert.Root>
+      </HStack>
     );
   }
-  
+
   if (!featuredDocs || featuredDocs.length === 0) {
     return (
-      <EmptyState.Root className="py-12">
-        <EmptyState.Title>
+      <VStack
+        py={12}
+        gap={2}
+        borderWidth="1px"
+        borderStyle="dashed"
+        borderColor={t.color.border2}
+        borderRadius={t.radius.lg}
+      >
+        <Text fontFamily={t.font.serif} fontSize="lg" color={t.color.textSoft}>
           활성 Featured 콘텐츠가 없습니다
-        </EmptyState.Title>
-        <EmptyState.Description>
+        </Text>
+        <Text fontSize="sm" color={t.color.textMuted}>
           문서 목록에서 Featured로 설정할 콘텐츠를 선택해주세요
-        </EmptyState.Description>
-      </EmptyState.Root>
+        </Text>
+      </VStack>
     );
   }
-  
+
   const handleRemove = (id: string) => {
     if (window.confirm('정말로 Featured에서 제거하시겠습니까?')) {
       removeFeatured(id);
     }
   };
-  
+
   const handleEdit = (doc: FeaturedDocument) => {
     setSelectedDoc(doc);
     setIsEditModalOpen(true);
   };
-  
+
   const formatDate = (date?: string) => {
     if (!date) return '미설정';
     return new Date(date).toLocaleDateString('ko-KR', {
@@ -85,141 +104,169 @@ const ActiveFeaturedList: React.FC = () => {
       minute: '2-digit'
     });
   };
-  
+
   return (
     <>
-      <VStack className="gap-4 w-full">
+      <VStack gap={4} w="full">
         {featuredDocs.map((doc, index) => (
-          <Card.Root
+          <Box
             key={doc.id}
-            className="w-full hover:shadow-lg transition-shadow duration-300 overflow-hidden"
+            w="full"
+            bg={t.color.surface}
+            borderWidth="1px"
+            borderColor={t.color.border}
+            borderRadius={t.radius.lg}
+            overflow="hidden"
+            transition="border-color 0.2s ease"
+            _hover={{ borderColor: t.color.border2 }}
           >
-            <Card.Body className="p-0">
-              <HStack className="gap-0 h-full">
-                {/* Drag Handle */}
-                <Box className="px-2 py-4 bg-gray-50 cursor-move hover:bg-gray-100 transition-colors">
-                  <GripVertical size={20} className="text-gray-400" />
+            <HStack gap={0} h="full" align="stretch">
+              {/* Priority */}
+              <VStack px={4} justify="center" bg={t.color.surface2}>
+                <Text
+                  fontFamily={t.font.serif}
+                  fontSize="lg"
+                  fontWeight="bold"
+                  color={t.color.accent}
+                >
+                  #{index + 1}
+                </Text>
+              </VStack>
+
+              {/* Thumbnail */}
+              {doc.featuredInfo?.featuredImageUrl && (
+                <Box position="relative" w="32" h="32" flexShrink={0}>
+                  <Image
+                    src={doc.featuredInfo.featuredImageUrl}
+                    alt={doc.title}
+                    w="full"
+                    h="full"
+                    objectFit="cover"
+                  />
                 </Box>
-                
-                {/* Priority Badge */}
-                <Box className="px-4 py-4 bg-gradient-to-br from-purple-50 to-purple-100">
-                  <Badge
-                    colorScheme="purple"
-                    className="text-lg font-bold px-3 py-1"
-                  >
-                    #{index + 1}
-                  </Badge>
-                </Box>
-                
-                {/* Thumbnail */}
-                {doc.featuredInfo?.featuredImageUrl && (
-                  <Box className="relative w-32 h-32 flex-shrink-0">
-                    <Image
-                      src={doc.featuredInfo.featuredImageUrl}
-                      alt={doc.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <Box
-                      className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"
-                    />
-                  </Box>
-                )}
-                
-                {/* Content */}
-                <VStack className="flex-1 p-4 gap-2 items-start">
-                  <HStack className="w-full justify-between">
-                    <Box className="flex-1">
-                      <Text className="text-lg font-bold text-gray-900 mb-1">
-                        {doc.featuredInfo?.featuredTitle || doc.title}
+              )}
+
+              {/* Content */}
+              <VStack flex={1} p={4} gap={2} align="start">
+                <HStack w="full" justify="space-between" align="start">
+                  <Box flex={1}>
+                    <Text
+                      fontSize="lg"
+                      fontWeight="bold"
+                      fontFamily={t.font.serif}
+                      color={t.color.text}
+                      mb={1}
+                    >
+                      {doc.featuredInfo?.featuredTitle || doc.title}
+                    </Text>
+                    {doc.featuredInfo?.featuredSubtitle && (
+                      <Text fontSize="sm" color={t.color.textMuted}>
+                        {doc.featuredInfo.featuredSubtitle}
                       </Text>
-                      {doc.featuredInfo?.featuredSubtitle && (
-                        <Text className="text-sm text-gray-600">
-                          {doc.featuredInfo.featuredSubtitle}
-                        </Text>
-                      )}
-                    </Box>
-                    
-                    <HStack className="gap-1">
-                      {doc.featuredSchedule?.isActive && (
-                        <Badge colorScheme="green">활성</Badge>
-                      )}
-                      {doc.draft && (
-                        <Badge colorScheme="yellow">임시저장</Badge>
-                      )}
-                    </HStack>
-                  </HStack>
-                  
-                  {/* Metadata */}
-                  <HStack className="flex-wrap gap-4 text-sm text-gray-500">
-                    {doc.featuredInfo?.location && (
-                      <HStack className="gap-1">
-                        <MapPin size={14} />
-                        <Text>{doc.featuredInfo.location}</Text>
-                      </HStack>
                     )}
-                    
-                    <HStack className="gap-1">
-                      <Calendar size={14} />
-                      <Text>
-                        {formatDate(doc.featuredSchedule?.startDate)} ~ {formatDate(doc.featuredSchedule?.endDate)}
-                      </Text>
-                    </HStack>
+                  </Box>
+
+                  <HStack gap={1}>
+                    {doc.featuredSchedule?.isActive && (
+                      <Badge
+                        bg={t.color.badgeBg}
+                        color={t.color.badgeText}
+                        borderRadius={t.radius.pill}
+                        px={2.5}
+                      >
+                        활성
+                      </Badge>
+                    )}
+                    {doc.draft && (
+                      <Badge
+                        bg="whiteAlpha.100"
+                        color={t.color.textMuted}
+                        borderRadius={t.radius.pill}
+                        px={2.5}
+                      >
+                        임시저장
+                      </Badge>
+                    )}
                   </HStack>
-                  
-                  {/* Highlights */}
-                  {doc.featuredInfo?.highlights && doc.featuredInfo.highlights.length > 0 && (
-                    <HStack className="gap-2 flex-wrap">
-                      {doc.featuredInfo.highlights.map((highlight, idx) => (
-                        <Badge
-                          key={idx}
-                          variant="subtle"
-                          colorScheme="blue"
-                          className="text-xs"
-                        >
-                          {highlight}
-                        </Badge>
-                      ))}
+                </HStack>
+
+                {/* Metadata */}
+                <HStack flexWrap="wrap" gap={4} fontSize="sm" color={t.color.textFaint}>
+                  {doc.featuredInfo?.location && (
+                    <HStack gap={1}>
+                      <MapPin size={14} />
+                      <Text>{doc.featuredInfo.location}</Text>
                     </HStack>
                   )}
-                </VStack>
-                
-                {/* Actions */}
-                <VStack className="p-4 gap-2 border-l border-gray-100">
-                  <IconButton
-                    aria-label="View"
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => window.open(`/blog/view/${doc.id}`, '_blank')}
-                  >
-                    <Eye size={16} />
-                  </IconButton>
-                  
-                  <IconButton
-                    aria-label="Edit"
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => handleEdit(doc)}
-                  >
-                    <Edit size={16} />
-                  </IconButton>
-                  
-                  <IconButton
-                    aria-label="Remove"
-                    size="sm"
-                    variant="ghost"
-                    colorScheme="red"
-                    onClick={() => handleRemove(doc.id!)}
-                    loading={isRemoving}
-                  >
-                    <Trash2 size={16} />
-                  </IconButton>
-                </VStack>
-              </HStack>
-            </Card.Body>
-          </Card.Root>
+
+                  <HStack gap={1}>
+                    <Calendar size={14} />
+                    <Text>
+                      {formatDate(doc.featuredSchedule?.startDate)} ~ {formatDate(doc.featuredSchedule?.endDate)}
+                    </Text>
+                  </HStack>
+                </HStack>
+
+                {/* Highlights */}
+                {doc.featuredInfo?.highlights && doc.featuredInfo.highlights.length > 0 && (
+                  <HStack gap={2} flexWrap="wrap">
+                    {doc.featuredInfo.highlights.map((highlight, idx) => (
+                      <Badge
+                        key={idx}
+                        bg="transparent"
+                        borderWidth="1px"
+                        borderColor={t.color.border2}
+                        color={t.color.textSoft}
+                        borderRadius={t.radius.pill}
+                        px={2.5}
+                        fontSize="xs"
+                      >
+                        {highlight}
+                      </Badge>
+                    ))}
+                  </HStack>
+                )}
+              </VStack>
+
+              {/* Actions */}
+              <VStack p={4} gap={2} borderLeftWidth="1px" borderColor={t.color.border} justify="center">
+                <IconButton
+                  aria-label="View"
+                  size="sm"
+                  variant="ghost"
+                  {...ghostIconStyle}
+                  onClick={() => window.open(`/blog/view/${doc.id}`, '_blank')}
+                >
+                  <Eye size={16} />
+                </IconButton>
+
+                <IconButton
+                  aria-label="Edit"
+                  size="sm"
+                  variant="ghost"
+                  {...ghostIconStyle}
+                  onClick={() => handleEdit(doc)}
+                >
+                  <Edit size={16} />
+                </IconButton>
+
+                <IconButton
+                  aria-label="Remove"
+                  size="sm"
+                  variant="ghost"
+                  color="#d99"
+                  _hover={{ color: "#eaa", bg: "rgba(180, 60, 60, 0.14)" }}
+                  onClick={() => handleRemove(doc.id!)}
+                  loading={isRemoving}
+                >
+                  <Trash2 size={16} />
+                </IconButton>
+              </VStack>
+            </HStack>
+          </Box>
         ))}
       </VStack>
-      
+
       {/* Edit Modal */}
       {selectedDoc && (
         <FeaturedEditModal

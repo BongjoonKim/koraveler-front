@@ -5,6 +5,7 @@ import {
   Image as ImageIcon,
   Plus,
   CheckSquare,
+  CloudUpload,
   Download,
   Trash2,
   X,
@@ -33,6 +34,43 @@ function TravelAlbum({ travelId }: TravelAlbumProps) {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [lightboxMedia, setLightboxMedia] = useState<TravelMedia | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isDragActive, setIsDragActive] = useState(false);
+  const [droppedFiles, setDroppedFiles] = useState<File[] | null>(null);
+
+  // 섹션 전체 드래그 드롭 — 업로드 존이 닫혀 있어도 파일을 끌어오면 바로 업로드
+  const handleSectionDragEnter = useCallback((e: React.DragEvent) => {
+    if (!Array.from(e.dataTransfer.types).includes("Files")) return;
+    e.preventDefault();
+    setIsDragActive(true);
+  }, []);
+
+  const handleSectionDragOver = useCallback((e: React.DragEvent) => {
+    if (!Array.from(e.dataTransfer.types).includes("Files")) return;
+    e.preventDefault();
+  }, []);
+
+  const handleSectionDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    // 섹션 내부 요소 간 이동은 무시하고, 섹션 밖으로 나갈 때만 해제
+    if (e.currentTarget.contains(e.relatedTarget as Node)) return;
+    setIsDragActive(false);
+  }, []);
+
+  const handleSectionDrop = useCallback((e: React.DragEvent) => {
+    if (!Array.from(e.dataTransfer.types).includes("Files")) return;
+    e.preventDefault();
+    setIsDragActive(false);
+    const files = Array.from(e.dataTransfer.files).filter(
+      (f) => f.type.startsWith("image/") || f.type.startsWith("video/")
+    );
+    if (files.length === 0) return;
+    setDroppedFiles(files);
+    setIsUploadOpen(true);
+  }, []);
+
+  const handleDroppedFilesConsumed = useCallback(() => {
+    setDroppedFiles(null);
+  }, []);
 
   // Selection handlers
   const handleSelect = useCallback((id: string) => {
@@ -136,8 +174,23 @@ function TravelAlbum({ travelId }: TravelAlbumProps) {
   }, [selectedIds, travelId, deleteMutation]);
 
   return (
-    <StyledTravelAlbum>
+    <StyledTravelAlbum
+      onDragEnter={handleSectionDragEnter}
+      onDragOver={handleSectionDragOver}
+      onDragLeave={handleSectionDragLeave}
+      onDrop={handleSectionDrop}
+    >
       <div className="dash-section">
+        {/* Drag & drop overlay */}
+        {isDragActive && (
+          <div className="drop-overlay">
+            <div className="drop-overlay-inner">
+              <CloudUpload size={36} />
+              <p>Drop photos or videos to upload</p>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="section-header">
           <h3 className="section-title">
@@ -206,6 +259,8 @@ function TravelAlbum({ travelId }: TravelAlbumProps) {
               <MediaUploadZone
                 travelId={travelId}
                 onUploadComplete={() => setIsUploadOpen(false)}
+                externalFiles={droppedFiles}
+                onExternalFilesConsumed={handleDroppedFilesConsumed}
               />
             </motion.div>
           )}
@@ -221,7 +276,7 @@ function TravelAlbum({ travelId }: TravelAlbumProps) {
           <div className="empty-album">
             <ImageIcon size={32} />
             <p>No photos yet</p>
-            <span>Upload your first travel photo</span>
+            <span>Drag &amp; drop photos here, or tap + to upload</span>
           </div>
         ) : (
           <MediaGrid
@@ -256,8 +311,37 @@ const spin = keyframes`
 
 const StyledTravelAlbum = styled.div`
   .dash-section {
+    position: relative;
     padding: 1.25rem 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .drop-overlay {
+    position: absolute;
+    inset: 8px 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #7fb89a;
+    border-radius: 16px;
+    background: rgba(18, 24, 22, 0.9);
+    backdrop-filter: blur(2px);
+  }
+
+  .drop-overlay-inner {
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #7fb89a;
+
+    p {
+      font-size: 14px;
+      font-weight: 600;
+      color: #f1f3f2;
+    }
   }
 
   .section-header {

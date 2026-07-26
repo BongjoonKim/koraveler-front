@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import {
   Box,
-  Card,
   HStack,
   VStack,
   Text,
@@ -10,8 +9,6 @@ import {
   Image,
   Input,
   Spinner,
-  Alert,
-  EmptyState,
   IconButton,
   Grid,
   Pagination
@@ -31,21 +28,36 @@ import {
 import { debounce } from 'lodash';
 import SetFeaturedModal from './SetFeaturedModal';
 import moment from "moment";
+import { homeTokens } from '../../adminUi';
+
+const t = homeTokens;
+
+// 페이지네이션 트리거 다크 톤 공통 스타일
+const pageBtnStyle = {
+  px: 3,
+  py: 2,
+  borderWidth: "1px",
+  borderColor: t.color.border,
+  borderRadius: t.radius.md,
+  color: t.color.textSoft,
+  bg: "transparent",
+  _hover: { bg: t.color.surface3 },
+} as const;
 
 function FeaturableDocuments() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedDoc, setSelectedDoc] = useState<DocumentDTO | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
   const { data, isLoading, error } = useFeaturableDocuments({
     page: currentPage,
     size: 12,
     search: searchTerm
   });
-  
+
   const { mutate: setFeatured, isPending: isSetting } = useSetFeatured();
-  
+
   // Debounced search
   const debouncedSearch = useCallback(
     debounce((value: string) => {
@@ -54,219 +66,278 @@ function FeaturableDocuments() {
     }, 500),
     []
   );
-  
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     debouncedSearch(e.target.value);
   };
-  
+
   const handleSetFeatured = (doc: DocumentDTO) => {
     setSelectedDoc(doc);
     setIsModalOpen(true);
   };
-  
-  const formatDate = (date?: string) => {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-  
+
   if (error) {
     return (
-      <Alert.Root status="error" className="rounded-lg">
-        <AlertCircle className="mr-2" />
+      <HStack
+        bg="rgba(180, 60, 60, 0.12)"
+        borderWidth="1px"
+        borderColor="rgba(221, 153, 153, 0.35)"
+        borderRadius={t.radius.md}
+        color="#eaa"
+        p={4}
+        gap={2}
+      >
+        <AlertCircle size={18} />
         <Text>문서 목록을 불러오는데 실패했습니다.</Text>
-      </Alert.Root>
+      </HStack>
     );
   }
-  
+
   return (
     <>
       {/* Search Bar */}
-      <Box className="mb-6">
-        <HStack className="gap-4">
-          <Box className="relative flex-1 max-w-md">
-            <Search
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              size={20}
-            />
+      <Box mb={6}>
+        <HStack gap={4}>
+          <Box position="relative" flex={1} maxW="md">
+            <Box
+              position="absolute"
+              left={3}
+              top="50%"
+              transform="translateY(-50%)"
+              color={t.color.textFaint}
+              zIndex={1}
+            >
+              <Search size={18} />
+            </Box>
             <Input
               placeholder="제목, 태그, 내용으로 검색..."
-              className="pl-10"
+              pl={10}
+              bg={t.color.surface2}
+              borderColor={t.color.border}
+              color={t.color.text}
+              _placeholder={{ color: t.color.textFaint }}
+              _focus={{ borderColor: t.color.accent }}
               onChange={handleSearch}
             />
           </Box>
           <Badge
-            colorScheme="gray"
-            className="px-3 py-2"
+            bg={t.color.badgeBg}
+            color={t.color.badgeText}
+            borderRadius={t.radius.pill}
+            px={3}
+            py={2}
           >
             총 {data?.totalDocsCnt || 0}개 문서
           </Badge>
         </HStack>
       </Box>
-      
+
       {/* Loading State */}
       {isLoading && (
-        <Box className="flex justify-center items-center h-64">
-          <Spinner size="xl" color="purple.500" />
-        </Box>
+        <HStack justify="center" align="center" h="64" w="full">
+          <Spinner size="xl" color={t.color.accent} />
+        </HStack>
       )}
-      
+
       {/* Empty State */}
       {!isLoading && (!data?.documents || data.documents.length === 0) && (
-        <EmptyState.Root>
-          <EmptyState.Title>
+        <VStack
+          py={12}
+          gap={2}
+          borderWidth="1px"
+          borderStyle="dashed"
+          borderColor={t.color.border2}
+          borderRadius={t.radius.lg}
+        >
+          <Text fontFamily={t.font.serif} fontSize="lg" color={t.color.textSoft}>
             Featured 가능한 문서가 없습니다
-          </EmptyState.Title>
-          <EmptyState.Description>
+          </Text>
+          <Text fontSize="sm" color={t.color.textMuted}>
             {searchTerm ? "다른 검색어로 시도해보세요" : "새로운 블로그 글을 작성해주세요"}
-          </EmptyState.Description>
-        </EmptyState.Root>
+          </Text>
+        </VStack>
       )}
-      
+
       {/* Document Grid */}
       {!isLoading && data?.documents && data.documents.length > 0 && (
         <>
-          <Grid className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+          <Grid
+            templateColumns={{ base: "1fr", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" }}
+            gap={4}
+            mb={6}
+          >
             {data.documents.map((doc) => (
-              <Card.Root
+              <Box
                 key={doc.id}
-                className="hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                bg={t.color.surface}
+                borderWidth="1px"
+                borderColor={t.color.border}
+                borderRadius={t.radius.lg}
+                overflow="hidden"
+                transition="border-color 0.2s ease"
+                _hover={{ borderColor: t.color.border2 }}
+                role="group"
               >
                 {/* Thumbnail */}
                 {doc.thumbnailImgUrl && (
-                  <Box className="relative h-48 overflow-hidden">
+                  <Box position="relative" h="48" overflow="hidden">
                     <Image
                       src={doc.thumbnailImgUrl}
                       alt={doc.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      w="full"
+                      h="full"
+                      objectFit="cover"
                     />
-                    <Box className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                     <Badge
-                      className="absolute top-2 right-2"
-                      colorScheme={doc.draft ? 'yellow' : 'green'}
+                      position="absolute"
+                      top={2}
+                      right={2}
+                      bg={doc.draft ? "whiteAlpha.300" : t.color.badgeBg}
+                      color={doc.draft ? t.color.text : t.color.badgeText}
+                      borderRadius={t.radius.pill}
+                      px={2.5}
                     >
                       {doc.draft ? '임시저장' : '게시됨'}
                     </Badge>
                   </Box>
                 )}
-                
-                <Card.Body className="p-4">
-                  <VStack className="gap-3 items-start">
+
+                <Box p={4}>
+                  <VStack gap={3} align="start">
                     {/* Title */}
-                    <Box className="w-full">
-                      <Text className="font-bold text-lg text-gray-900 line-clamp-2">
-                        {doc.title}
-                      </Text>
-                    </Box>
-                    
+                    <Text
+                      fontWeight="bold"
+                      fontSize="lg"
+                      fontFamily={t.font.serif}
+                      color={t.color.text}
+                      lineClamp={2}
+                    >
+                      {doc.title}
+                    </Text>
+
                     {/* Meta Info */}
-                    <HStack className="text-sm text-gray-500 gap-3">
-                      <HStack className="gap-1">
+                    <HStack fontSize="sm" color={t.color.textFaint} gap={3}>
+                      <HStack gap={1}>
                         <Calendar size={14} />
-                        <Text>{moment(doc?.created, 'YYYY-MM-DD').toISOString()}</Text>
+                        <Text>{moment(doc?.created, 'YYYY-MM-DD').format('YYYY.MM.DD')}</Text>
                       </HStack>
                       {doc.tags && doc.tags.length > 0 && (
-                        <HStack className="gap-1">
+                        <HStack gap={1}>
                           <FileText size={14} />
                           <Text>{doc.tags.length} tags</Text>
                         </HStack>
                       )}
                     </HStack>
-                    
+
                     {/* Tags */}
                     {doc.tags && doc.tags.length > 0 && (
-                      <HStack className="flex-wrap gap-1">
+                      <HStack flexWrap="wrap" gap={1}>
                         {doc.tags.slice(0, 3).map((tag, idx) => (
                           <Badge
                             key={idx}
                             size="sm"
-                            variant="subtle"
-                            className="text-xs"
+                            bg="transparent"
+                            borderWidth="1px"
+                            borderColor={t.color.border2}
+                            color={t.color.textSoft}
+                            borderRadius={t.radius.pill}
+                            px={2}
+                            fontSize="xs"
                           >
                             {tag}
                           </Badge>
                         ))}
                         {doc.tags.length > 3 && (
-                          <Badge size="sm" variant="subtle" className="text-xs">
+                          <Badge
+                            size="sm"
+                            bg="transparent"
+                            color={t.color.textFaint}
+                            fontSize="xs"
+                          >
                             +{doc.tags.length - 3}
                           </Badge>
                         )}
                       </HStack>
                     )}
-                    
+
                     {/* Actions */}
-                    <HStack className="w-full gap-2 pt-2">
+                    <HStack w="full" gap={2} pt={2}>
                       <Button
                         size="sm"
-                        colorScheme="purple"
-                        className="flex-1"
+                        flex={1}
+                        bg={t.color.accentStrong}
+                        color={t.color.text}
+                        borderRadius={t.radius.pill}
+                        _hover={{ filter: "brightness(1.12)" }}
                         onClick={() => handleSetFeatured(doc)}
                         loading={isSetting}
                       >
-                        <Plus size={16} className="mr-1" />
+                        <Plus size={16} />
                         Featured 설정
                       </Button>
                       <IconButton
                         aria-label="View"
                         size="sm"
                         variant="ghost"
+                        color={t.color.textMuted}
+                        _hover={{ color: t.color.text, bg: "whiteAlpha.100" }}
                         onClick={() => window.open(`/blog/view/${doc.id}`, '_blank')}
                       >
                         <Eye size={16} />
                       </IconButton>
                     </HStack>
                   </VStack>
-                </Card.Body>
-              </Card.Root>
+                </Box>
+              </Box>
             ))}
           </Grid>
-          
+
           {/* Pagination */}
           {data.totalPagesCnt && data.totalPagesCnt > 1 && (
-            <Box className="flex justify-center mt-4">
+            <HStack justify="center" mt={4}>
               <Pagination.Root
                 count={data.totalDocsCnt || 0}
                 pageSize={20}
                 page={currentPage}
                 onPageChange={(details : any) => setCurrentPage(details.page)}
               >
-                <HStack className="gap-2">
-                  <Pagination.PrevTrigger className="px-3 py-2 border rounded hover:bg-gray-50">
+                <HStack gap={2}>
+                  <Pagination.PrevTrigger {...pageBtnStyle}>
                     이전
                   </Pagination.PrevTrigger>
-                  
+
                   <Pagination.Items
-                    className="flex gap-1"
                     render={(page) => (
                       page.type === 'page' ? (
                         <Pagination.Item
                           {...page}
-                          className="px-3 py-2 border rounded hover:bg-purple-50
-                         data-[selected]:bg-purple-500 data-[selected]:text-white"
+                          {...pageBtnStyle}
+                          _selected={{
+                            bg: t.color.accentStrong,
+                            color: t.color.text,
+                            borderColor: "transparent",
+                          }}
                         >
                           {page.value}
                         </Pagination.Item>
                       ) : (
                         <Pagination.Ellipsis {...page}>
-                          <Text className="px-2">...</Text>
+                          <Text px={2} color={t.color.textFaint}>...</Text>
                         </Pagination.Ellipsis>
                       )
                     )}
                   />
-                  
-                  <Pagination.NextTrigger className="px-3 py-2 border rounded hover:bg-gray-50">
+
+                  <Pagination.NextTrigger {...pageBtnStyle}>
                     다음
                   </Pagination.NextTrigger>
                 </HStack>
               </Pagination.Root>
-            </Box>
+            </HStack>
           )}
         </>
       )}
-      
+
       {/* Set Featured Modal */}
       {selectedDoc && (
         <SetFeaturedModal

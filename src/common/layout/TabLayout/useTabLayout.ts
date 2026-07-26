@@ -18,19 +18,19 @@ function useTabLayout(props : AdminMenuTabProps | UserMenuTabProps) {
   // TabItem[] 타입으로 변경하고 value를 경로 기반으로 설정
   const [adminTabList, setAdminTabList] = useState<TabItem[]>([
     {
-      label: "menu-list",
+      label: "Menus",
       value: "menu", // 경로의 마지막 부분과 일치하도록 설정
     },
     {
-      label: "user-list",
+      label: "Users",
       value: "users",
     },
     {
-      label: "folder",
+      label: "Folders",
       value: "folder",
     },
     {
-      label: "feature",
+      label: "Featured",
       value: "feature",
     }
   ]);

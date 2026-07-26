@@ -14,6 +14,7 @@ import {
   Plane,
 } from "lucide-react";
 import { useCreateTravel } from "../../../../hooks/useTravelQueries";
+import { DEFAULT_DASHBOARD_ITEMS } from "../../../../constants/travelDashboardItems";
 import {
   TravelCreateRequest,
   TravelVisibility,
@@ -86,7 +87,11 @@ function TravelCreateProject(props: TravelCreateProjectProps) {
     if (!form.title.trim()) return;
 
     try {
-      const result = await createTravel.mutateAsync(form);
+      // 대시보드 기본 구성(위젯·표시방식)을 프로젝트에 함께 저장
+      const result = await createTravel.mutateAsync({
+        ...form,
+        dashboardItems: DEFAULT_DASHBOARD_ITEMS,
+      });
       navigate(`/travel/dashboard/${result.id}`);
     } catch (error) {
       console.error("Travel creation failed:", error);
