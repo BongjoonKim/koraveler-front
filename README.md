@@ -3,5 +3,5 @@ Nadeliv - 한국 여행 소개 사이트 개발 프로젝트의 프론트엔드 
 
 # 기술
 React, TypeScript 사용<br/>
-AWS를 활용하여 S3(이미지 저장) EC2서버에 nginx를 활용해서 배포하고 있습니다. <br/>
+AWS의 Cloudfront 활용해서 배포하고 있습니다. <br/>
 주소는 https://nadeliv.com 입니다
